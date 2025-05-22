@@ -1,73 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Filter, ChevronDown } from 'lucide-react';
-import Layout from '../../components/layout/Layout';
-import { Card, CardContent } from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
-import AdAccountCard from './AdAccountCard';
-import RentModal from './RentModal';
-import { AdAccount } from '../../types';
+import React, { useState, useEffect } from "react";
+import { Search, Filter, ChevronDown } from "lucide-react";
+import Layout from "../../components/layout/Layout";
+import { Card, CardContent } from "../../components/ui/Card";
+import AdAccountCard from "./AdAccountCard";
+import RentModal from "./RentModal";
+import { AdAccount } from "../../types";
 
 // Mock data for demo purposes
 const mockAdAccounts: AdAccount[] = [
   {
-    id: '1',
-    name: 'TKQC Cá nhân - Visa',
-    accountType: 'personal',
-    accountType: 'visa',
+    id: "1",
+    name: "TKQC Cá nhân - Visa",
+    accountType: "personal",
     defaultLimit: 5000000,
     pricePerDay: 200000,
-    status: 'available',
-    notes: 'TKQC sạch, limit cao, phù hợp mọi ngành hàng'
+    status: "available",
+    notes: "TKQC sạch, limit cao, phù hợp mọi ngành hàng",
   },
   {
-    id: '2',
-    name: 'TKQC BM - Visa',
-    accountType: 'business',
-    accountType: 'visa',
+    id: "2",
+    name: "TKQC BM - Visa",
+    accountType: "visa",
     defaultLimit: 10000000,
     pricePerDay: 350000,
-    status: 'available',
-    notes: 'TKQC BM chất lượng cao, đã verify danh tính'
+    status: "available",
+    notes: "TKQC BM chất lượng cao, đã verify danh tính",
   },
   {
-    id: '3',
-    name: 'TKQC Cá nhân - Limit thấp',
-    accountType: 'personal',
-    accountType: 'low_limit',
+    id: "3",
+    name: "TKQC Cá nhân - Limit thấp",
+    accountType: "personal",
     defaultLimit: 2000000,
     pricePerDay: 100000,
-    status: 'available',
+    status: "available",
   },
   {
-    id: '4',
-    name: 'TKQC BM - Limit cao',
-    accountType: 'business',
-    accountType: 'high_limit',
+    id: "4",
+    name: "TKQC BM - Limit cao",
+    accountType: "high_limit",
     defaultLimit: 20000000,
     pricePerDay: 500000,
-    status: 'available',
-    notes: 'TKQC BM premium, limit cực cao, phù hợp cho chiến dịch lớn'
+    status: "available",
+    notes: "TKQC BM premium, limit cực cao, phù hợp cho chiến dịch lớn",
   },
   {
-    id: '5',
-    name: 'TKQC Cá nhân - Standard',
-    accountType: 'personal',
-    accountType: 'low_limit',
+    id: "5",
+    name: "TKQC Cá nhân - Standard",
+    accountType: "low_limit",
     defaultLimit: 3000000,
     pricePerDay: 150000,
-    status: 'available',
-    notes: 'TKQC tiêu chuẩn, phù hợp cho người mới bắt đầu'
+    status: "available",
+    notes: "TKQC tiêu chuẩn, phù hợp cho người mới bắt đầu",
   },
 ];
 
 const MarketplacePage: React.FC = () => {
   const [adAccounts, setAdAccounts] = useState<AdAccount[]>([]);
   const [filteredAccounts, setFilteredAccounts] = useState<AdAccount[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedType, setSelectedType] = useState('all');
-  const [selectedAccountType, setSelectedAccountType] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedType, setSelectedType] = useState("all");
+  const [selectedAccountType, setSelectedAccountType] = useState("all");
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [selectedAccount, setSelectedAccount] = useState<AdAccount | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<AdAccount | null>(
+    null
+  );
   const [isRentModalOpen, setIsRentModalOpen] = useState(false);
 
   useEffect(() => {
@@ -78,26 +74,29 @@ const MarketplacePage: React.FC = () => {
 
   useEffect(() => {
     let results = adAccounts;
-    
+
     // Apply search filter
     if (searchTerm) {
-      results = results.filter(account => 
-        account.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        account.bmName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        account.notes?.toLowerCase().includes(searchTerm.toLowerCase())
+      results = results.filter(
+        (account) =>
+          account.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          account.bmName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          account.notes?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
+
     // Apply BM type filter
-    if (selectedType !== 'all') {
-      results = results.filter(account => account.bmType === selectedType);
+    if (selectedType !== "all") {
+      results = results.filter((account) => account.bmType === selectedType);
     }
-    
+
     // Apply account type filter
-    if (selectedAccountType !== 'all') {
-      results = results.filter(account => account.accountType === selectedAccountType);
+    if (selectedAccountType !== "all") {
+      results = results.filter(
+        (account) => account.accountType === selectedAccountType
+      );
     }
-    
+
     setFilteredAccounts(results);
   }, [adAccounts, searchTerm, selectedType, selectedAccountType]);
 
@@ -143,7 +142,11 @@ const MarketplacePage: React.FC = () => {
             >
               <Filter className="h-5 w-5 mr-2 text-gray-400" />
               Bộ lọc
-              <ChevronDown className={`ml-2 h-4 w-4 transition-transform ${isFiltersOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown
+                className={`ml-2 h-4 w-4 transition-transform ${
+                  isFiltersOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
           </div>
         </div>
@@ -153,7 +156,10 @@ const MarketplacePage: React.FC = () => {
             <CardContent className="p-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="bmType" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="bmType"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Loại BM
                   </label>
                   <select
@@ -168,7 +174,10 @@ const MarketplacePage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="accountType" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="accountType"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Loại tài khoản
                   </label>
                   <select
@@ -190,17 +199,20 @@ const MarketplacePage: React.FC = () => {
 
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredAccounts.map((account) => (
-            <AdAccountCard 
-              key={account.id} 
-              account={account} 
-              onRentClick={() => handleRentClick(account)} 
+            <AdAccountCard
+              key={account.id}
+              account={account}
+              onRentClick={() => handleRentClick(account)}
             />
           ))}
         </div>
 
         {filteredAccounts.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">Không tìm thấy BM/tài khoản quảng cáo phù hợp với tiêu chí tìm kiếm.</p>
+            <p className="text-gray-500">
+              Không tìm thấy BM/tài khoản quảng cáo phù hợp với tiêu chí tìm
+              kiếm.
+            </p>
           </div>
         )}
       </div>

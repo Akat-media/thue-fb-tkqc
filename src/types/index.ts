@@ -11,8 +11,8 @@ export interface Transaction {
   id: string;
   userId: string;
   amount: number;
-  type: 'deposit' | 'withdrawal' | 'payment' | 'refund';
-  status: 'pending' | 'completed' | 'failed' | 'cancelled';
+  type: "deposit" | "withdrawal" | "payment" | "refund";
+  status: "pending" | "completed" | "failed" | "cancelled";
   description: string;
   transactionCode?: string;
   createdAt: Date;
@@ -21,11 +21,10 @@ export interface Transaction {
 export interface AdAccount {
   id: string;
   name: string;
-  accountType: 'personal' | 'business';
-  accountType: 'visa' | 'high_limit' | 'low_limit';
+  accountType: "personal" | "business" | "visa" | "high_limit" | "low_limit";
   defaultLimit: number;
   pricePerDay: number;
-  status: 'available' | 'rented' | 'unavailable';
+  status: "available" | "rented" | "unavailable";
   notes?: string;
 }
 
@@ -39,11 +38,11 @@ export interface Rental {
   requestedLimit: number;
   totalPrice: number;
   spentBudget: number;
-  status: 'pending' | 'active' | 'expired' | 'cancelled';
+  status: "pending" | "active" | "expired" | "cancelled";
   createdAt: Date;
 }
 
-export type NotificationType = 'success' | 'info' | 'warning' | 'error';
+export type NotificationType = "success" | "info" | "warning" | "error";
 
 export interface Notification {
   id: string;
