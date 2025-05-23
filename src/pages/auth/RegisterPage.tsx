@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, Phone } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useNotification } from '../../context/NotificationContext';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '../../components/ui/Card';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Mail, Lock, User, Phone, Bot, CheckCircle2 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { useNotification } from "../../context/NotificationContext";
 
 const RegisterPage: React.FC = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isOpen, setIsOpen] = useState(true);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{
     name?: string;
     email?: string;
@@ -26,187 +24,197 @@ const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
 
   const validateForm = (): boolean => {
-    const newErrors: {
-      name?: string;
-      email?: string;
-      phone?: string;
-      password?: string;
-      confirmPassword?: string;
-    } = {};
-
-    if (!name) {
-      newErrors.name = 'Họ tên là bắt buộc';
-    }
-
-    if (!email) {
-      newErrors.email = 'Email là bắt buộc';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email không hợp lệ';
-    }
-
-    if (!phone) {
-      newErrors.phone = 'Số điện thoại là bắt buộc';
-    } else if (!/^[0-9]{10}$/.test(phone)) {
-      newErrors.phone = 'Số điện thoại phải có 10 chữ số';
-    }
-
-    if (!password) {
-      newErrors.password = 'Mật khẩu là bắt buộc';
-    } else if (password.length < 6) {
-      newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
-    }
-
-    if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Mật khẩu xác nhận không khớp';
-    }
-
+    const newErrors: typeof errors = {};
+    if (!name) newErrors.name = "Họ tên là bắt buộc";
+    if (!email) newErrors.email = "Email là bắt buộc";
+    else if (!/\S+@\S+\.\S+/.test(email))
+      newErrors.email = "Email không hợp lệ";
+    if (!phone) newErrors.phone = "Số điện thoại là bắt buộc";
+    else if (!/^[0-9]{10}$/.test(phone))
+      newErrors.phone = "Số điện thoại phải có 10 chữ số";
+    if (!password) newErrors.password = "Mật khẩu là bắt buộc";
+    else if (password.length < 6)
+      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+    if (password !== confirmPassword)
+      newErrors.confirmPassword = "Mật khẩu xác nhận không khớp";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
     try {
       await register(name, email, phone, password);
-      addNotification('Đăng ký thành công', 'Tài khoản của bạn đã được tạo!', 'success');
-      navigate('/');
+      addNotification(
+        "Đăng ký thành công",
+        "Tài khoản của bạn đã được tạo!",
+        "success"
+      );
+      navigate("/");
     } catch (error) {
-      console.error('Registration error:', error);
-      addNotification('Đăng ký thất bại', 'Có lỗi xảy ra trong quá trình đăng ký', 'error');
+      console.error("Registration error:", error);
+      addNotification(
+        "Đăng ký thất bại",
+        "Có lỗi xảy ra trong quá trình đăng ký",
+        "error"
+      );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Đăng ký tài khoản mới
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Hoặc{' '}
-          <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
-            đăng nhập nếu đã có tài khoản
-          </Link>
-        </p>
+    <>
+      <div className="h-screen bg-[#e0f2fe] relative overflow-hidden">
+        <Bot
+          className="absolute top-10 left-10 text-blue-500 opacity-20 animate-floating"
+          size={40}
+        />
+        <Bot
+          className="absolute top-1/2 left-1/3 text-blue-400 opacity-20 animate-floating delay-2000"
+          size={30}
+        />
+        <Mail
+          className="absolute bottom-10 right-16 text-blue-300 opacity-20 animate-floating delay-1000"
+          size={50}
+        />
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <Card>
-          <CardHeader>
-            <CardTitle>Đăng ký</CardTitle>
-            <CardDescription>
-              Tạo tài khoản mới để truy cập vào hệ thống
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-500 ${
+          isOpen ? "bg-black bg-opacity-0" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <div className="bg-white rounded-lg overflow-hidden shadow-xl max-w-6xl w-full flex">
+          <div className="flex-1 p-8 flex flex-col justify-center">
+            <h1 className="text-2xl font-semibold text-[#0167F8] mb-2">
+              Tạo Tài Khoản Mới
+            </h1>
+            <p className="text-sm text-gray-600 mb-6">
+              Đăng ký ngay để sử dụng các dịch vụ của AKAds.
+            </p>
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Input
+                <label
+                  htmlFor="name"
+                  className="block text-xs font-semibold uppercase text-[#0167F8]"
+                >
+                  Họ tên
+                </label>
+                <input
                   id="name"
-                  type="text"
-                  label="Họ tên"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  icon={<User className="h-5 w-5 text-gray-400" />}
-                  placeholder="Nguyễn Văn A"
-                  error={errors.name}
-                  fullWidth
+                  placeholder="P Nguyễn"
+                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                 />
+                {errors.name && (
+                  <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+                )}
               </div>
-
               <div>
-                <Input
-                  id="email"
+                <label
+                  htmlFor="email"
+                  className="block text-xs font-semibold uppercase text-[#0167F8]"
+                >
+                  Email
+                </label>
+                <input
                   type="email"
-                  label="Email"
+                  id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  icon={<Mail className="h-5 w-5 text-gray-400" />}
-                  placeholder="name@example.com"
-                  error={errors.email}
-                  fullWidth
+                  placeholder="Email"
+                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                 />
+                {errors.email && (
+                  <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+                )}
               </div>
-
               <div>
-                <Input
-                  id="phone"
+                <label
+                  htmlFor="phone"
+                  className="block text-xs font-semibold uppercase text-[#0167F8]"
+                >
+                  Số điện thoại
+                </label>
+                <input
                   type="tel"
-                  label="Số điện thoại"
+                  id="phone"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  icon={<Phone className="h-5 w-5 text-gray-400" />}
                   placeholder="0901234567"
-                  error={errors.phone}
-                  fullWidth
+                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                 />
+                {errors.phone && (
+                  <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
+                )}
               </div>
-
               <div>
-                <Input
-                  id="password"
+                <label
+                  htmlFor="password"
+                  className="block text-xs font-semibold uppercase text-[#0167F8]"
+                >
+                  Mật khẩu
+                </label>
+                <input
                   type="password"
-                  label="Mật khẩu"
+                  id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  icon={<Lock className="h-5 w-5 text-gray-400" />}
-                  placeholder="••••••••"
-                  error={errors.password}
-                  fullWidth
+                  placeholder="Password"
+                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                 />
+                {errors.password && (
+                  <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+                )}
               </div>
-
               <div>
-                <Input
-                  id="confirmPassword"
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-xs font-semibold uppercase text-[#0167F8]"
+                >
+                  Xác nhận mật khẩu
+                </label>
+                <input
                   type="password"
-                  label="Xác nhận mật khẩu"
+                  id="confirmPassword"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  icon={<Lock className="h-5 w-5 text-gray-400" />}
-                  placeholder="••••••••"
-                  error={errors.confirmPassword}
-                  fullWidth
+                  placeholder="Confirm Password"
+                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                 />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </div>
-
-              <div className="flex items-center">
-                <input
-                  id="terms"
-                  name="terms"
-                  type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  required
-                />
-                <label htmlFor="terms" className="ml-2 block text-sm text-gray-900">
-                  Tôi đồng ý với{' '}
-                  <Link to="/terms" className="font-medium text-blue-600 hover:text-blue-500">
-                    Điều khoản sử dụng
-                  </Link>{' '}
-                  và{' '}
-                  <Link to="/privacy" className="font-medium text-blue-600 hover:text-blue-500">
-                    Chính sách bảo mật
-                  </Link>
-                </label>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button
+              <button
                 type="submit"
-                fullWidth
-                isLoading={isLoading}
-                disabled={isLoading}
+                className="px-8 py-2 bg-[#0167F8] text-white rounded-full hover:bg-[#005fce] transition mx-auto block shadow-md hover:shadow-lg"
               >
                 Đăng ký
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
+              </button>
+            </form>
+            <p className="mt-3 text-center text-sm">
+              Đã có tài khoản?{" "}
+              <Link to="/login" className="text-[#0167F8] hover:underline">
+                Đăng nhập
+              </Link>
+            </p>
+          </div>
+          <div className="hidden md:block flex-1 overflow-hidden min-h-[400px]">
+            <Link to="/" className="block w-full h-full">
+              <img
+                src="src/public/AKA.png"
+                className="w-full h-full min-h-[400px] object-cover animate-spin-slow"
+                alt=""
+              />
+            </Link>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
