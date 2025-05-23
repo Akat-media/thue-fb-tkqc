@@ -26,6 +26,8 @@ export interface AdAccount {
   pricePerDay: number;
   status: "available" | "rented" | "unavailable";
   notes?: string;
+  bmName?: string;
+  bmType?: string;
 }
 
 export interface Rental {

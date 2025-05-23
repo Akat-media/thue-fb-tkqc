@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "../../components/ui/Card";
 import { Rental, AdAccount } from "../../types";
+import {AdAccountProvider} from "../marketplace/AdAccountContext.tsx";
 
 // Mock data for demonstration
 const mockRentals: (Rental & { adAccount: AdAccount })[] = [
@@ -158,254 +159,256 @@ const RentalsPage: React.FC = () => {
   };
 
   return (
-    <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="md:flex md:items-center md:justify-between">
-          <div className="flex-1 min-w-0">
-            <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-              Tài khoản đang thuê
-            </h2>
-          </div>
-        </div>
-
-        <div className="mt-6">
-          <div className="sm:hidden">
-            <select
-              id="tabs"
-              name="tabs"
-              className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-              value={activeTab}
-              onChange={(e) =>
-                setActiveTab(e.target.value as "active" | "expired" | "all")
-              }
-            >
-              <option value="active">Đang hoạt động</option>
-              <option value="expired">Đã hết hạn</option>
-              <option value="all">Tất cả</option>
-            </select>
-          </div>
-          <div className="hidden sm:block">
-            <div className="border-b border-gray-200">
-              <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-                <button
-                  className={`${
-                    activeTab === "active"
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                  onClick={() => setActiveTab("active")}
-                >
-                  Đang hoạt động
-                </button>
-                <button
-                  className={`${
-                    activeTab === "expired"
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                  onClick={() => setActiveTab("expired")}
-                >
-                  Đã hết hạn
-                </button>
-                <button
-                  className={`${
-                    activeTab === "all"
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                  onClick={() => setActiveTab("all")}
-                >
-                  Tất cả
-                </button>
-              </nav>
+      <AdAccountProvider>
+        <Layout>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="md:flex md:items-center md:justify-between">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                  Tài khoản đang thuê
+                </h2>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div className="mt-6">
-          {filteredRentals.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredRentals.map((rental) => (
-                <Card key={rental.id} className="h-full flex flex-col">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg">
-                        {rental.adAccount.name}
-                      </CardTitle>
-                      {getStatusBadge(rental.status)}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">BM ID:</span>
-                          <span className="font-medium">
-                            {rental.adAccount.bmId}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Thời gian thuê:</span>
-                          <span className="font-medium">
-                            {formatDate(rental.startDate)} -{" "}
-                            {formatDate(rental.endDate)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Limit yêu cầu:</span>
-                          <span className="font-medium">
-                            {rental.requestedLimit.toLocaleString("vi-VN")} VNĐ
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Đã chi tiêu:</span>
-                          <span className="font-medium">
-                            {rental.spentBudget.toLocaleString("vi-VN")} VNĐ
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Còn lại:</span>
-                          <span className="font-medium">
-                            {(
-                              rental.requestedLimit - rental.spentBudget
-                            ).toLocaleString("vi-VN")}{" "}
-                            VNĐ
-                          </span>
-                        </div>
-                      </div>
+            <div className="mt-6">
+              <div className="sm:hidden">
+                <select
+                  id="tabs"
+                  name="tabs"
+                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                  value={activeTab}
+                  onChange={(e) =>
+                    setActiveTab(e.target.value as "active" | "expired" | "all")
+                  }
+                >
+                  <option value="active">Đang hoạt động</option>
+                  <option value="expired">Đã hết hạn</option>
+                  <option value="all">Tất cả</option>
+                </select>
+              </div>
+              <div className="hidden sm:block">
+                <div className="border-b border-gray-200">
+                  <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+                    <button
+                      className={`${
+                        activeTab === "active"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                      onClick={() => setActiveTab("active")}
+                    >
+                      Đang hoạt động
+                    </button>
+                    <button
+                      className={`${
+                        activeTab === "expired"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                      onClick={() => setActiveTab("expired")}
+                    >
+                      Đã hết hạn
+                    </button>
+                    <button
+                      className={`${
+                        activeTab === "all"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                      onClick={() => setActiveTab("all")}
+                    >
+                      Tất cả
+                    </button>
+                  </nav>
+                </div>
+              </div>
+            </div>
 
-                      {rental.status === "active" && (
-                        <div className="pt-2">
-                          <div className="w-full bg-gray-200 rounded-full h-2.5">
-                            <div
-                              className="bg-blue-600 h-2.5 rounded-full"
-                              style={{
-                                width: `${Math.min(
-                                  100,
-                                  (rental.spentBudget / rental.requestedLimit) *
-                                    100
-                                )}%`,
-                              }}
-                            ></div>
-                          </div>
-                          <div className="flex justify-between text-xs text-gray-500 mt-1">
-                            <span>0%</span>
-                            <span>
-                              {Math.round(
-                                (rental.spentBudget / rental.requestedLimit) *
-                                  100
-                              )}
-                              %
-                            </span>
-                            <span>100%</span>
-                          </div>
+            <div className="mt-6">
+              {filteredRentals.length > 0 ? (
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {filteredRentals.map((rental) => (
+                    <Card key={rental.id} className="h-full flex flex-col">
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <CardTitle className="text-lg">
+                            {rental.adAccount.name}
+                          </CardTitle>
+                          {getStatusBadge(rental.status)}
                         </div>
-                      )}
-
-                      {rental.status === "active" && (
-                        <div className="bg-blue-50 p-3 rounded-md flex items-start">
-                          <Clock className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                          <div className="ml-3">
-                            <h3 className="text-sm font-medium text-blue-800">
-                              Thời gian còn lại
-                            </h3>
-                            <p className="text-sm text-blue-700 mt-1">
-                              {calculateDaysLeft(rental.endDate)} ngày
-                            </p>
-                          </div>
-                        </div>
-                      )}
-
-                      {rental.status === "expired" &&
-                        rental.spentBudget < rental.requestedLimit && (
-                          <div className="bg-green-50 p-3 rounded-md flex items-start">
-                            <AlertTriangle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                            <div className="ml-3">
-                              <h3 className="text-sm font-medium text-green-800">
-                                Hoàn tiền khả dụng
-                              </h3>
-                              <p className="text-sm text-green-700 mt-1">
-                                Bạn có thể yêu cầu hoàn{" "}
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                        <div className="space-y-4">
+                          <div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-500">BM ID:</span>
+                              <span className="font-medium">
+                                {rental.adAccount.bmId}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-500">Thời gian thuê:</span>
+                              <span className="font-medium">
+                                {formatDate(rental.startDate)} -{" "}
+                                {formatDate(rental.endDate)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-500">Limit yêu cầu:</span>
+                              <span className="font-medium">
+                                {rental.requestedLimit.toLocaleString("vi-VN")} VNĐ
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-500">Đã chi tiêu:</span>
+                              <span className="font-medium">
+                                {rental.spentBudget.toLocaleString("vi-VN")} VNĐ
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-500">Còn lại:</span>
+                              <span className="font-medium">
                                 {(
                                   rental.requestedLimit - rental.spentBudget
                                 ).toLocaleString("vi-VN")}{" "}
-                                VNĐ chưa sử dụng
-                              </p>
+                                VNĐ
+                              </span>
                             </div>
                           </div>
-                        )}
-                    </div>
-                  </CardContent>
-                  <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                    <div className="flex space-x-3">
-                      {rental.status === "active" && (
-                        <>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            icon={<BarChart3 className="h-4 w-4" />}
-                            fullWidth
-                          >
-                            Xem báo cáo
-                          </Button>
-                          <Button size="sm" fullWidth>
-                            Gia hạn
-                          </Button>
-                        </>
-                      )}
-                      {rental.status === "expired" &&
-                        rental.spentBudget < rental.requestedLimit && (
-                          <Button size="sm" fullWidth>
-                            Yêu cầu hoàn tiền
-                          </Button>
-                        )}
-                      {rental.status === "expired" &&
-                        rental.spentBudget >= rental.requestedLimit && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            icon={<BarChart3 className="h-4 w-4" />}
-                            fullWidth
-                          >
-                            Xem báo cáo
-                          </Button>
-                        )}
-                      {rental.status === "pending" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          icon={<RefreshCw className="h-4 w-4" />}
-                          fullWidth
-                          disabled
-                        >
-                          Đang xử lý
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              ))}
+
+                          {rental.status === "active" && (
+                            <div className="pt-2">
+                              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                <div
+                                  className="bg-blue-600 h-2.5 rounded-full"
+                                  style={{
+                                    width: `${Math.min(
+                                      100,
+                                      (rental.spentBudget / rental.requestedLimit) *
+                                        100
+                                    )}%`,
+                                  }}
+                                ></div>
+                              </div>
+                              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>0%</span>
+                                <span>
+                                  {Math.round(
+                                    (rental.spentBudget / rental.requestedLimit) *
+                                      100
+                                  )}
+                                  %
+                                </span>
+                                <span>100%</span>
+                              </div>
+                            </div>
+                          )}
+
+                          {rental.status === "active" && (
+                            <div className="bg-blue-50 p-3 rounded-md flex items-start">
+                              <Clock className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                              <div className="ml-3">
+                                <h3 className="text-sm font-medium text-blue-800">
+                                  Thời gian còn lại
+                                </h3>
+                                <p className="text-sm text-blue-700 mt-1">
+                                  {calculateDaysLeft(rental.endDate)} ngày
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
+                          {rental.status === "expired" &&
+                            rental.spentBudget < rental.requestedLimit && (
+                              <div className="bg-green-50 p-3 rounded-md flex items-start">
+                                <AlertTriangle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                                <div className="ml-3">
+                                  <h3 className="text-sm font-medium text-green-800">
+                                    Hoàn tiền khả dụng
+                                  </h3>
+                                  <p className="text-sm text-green-700 mt-1">
+                                    Bạn có thể yêu cầu hoàn{" "}
+                                    {(
+                                      rental.requestedLimit - rental.spentBudget
+                                    ).toLocaleString("vi-VN")}{" "}
+                                    VNĐ chưa sử dụng
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+                        </div>
+                      </CardContent>
+                      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                        <div className="flex space-x-3">
+                          {rental.status === "active" && (
+                            <>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                icon={<BarChart3 className="h-4 w-4" />}
+                                fullWidth
+                              >
+                                Xem báo cáo
+                              </Button>
+                              <Button size="sm" fullWidth>
+                                Gia hạn
+                              </Button>
+                            </>
+                          )}
+                          {rental.status === "expired" &&
+                            rental.spentBudget < rental.requestedLimit && (
+                              <Button size="sm" fullWidth>
+                                Yêu cầu hoàn tiền
+                              </Button>
+                            )}
+                          {rental.status === "expired" &&
+                            rental.spentBudget >= rental.requestedLimit && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                icon={<BarChart3 className="h-4 w-4" />}
+                                fullWidth
+                              >
+                                Xem báo cáo
+                              </Button>
+                            )}
+                          {rental.status === "pending" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              icon={<RefreshCw className="h-4 w-4" />}
+                              fullWidth
+                              disabled
+                            >
+                              Đang xử lý
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-gray-500">
+                    {activeTab === "active"
+                      ? "Bạn không có tài khoản nào đang hoạt động."
+                      : activeTab === "expired"
+                      ? "Bạn không có tài khoản nào đã hết hạn."
+                      : "Bạn chưa thuê tài khoản nào."}
+                  </p>
+                  <Button
+                    className="mt-4"
+                    onClick={() => (window.location.href = "/marketplace")}
+                  >
+                    Thuê tài khoản ngay
+                  </Button>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500">
-                {activeTab === "active"
-                  ? "Bạn không có tài khoản nào đang hoạt động."
-                  : activeTab === "expired"
-                  ? "Bạn không có tài khoản nào đã hết hạn."
-                  : "Bạn chưa thuê tài khoản nào."}
-              </p>
-              <Button
-                className="mt-4"
-                onClick={() => (window.location.href = "/marketplace")}
-              >
-                Thuê tài khoản ngay
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-    </Layout>
+          </div>
+        </Layout>
+      </AdAccountProvider>
   );
 };
 
