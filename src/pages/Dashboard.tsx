@@ -21,6 +21,8 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import { useAuth } from "../context/AuthContext";
+import { Navigate } from "react-router-dom";
 
 interface StatCard {
   icon: React.ElementType;
@@ -101,13 +103,43 @@ function StatCard({
 
 function AdPerformanceChart() {
   const data = [
-    { name: "Thứ 2", cost: 32000000, reach: 180000 },
-    { name: "Thứ 3", cost: 42000000, reach: 220000 },
-    { name: "Thứ 4", cost: 28000000, reach: 160000 },
-    { name: "Thứ 5", cost: 36000000, reach: 190000 },
-    { name: "Thứ 6", cost: 40000000, reach: 230000 },
-    { name: "Thứ 7", cost: 30000000, reach: 170000 },
-    { name: "CN", cost: 25000000, reach: 140000 },
+    {
+      name: "Thứ 2",
+      cost: 32000000,
+      reach: 180000,
+      conversion_value: 86900000,
+    },
+    {
+      name: "Thứ 3",
+      cost: 42000000,
+      reach: 220000,
+      conversion_value: 96820000,
+    },
+    {
+      name: "Thứ 4",
+      cost: 28000000,
+      reach: 160000,
+      conversion_value: 66900000,
+    },
+    {
+      name: "Thứ 5",
+      cost: 36000000,
+      reach: 190000,
+      conversion_value: 76900000,
+    },
+    {
+      name: "Thứ 6",
+      cost: 40000000,
+      reach: 230000,
+      conversion_value: 81200000,
+    },
+    {
+      name: "Thứ 7",
+      cost: 30000000,
+      reach: 170000,
+      conversion_value: 116900000,
+    },
+    { name: "CN", cost: 25000000, reach: 140000, conversion_value: 106900000 },
   ];
   return (
     <div className="bg-white border border-gray-100 p-4 sm:p-6 rounded-2xl shadow-sm">
@@ -140,6 +172,16 @@ function AdPerformanceChart() {
               <linearGradient id="colorReach" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
                 <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
+              </linearGradient>
+              <linearGradient
+                id="colorConversionvalue"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" />
@@ -178,6 +220,17 @@ function AdPerformanceChart() {
               dot={{ fill: "#10b981", strokeWidth: 2, r: 3 }}
               activeDot={{ r: 5 }}
               fill="url(#colorReach)"
+            />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="conversion_value"
+              stroke="#f59e0b"
+              strokeWidth={2.5}
+              dot={{ fill: "#f59e0b", strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6 }}
+              fillOpacity={1}
+              fill="url(#colorConversionvalue)"
             />
           </LineChart>
         </ResponsiveContainer>
@@ -233,6 +286,11 @@ function AdPerformanceChart() {
 // }
 
 function Dashboard() {
+  const { user } = useAuth();
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
   const stats: StatCard[] = [
     {
       icon: DollarSign,
