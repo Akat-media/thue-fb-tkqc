@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
-import { X, AlertCircle } from 'lucide-react';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../components/ui/Card';
-import { AdAccount } from '../../types';
-import { useAuth } from '../../context/AuthContext';
-import { useNotification } from '../../context/NotificationContext';
+import React, { useState } from "react";
+import { X, AlertCircle } from "lucide-react";
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/Card";
+import { AdAccount } from "../../types";
+import { useAuth } from "../../context/AuthContext";
+import { useNotification } from "../../context/NotificationContext";
 
 interface RentModalProps {
   isOpen: boolean;
@@ -15,11 +21,11 @@ interface RentModalProps {
 
 const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
   const [rentalDays, setRentalDays] = useState(1);
-  const [userBmId, setUserBmId] = useState('');
+  const [userBmId, setUserBmId] = useState("");
   const [requestedLimit, setRequestedLimit] = useState(account.defaultLimit);
   const [errors, setErrors] = useState<{ bmId?: string; limit?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { user } = useAuth();
   const { addNotification } = useNotification();
 
@@ -27,67 +33,70 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
 
   const calculateTotalPrice = () => {
     const rentalPrice = account.pricePerDay * rentalDays;
-    const limitFee = requestedLimit > account.defaultLimit 
-      ? (requestedLimit - account.defaultLimit) * 0.05 // 5% fee for additional limit
-      : 0;
+    const limitFee =
+      requestedLimit > account.defaultLimit
+        ? (requestedLimit - account.defaultLimit) * 0.05 // 5% fee for additional limit
+        : 0;
     const serviceFee = rentalPrice * 0.1; // 10% service fee
-    
+
     return rentalPrice + limitFee + serviceFee;
   };
 
   const validateForm = () => {
     const newErrors: { bmId?: string; limit?: string } = {};
-    
+
     if (!userBmId) {
-      newErrors.bmId = 'Vui lòng nhập BM ID của bạn';
+      newErrors.bmId = "Vui lòng nhập BM ID của bạn";
     } else if (!/^\d+$/.test(userBmId)) {
-      newErrors.bmId = 'BM ID phải là số';
+      newErrors.bmId = "BM ID phải là số";
     }
-    
+
     if (requestedLimit <= 0) {
-      newErrors.limit = 'Limit phải lớn hơn 0';
+      newErrors.limit = "Limit phải lớn hơn 0";
     } else if (requestedLimit > account.defaultLimit * 2) {
-      newErrors.limit = `Limit tối đa không được vượt quá ${(account.defaultLimit * 2).toLocaleString('vi-VN')} VNĐ`;
+      newErrors.limit = `Limit tối đa không được vượt quá ${(
+        account.defaultLimit * 2
+      ).toLocaleString("vi-VN")} VNĐ`;
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-    
+
     const totalPrice = calculateTotalPrice();
-    
+
     if (!user || user.balance < totalPrice) {
       addNotification(
-        'Số dư không đủ', 
-        'Vui lòng nạp thêm tiền để thuê tài khoản quảng cáo này', 
-        'error'
+        "Số dư không đủ",
+        "Vui lòng nạp thêm tiền để thuê tài khoản quảng cáo này",
+        "error"
       );
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       // In a real app, this would be an API call
       // Simulate API call with setTimeout
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       addNotification(
-        'Thuê tài khoản thành công', 
-        'Yêu cầu thuê tài khoản quảng cáo đã được gửi đi. Bạn sẽ nhận được quyền truy cập trong ít phút', 
-        'success'
+        "Thuê tài khoản thành công",
+        "Yêu cầu thuê tài khoản quảng cáo đã được gửi đi. Bạn sẽ nhận được quyền truy cập trong ít phút",
+        "success"
       );
-      
+
       onClose();
     } catch (error) {
-      console.error('Rental error:', error);
+      console.error("Rental error:", error);
       addNotification(
-        'Có lỗi xảy ra', 
-        'Không thể hoàn tất yêu cầu thuê tài khoản. Vui lòng thử lại sau', 
-        'error'
+        "Có lỗi xảy ra",
+        "Không thể hoàn tất yêu cầu thuê tài khoản. Vui lòng thử lại sau",
+        "error"
       );
     } finally {
       setIsLoading(false);
@@ -101,7 +110,12 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
 
-        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <span
+          className="hidden sm:inline-block sm:align-middle sm:h-screen"
+          aria-hidden="true"
+        >
+          &#8203;
+        </span>
 
         <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
           <Card className="border-0 shadow-none">
@@ -121,16 +135,24 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
                     <AlertCircle className="h-5 w-5 text-blue-400" />
                   </div>
                   <div className="ml-3">
-                    <h3 className="text-sm font-medium text-blue-800">Thông tin tài khoản</h3>
+                    <h3 className="text-sm font-medium text-blue-800">
+                      Thông tin tài khoản
+                    </h3>
                     <div className="mt-2 text-sm text-blue-700">
                       <p>
                         Bạn đang thuê: <strong>{account.name}</strong>
                       </p>
                       <p>
-                        Limit mặc định: <strong>{account.defaultLimit.toLocaleString('vi-VN')} VNĐ</strong>
+                        Limit mặc định:{" "}
+                        <strong>
+                          {account.defaultLimit.toLocaleString("vi-VN")} VNĐ
+                        </strong>
                       </p>
                       <p>
-                        Giá thuê/ngày: <strong>{account.pricePerDay.toLocaleString('vi-VN')} VNĐ</strong>
+                        Giá thuê/ngày:{" "}
+                        <strong>
+                          {account.pricePerDay.toLocaleString("vi-VN")} VNĐ
+                        </strong>
                       </p>
                     </div>
                   </div>
@@ -151,7 +173,7 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
                     fullWidth
                   />
                 </div>
-                
+
                 <div>
                   <Input
                     id="rentalDays"
@@ -165,7 +187,7 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
                     fullWidth
                   />
                 </div>
-                
+
                 <div>
                   <Input
                     id="requestedLimit"
@@ -175,42 +197,60 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
                     max={account.defaultLimit * 2}
                     step={100000}
                     value={requestedLimit}
-                    onChange={(e) => setRequestedLimit(parseInt(e.target.value))}
+                    onChange={(e) =>
+                      setRequestedLimit(parseInt(e.target.value))
+                    }
                     error={errors.limit}
-                    helperText={`Hạn mức mặc định: ${account.defaultLimit.toLocaleString('vi-VN')} VNĐ. Phí 5% cho phần vượt quá`}
+                    helperText={`Hạn mức mặc định: ${account.defaultLimit.toLocaleString(
+                      "vi-VN"
+                    )} VNĐ. Phí 5% cho phần vượt quá`}
                     fullWidth
                   />
                 </div>
               </div>
 
               <div className="bg-gray-50 p-4 rounded-md">
-                <h4 className="text-sm font-medium text-gray-900">Chi tiết thanh toán</h4>
+                <h4 className="text-sm font-medium text-gray-900">
+                  Chi tiết thanh toán
+                </h4>
                 <div className="mt-2 space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Phí thuê ({rentalDays} ngày)</span>
+                    <span className="text-gray-500">
+                      Phí thuê ({rentalDays} ngày)
+                    </span>
                     <span className="text-gray-900 font-medium">
-                      {(account.pricePerDay * rentalDays).toLocaleString('vi-VN')} VNĐ
+                      {(account.pricePerDay * rentalDays).toLocaleString(
+                        "vi-VN"
+                      )}{" "}
+                      VNĐ
                     </span>
                   </div>
                   {requestedLimit > account.defaultLimit && (
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-500">Phí tăng limit</span>
                       <span className="text-gray-900 font-medium">
-                        {((requestedLimit - account.defaultLimit) * 0.05).toLocaleString('vi-VN')} VNĐ
+                        {(
+                          (requestedLimit - account.defaultLimit) *
+                          0.05
+                        ).toLocaleString("vi-VN")}{" "}
+                        VNĐ
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Phí dịch vụ (10%)</span>
                     <span className="text-gray-900 font-medium">
-                      {(account.pricePerDay * rentalDays * 0.1).toLocaleString('vi-VN')} VNĐ
+                      {(account.pricePerDay * rentalDays * 0.1).toLocaleString(
+                        "vi-VN"
+                      )}{" "}
+                      VNĐ
                     </span>
                   </div>
                   <div className="border-t border-gray-200 pt-2 mt-2">
                     <div className="flex justify-between text-sm font-medium">
                       <span className="text-gray-900">Tổng thanh toán</span>
                       <span className="text-blue-600">
-                        {calculateTotalPrice().toLocaleString('vi-VN')} VNĐ
+                        {calculateTotalPrice().toLocaleString("vi-VN")} VNĐ
                       </span>
                     </div>
                   </div>
@@ -220,30 +260,38 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
               {user && (
                 <div className="text-sm">
                   <span className="text-gray-500">Số dư của bạn: </span>
-                  <span className={`font-medium ${user.balance < calculateTotalPrice() ? 'text-red-600' : 'text-green-600'}`}>
-                    {user.balance.toLocaleString('vi-VN')} VNĐ
+                  <span
+                    className={`font-medium ${
+                      user.balance < calculateTotalPrice()
+                        ? "text-red-600"
+                        : "text-green-600"
+                    }`}
+                  >
+                    {user?.balance != null
+                      ? user.balance.toLocaleString("vi-VN") + " VNĐ"
+                      : "Đang tải..."}
                   </span>
-                  
+
                   {user.balance < calculateTotalPrice() && (
                     <div className="mt-2 text-sm text-red-600">
-                      Số dư không đủ để thuê tài khoản này. Vui lòng nạp thêm tiền.
+                      Số dư không đủ để thuê tài khoản này. Vui lòng nạp thêm
+                      tiền.
                     </div>
                   )}
                 </div>
               )}
             </CardContent>
             <CardFooter className="flex justify-end space-x-3 bg-gray-50 border-t">
-              <Button 
-                variant="outline" 
-                onClick={onClose}
-                disabled={isLoading}
-              >
+              <Button variant="outline" onClick={onClose} disabled={isLoading}>
                 Hủy
               </Button>
-              <Button 
+              <Button
                 onClick={handleSubmit}
                 isLoading={isLoading}
-                disabled={isLoading || (user ? user.balance < calculateTotalPrice() : false)}
+                disabled={
+                  isLoading ||
+                  (user ? user.balance < calculateTotalPrice() : false)
+                }
               >
                 Xác nhận thuê
               </Button>

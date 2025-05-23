@@ -1,84 +1,93 @@
-import React, { useState } from 'react';
-import { CreditCard, Copy, RefreshCw, FileText } from 'lucide-react';
-import Layout from '../../components/layout/Layout';
-import Button from '../../components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { useAuth } from '../../context/AuthContext';
-import { useNotification } from '../../context/NotificationContext';
-import { Transaction } from '../../types';
+import React, { useState } from "react";
+import { CreditCard, Copy, RefreshCw, FileText } from "lucide-react";
+import Layout from "../../components/layout/Layout";
+import Button from "../../components/ui/Button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/Card";
+import { useAuth } from "../../context/AuthContext";
+import { useNotification } from "../../context/NotificationContext";
+import { Transaction } from "../../types";
 
 // Mock transactions data
 const mockTransactions: Transaction[] = [
   {
-    id: '1',
-    userId: '1',
+    id: "1",
+    userId: "1",
     amount: 1000000,
-    type: 'deposit',
-    status: 'completed',
-    description: 'Nạp tiền qua Web2m - Chuyển khoản ngân hàng',
-    transactionCode: 'DEPOSIT-123456',
+    type: "deposit",
+    status: "completed",
+    description: "Nạp tiền qua Web2m - Chuyển khoản ngân hàng",
+    transactionCode: "DEPOSIT-123456",
     createdAt: new Date(2023, 5, 15, 10, 30),
   },
   {
-    id: '2',
-    userId: '1',
+    id: "2",
+    userId: "1",
     amount: 500000,
-    type: 'payment',
-    status: 'completed',
-    description: 'Thanh toán thuê BM Agency - Visa',
+    type: "payment",
+    status: "completed",
+    description: "Thanh toán thuê BM Agency - Visa",
     createdAt: new Date(2023, 5, 16, 14, 45),
   },
   {
-    id: '3',
-    userId: '1',
+    id: "3",
+    userId: "1",
     amount: 200000,
-    type: 'refund',
-    status: 'completed',
-    description: 'Hoàn tiền limit chưa sử dụng',
+    type: "refund",
+    status: "completed",
+    description: "Hoàn tiền limit chưa sử dụng",
     createdAt: new Date(2023, 5, 18, 9, 15),
   },
 ];
 
 const PaymentPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('deposit');
+  const [activeTab, setActiveTab] = useState("deposit");
   const [transactions] = useState<Transaction[]>(mockTransactions);
   const [selectedAmount, setSelectedAmount] = useState(1000000);
-  const [customAmount, setCustomAmount] = useState('');
+  const [customAmount, setCustomAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { user } = useAuth();
   const { addNotification } = useNotification();
 
   const handleCopyClick = (text: string) => {
     navigator.clipboard.writeText(text);
-    addNotification('Đã sao chép', 'Thông tin đã được sao chép vào clipboard', 'success');
+    addNotification(
+      "Đã sao chép",
+      "Thông tin đã được sao chép vào clipboard",
+      "success"
+    );
   };
 
   const handleDeposit = async () => {
     const amount = customAmount ? parseInt(customAmount) : selectedAmount;
-    
+
     if (isNaN(amount) || amount <= 0) {
-      addNotification('Lỗi', 'Vui lòng nhập số tiền hợp lệ', 'error');
+      addNotification("Lỗi", "Vui lòng nhập số tiền hợp lệ", "error");
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       // In a real app, this would be an API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       addNotification(
-        'Tạo lệnh nạp tiền thành công', 
-        'Vui lòng chuyển khoản theo thông tin đã cung cấp', 
-        'success'
+        "Tạo lệnh nạp tiền thành công",
+        "Vui lòng chuyển khoản theo thông tin đã cung cấp",
+        "success"
       );
     } catch (error) {
-      console.error('Deposit error:', error);
+      console.error("Deposit error:", error);
       addNotification(
-        'Có lỗi xảy ra', 
-        'Không thể tạo lệnh nạp tiền. Vui lòng thử lại sau', 
-        'error'
+        "Có lỗi xảy ra",
+        "Không thể tạo lệnh nạp tiền. Vui lòng thử lại sau",
+        "error"
       );
     } finally {
       setIsLoading(false);
@@ -86,12 +95,12 @@ const PaymentPage: React.FC = () => {
   };
 
   const formatTransactionDate = (date: Date) => {
-    return new Intl.DateTimeFormat('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Intl.DateTimeFormat("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     }).format(date);
   };
 
@@ -105,7 +114,12 @@ const PaymentPage: React.FC = () => {
             </h2>
             {user && (
               <p className="mt-1 text-sm text-gray-500">
-                Số dư hiện tại: <span className="font-medium text-green-600">{user.balance.toLocaleString('vi-VN')} VNĐ</span>
+                Số dư hiện tại:{" "}
+                <span className="font-medium text-green-600">
+                  {user && typeof user.balance === "number"
+                    ? user.balance.toLocaleString("vi-VN") + " VNĐ"
+                    : "Không có thông tin số dư"}
+                </span>
               </p>
             )}
           </div>
@@ -129,22 +143,22 @@ const PaymentPage: React.FC = () => {
               <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                 <button
                   className={`${
-                    activeTab === 'deposit'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    activeTab === "deposit"
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                  onClick={() => setActiveTab('deposit')}
+                  onClick={() => setActiveTab("deposit")}
                 >
                   <CreditCard className="h-5 w-5 mr-2 inline-block" />
                   Nạp tiền
                 </button>
                 <button
                   className={`${
-                    activeTab === 'history'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    activeTab === "history"
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                  onClick={() => setActiveTab('history')}
+                  onClick={() => setActiveTab("history")}
                 >
                   <FileText className="h-5 w-5 mr-2 inline-block" />
                   Lịch sử giao dịch
@@ -155,7 +169,7 @@ const PaymentPage: React.FC = () => {
         </div>
 
         <div className="mt-6">
-          {activeTab === 'deposit' ? (
+          {activeTab === "deposit" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
@@ -174,15 +188,15 @@ const PaymentPage: React.FC = () => {
                             type="button"
                             className={`${
                               selectedAmount === amount && !customAmount
-                                ? 'bg-blue-50 border-blue-500 text-blue-600'
-                                : 'bg-white border-gray-300 text-gray-700'
+                                ? "bg-blue-50 border-blue-500 text-blue-600"
+                                : "bg-white border-gray-300 text-gray-700"
                             } border rounded-md py-2 px-3 text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
                             onClick={() => {
                               setSelectedAmount(amount);
-                              setCustomAmount('');
+                              setCustomAmount("");
                             }}
                           >
-                            {amount.toLocaleString('vi-VN')}đ
+                            {amount.toLocaleString("vi-VN")}đ
                           </button>
                         ))}
                         <div className="col-span-2 sm:col-span-3">
@@ -203,21 +217,26 @@ const PaymentPage: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="rounded-md bg-blue-50 p-4">
                       <div className="flex">
                         <div className="flex-shrink-0">
-                          <RefreshCw className="h-5 w-5 text-blue-400" aria-hidden="true" />
+                          <RefreshCw
+                            className="h-5 w-5 text-blue-400"
+                            aria-hidden="true"
+                          />
                         </div>
                         <div className="ml-3">
-                          <h3 className="text-sm font-medium text-blue-800">Thông tin chuyển khoản</h3>
+                          <h3 className="text-sm font-medium text-blue-800">
+                            Thông tin chuyển khoản
+                          </h3>
                           <div className="mt-2 text-sm text-blue-700 space-y-1">
                             <div className="flex justify-between">
                               <span>Ngân hàng:</span>
                               <div className="flex items-center">
                                 <span className="font-medium">Vietcombank</span>
                                 <button
-                                  onClick={() => handleCopyClick('Vietcombank')}
+                                  onClick={() => handleCopyClick("Vietcombank")}
                                   className="ml-2 text-blue-500 hover:text-blue-700"
                                 >
                                   <Copy className="h-4 w-4" />
@@ -229,7 +248,7 @@ const PaymentPage: React.FC = () => {
                               <div className="flex items-center">
                                 <span className="font-medium">1234567890</span>
                                 <button
-                                  onClick={() => handleCopyClick('1234567890')}
+                                  onClick={() => handleCopyClick("1234567890")}
                                   className="ml-2 text-blue-500 hover:text-blue-700"
                                 >
                                   <Copy className="h-4 w-4" />
@@ -239,9 +258,13 @@ const PaymentPage: React.FC = () => {
                             <div className="flex justify-between">
                               <span>Chủ tài khoản:</span>
                               <div className="flex items-center">
-                                <span className="font-medium">CÔNG TY TNHH AKADS</span>
+                                <span className="font-medium">
+                                  CÔNG TY TNHH AKADS
+                                </span>
                                 <button
-                                  onClick={() => handleCopyClick('CÔNG TY TNHH AKADS')}
+                                  onClick={() =>
+                                    handleCopyClick("CÔNG TY TNHH AKADS")
+                                  }
                                   className="ml-2 text-blue-500 hover:text-blue-700"
                                 >
                                   <Copy className="h-4 w-4" />
@@ -251,9 +274,16 @@ const PaymentPage: React.FC = () => {
                             <div className="flex justify-between">
                               <span>Nội dung CK:</span>
                               <div className="flex items-center">
-                                <span className="font-medium">AKADS {user?.name.split(' ')[0]}</span>
+                                <span className="font-medium">
+                                  AKADS{" "}
+                                  {user?.name ? user.name.split(" ")[0] : ""}
+                                </span>
                                 <button
-                                  onClick={() => handleCopyClick(`AKADS ${user?.name.split(' ')[0]}`)}
+                                  onClick={() =>
+                                    handleCopyClick(
+                                      `AKADS ${user?.name.split(" ")[0]}`
+                                    )
+                                  }
                                   className="ml-2 text-blue-500 hover:text-blue-700"
                                 >
                                   <Copy className="h-4 w-4" />
@@ -264,10 +294,22 @@ const PaymentPage: React.FC = () => {
                               <span>Số tiền:</span>
                               <div className="flex items-center">
                                 <span className="font-medium">
-                                  {(customAmount ? parseInt(customAmount) : selectedAmount).toLocaleString('vi-VN')} VNĐ
+                                  {(customAmount
+                                    ? parseInt(customAmount)
+                                    : selectedAmount
+                                  ).toLocaleString("vi-VN")}{" "}
+                                  VNĐ
                                 </span>
                                 <button
-                                  onClick={() => handleCopyClick(`${customAmount ? parseInt(customAmount) : selectedAmount}`)}
+                                  onClick={() =>
+                                    handleCopyClick(
+                                      `${
+                                        customAmount
+                                          ? parseInt(customAmount)
+                                          : selectedAmount
+                                      }`
+                                    )
+                                  }
                                   className="ml-2 text-blue-500 hover:text-blue-700"
                                 >
                                   <Copy className="h-4 w-4" />
@@ -278,7 +320,7 @@ const PaymentPage: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="pt-2">
                       <Button
                         fullWidth
@@ -289,13 +331,14 @@ const PaymentPage: React.FC = () => {
                         Tạo lệnh nạp tiền
                       </Button>
                       <p className="mt-2 text-xs text-gray-500 text-center">
-                        Sau khi chuyển khoản, hệ thống sẽ tự động cộng tiền vào tài khoản của bạn trong vòng 5 phút.
+                        Sau khi chuyển khoản, hệ thống sẽ tự động cộng tiền vào
+                        tài khoản của bạn trong vòng 5 phút.
                       </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardHeader>
                   <CardTitle>Hướng dẫn nạp tiền</CardTitle>
@@ -309,13 +352,16 @@ const PaymentPage: React.FC = () => {
                         </div>
                       </div>
                       <div className="ml-4">
-                        <h4 className="text-sm font-medium text-gray-900">Chọn số tiền cần nạp</h4>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          Chọn số tiền cần nạp
+                        </h4>
                         <p className="mt-1 text-sm text-gray-500">
-                          Chọn một trong các mệnh giá có sẵn hoặc nhập số tiền tùy chọn (tối thiểu 100.000đ).
+                          Chọn một trong các mệnh giá có sẵn hoặc nhập số tiền
+                          tùy chọn (tối thiểu 100.000đ).
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex">
                       <div className="flex-shrink-0">
                         <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
@@ -323,13 +369,16 @@ const PaymentPage: React.FC = () => {
                         </div>
                       </div>
                       <div className="ml-4">
-                        <h4 className="text-sm font-medium text-gray-900">Tạo lệnh nạp tiền</h4>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          Tạo lệnh nạp tiền
+                        </h4>
                         <p className="mt-1 text-sm text-gray-500">
-                          Nhấn nút "Tạo lệnh nạp tiền" để hệ thống tạo một mã giao dịch duy nhất.
+                          Nhấn nút "Tạo lệnh nạp tiền" để hệ thống tạo một mã
+                          giao dịch duy nhất.
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex">
                       <div className="flex-shrink-0">
                         <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
@@ -337,13 +386,16 @@ const PaymentPage: React.FC = () => {
                         </div>
                       </div>
                       <div className="ml-4">
-                        <h4 className="text-sm font-medium text-gray-900">Chuyển khoản ngân hàng</h4>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          Chuyển khoản ngân hàng
+                        </h4>
                         <p className="mt-1 text-sm text-gray-500">
-                          Thực hiện chuyển khoản theo thông tin được cung cấp. Lưu ý nhập đúng nội dung chuyển khoản.
+                          Thực hiện chuyển khoản theo thông tin được cung cấp.
+                          Lưu ý nhập đúng nội dung chuyển khoản.
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex">
                       <div className="flex-shrink-0">
                         <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
@@ -351,9 +403,13 @@ const PaymentPage: React.FC = () => {
                         </div>
                       </div>
                       <div className="ml-4">
-                        <h4 className="text-sm font-medium text-gray-900">Nhận tiền tự động</h4>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          Nhận tiền tự động
+                        </h4>
                         <p className="mt-1 text-sm text-gray-500">
-                          Hệ thống sẽ tự động cộng tiền vào tài khoản của bạn sau khi nhận được thanh toán (thường trong vòng 5 phút).
+                          Hệ thống sẽ tự động cộng tiền vào tài khoản của bạn
+                          sau khi nhận được thanh toán (thường trong vòng 5
+                          phút).
                         </p>
                       </div>
                     </div>
@@ -372,19 +428,34 @@ const PaymentPage: React.FC = () => {
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
                             Thời gian
                           </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
                             Loại giao dịch
                           </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
                             Mô tả
                           </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
                             Số tiền
                           </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
                             Trạng thái
                           </th>
                         </tr>
@@ -396,46 +467,56 @@ const PaymentPage: React.FC = () => {
                               {formatTransactionDate(transaction.createdAt)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                transaction.type === 'deposit' 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : transaction.type === 'refund'
-                                    ? 'bg-blue-100 text-blue-800'
-                                    : 'bg-yellow-100 text-yellow-800'
-                              }`}>
-                                {transaction.type === 'deposit' 
-                                  ? 'Nạp tiền' 
-                                  : transaction.type === 'refund'
-                                    ? 'Hoàn tiền'
-                                    : 'Thanh toán'}
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  transaction.type === "deposit"
+                                    ? "bg-green-100 text-green-800"
+                                    : transaction.type === "refund"
+                                    ? "bg-blue-100 text-blue-800"
+                                    : "bg-yellow-100 text-yellow-800"
+                                }`}
+                              >
+                                {transaction.type === "deposit"
+                                  ? "Nạp tiền"
+                                  : transaction.type === "refund"
+                                  ? "Hoàn tiền"
+                                  : "Thanh toán"}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {transaction.description}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
-                              <span className={`font-medium ${
-                                transaction.type === 'deposit' || transaction.type === 'refund'
-                                  ? 'text-green-600' 
-                                  : 'text-red-600'
-                              }`}>
-                                {transaction.type === 'deposit' || transaction.type === 'refund' ? '+' : '-'}
-                                {transaction.amount.toLocaleString('vi-VN')} VNĐ
+                              <span
+                                className={`font-medium ${
+                                  transaction.type === "deposit" ||
+                                  transaction.type === "refund"
+                                    ? "text-green-600"
+                                    : "text-red-600"
+                                }`}
+                              >
+                                {transaction.type === "deposit" ||
+                                transaction.type === "refund"
+                                  ? "+"
+                                  : "-"}
+                                {transaction.amount.toLocaleString("vi-VN")} VNĐ
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                transaction.status === 'completed' 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : transaction.status === 'pending'
-                                    ? 'bg-yellow-100 text-yellow-800'
-                                    : 'bg-red-100 text-red-800'
-                              }`}>
-                                {transaction.status === 'completed' 
-                                  ? 'Hoàn thành' 
-                                  : transaction.status === 'pending'
-                                    ? 'Đang xử lý'
-                                    : 'Thất bại'}
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  transaction.status === "completed"
+                                    ? "bg-green-100 text-green-800"
+                                    : transaction.status === "pending"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-red-100 text-red-800"
+                                }`}
+                              >
+                                {transaction.status === "completed"
+                                  ? "Hoàn thành"
+                                  : transaction.status === "pending"
+                                  ? "Đang xử lý"
+                                  : "Thất bại"}
                               </span>
                             </td>
                           </tr>
@@ -443,7 +524,7 @@ const PaymentPage: React.FC = () => {
                       </tbody>
                     </table>
                   </div>
-                  
+
                   {transactions.length === 0 && (
                     <div className="text-center py-8">
                       <p className="text-gray-500">Chưa có giao dịch nào.</p>
