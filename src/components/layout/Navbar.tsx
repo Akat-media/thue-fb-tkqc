@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Menu, X, Bell, User, CreditCard, LogOut } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import Button from '../ui/Button';
+import React, { useState } from "react";
+import { Menu, X, Bell, User, CreditCard, LogOut } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import Button from "../ui/Button";
 
 const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link
-                to="/"
+                to="/dashboard"
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
                 Trang chủ
@@ -76,7 +76,7 @@ const Navbar: React.FC = () => {
                     >
                       <span className="sr-only">Open user menu</span>
                       <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                        {user?.name.charAt(0).toUpperCase()}
+                        {user?.name?.charAt(0)?.toUpperCase()}
                       </div>
                     </button>
                   </div>
@@ -91,7 +91,7 @@ const Navbar: React.FC = () => {
                         <p className="font-medium">{user?.name}</p>
                         <p className="text-gray-500">{user?.email}</p>
                         <p className="font-medium text-green-600 mt-1">
-                          {user?.balance.toLocaleString('vi-VN')} VNĐ
+                          {user?.balance.toLocaleString("vi-VN")} VNĐ
                         </p>
                       </div>
                       <Link
@@ -197,7 +197,7 @@ const Navbar: React.FC = () => {
                     {user?.email}
                   </div>
                   <div className="text-sm font-medium text-green-600">
-                    {user?.balance.toLocaleString('vi-VN')} VNĐ
+                    {user?.balance.toLocaleString("vi-VN")} VNĐ
                   </div>
                 </div>
               </div>
