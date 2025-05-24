@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Layout from "../../components/layout/Layout";
-import { AdAccount } from "../../types";
-import { useAdAccountContext } from "./AdAccountContext";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Layout from '../../components/layout/Layout';
+import { AdAccount } from '../../types';
+import { useAdAccountStore } from './adAccountStore';
 
 interface FormData {
     adAccountType: string;
@@ -13,63 +13,86 @@ interface FormData {
     notes: string;
 }
 
+interface FormErrors {
+    adAccountType?: string;
+    name?: string;
+    accountType?: string;
+    defaultLimit?: string;
+    pricePerDay?: string;
+}
+
 const AddAccountPage: React.FC = () => {
     const navigate = useNavigate();
-    const { addAccount } = useAdAccountContext();
+    const { addAccount } = useAdAccountStore();
 
     const [formData, setFormData] = useState<FormData>({
-        adAccountType: "",
-        name: "",
-        accountType: "",
-        defaultLimit: "",
-        pricePerDay: "",
-        notes: "",
+        adAccountType: '',
+        name: '',
+        accountType: '',
+        defaultLimit: '',
+        pricePerDay: '',
+        notes: '',
     });
+
+    const [errors, setErrors] = useState<FormErrors>({});
+
+    const validateForm = (): FormErrors => {
+        const newErrors: FormErrors = {};
+        if (!formData.adAccountType) newErrors.adAccountType = 'Vui lòng chọn loại tài khoản quảng cáo';
+        if (!formData.name) newErrors.name = 'Vui lòng nhập tên tài khoản';
+        if (!formData.accountType) newErrors.accountType = 'Vui lòng chọn loại tài khoản';
+        if (!formData.defaultLimit || isNaN(parseFloat(formData.defaultLimit)) || parseFloat(formData.defaultLimit) < 0) {
+            newErrors.defaultLimit = 'Vui lòng nhập limit hợp lệ (số không âm)';
+        }
+        if (!formData.pricePerDay || isNaN(parseFloat(formData.pricePerDay)) || parseFloat(formData.pricePerDay) < 0) {
+            newErrors.pricePerDay = 'Vui lòng nhập giá thuê hợp lệ (số không âm)';
+        }
+        return newErrors;
+    };
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+        setErrors((prev) => ({ ...prev, [e.target.name]: undefined }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (
-            formData.adAccountType &&
-            formData.name &&
-            formData.accountType &&
-            formData.defaultLimit &&
-            formData.pricePerDay
-        ) {
-            const newAccount: AdAccount = {
-                id: Date.now().toString(),
-                name: `${formData.name} - ${
-                    formData.adAccountType.charAt(0).toUpperCase() + formData.adAccountType.slice(1)
-                }`,
-                accountType: formData.accountType as "personal" | "business" | "visa" | "high_limit" | "low_limit",
-                defaultLimit: parseFloat(formData.defaultLimit),
-                pricePerDay: parseFloat(formData.pricePerDay),
-                status: "available",
-                notes: formData.notes || "Không có ghi chú",
-            };
-            console.log("newAccount", newAccount);
-            addAccount(newAccount);
-            setFormData({
-                adAccountType: "",
-                name: "",
-                accountType: "",
-                defaultLimit: "",
-                pricePerDay: "",
-                notes: "",
-            });
-            navigate("/marketplace");
-        } else {
-            alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
+        const formErrors = validateForm();
+        if (Object.keys(formErrors).length > 0) {
+            setErrors(formErrors);
+            return;
         }
+
+        const newAccount: AdAccount = {
+            id: Date.now().toString(),
+            name: `${formData.name} - ${
+                formData.adAccountType.charAt(0).toUpperCase() + formData.adAccountType.slice(1)
+            }`,
+            accountType: formData.accountType as "personal" | "business" | "visa" | "high_limit" | "low_limit",
+            defaultLimit: parseFloat(formData.defaultLimit),
+            pricePerDay: parseFloat(formData.pricePerDay),
+            status: 'available',
+            notes: formData.notes || 'Không có ghi chú',
+            adAccountType: formData.adAccountType as 'facebook' | 'google' | 'tiktok',
+        };
+
+        console.log("new acc", newAccount)
+        addAccount(newAccount);
+        setFormData({
+            adAccountType: '',
+            name: '',
+            accountType: '',
+            defaultLimit: '',
+            pricePerDay: '',
+            notes: '',
+        });
+        navigate('/marketplace');
     };
 
     const handleCancel = () => {
-        navigate("/marketplace");
+        navigate('/marketplace');
     };
 
     return (
@@ -86,14 +109,18 @@ const AddAccountPage: React.FC = () => {
                                 name="adAccountType"
                                 value={formData.adAccountType}
                                 onChange={handleChange}
-                                className="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                required
+                                className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
+                                    errors.adAccountType ? 'border-red-500' : ''
+                                }`}
                             >
                                 <option value="">Chọn loại tài khoản quảng cáo</option>
                                 <option value="facebook">Facebook Ads</option>
                                 <option value="google">Google Ads</option>
                                 <option value="tiktok">TikTok Ads</option>
                             </select>
+                            {errors.adAccountType && (
+                                <p className="mt-1 text-sm text-red-500">{errors.adAccountType}</p>
+                            )}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Tên tài khoản</label>
@@ -102,9 +129,11 @@ const AddAccountPage: React.FC = () => {
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
-                                className="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                required
+                                className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
+                                    errors.name ? 'border-red-500' : ''
+                                }`}
                             />
+                            {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Loại tài khoản</label>
@@ -112,8 +141,9 @@ const AddAccountPage: React.FC = () => {
                                 name="accountType"
                                 value={formData.accountType}
                                 onChange={handleChange}
-                                className="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                required
+                                className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
+                                    errors.accountType ? 'border-red-500' : ''
+                                }`}
                             >
                                 <option value="">Chọn loại tài khoản</option>
                                 <option value="personal">Cá nhân</option>
@@ -122,36 +152,47 @@ const AddAccountPage: React.FC = () => {
                                 <option value="high_limit">Limit cao</option>
                                 <option value="low_limit">Limit thấp</option>
                             </select>
+                            {errors.accountType && (
+                                <p className="mt-1 text-sm text-red-500">{errors.accountType}</p>
+                            )}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
-                                Limit mặc định (USD)
+                                Limit mặc định (VND)
                             </label>
                             <input
                                 type="number"
                                 name="defaultLimit"
                                 value={formData.defaultLimit}
                                 onChange={handleChange}
-                                className="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                required
+                                className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
+                                    errors.defaultLimit ? 'border-red-500' : ''
+                                }`}
                                 min="0"
                                 step="0.01"
                             />
+                            {errors.defaultLimit && (
+                                <p className="mt-1 text-sm text-red-500">{errors.defaultLimit}</p>
+                            )}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
-                                Giá thuê ngày (USD)
+                                Giá thuê ngày (VND)
                             </label>
                             <input
                                 type="number"
                                 name="pricePerDay"
                                 value={formData.pricePerDay}
                                 onChange={handleChange}
-                                className="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                required
+                                className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
+                                    errors.pricePerDay ? 'border-red-500' : ''
+                                }`}
                                 min="0"
                                 step="0.01"
                             />
+                            {errors.pricePerDay && (
+                                <p className="mt-1 text-sm text-red-500">{errors.pricePerDay}</p>
+                            )}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Ghi chú</label>

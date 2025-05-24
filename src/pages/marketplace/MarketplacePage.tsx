@@ -1,49 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { Search, Filter, ChevronDown } from "lucide-react";
-import Layout from "../../components/layout/Layout";
-import { Card, CardContent } from "../../components/ui/Card";
-import AdAccountCard from "./AdAccountCard";
-import RentModal from "./RentModal";
-import { AdAccount } from "../../types";
-import { useAdAccountContext } from "./AdAccountContext";
+import React, { useState } from 'react';
+import { Search, Filter, ChevronDown } from 'lucide-react';
+import Layout from '../../components/layout/Layout';
+import { Card, CardContent } from '../../components/ui/Card';
+import AdAccountCard from './AdAccountCard';
+import RentModal from './RentModal';
+import { AdAccount } from '../../types';
+import { useAdAccountStore } from './adAccountStore'; // Import store
 
 const MarketplacePage: React.FC = () => {
-  const { accounts } = useAdAccountContext();
-  const [filteredAccounts, setFilteredAccounts] = useState<AdAccount[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedType, setSelectedType] = useState("all");
-  const [selectedAccountType, setSelectedAccountType] = useState("all");
+  const {
+    filteredAccounts,
+    searchTerm,
+    selectedType,
+    selectedAccountType,
+    setSearchTerm,
+    setSelectedType,
+    setSelectedAccountType,
+  } = useAdAccountStore();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<AdAccount | null>(null);
   const [isRentModalOpen, setIsRentModalOpen] = useState(false);
-
-  useEffect(() => {
-    let results = accounts;
-
-    // Apply search filter
-    if (searchTerm) {
-      results = results.filter(
-          (account) =>
-              account.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              account.bmName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              account.notes?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Apply BM type filter
-    if (selectedType !== "all") {
-      results = results.filter((account) => account.bmType === selectedType);
-    }
-
-    // Apply account type filter
-    if (selectedAccountType !== "all") {
-      results = results.filter(
-          (account) => account.accountType === selectedAccountType
-      );
-    }
-
-    setFilteredAccounts(results);
-  }, [accounts, searchTerm, selectedType, selectedAccountType]);
 
   const handleRentClick = (account: AdAccount) => {
     setSelectedAccount(account);
@@ -88,7 +64,7 @@ const MarketplacePage: React.FC = () => {
                 <Filter className="h-5 w-5 mr-2 text-gray-400" />
                 Bộ lọc
                 <ChevronDown
-                    className={`ml-2 h-4 w-4 transition-transform ${isFiltersOpen ? "rotate-180" : ""}`}
+                    className={`ml-2 h-4 w-4 transition-transform ${isFiltersOpen ? 'rotate-180' : ''}`}
                 />
               </button>
             </div>

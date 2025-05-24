@@ -28,6 +28,7 @@ export interface AdAccount {
   notes?: string;
   bmName?: string;
   bmType?: string;
+  adAccountType?: string;
 }
 
 export interface Rental {

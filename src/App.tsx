@@ -10,14 +10,12 @@ import RentalsPage from "./pages/rentals/RentalsPage";
 import PaymentPage from "./pages/payment/PaymentPage";
 import Dashboard from "./pages/Dashboard";
 import AddAccountPage from "./pages/marketplace/AddAccountPage.tsx";
-import {AdAccountProvider} from "./pages/marketplace/AdAccountContext.tsx";
 import PaymentForm from "./pages/marketplace/PaymentForm.tsx";
 
 function App() {
   return (
     <AuthProvider>
       <NotificationProvider>
-        <AdAccountProvider>
           <Router>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -31,7 +29,6 @@ function App() {
             <Route path="/deposit" element={<PaymentForm />} />
           </Routes>
         </Router>
-        </AdAccountProvider>
       </NotificationProvider>
     </AuthProvider>
   );

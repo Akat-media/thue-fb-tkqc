@@ -21,7 +21,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import {AdAccountProvider} from "./marketplace/AdAccountContext.tsx";
+
 
 interface StatCard {
   icon: React.ElementType;
@@ -270,7 +270,6 @@ function Dashboard() {
   ];
 
   return (
-      <AdAccountProvider>
         <Layout>
           <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full">
             <div className="mb-6 sm:mb-8">
@@ -384,7 +383,6 @@ function Dashboard() {
             </div> */}
           </div>
         </Layout>
-      </AdAccountProvider>
   );
 }
 
