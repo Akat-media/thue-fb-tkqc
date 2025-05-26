@@ -12,6 +12,8 @@ import {
   PanelRightOpen,
   PanelRightClose,
   AlignStartHorizontal,
+  PackagePlus,
+  QrCode,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import clsx from "clsx";
@@ -33,15 +35,15 @@ const Sidebar: React.FC<{
     { label: "Danh sách BM", icon: Briefcase, path: "/marketplace" },
     { label: "Tài khoản đang thuê", icon: ShoppingCart, path: "/rentals" },
     { label: "Nạp tiền", icon: CreditCard, path: "/payments" },
+    { label: "QR Here", icon: QrCode, path: "/deposit" },
     {
       label: "Quản lý TKQC",
       icon: AlignStartHorizontal,
       path: "/adsaccountmanager",
     },
+    { label: "Thêm TKQC", icon: PackagePlus, path: "/add-account" },
     { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
-    { label: "Thêm TKQC", icon: AlignStartHorizontal, path: "/add-account" },
-    { label: "QR Here", icon: AlignStartHorizontal, path: "/deposit" },
   ];
 
   React.useEffect(() => {
