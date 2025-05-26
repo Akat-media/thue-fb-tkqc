@@ -1,0 +1,216 @@
+import React from "react";
+import {
+  LayoutDashboard,
+  Briefcase,
+  ShoppingCart,
+  CreditCard,
+  Users,
+  Bell,
+  HelpCircle,
+  ChevronDown,
+  LogOut,
+  PanelRightOpen,
+  PanelRightClose,
+  AlignStartHorizontal,
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import clsx from "clsx";
+import { useAuth } from "../../context/AuthContext";
+
+const Sidebar: React.FC<{
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
+}> = ({ isSidebarOpen, toggleSidebar }) => {
+  const { user, logout } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [openProfileMenu, setOpenProfileMenu] = React.useState(false);
+
+  const toggleProfileMenu = () => setOpenProfileMenu(!openProfileMenu);
+
+  const links = [
+    { label: "Trang chủ", icon: LayoutDashboard, path: "/dashboard" },
+    { label: "Danh sách BM", icon: Briefcase, path: "/marketplace" },
+    { label: "Tài khoản đang thuê", icon: ShoppingCart, path: "/rentals" },
+    { label: "Nạp tiền", icon: CreditCard, path: "/payments" },
+    {
+      label: "Quản lý TKQC",
+      icon: AlignStartHorizontal,
+      path: "/adsaccountmanager",
+    },
+    { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
+    { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
+    { label: "Thêm TKQC", icon: AlignStartHorizontal, path: "/add-account" },
+    { label: "QR Here", icon: AlignStartHorizontal, path: "/deposit" },
+  ];
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        if (isSidebarOpen) toggleSidebar();
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isSidebarOpen, toggleSidebar]);
+
+  return (
+    <aside
+      className={clsx(
+        "fixed top-0 left-0 h-screen bg-white border-r flex flex-col justify-between py-6 px-4 shadow-sm z-40 transition-all duration-500",
+        isSidebarOpen ? "w-64" : "w-14"
+      )}
+    >
+      <div>
+        <div
+          className={clsx(
+            "flex items-center mb-6 transition-all duration-300",
+            isSidebarOpen ? "justify-between px-2" : "justify-center"
+          )}
+        >
+          <Link
+            to="/"
+            className={clsx(
+              "text-2xl font-bold text-blue-600 hover:underline transition-all duration-300",
+              !isSidebarOpen && "opacity-0 w-0 overflow-hidden"
+            )}
+          >
+            AKAds
+          </Link>
+
+          <button
+            onClick={toggleSidebar}
+            className="p-1 text-gray-600 rounded hover:bg-gray-100"
+          >
+            {isSidebarOpen ? (
+              <PanelRightOpen size={20} />
+            ) : (
+              <PanelRightClose size={20} />
+            )}
+          </button>
+        </div>
+
+        <nav className="space-y-2">
+          {links.map(({ label, icon: Icon, path }) => (
+            <Link
+              key={path}
+              to={path}
+              className={clsx(
+                "group flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300",
+                location.pathname === path && "bg-blue-100 font-semibold"
+              )}
+            >
+              <div className="w-12 flex justify-center">
+                <Icon className="w-5 h-5" />
+              </div>
+              <span
+                className={clsx(
+                  "transition-all whitespace-nowrap overflow-hidden duration-300",
+                  isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+                )}
+              >
+                {label}
+              </span>
+            </Link>
+          ))}
+        </nav>
+      </div>
+
+      <div className="space-y-2">
+        <Link
+          to="/help"
+          className="flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300"
+        >
+          <div className="w-12 flex justify-center">
+            <HelpCircle className="w-5 h-5" />
+          </div>
+          <span
+            className={clsx(
+              "transition-all whitespace-nowrap overflow-hidden duration-300",
+              isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+            )}
+          >
+            Hỗ Trợ
+          </span>
+        </Link>
+
+        <Link
+          to="/notifications"
+          className="flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300"
+        >
+          <div className="w-12 flex justify-center">
+            <Bell className="w-5 h-5" />
+          </div>
+          <span
+            className={clsx(
+              "transition-all whitespace-nowrap overflow-hidden duration-300",
+              isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+            )}
+          >
+            Thông báo
+          </span>
+        </Link>
+
+        {/* User profile */}
+        {user && isSidebarOpen && (
+          <div className="relative mt-2">
+            <button
+              onClick={toggleProfileMenu}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 transition"
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0 -ml-1">
+                  {user.name?.charAt(0)?.toUpperCase()}
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-sm font-medium text-gray-900">
+                    {user.name}
+                  </span>
+                  <span className="text-xs text-gray-500">{user.email}</span>
+                </div>
+              </div>
+              <ChevronDown className="w-6 h-4 text-gray-400 ml-2" />
+            </button>
+
+            {openProfileMenu && (
+              <div className="absolute left-0 bottom-12 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                <div className="px-4 py-3 text-sm text-gray-700 border-b">
+                  <p className="font-semibold text-base">{user.name}</p>
+                  <p className="text-gray-500">{user.email}</p>
+                  <p className="font-semibold text-green-600 mt-1">
+                    {user.balance?.toLocaleString("vi-VN")} VNĐ
+                  </p>
+                </div>
+                <Link
+                  to="/account"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Tài khoản
+                </Link>
+                <Link
+                  to="/payments"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Nạp tiền
+                </Link>
+                <button
+                  onClick={() => {
+                    logout();
+                    navigate("/login");
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  <LogOut className="w-4 h-4 inline mr-2" />
+                  Đăng xuất
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </aside>
+  );
+};
+
+export default Sidebar;

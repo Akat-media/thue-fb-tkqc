@@ -64,14 +64,10 @@ const RegisterPage: React.FC = () => {
 
   return (
     <>
-      <div className="h-screen bg-[#e0f2fe] relative overflow-hidden">
+      <div className="h-screen bg-gradient-to-br from-blue-200 via-white to-blue-200 to-transparent relative overflow-hidden">
         <Bot
           className="absolute top-10 left-10 text-blue-500 opacity-20 animate-floating"
           size={40}
-        />
-        <Bot
-          className="absolute top-1/2 left-1/3 text-blue-400 opacity-20 animate-floating delay-2000"
-          size={30}
         />
         <Mail
           className="absolute bottom-10 right-16 text-blue-300 opacity-20 animate-floating delay-1000"
@@ -84,8 +80,8 @@ const RegisterPage: React.FC = () => {
           isOpen ? "bg-black bg-opacity-0" : "pointer-events-none opacity-0"
         }`}
       >
-        <div className="bg-white rounded-lg overflow-hidden shadow-xl max-w-6xl w-full flex">
-          <div className="flex-1 p-8 flex flex-col justify-center">
+        <div className="bg-gradient-to-br from-white via-blue-100 to-blue rounded-lg overflow-hidden shadow-xl w-full max-w-md p-8">
+          <div className="flex flex-col justify-center">
             <h1 className="text-2xl font-semibold text-[#0167F8] mb-2">
               Tạo Tài Khoản Mới
             </h1>
@@ -203,15 +199,16 @@ const RegisterPage: React.FC = () => {
               </Link>
             </p>
           </div>
-          <div className="hidden md:block flex-1 overflow-hidden min-h-[400px]">
-            <Link to="/" className="block w-full h-full">
+          {/* <div className="hidden md:flex w-1/2 max-w-[400px] items-center justify-center overflow-hidden">
+            <Link to="/" className="block w-full h-auto">
               <img
                 src="src/public/AKA.png"
-                className="w-full h-full min-h-[400px] object-cover animate-spin-slow"
-                alt=""
+                alt="AKAds Logo"
+                className="object-contain w-full max-h-[400px] rounded"
+                loading="eager"
               />
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

@@ -11,12 +11,15 @@ import PaymentPage from "./pages/payment/PaymentPage";
 import Dashboard from "./pages/Dashboard";
 import AddAccountPage from "./pages/marketplace/AddAccountPage.tsx";
 import PaymentForm from "./pages/marketplace/PaymentForm.tsx";
+import ManageAdsAccount from "./pages/admin/ManageAdsAccount";
+import AdminTransactionsPage from "./pages/admin/AdminTransactionsPage";
+import UserManagementPage from "./pages/admin/UserManagementPage";
 
 function App() {
   return (
     <AuthProvider>
       <NotificationProvider>
-          <Router>
+        <Router>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -27,6 +30,12 @@ function App() {
             <Route path="/rentals" element={<RentalsPage />} />
             <Route path="/payments" element={<PaymentPage />} />
             <Route path="/deposit" element={<PaymentForm />} />
+            <Route path="/adsaccountmanager" element={<ManageAdsAccount />} />
+            <Route
+              path="/admintransaction"
+              element={<AdminTransactionsPage />}
+            />
+            <Route path="/usermanage" element={<UserManagementPage />} />
           </Routes>
         </Router>
       </NotificationProvider>
