@@ -21,11 +21,16 @@ export interface Transaction {
 export interface AdAccount {
   id: string;
   name: string;
-  accountType: "personal" | "business" | "visa" | "high_limit" | "low_limit";
+  // accountType: "personal" | "business" | "visa" | "high_limit" | "low_limit";
+  accountType: string;
   defaultLimit: number;
   pricePerDay: number;
-  status: "available" | "rented" | "unavailable";
+  // status: "available" | "rented" | "unavailable";
+  status: string;
   notes?: string;
+  bmName?: string;
+  bmType?: string;
+  adAccountType?: string;
 }
 
 export interface Rental {
