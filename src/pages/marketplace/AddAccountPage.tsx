@@ -1,93 +1,74 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
 import Layout from '../../components/layout/Layout';
 import { AdAccount } from '../../types';
 import { useAdAccountStore } from './adAccountStore';
 
-interface FormData {
-    adAccountType: string;
-    name: string;
-    accountType: string;
-    defaultLimit: string;
-    pricePerDay: string;
-    notes: string;
-}
+const formSchema = z.object({
+    adAccountType: z
+        .string()
+        .min(1, { message: 'Vui lòng chọn loại tài khoản quảng cáo' })
+        .refine((val) => ['facebook', 'google', 'tiktok'].includes(val), {
+            message: 'Loại tài khoản quảng cáo không hợp lệ, vui lòng chọn Facebook, Google hoặc TikTok',
+        }),
+    name: z.string().min(1, { message: 'Vui lòng nhập tên tài khoản' }),
+    accountType: z
+        .string()
+        .min(1, { message: 'Vui lòng chọn loại tài khoản' })
+        .refine((val) => ['personal', 'business', 'visa', 'high_limit', 'low_limit'].includes(val), {
+            message: 'Loại tài khoản không hợp lệ, vui lòng chọn Cá nhân, Doanh nghiệp, Visa, Limit cao hoặc Limit thấp',
+        }),
+    defaultLimit: z
+        .number({ invalid_type_error: 'Vui lòng nhập limit hợp lệ (số không âm)' })
+        .min(0, { message: 'Limit phải là số không âm' }),
+    pricePerDay: z
+        .number({ invalid_type_error: 'Vui lòng nhập giá thuê hợp lệ (số không âm)' })
+        .min(0, { message: 'Giá thuê phải là số không âm' }),
+    notes: z.string().optional(),
+});
 
-interface FormErrors {
-    adAccountType?: string;
-    name?: string;
-    accountType?: string;
-    defaultLimit?: string;
-    pricePerDay?: string;
-}
+
+type FormData = z.infer<typeof formSchema>;
 
 const AddAccountPage: React.FC = () => {
     const navigate = useNavigate();
     const { addAccount } = useAdAccountStore();
 
-    const [formData, setFormData] = useState<FormData>({
-        adAccountType: '',
-        name: '',
-        accountType: '',
-        defaultLimit: '',
-        pricePerDay: '',
-        notes: '',
-    });
-
-    const [errors, setErrors] = useState<FormErrors>({});
-
-    const validateForm = (): FormErrors => {
-        const newErrors: FormErrors = {};
-        if (!formData.adAccountType) newErrors.adAccountType = 'Vui lòng chọn loại tài khoản quảng cáo';
-        if (!formData.name) newErrors.name = 'Vui lòng nhập tên tài khoản';
-        if (!formData.accountType) newErrors.accountType = 'Vui lòng chọn loại tài khoản';
-        if (!formData.defaultLimit || isNaN(parseFloat(formData.defaultLimit)) || parseFloat(formData.defaultLimit) < 0) {
-            newErrors.defaultLimit = 'Vui lòng nhập limit hợp lệ (số không âm)';
-        }
-        if (!formData.pricePerDay || isNaN(parseFloat(formData.pricePerDay)) || parseFloat(formData.pricePerDay) < 0) {
-            newErrors.pricePerDay = 'Vui lòng nhập giá thuê hợp lệ (số không âm)';
-        }
-        return newErrors;
-    };
-
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-    ) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-        setErrors((prev) => ({ ...prev, [e.target.name]: undefined }));
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const formErrors = validateForm();
-        if (Object.keys(formErrors).length > 0) {
-            setErrors(formErrors);
-            return;
-        }
-
-        const newAccount: AdAccount = {
-            id: Date.now().toString(),
-            name: `${formData.name} - ${
-                formData.adAccountType.charAt(0).toUpperCase() + formData.adAccountType.slice(1)
-            }`,
-            accountType: formData.accountType as "personal" | "business" | "visa" | "high_limit" | "low_limit",
-            defaultLimit: parseFloat(formData.defaultLimit),
-            pricePerDay: parseFloat(formData.pricePerDay),
-            status: 'available',
-            notes: formData.notes || 'Không có ghi chú',
-            adAccountType: formData.adAccountType as 'facebook' | 'google' | 'tiktok',
-        };
-
-        console.log("new acc", newAccount)
-        addAccount(newAccount);
-        setFormData({
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<FormData>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
             adAccountType: '',
             name: '',
             accountType: '',
-            defaultLimit: '',
-            pricePerDay: '',
+            defaultLimit: 0,
+            pricePerDay: 0,
             notes: '',
-        });
+        },
+    });
+
+    const onSubmit = (data: FormData) => {
+        const newAccount: AdAccount = {
+            id: Date.now().toString(),
+            name: `${data.name} - ${data.adAccountType.charAt(0).toUpperCase() + data.adAccountType.slice(1)}`,
+            accountType: data.accountType,
+            defaultLimit: data.defaultLimit,
+            pricePerDay: data.pricePerDay,
+            status: 'available',
+            notes: data.notes || 'Không có ghi chú',
+            adAccountType: data.adAccountType,
+        };
+
+        console.log('new acc', newAccount);
+        addAccount(newAccount);
+        reset();
         navigate('/marketplace');
     };
 
@@ -100,15 +81,13 @@ const AddAccountPage: React.FC = () => {
             <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="bg-white rounded-lg shadow-lg p-8">
                     <h2 className="text-2xl font-bold text-gray-900 mb-6">Thêm Tài khoản Quảng cáo</h2>
-                    <form id="accountForm" onSubmit={handleSubmit} className="space-y-6">
+                    <form id="accountForm" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
                                 Loại tài khoản quảng cáo
                             </label>
                             <select
-                                name="adAccountType"
-                                value={formData.adAccountType}
-                                onChange={handleChange}
+                                {...register('adAccountType')}
                                 className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
                                     errors.adAccountType ? 'border-red-500' : ''
                                 }`}
@@ -119,28 +98,24 @@ const AddAccountPage: React.FC = () => {
                                 <option value="tiktok">TikTok Ads</option>
                             </select>
                             {errors.adAccountType && (
-                                <p className="mt-1 text-sm text-red-500">{errors.adAccountType}</p>
+                                <p className="mt-1 text-sm text-red-500">{errors.adAccountType.message}</p>
                             )}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Tên tài khoản</label>
                             <input
                                 type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
+                                {...register('name')}
                                 className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
                                     errors.name ? 'border-red-500' : ''
                                 }`}
                             />
-                            {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
+                            {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Loại tài khoản</label>
                             <select
-                                name="accountType"
-                                value={formData.accountType}
-                                onChange={handleChange}
+                                {...register('accountType')}
                                 className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
                                     errors.accountType ? 'border-red-500' : ''
                                 }`}
@@ -153,7 +128,7 @@ const AddAccountPage: React.FC = () => {
                                 <option value="low_limit">Limit thấp</option>
                             </select>
                             {errors.accountType && (
-                                <p className="mt-1 text-sm text-red-500">{errors.accountType}</p>
+                                <p className="mt-1 text-sm text-red-500">{errors.accountType.message}</p>
                             )}
                         </div>
                         <div>
@@ -162,9 +137,7 @@ const AddAccountPage: React.FC = () => {
                             </label>
                             <input
                                 type="number"
-                                name="defaultLimit"
-                                value={formData.defaultLimit}
-                                onChange={handleChange}
+                                {...register('defaultLimit', { valueAsNumber: true })}
                                 className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
                                     errors.defaultLimit ? 'border-red-500' : ''
                                 }`}
@@ -172,7 +145,7 @@ const AddAccountPage: React.FC = () => {
                                 step="0.01"
                             />
                             {errors.defaultLimit && (
-                                <p className="mt-1 text-sm text-red-500">{errors.defaultLimit}</p>
+                                <p className="mt-1 text-sm text-red-500">{errors.defaultLimit.message}</p>
                             )}
                         </div>
                         <div>
@@ -181,9 +154,7 @@ const AddAccountPage: React.FC = () => {
                             </label>
                             <input
                                 type="number"
-                                name="pricePerDay"
-                                value={formData.pricePerDay}
-                                onChange={handleChange}
+                                {...register('pricePerDay', { valueAsNumber: true })}
                                 className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
                                     errors.pricePerDay ? 'border-red-500' : ''
                                 }`}
@@ -191,15 +162,13 @@ const AddAccountPage: React.FC = () => {
                                 step="0.01"
                             />
                             {errors.pricePerDay && (
-                                <p className="mt-1 text-sm text-red-500">{errors.pricePerDay}</p>
+                                <p className="mt-1 text-sm text-red-500">{errors.pricePerDay.message}</p>
                             )}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Ghi chú</label>
                             <textarea
-                                name="notes"
-                                value={formData.notes}
-                                onChange={handleChange}
+                                {...register('notes')}
                                 className="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
                             />
                         </div>
