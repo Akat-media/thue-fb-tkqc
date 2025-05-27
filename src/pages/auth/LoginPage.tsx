@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Mail, Lock, Bot } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
+import axios from "axios";
+import { BaseUrl } from "../../api/BaseHeader";
 
 const LoginPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -11,7 +12,6 @@ const LoginPage: React.FC = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {}
   );
-  const { login, isLoading } = useAuth();
   const { addNotification } = useNotification();
   const navigate = useNavigate();
 
@@ -35,12 +35,23 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     if (!validateForm()) return;
     try {
-      await login(email, password);
-      addNotification(
-        "Đăng nhập thành công",
-        "Chào mừng bạn quay trở lại!",
-        "success"
-      );
+      await axios
+        .post(`${BaseUrl}/login`, {
+          email: email,
+          password: password,
+        })
+        .then((res) => {
+          navigate("/");
+          localStorage.setItem("access_token", res.data.data.access_token);
+          localStorage.setItem("refresh_token", res.data.data.refresh_token);
+          localStorage.setItem("user", JSON.stringify(res.data.data));
+          addNotification(
+            "Đăng nhập thành công",
+            "Chào mừng bạn quay trở lại!",
+            "success"
+          );
+        });
+
       navigate("/");
     } catch (error) {
       console.error("Login error:", error);
