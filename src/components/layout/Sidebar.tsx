@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   LayoutDashboard,
   Briefcase,
@@ -14,6 +14,7 @@ import {
   AlignStartHorizontal,
   PackagePlus,
   QrCode,
+  Archive,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import clsx from "clsx";
@@ -26,8 +27,11 @@ const Sidebar: React.FC<{
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [openProfileMenu, setOpenProfileMenu] = React.useState(false);
-
+  const [openProfileMenu, setOpenProfileMenu] = useState(false);
+  const isAdsMenuActive =
+    location.pathname.startsWith("/adsaccountmanager") ||
+    location.pathname === "/add-account";
+  const [openAdsSubmenu, setOpenAdsSubmenu] = useState(isAdsMenuActive);
   const toggleProfileMenu = () => setOpenProfileMenu(!openProfileMenu);
 
   const links = [
@@ -36,12 +40,6 @@ const Sidebar: React.FC<{
     { label: "Tài khoản đang thuê", icon: ShoppingCart, path: "/rentals" },
     { label: "Nạp tiền", icon: CreditCard, path: "/payments" },
     { label: "QR Here", icon: QrCode, path: "/deposit" },
-    {
-      label: "Quản lý TKQC",
-      icon: AlignStartHorizontal,
-      path: "/adsaccountmanager",
-    },
-    { label: "Thêm TKQC", icon: PackagePlus, path: "/add-account" },
     { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
   ];
@@ -94,7 +92,101 @@ const Sidebar: React.FC<{
         </div>
 
         <nav className="space-y-2">
-          {links.map(({ label, icon: Icon, path }) => (
+          {links.slice(0, 5).map(({ label, icon: Icon, path }) => (
+            <Link
+              key={path}
+              to={path}
+              className={clsx(
+                "group flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300",
+                location.pathname === path && "bg-blue-100 font-semibold"
+              )}
+            >
+              <div className="w-12 flex justify-center">
+                <Icon className="w-5 h-5" />
+              </div>
+              <span
+                className={clsx(
+                  "transition-all whitespace-nowrap overflow-hidden duration-300",
+                  isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+                )}
+              >
+                {label}
+              </span>
+            </Link>
+          ))}
+          <button
+            onClick={() => {
+              if (!isSidebarOpen) {
+                toggleSidebar();
+              } else {
+                setOpenAdsSubmenu(!openAdsSubmenu);
+              }
+            }}
+            className={clsx(
+              "group flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300 w-full",
+              isAdsMenuActive && "bg-blue-100 font-semibold"
+            )}
+          >
+            <div className="w-12 flex justify-center">
+              <AlignStartHorizontal className="w-5 h-5" />
+            </div>
+            <span
+              className={clsx(
+                "transition-all whitespace-nowrap overflow-hidden duration-300",
+                isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+              )}
+            >
+              Quản lý TKQC
+            </span>
+            {isSidebarOpen && (
+              <ChevronDown
+                className={clsx(
+                  "ml-auto w-4 h-4 transition-transform",
+                  openAdsSubmenu && "rotate-180"
+                )}
+              />
+            )}
+          </button>
+
+          <div
+            className={clsx(
+              "transition-all duration-1000 ease-in-out overflow-hidden transform origin-top",
+              openAdsSubmenu && isSidebarOpen
+                ? "max-h-40 opacity-100 scale-y-100 mt-1"
+                : "max-h-0 opacity-0 scale-y-95"
+            )}
+          >
+            <div className="ml-10 space-y-1">
+              <Link
+                to="/adsaccountmanager"
+                className={clsx(
+                  "flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700",
+                  location.pathname === "/adsaccountmanager" &&
+                    "bg-blue-100 font-semibold"
+                )}
+              >
+                <div className="w-8 flex justify-center">
+                  <Archive className="w-4 h-4" />
+                </div>
+                <span className="text-gray-600">Quản lý tài khoản</span>
+              </Link>
+              <Link
+                to="/add-account"
+                className={clsx(
+                  "flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700",
+                  location.pathname === "/add-account" &&
+                    "bg-blue-100 font-semibold"
+                )}
+              >
+                <div className="w-8 flex justify-center">
+                  <PackagePlus className="w-4 h-4" />
+                </div>
+                <span className="text-gray-600">Thêm TKQC</span>
+              </Link>
+            </div>
+          </div>
+
+          {links.slice(5).map(({ label, icon: Icon, path }) => (
             <Link
               key={path}
               to={path}
@@ -119,7 +211,7 @@ const Sidebar: React.FC<{
         </nav>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2 mt-6">
         <Link
           to="/help"
           className="flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300"
@@ -154,7 +246,7 @@ const Sidebar: React.FC<{
           </span>
         </Link>
 
-        {/* User profile */}
+        {/* User profile (nếu đang đăng nhập) */}
         {user && isSidebarOpen && (
           <div className="relative mt-2">
             <button

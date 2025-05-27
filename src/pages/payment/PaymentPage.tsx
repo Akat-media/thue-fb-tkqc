@@ -37,10 +37,28 @@ const mockTransactions: Transaction[] = [
     id: "3",
     userId: "1",
     amount: 200000,
-    type: "refund",
+    type: "deposit",
     status: "completed",
-    description: "Hoàn tiền limit chưa sử dụng",
+    description: "Nạp tiền qua Web2m - Ví điện tử",
     createdAt: new Date(2023, 5, 18, 9, 15),
+  },
+  {
+    id: "4",
+    userId: "1",
+    amount: 300000,
+    type: "payment",
+    status: "completed",
+    description: "Thanh toán gói dịch vụ AI - 1 tháng",
+    createdAt: new Date(2023, 5, 20, 16, 30),
+  },
+  {
+    id: "5",
+    userId: "1",
+    amount: 100000,
+    type: "payment",
+    status: "completed",
+    description: "Thanh toán thuê Tài Khoản Quảng Cáo - Limit thấp",
+    createdAt: new Date(2023, 5, 16, 14, 45),
   },
 ];
 
@@ -48,9 +66,8 @@ const PaymentPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("deposit");
   const [transactions] = useState<Transaction[]>(mockTransactions);
   const [selectedAmount, setSelectedAmount] = useState(1000000);
-  const [customAmount, setCustomAmount] = useState("");
+  const [customAmount, setCustomAmount] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-
   const { user } = useAuth();
   const { addNotification } = useNotification();
 
@@ -135,7 +152,8 @@ const PaymentPage: React.FC = () => {
               onChange={(e) => setActiveTab(e.target.value)}
             >
               <option value="deposit">Nạp tiền</option>
-              <option value="history">Lịch sử giao dịch</option>
+              <option value="history">Lịch sử nạp</option>
+              <option value="platform">Thanh toán nền tảng</option>
             </select>
           </div>
           <div className="hidden sm:block">
@@ -161,7 +179,17 @@ const PaymentPage: React.FC = () => {
                   onClick={() => setActiveTab("history")}
                 >
                   <FileText className="h-5 w-5 mr-2 inline-block" />
-                  Lịch sử giao dịch
+                  Lịch sử nạp
+                </button>
+                <button
+                  className={`${
+                    activeTab === "platform"
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                  onClick={() => setActiveTab("platform")}
+                >
+                  Thanh toán nền tảng
                 </button>
               </nav>
             </div>
@@ -169,20 +197,24 @@ const PaymentPage: React.FC = () => {
         </div>
 
         <div className="mt-6">
-          {activeTab === "deposit" ? (
+          {activeTab === "deposit" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Nạp tiền qua Web2m</CardTitle>
+                  <CardTitle className="text-xl sm:text-2xl font-semibold">
+                    Nạp tiền qua Web2m
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Chọn mệnh giá
+                      <label className="block text-xl font-medium text-gray-700">
+                        Vui lòng chọn mệnh giá
                       </label>
                       <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        {[500000, 1000000, 2000000, 5000000].map((amount) => (
+                        {[
+                          500000, 1000000, 2000000, 3000000, 5000000, 10000000,
+                        ].map((amount) => (
                           <button
                             key={amount}
                             type="button"
@@ -200,19 +232,41 @@ const PaymentPage: React.FC = () => {
                           </button>
                         ))}
                         <div className="col-span-2 sm:col-span-3">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Hoặc nhập số tiền khác
+                          <label className="block text-xl font-medium text-gray-700">
+                            Hoặc nhập số tiền bạn muốn 👇
                           </label>
                           <div className="mt-1">
                             <input
                               type="number"
-                              className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              className={`shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full h-12 px-4 sm:text-sm rounded-md ${
+                                customAmount &&
+                                (parseInt(customAmount) < 50000 ||
+                                  parseInt(customAmount) % 1000 !== 0)
+                                  ? "border-red-500"
+                                  : "border border-transparent"
+                              }`}
                               placeholder="Nhập số tiền"
                               value={customAmount}
-                              onChange={(e) => setCustomAmount(e.target.value)}
-                              min="100000"
-                              step="10000"
+                              onChange={(e) => {
+                                const raw = e.target.value.replace(
+                                  /[^0-9]/g,
+                                  ""
+                                );
+                                setCustomAmount(raw);
+                              }}
+                              min="50000"
+                              step="1000"
                             />
+
+                            {customAmount &&
+                              (parseInt(customAmount) < 50000 ||
+                                parseInt(customAmount) % 1000 !== 0) && (
+                                <p className="text-red-500 text-xs mt-1">
+                                  Vui lòng nhập số tiền từ 50.000 VNĐ trở lên và
+                                  là số tiền chẵn hàng nghìn (vd: 50.000 VNĐ,
+                                  68.000 VNĐ, 100.000 VNĐ).
+                                </p>
+                              )}
                           </div>
                         </div>
                       </div>
@@ -226,95 +280,89 @@ const PaymentPage: React.FC = () => {
                             aria-hidden="true"
                           />
                         </div>
-                        <div className="ml-3">
-                          <h3 className="text-sm font-medium text-blue-800">
+                        <div className="ml-3 w-full">
+                          <h3 className="text-sm font-medium text-blue-800 mb-2">
                             Thông tin chuyển khoản
                           </h3>
-                          <div className="mt-2 text-sm text-blue-700 space-y-1">
-                            <div className="flex justify-between">
-                              <span>Ngân hàng:</span>
-                              <div className="flex items-center">
-                                <span className="font-medium">Vietcombank</span>
-                                <button
-                                  onClick={() => handleCopyClick("Vietcombank")}
-                                  className="ml-2 text-blue-500 hover:text-blue-700"
-                                >
-                                  <Copy className="h-4 w-4" />
-                                </button>
-                              </div>
+                          <div className="text-sm text-blue-700 space-y-2 grid grid-cols-2 gap-x-4">
+                            <span className="self-center">Ngân hàng:</span>
+                            <div className="flex justify-end items-center">
+                              <span className="font-medium">Vietcombank</span>
+                              <button
+                                onClick={() => handleCopyClick("Vietcombank")}
+                                className="ml-2 text-blue-500 hover:text-blue-700"
+                              >
+                                <Copy className="h-4 w-4" />
+                              </button>
                             </div>
-                            <div className="flex justify-between">
-                              <span>Số tài khoản:</span>
-                              <div className="flex items-center">
-                                <span className="font-medium">1234567890</span>
-                                <button
-                                  onClick={() => handleCopyClick("1234567890")}
-                                  className="ml-2 text-blue-500 hover:text-blue-700"
-                                >
-                                  <Copy className="h-4 w-4" />
-                                </button>
-                              </div>
+
+                            <span className="self-center">Số tài khoản:</span>
+                            <div className="flex justify-end items-center">
+                              <span className="font-medium">1234567890</span>
+                              <button
+                                onClick={() => handleCopyClick("1234567890")}
+                                className="ml-2 text-blue-500 hover:text-blue-700"
+                              >
+                                <Copy className="h-4 w-4" />
+                              </button>
                             </div>
-                            <div className="flex justify-between">
-                              <span>Chủ tài khoản:</span>
-                              <div className="flex items-center">
-                                <span className="font-medium">
-                                  CÔNG TY TNHH AKADS
-                                </span>
-                                <button
-                                  onClick={() =>
-                                    handleCopyClick("CÔNG TY TNHH AKADS")
-                                  }
-                                  className="ml-2 text-blue-500 hover:text-blue-700"
-                                >
-                                  <Copy className="h-4 w-4" />
-                                </button>
-                              </div>
+
+                            <span className="self-center">Chủ tài khoản:</span>
+                            <div className="flex justify-end items-center">
+                              <span className="font-medium">
+                                CÔNG TY TNHH AKADS
+                              </span>
+                              <button
+                                onClick={() =>
+                                  handleCopyClick("CÔNG TY TNHH AKADS")
+                                }
+                                className="ml-2 text-blue-500 hover:text-blue-700"
+                              >
+                                <Copy className="h-4 w-4" />
+                              </button>
                             </div>
-                            <div className="flex justify-between">
-                              <span>Nội dung CK:</span>
-                              <div className="flex items-center">
-                                <span className="font-medium">
-                                  AKADS{" "}
-                                  {user?.name ? user.name.split(" ")[0] : ""}
-                                </span>
-                                <button
-                                  onClick={() =>
-                                    handleCopyClick(
-                                      `AKADS ${user?.name.split(" ")[0]}`
-                                    )
-                                  }
-                                  className="ml-2 text-blue-500 hover:text-blue-700"
-                                >
-                                  <Copy className="h-4 w-4" />
-                                </button>
-                              </div>
+
+                            <span className="self-center">Nội dung CK:</span>
+                            <div className="flex justify-end items-center">
+                              <span className="font-medium">
+                                AKADS{" "}
+                                {user?.name ? user.name.split(" ")[0] : ""}
+                              </span>
+                              <button
+                                onClick={() =>
+                                  handleCopyClick(
+                                    `AKADS ${user?.name.split(" ")[0]}`
+                                  )
+                                }
+                                className="ml-2 text-blue-500 hover:text-blue-700"
+                              >
+                                <Copy className="h-4 w-4" />
+                              </button>
                             </div>
-                            <div className="flex justify-between">
-                              <span>Số tiền:</span>
-                              <div className="flex items-center">
-                                <span className="font-medium">
-                                  {(customAmount
-                                    ? parseInt(customAmount)
-                                    : selectedAmount
-                                  ).toLocaleString("vi-VN")}{" "}
-                                  VNĐ
-                                </span>
-                                <button
-                                  onClick={() =>
-                                    handleCopyClick(
-                                      `${
-                                        customAmount
-                                          ? parseInt(customAmount)
-                                          : selectedAmount
-                                      }`
-                                    )
-                                  }
-                                  className="ml-2 text-blue-500 hover:text-blue-700"
-                                >
-                                  <Copy className="h-4 w-4" />
-                                </button>
-                              </div>
+
+                            <span className="self-center">Số tiền:</span>
+                            <div className="flex justify-end items-center">
+                              <span className="font-medium">
+                                {(customAmount
+                                  ? parseInt(customAmount)
+                                  : selectedAmount
+                                ).toLocaleString("vi-VN")}{" "}
+                                VNĐ
+                              </span>
+                              <button
+                                onClick={() =>
+                                  handleCopyClick(
+                                    `${
+                                      customAmount
+                                        ? parseInt(customAmount)
+                                        : selectedAmount
+                                    }`
+                                  )
+                                }
+                                className="ml-2 text-blue-500 hover:text-blue-700"
+                              >
+                                <Copy className="h-4 w-4" />
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -417,119 +465,174 @@ const PaymentPage: React.FC = () => {
                 </CardContent>
               </Card>
             </div>
-          ) : (
+          )}
+
+          {activeTab === "history" && (
             <div>
               <Card>
                 <CardHeader>
-                  <CardTitle>Lịch sử giao dịch</CardTitle>
+                  <CardTitle>Lịch sử nạp</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Thời gian
                           </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Loại giao dịch
                           </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Mô tả
                           </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Số tiền
                           </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Trạng thái
                           </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {transactions.map((transaction) => (
-                          <tr key={transaction.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {formatTransactionDate(transaction.createdAt)}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  transaction.type === "deposit"
-                                    ? "bg-green-100 text-green-800"
-                                    : transaction.type === "refund"
-                                    ? "bg-blue-100 text-blue-800"
-                                    : "bg-yellow-100 text-yellow-800"
-                                }`}
-                              >
-                                {transaction.type === "deposit"
-                                  ? "Nạp tiền"
-                                  : transaction.type === "refund"
-                                  ? "Hoàn tiền"
-                                  : "Thanh toán"}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {transaction.description}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                              <span
-                                className={`font-medium ${
-                                  transaction.type === "deposit" ||
-                                  transaction.type === "refund"
-                                    ? "text-green-600"
-                                    : "text-red-600"
-                                }`}
-                              >
-                                {transaction.type === "deposit" ||
-                                transaction.type === "refund"
-                                  ? "+"
-                                  : "-"}
-                                {transaction.amount.toLocaleString("vi-VN")} VNĐ
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  transaction.status === "completed"
-                                    ? "bg-green-100 text-green-800"
+                        {transactions
+                          .filter((t) => t.type === "deposit")
+                          .map((transaction) => (
+                            <tr
+                              key={transaction.id}
+                              className="hover:bg-gray-50"
+                            >
+                              <td className="px-6 py-4 text-sm text-gray-500">
+                                {formatTransactionDate(transaction.createdAt)}
+                              </td>
+                              <td className="px-6 py-4 text-sm">
+                                <span className="bg-green-100 text-green-800 px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                  Nạp tiền
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-500">
+                                {transaction.description}
+                              </td>
+                              <td className="px-6 py-4 text-sm">
+                                <span className="text-green-600 font-medium">
+                                  +{transaction.amount.toLocaleString("vi-VN")}{" "}
+                                  VNĐ
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 text-sm">
+                                <span
+                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    transaction.status === "completed"
+                                      ? "bg-green-100 text-green-800"
+                                      : transaction.status === "pending"
+                                      ? "bg-yellow-100 text-yellow-800"
+                                      : "bg-red-100 text-red-800"
+                                  }`}
+                                >
+                                  {transaction.status === "completed"
+                                    ? "Hoàn thành"
                                     : transaction.status === "pending"
-                                    ? "bg-yellow-100 text-yellow-800"
-                                    : "bg-red-100 text-red-800"
-                                }`}
-                              >
-                                {transaction.status === "completed"
-                                  ? "Hoàn thành"
-                                  : transaction.status === "pending"
-                                  ? "Đang xử lý"
-                                  : "Thất bại"}
-                              </span>
+                                    ? "Đang xử lý"
+                                    : "Thất bại"}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        {transactions.filter((t) => t.type === "deposit")
+                          .length === 0 && (
+                          <tr>
+                            <td
+                              colSpan={5}
+                              className="text-center py-6 text-gray-500"
+                            >
+                              Chưa có giao dịch nạp tiền nào.
                             </td>
                           </tr>
-                        ))}
+                        )}
                       </tbody>
                     </table>
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
-                  {transactions.length === 0 && (
-                    <div className="text-center py-8">
-                      <p className="text-gray-500">Chưa có giao dịch nào.</p>
-                    </div>
-                  )}
+          {activeTab === "platform" && (
+            <div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Lịch sử giao dịch nền tảng</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Thời gian
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Mô tả
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Số tiền
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Trạng thái
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {transactions
+                          .filter((t) => t.type === "payment")
+                          .map((t) => (
+                            <tr key={t.id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 text-sm text-gray-500">
+                                {formatTransactionDate(t.createdAt)}
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-500">
+                                {t.description}
+                              </td>
+                              <td className="px-6 py-4 text-sm">
+                                <span className="text-red-600 font-medium">
+                                  -{t.amount.toLocaleString("vi-VN")} VNĐ
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 text-sm">
+                                <span
+                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    t.status === "completed"
+                                      ? "bg-green-100 text-green-800"
+                                      : t.status === "pending"
+                                      ? "bg-yellow-100 text-yellow-800"
+                                      : "bg-red-100 text-red-800"
+                                  }`}
+                                >
+                                  {t.status === "completed"
+                                    ? "Hoàn thành"
+                                    : t.status === "pending"
+                                    ? "Đang xử lý"
+                                    : "Thất bại"}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        {transactions.filter((t) =>
+                          t.description.toLowerCase().includes("dịch vụ ai")
+                        ).length === 0 && (
+                          <tr>
+                            <td
+                              colSpan={4}
+                              className="text-center py-6 text-gray-500"
+                            >
+                              Tài khoản chưa có giao dịch nền tảng nào.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </CardContent>
               </Card>
             </div>
