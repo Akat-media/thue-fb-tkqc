@@ -86,6 +86,11 @@ const PaymentPage: React.FC = () => {
   }`;
   const [isShowingQR, setIsShowingQR] = useState(false);
   const [countdown, setCountdown] = useState(120);
+  const [qrImageUrl, setQrImageUrl] = useState<string | null>(null);
+  const storedUserData = localStorage.getItem("user");
+  const shortCode = storedUserData
+    ? JSON.parse(storedUserData)?.user?.short_code || "NAP0000"
+    : "NAP0000";
 
   const handleCopyClick = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -107,7 +112,6 @@ const PaymentPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // In a real app, this would be an API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       addNotification(
@@ -115,7 +119,19 @@ const PaymentPage: React.FC = () => {
         "Vui lòng chuyển khoản theo thông tin đã cung cấp",
         "success"
       );
+
       setIsShowingQR(true);
+
+      const encodedName = encodeURIComponent(user?.name || "AKADS");
+      const storedUserData = localStorage.getItem("user");
+      const shortCode = storedUserData
+        ? JSON.parse(storedUserData)?.user?.short_code || "NAP0000"
+        : "NAP0000";
+
+      const qrUrl = `https://apiqr.web2m.com/api/generate/ACB/20478471/${encodedName}?amount=${amount}&memo=${shortCode}&is_mask=1&bg=1`;
+
+      setQrImageUrl(qrUrl);
+
       setTimeout(() => {
         setShowQRCode(true);
         setIsShowingQR(false);
@@ -246,6 +262,52 @@ const PaymentPage: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
+                    <div className="col-span-2 sm:col-span-3">
+                      <label className="block text-xl font-medium text-gray-700">
+                        Nhập số tiền bạn muốn nạp 👇
+                      </label>
+                      <div className="mt-2">
+                        <div className="relative">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            className={`shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full h-12 px-4 pr-16 sm:text-sm rounded-md ${
+                              customAmount &&
+                              (parseInt(customAmount) < 50000 ||
+                                parseInt(customAmount) % 1000 !== 0)
+                                ? "border-red-500"
+                                : "border border-gray-300"
+                            }`}
+                            placeholder="Nhập số tiền"
+                            value={
+                              customAmount
+                                ? parseInt(customAmount).toLocaleString("vi-VN")
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const raw = e.target.value.replace(/[^0-9]/g, "");
+                              setCustomAmount(raw);
+                              setShowQRCode(false);
+                            }}
+                            min="50000"
+                            step="1000"
+                          />
+                          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+                            VNĐ
+                          </span>
+                        </div>
+
+                        {customAmount &&
+                          (parseInt(customAmount) < 50000 ||
+                            parseInt(customAmount) % 1000 !== 0) && (
+                            <p className="text-red-500 text-xs mt-1">
+                              Vui lòng nhập số tiền từ 50.000 VNĐ trở lên và là
+                              số tiền chẵn hàng nghìn (vd: 50.000 VNĐ, 68.000
+                              VNĐ, 100.000 VNĐ).
+                            </p>
+                          )}
+                      </div>
+                    </div>
                     <div>
                       <label className="block text-xl font-medium text-gray-700">
                         Vui lòng chọn mệnh giá
@@ -271,57 +333,6 @@ const PaymentPage: React.FC = () => {
                             {amount.toLocaleString("vi-VN")}đ
                           </button>
                         ))}
-                        <div className="col-span-2 sm:col-span-3">
-                          <label className="block text-xl font-medium text-gray-700">
-                            Hoặc nhập số tiền bạn muốn 👇
-                          </label>
-                          <div className="mt-1">
-                            <div className="relative">
-                              <input
-                                type="text"
-                                inputMode="numeric"
-                                className={`shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full h-12 px-4 pr-16 sm:text-sm rounded-md ${
-                                  customAmount &&
-                                  (parseInt(customAmount) < 50000 ||
-                                    parseInt(customAmount) % 1000 !== 0)
-                                    ? "border-red-500"
-                                    : "border border-transparent"
-                                }`}
-                                placeholder="Nhập số tiền"
-                                value={
-                                  customAmount
-                                    ? parseInt(customAmount).toLocaleString(
-                                        "vi-VN"
-                                      )
-                                    : ""
-                                }
-                                onChange={(e) => {
-                                  const raw = e.target.value.replace(
-                                    /[^0-9]/g,
-                                    ""
-                                  );
-                                  setCustomAmount(raw);
-                                  setShowQRCode(false);
-                                }}
-                                min="50000"
-                                step="1000"
-                              />
-                              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">
-                                VNĐ
-                              </span>
-                            </div>
-
-                            {customAmount &&
-                              (parseInt(customAmount) < 50000 ||
-                                parseInt(customAmount) % 1000 !== 0) && (
-                                <p className="text-red-500 text-xs mt-1">
-                                  Vui lòng nhập số tiền từ 50.000 VNĐ trở lên và
-                                  là số tiền chẵn hàng nghìn (vd: 50.000 VNĐ,
-                                  68.000 VNĐ, 100.000 VNĐ).
-                                </p>
-                              )}
-                          </div>
-                        </div>
                       </div>
                     </div>
 
@@ -340,9 +351,9 @@ const PaymentPage: React.FC = () => {
                           <div className="text-sm text-blue-700 space-y-2 grid grid-cols-2 gap-x-4">
                             <span className="self-center">Ngân hàng:</span>
                             <div className="flex justify-end items-center">
-                              <span className="font-medium">Vietcombank</span>
+                              <span className="font-medium">ACB Bank</span>
                               <button
-                                onClick={() => handleCopyClick("Vietcombank")}
+                                onClick={() => handleCopyClick("ACB Bank")}
                                 className="ml-2 text-blue-500 hover:text-blue-700"
                               >
                                 <Copy className="h-4 w-4" />
@@ -351,9 +362,9 @@ const PaymentPage: React.FC = () => {
 
                             <span className="self-center">Số tài khoản:</span>
                             <div className="flex justify-end items-center">
-                              <span className="font-medium">1234567890</span>
+                              <span className="font-medium">20478471</span>
                               <button
-                                onClick={() => handleCopyClick("1234567890")}
+                                onClick={() => handleCopyClick("20478471")}
                                 className="ml-2 text-blue-500 hover:text-blue-700"
                               >
                                 <Copy className="h-4 w-4" />
@@ -377,16 +388,9 @@ const PaymentPage: React.FC = () => {
 
                             <span className="self-center">Nội dung CK:</span>
                             <div className="flex justify-end items-center">
-                              <span className="font-medium">
-                                AKADS{" "}
-                                {user?.name ? user.name.split(" ")[0] : ""}
-                              </span>
+                              <span className="font-medium">{shortCode}</span>
                               <button
-                                onClick={() =>
-                                  handleCopyClick(
-                                    `AKADS ${user?.name.split(" ")[0]}`
-                                  )
-                                }
+                                onClick={() => handleCopyClick(shortCode)}
                                 className="ml-2 text-blue-500 hover:text-blue-700"
                               >
                                 <Copy className="h-4 w-4" />
@@ -459,7 +463,13 @@ const PaymentPage: React.FC = () => {
                   ) : showQRCode ? (
                     <div className="flex items-center justify-center min-h-[500px]">
                       <div className="flex flex-col items-center text-sm text-gray-700 space-y-6 text-center">
-                        <QRCodeSVG value={qrData} size={300} level="H" />
+                        {qrImageUrl && (
+                          <img
+                            src={qrImageUrl}
+                            alt="Mã QR chuyển khoản"
+                            className="w-[400px] h-[500px] rounded shadow"
+                          />
+                        )}
                         <div className="space-y-1">
                           <p className="text-sm text-red-500 font-semibold">
                             Mã QR sẽ hết hạn sau: {Math.floor(countdown / 60)}:
@@ -484,8 +494,7 @@ const PaymentPage: React.FC = () => {
                             VNĐ
                           </p>
                           <p>
-                            <strong>Nội dung CK:</strong> AKADS{" "}
-                            {user?.name ? user.name.split(" ")[0] : ""}
+                            <strong>Nội dung CK:</strong> {shortCode}
                           </p>
                         </div>
                       </div>
