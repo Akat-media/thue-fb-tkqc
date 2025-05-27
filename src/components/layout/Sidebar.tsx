@@ -14,6 +14,7 @@ import {
   AlignStartHorizontal,
   PackagePlus,
   QrCode,
+  CircleDollarSign,
   Archive,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -38,8 +39,8 @@ const Sidebar: React.FC<{
     { label: "Trang chủ", icon: LayoutDashboard, path: "/dashboard" },
     { label: "Danh sách BM", icon: Briefcase, path: "/marketplace" },
     { label: "Tài khoản đang thuê", icon: ShoppingCart, path: "/rentals" },
-    { label: "Nạp tiền", icon: CreditCard, path: "/payments" },
-    { label: "QR Here", icon: QrCode, path: "/deposit" },
+    { label: "Nạp tiền", icon: CircleDollarSign, path: "/payments" },
+    // { label: "QR Here", icon: QrCode, path: "/deposit" },
     { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
   ];
