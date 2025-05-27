@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, User, Phone, Bot, CheckCircle2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
+import { BaseUrl } from "../../api/BaseHeader";
+import axios from "axios";
 
 const RegisterPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -19,7 +21,7 @@ const RegisterPage: React.FC = () => {
     confirmPassword?: string;
   }>({});
 
-  const { register, isLoading } = useAuth();
+  // const { register, isLoading } = useAuth();
   const { addNotification } = useNotification();
   const navigate = useNavigate();
 
@@ -45,13 +47,34 @@ const RegisterPage: React.FC = () => {
     e.preventDefault();
     if (!validateForm()) return;
     try {
-      await register(name, email, phone, password);
-      addNotification(
-        "Đăng ký thành công",
-        "Tài khoản của bạn đã được tạo!",
-        "success"
-      );
-      navigate("/");
+      // await register(name, email, phone, password);
+      const registerRes = await axios.post(`${BaseUrl}/user`, {
+        username: name,
+        email: email,
+        phone: phone,
+        password: password,
+        role: "user",
+      });
+      if (registerRes.status == 200) {
+        addNotification(
+          "Đăng ký thành công",
+          "Tài khoản của bạn đã được tạo!",
+          "success"
+        );
+        await axios
+          .post(`${BaseUrl}/login`, {
+            email: email,
+            password: password,
+          })
+          .then((res) => {
+            navigate("/");
+            localStorage.setItem("access_token", res.data.data.access_token);
+            localStorage.setItem("refresh_token", res.data.data.refresh_token);
+            localStorage.setItem("user", JSON.stringify(res.data.data));
+          });
+      } else {
+        addNotification("Đăng ký thất bại", registerRes.data.message, "error");
+      }
     } catch (error) {
       console.error("Registration error:", error);
       addNotification(
