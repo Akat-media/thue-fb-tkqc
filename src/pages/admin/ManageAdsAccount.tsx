@@ -152,20 +152,19 @@ const ManageAdsAccount: React.FC = () => {
   return (
     <Layout>
       <div className="p-6">
-        <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+        <h1 className="text-1xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
           Quản lý tài khoản
-        </h2>
-        <div className="bg-white shadow-sm rounded-lg p-4 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        </h1>
+        <div className="bg-white shadow-sm rounded-lg p-4 mt-3 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* Search bar */}
           <div className="relative w-full md:w-[350px]">
             <input
               type="text"
               placeholder="Tìm kiếm theo ID, Tài Khoản"
-              className="form-control w-full pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
+              className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <i className="absolute left-3 top-2.5 text-gray-400">🔍</i>
           </div>
           <div className="flex items-center gap-3">
             <select
@@ -208,8 +207,8 @@ const ManageAdsAccount: React.FC = () => {
                 <th className="px-4 py-2">Phí</th>
                 <th className="px-4 py-2">Tổng</th>
                 <th className="px-4 py-2">Trạng thái</th>
-                <th className="px-4 py-2">Giới hạn trước</th>
-                <th className="px-4 py-2">Giới hạn sau</th>
+                <th className="px-4 py-2">Ngưỡng Thanh Toán</th>
+                <th className="px-4 py-2">Giới Hạn Chi Tiêu</th>
                 <th className="px-4 py-2">Ngày tạo</th>
               </tr>
             </thead>
