@@ -13,6 +13,7 @@ import PaymentForm from "./pages/marketplace/PaymentForm.tsx";
 import ManageAdsAccount from "./pages/admin/ManageAdsAccount";
 import AdminTransactionsPage from "./pages/admin/AdminTransactionsPage";
 import UserManagementPage from "./pages/admin/UserManagementPage";
+import Analytics from "./pages/analytics/Analytics";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/payments" element={<PaymentPage />} />
             <Route path="/deposit" element={<PaymentForm />} />
             <Route path="/adsaccountmanager" element={<ManageAdsAccount />} />
+            <Route path="/analytics" element={<Analytics />} />
             <Route
               path="/admintransaction"
               element={<AdminTransactionsPage />}

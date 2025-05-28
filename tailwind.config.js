@@ -17,6 +17,12 @@ export default {
           },
         },
       },
+      colors: {
+        revenue: '#4CAF50',
+        adCost: '#FF5252',
+        reach: '#2196F3',
+        engagement: '#AB47BC',
+      },
     },
   },
   plugins: [],
