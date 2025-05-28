@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Mail, Phone } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Facebook, Twitter, Instagram, Mail, Phone } from "lucide-react";
 
 const Footer: React.FC = () => {
   return (
@@ -8,11 +8,12 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1">
-            <Link to="/" className="text-white text-xl font-bold">
+            <Link to="/" className="text-white text-xl font-semibold	">
               AKAds
             </Link>
             <p className="mt-2 text-sm text-gray-300">
-              Nền tảng cho thuê tài khoản quảng cáo Facebook uy tín, nhanh chóng và an toàn.
+              Nền tảng cho thuê tài khoản quảng cáo Facebook uy tín, nhanh chóng
+              và an toàn.
             </p>
             <div className="mt-4 flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-white">
@@ -35,12 +36,18 @@ const Footer: React.FC = () => {
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link to="/marketplace" className="text-gray-300 hover:text-white">
+                <Link
+                  to="/marketplace"
+                  className="text-gray-300 hover:text-white"
+                >
                   Cho thuê BM
                 </Link>
               </li>
               <li>
-                <Link to="/marketplace" className="text-gray-300 hover:text-white">
+                <Link
+                  to="/marketplace"
+                  className="text-gray-300 hover:text-white"
+                >
                   Cho thuê tài khoản quảng cáo
                 </Link>
               </li>

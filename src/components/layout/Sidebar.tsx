@@ -91,7 +91,7 @@ const Sidebar: React.FC<{
           <Link
             to="/"
             className={clsx(
-              "text-2xl font-bold text-blue-600 hover:underline transition-all duration-300",
+              "text-2xl font-semibold	 text-blue-600 hover:underline transition-all duration-300",
               !isSidebarOpen && "opacity-0 w-0 overflow-hidden"
             )}
           >

@@ -21,7 +21,7 @@ const Navbar: React.FC = () => {
     <nav className="bg-white shadow-sm w-full">
       <div className="flex justify-between items-center h-16 px-4 sm:px-6 lg:px-8">
         <div className="flex-shrink-0">
-          <Link to="/" className="text-blue-600 text-3xl font-bold">
+          <Link to="/" className="text-blue-600 text-3xl font-semibold	">
             AKAds
           </Link>
         </div>
