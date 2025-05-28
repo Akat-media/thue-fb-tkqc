@@ -116,7 +116,7 @@ const RegisterPage: React.FC = () => {
       <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-l from-transparent via-blue-100/70 to-white backdrop-blur-sm relative">
         <Link
           to="/"
-          className="absolute top-5 right-9 text-[#0167F8] font-bold text-3xl hover:underline"
+          className="absolute top-5 right-9 text-[#0167F8] font-semibold	 text-3xl hover:underline"
         >
           AKAds
         </Link>

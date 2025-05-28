@@ -73,7 +73,7 @@ const Sidebar: React.FC<{
           <Link
             to="/"
             className={clsx(
-              "text-2xl font-bold text-blue-600 hover:underline transition-all duration-300",
+              "text-2xl font-semibold	 text-blue-600 hover:underline transition-all duration-300",
               !isSidebarOpen && "opacity-0 w-0 overflow-hidden"
             )}
           >
@@ -255,7 +255,7 @@ const Sidebar: React.FC<{
               className="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 transition"
             >
               <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0 -ml-1">
+                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold	 shrink-0 -ml-1">
                   {user.name?.charAt(0)?.toUpperCase()}
                 </div>
                 <div className="flex flex-col text-left">

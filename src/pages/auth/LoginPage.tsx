@@ -74,7 +74,7 @@ const LoginPage: React.FC = () => {
       <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-r from-transparent via-blue-100/70 to-white backdrop-blur-sm relative">
         <Link
           to="/"
-          className="absolute top-6 left-6 text-[#0167F8] font-bold text-3xl hover:underline"
+          className="absolute top-6 left-6 text-[#0167F8] font-semibold	 text-3xl hover:underline"
         >
           AKAds
         </Link>

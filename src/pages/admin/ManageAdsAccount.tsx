@@ -456,7 +456,7 @@ const ManageAdsAccount: React.FC = () => {
   return (
     <Layout>
       <div className="flex items-end justify-between mb-4">
-        <h1 className="text-1xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
+        <h1 className="text-1xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
           Quản lý tài khoản
         </h1>
         <button
@@ -865,7 +865,7 @@ const ManageAdsAccount: React.FC = () => {
               >
                 ×
               </button>
-              <h2 className="text-xl font-bold mb-4">Chi tiết tài khoản</h2>
+              <h2 className="text-xl font-semibold	 mb-4">Chi tiết tài khoản</h2>
               <ul className="space-y-2 text-sm">
                 {Object.entries(selectedAccount).map(([key, value]) => (
                   <li key={key}>

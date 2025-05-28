@@ -17,6 +17,9 @@ export default {
           },
         },
       },
+      fontFamily: {
+        work: ['"Work Sans"', "sans-serif"],
+      },
     },
   },
   plugins: [],

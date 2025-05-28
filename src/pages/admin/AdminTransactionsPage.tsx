@@ -134,7 +134,7 @@ const AdminTransactionsPage = () => {
     <Layout>
       <div className="p-6">
         <div className="flex items-end justify-between mb-4">
-          <h1 className="text-1xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
+          <h1 className="text-1xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
             Quản lý giao dịch
           </h1>
           <button
