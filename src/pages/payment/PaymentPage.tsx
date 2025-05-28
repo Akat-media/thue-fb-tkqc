@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CreditCard, Copy, RefreshCw, FileText } from "lucide-react";
+import { CreditCard, Copy, FileText, Landmark } from "lucide-react";
 import Layout from "../../components/layout/Layout";
 import Button from "../../components/ui/Button";
 import {
@@ -339,7 +339,7 @@ const PaymentPage: React.FC = () => {
                     <div className="rounded-md bg-blue-50 p-4">
                       <div className="flex">
                         <div className="flex-shrink-0">
-                          <RefreshCw
+                          <Landmark
                             className="h-5 w-5 text-blue-400"
                             aria-hidden="true"
                           />
@@ -447,9 +447,7 @@ const PaymentPage: React.FC = () => {
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    {showQRCode
-                      ? "Thông tin chuyển khoản"
-                      : "Hướng dẫn nạp tiền"}
+                    {showQRCode ? "Mã QR" : "Hướng dẫn nạp tiền"}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -474,27 +472,6 @@ const PaymentPage: React.FC = () => {
                           <p className="text-sm text-red-500 font-semibold">
                             Mã QR sẽ hết hạn sau: {Math.floor(countdown / 60)}:
                             {(countdown % 60).toString().padStart(2, "0")}
-                          </p>
-                          <p> </p>
-                          <p>
-                            <strong>Ngân hàng:</strong> Vietcombank
-                          </p>
-                          <p>
-                            <strong>Số tài khoản:</strong> 1234567890
-                          </p>
-                          <p>
-                            <strong>Chủ tài khoản:</strong> CÔNG TY TNHH AKADS
-                          </p>
-                          <p>
-                            <strong>Số tiền:</strong>{" "}
-                            {(customAmount
-                              ? parseInt(customAmount)
-                              : selectedAmount
-                            ).toLocaleString("vi-VN")}{" "}
-                            VNĐ
-                          </p>
-                          <p>
-                            <strong>Nội dung CK:</strong> {shortCode}
                           </p>
                         </div>
                       </div>

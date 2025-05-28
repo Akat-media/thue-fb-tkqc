@@ -1,6 +1,23 @@
 import React, { useState } from "react";
 import Layout from "../../components/layout/Layout";
 import Button from "../../components/ui/Button";
+import {
+  BadgeInfo,
+  BadgeCheck,
+  CircleDollarSign,
+  Scale,
+  Briefcase,
+  DollarSign,
+  AlarmClockPlus,
+  Pen,
+  ALargeSmall,
+  Infinity,
+  Clock9,
+  User,
+  LucideUserRoundCheck,
+  HandCoins,
+  RefreshCcw,
+} from "lucide-react";
 
 interface AdsAccount {
   id: string;
@@ -127,6 +144,8 @@ const ManageAdsAccount: React.FC = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [filtered, setFiltered] = useState(mockData);
+  const [activeCell, setActiveCell] = useState<string | null>(null);
+  const [activeRow, setActiveRow] = useState<string | null>(null);
 
   const handleFilter = () => {
     const result = mockData.filter((item) => {
@@ -148,14 +167,29 @@ const ManageAdsAccount: React.FC = () => {
     setStatusFilter("all");
     setFiltered(mockData);
   };
-
+  const handleSync = async () => {
+    // const response = await fetch("api note");
+    // const data = await response.json();
+    // setFiltered(data);
+    setFiltered(mockData);
+  };
   return (
     <Layout>
       <div className="p-6">
-        <h1 className="text-1xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-          Quản lý tài khoản
-        </h1>
-        <div className="bg-white shadow-sm rounded-lg p-4 mt-3 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-1xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+            Quản lý tài khoản
+          </h1>
+          <button
+            onClick={handleSync}
+            className="mt-0 flex items-center gap-1 text-sm text-blue-600 hover:underline"
+          >
+            <RefreshCcw className="w-4 h-4" />
+            Đồng Bộ Tài Khoản
+          </button>
+        </div>
+
+        <div className="pl-1 p-4 mt-3 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* Search bar */}
           <div className="relative w-full md:w-[350px]">
             <input
@@ -164,9 +198,9 @@ const ManageAdsAccount: React.FC = () => {
               className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-            />
+            />{" "}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
             <select
               className="form-select focus:outline-none focus:ring-0"
               value={statusFilter}
@@ -182,11 +216,10 @@ const ManageAdsAccount: React.FC = () => {
 
                   return matchSearch && matchStatus;
                 });
-
                 setFiltered(result);
               }}
             >
-              <option value="all">Tất cả trạng thái</option>
+              <option value="all">Tất cả</option>
               <option value="Thành công">Thành công</option>
               <option value="Đang xử lý">Đang xử lý</option>
               <option value="Thất bại">Thất bại</option>
@@ -195,55 +228,254 @@ const ManageAdsAccount: React.FC = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-auto">
-          <table className="min-w-full border rounded-lg table-auto text-sm text-left">
-            <thead className="bg-gray-100 text-gray-700 font-semibold">
+        <div className="overflow-auto rounded-lg border border-gray-200">
+          <table className="min-w-[1200px] table-fixed border border-gray-300 border-collapse bg-white text-sm text-gray-800">
+            <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-700">
               <tr>
-                <th className="px-4 py-2">ID</th>
-                <th className="px-4 py-2">Tài khoản</th>
-                <th className="px-4 py-2">FB Ads Id</th>
-                <th className="px-4 py-2">Ghi chú</th>
-                <th className="px-4 py-2">Số tiền</th>
-                <th className="px-4 py-2">Phí</th>
-                <th className="px-4 py-2">Tổng</th>
-                <th className="px-4 py-2">Trạng thái</th>
-                <th className="px-4 py-2">Ngưỡng Thanh Toán</th>
-                <th className="px-4 py-2">Giới Hạn Chi Tiêu</th>
-                <th className="px-4 py-2">Ngày tạo</th>
+                <th className="px-4 py-3 text-center min-w-[80px] whitespace-nowrap border border-gray-200">
+                  <BadgeInfo className="inline w-4 h-4 mr-2 text-gray-500" />
+                  ID
+                </th>
+                <th className="px-4 py-3 text-center min-w-[160px] whitespace-nowrap border border-gray-200">
+                  <BadgeCheck className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Account ID
+                </th>
+                <th className="px-4 py-3 text-center min-w-[160px] whitespace-nowrap border border-gray-200">
+                  <CircleDollarSign className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Account Status
+                </th>
+                <th className="px-4 py-3 text-center min-w-[120px] whitespace-nowrap border border-gray-200">
+                  <Scale className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Amount Spent
+                </th>
+                <th className="px-4 py-3 text-center min-w-[120px] whitespace-nowrap border border-gray-200">
+                  <Briefcase className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Balance
+                </th>
+                <th className="px-4 py-3 text-center min-w-[150px] whitespace-nowrap border border-gray-200">
+                  <DollarSign className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Business
+                </th>
+                <th className="px-4 py-3 text-center min-w-[100px] whitespace-nowrap border border-gray-200">
+                  <AlarmClockPlus className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Currency
+                </th>
+                <th className="px-4 py-3 text-center min-w-[140px] whitespace-nowrap border border-gray-200">
+                  <Pen className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Created Time
+                </th>
+                <th className="px-4 py-3 text-center min-w-[240px] whitespace-nowrap border border-gray-200">
+                  <ALargeSmall className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Reason Status
+                </th>
+                <th className="px-4 py-3 text-center min-w-[150px] whitespace-nowrap border border-gray-200">
+                  <Infinity className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Name
+                </th>
+                <th className="px-4 py-3 text-center min-w-[120px] whitespace-nowrap border border-gray-200">
+                  <Clock9 className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Spend Cap
+                </th>
+                <th className="px-4 py-3 text-center min-w-[100px] whitespace-nowrap border border-gray-200">
+                  <User className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Time
+                </th>
+                <th className="px-4 py-3 text-center min-w-[140px] whitespace-nowrap border border-gray-200">
+                  <LucideUserRoundCheck className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Owner
+                </th>
+                <th className="px-4 py-3 text-center min-w-[100px] whitespace-nowrap border border-gray-200">
+                  <HandCoins className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Personal
+                </th>
+                <th className="px-4 py-3 text-center min-w-[150px] whitespace-nowrap border border-gray-200">
+                  <HandCoins className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Prepay Account
+                </th>
               </tr>
             </thead>
-            <tbody>
-              {filtered.length > 0 ? (
-                filtered.map((item) => (
-                  <tr key={item.id} className="border-t hover:bg-gray-50">
-                    <td className="px-4 py-2">{item.id}</td>
-                    <td className="px-4 py-2">{item.accountName}</td>
-                    <td className="px-4 py-2">{item.facebookAdsId}</td>
-                    <td className="px-4 py-2">{item.note}</td>
-                    <td className="px-4 py-2">
-                      {item.amount.toLocaleString()}₫
-                    </td>
-                    <td className="px-4 py-2">{item.fee.toLocaleString()}₫</td>
-                    <td className="px-4 py-2">
-                      {item.total.toLocaleString()}₫
-                    </td>
-                    <td className="px-4 py-2">{item.status}</td>
-                    <td className="px-4 py-2">
-                      {item.limitBefore.toLocaleString()}₫
-                    </td>
-                    <td className="px-4 py-2">
-                      {item.limitAfter.toLocaleString()}₫
-                    </td>
-                    <td className="px-4 py-2">{item.createdAt}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={11} className="text-center py-4 text-gray-500">
-                    Không có giao dịch nào khớp với bộ lọc.
+
+            <tbody className="text-sm text-gray-800">
+              {filtered.map((item) => (
+                <tr
+                  key={item.id}
+                  className={`border-t ${
+                    activeRow === item.id ? "bg-blue-100" : "hover:bg-gray-50"
+                  }`}
+                >
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-id` || activeRow === item.id
+                        ? "bg-blue-100"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      setActiveRow(item.id);
+                      setActiveCell(`${item.id}-id`);
+                    }}
+                  >
+                    {item.id}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-accountName`
+                        ? "bg-blue-100"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-accountName`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.accountName}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-status` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-status`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.status}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-amount` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-amount`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.amount.toLocaleString()}₫
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-total` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-total`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.total.toLocaleString()}₫
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-business` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-business`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    Business name
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-currency` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-currency`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    VND
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-createdAt` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-createdAt`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.createdAt}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-note` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-note`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.note}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-name` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-name`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.accountName}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-limitAfter`
+                        ? "bg-blue-100"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-limitAfter`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.limitAfter.toLocaleString()}₫
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-time` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-time`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.createdAt}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-owner` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-owner`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    Owner Name
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-personal` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-personal`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    Personal
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-prepay` ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-prepay`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    Có
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
