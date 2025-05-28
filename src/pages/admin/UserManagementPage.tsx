@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Layout from "../../components/layout/Layout";
 import Button from "../../components/ui/Button";
+import { RefreshCcw, Eye, User, BadgeInfo, Clock9, Phone } from "lucide-react";
 
 interface User {
   id: string;
@@ -91,6 +92,7 @@ const UserManagementPage = () => {
   const [filteredUsers, setFilteredUsers] = useState(mockUsers);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeRowId, setActiveRowId] = useState<string | null>(null);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.toLowerCase();
@@ -104,42 +106,95 @@ const UserManagementPage = () => {
     );
   };
 
+  const handleSync = () => {
+    console.log("Đồng bộ người dùng...");
+  };
+
   return (
     <Layout>
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Quản lý người dùng</h1>
-
-        {/* Search */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
-          <input
-            type="text"
-            placeholder="Tìm theo tên hoặc email"
-            value={search}
-            onChange={handleSearch}
-            className="form-control w-full md:w-1/3"
-          />
+        <div className="flex items-end justify-between mb-4">
+          <h1 className="text-1xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
+            Quản lý người dùng
+          </h1>
+          <button
+            onClick={handleSync}
+            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition flex items-center gap-2"
+          >
+            <RefreshCcw className="w-4 h-4" />
+            Đồng Bộ Người Dùng
+          </button>
         </div>
 
-        {/* Table */}
-        <div className="overflow-auto">
-          <table className="w-full table-auto border rounded-lg text-sm text-center align-middle">
-            <thead className="bg-gray-100 text-gray-700 font-semibold">
+        {/* Tìm kiếm */}
+        <div className="bg-white rounded-lg p-4 flex flex-col md:flex-row gap-4 md:items-center md:justify-between shadow-sm mb-6">
+          <div className="relative w-full md:w-[350px]">
+            <input
+              type="text"
+              placeholder="Tìm theo tên hoặc email"
+              value={search}
+              onChange={handleSearch}
+              className="form-control w-full pl-2 pr-4 py-2 border rounded-lg focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+          <Button variant="outline">Tải về CSV</Button>
+        </div>
+
+        <div className="overflow-auto rounded-lg border border-gray-200">
+          <table className="min-w-[1200px] table-fixed border border-gray-300 border-collapse bg-white text-sm text-gray-800">
+            <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-700">
               <tr>
-                <th className="px-4 py-2">Tên</th>
-                <th className="px-4 py-2">Email</th>
-                <th className="px-4 py-2">Vai trò</th>
-                <th className="px-4 py-2">Trạng thái</th>
-                <th className="px-4 py-2">Ngày tạo</th>
-                <th className="px-4 py-2">Hành động</th>
+                <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                  <User className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Tên
+                </th>
+                <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                  <BadgeInfo className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Email
+                </th>
+                <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                  <Phone className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Số điện thoại
+                </th>
+                <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                  <User className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Vai trò
+                </th>
+                <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                  <BadgeInfo className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Trạng thái
+                </th>
+                <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                  <Clock9 className="inline w-4 h-4 mr-2 text-gray-500" />
+                  Ngày tạo
+                </th>
+                <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200"></th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-sm text-gray-800">
               {filteredUsers.map((user) => (
-                <tr key={user.id} className="border-t">
-                  <td className="px-4 py-2">{user.name}</td>
-                  <td className="px-4 py-2">{user.email}</td>
-                  <td className="px-4 py-2">{user.role}</td>
-                  <td className="px-4 py-2">
+                <tr
+                  key={user.id}
+                  className={`border-t cursor-pointer ${
+                    activeRowId === user.id ? "bg-blue-100" : "hover:bg-gray-50"
+                  }`}
+                  onClick={() =>
+                    setActiveRowId(activeRowId === user.id ? null : user.id)
+                  }
+                >
+                  <td className="px-4 py-2 text-center border border-gray-200 font-semibold">
+                    {user.name}
+                  </td>
+                  <td className="px-4 py-2 text-center border border-gray-200">
+                    {user.email}
+                  </td>
+                  <td className="px-4 py-2 text-center border border-gray-200">
+                    {user.phone}
+                  </td>
+                  <td className="px-4 py-2 text-center border border-gray-200">
+                    {user.role}
+                  </td>
+                  <td className="px-4 py-2 text-center border border-gray-200">
                     <span
                       className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
                         user.status === "Hoạt động"
@@ -150,24 +205,29 @@ const UserManagementPage = () => {
                       {user.status}
                     </span>
                   </td>
-                  <td className="px-4 py-2">{user.createdAt}</td>
-                  <td className="px-4 py-2 text-center">
-                    <Button
-                      className="border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-0"
-                      size="sm"
+                  <td className="px-4 py-2 text-center border border-gray-200">
+                    {user.createdAt}
+                  </td>
+                  <td className="px-4 py-2 text-center border border-gray-200">
+                    <button
                       onClick={() => {
                         setSelectedUser(user);
                         setIsModalOpen(true);
                       }}
+                      className="text-gray-600 hover:text-blue-600"
+                      title="Xem chi tiết"
                     >
-                      Chi tiết
-                    </Button>
+                      <Eye className="w-5 h-5 mx-auto" />
+                    </button>
                   </td>
                 </tr>
               ))}
               {filteredUsers.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center py-4 text-gray-500">
+                  <td
+                    colSpan={6}
+                    className="text-center py-6 text-gray-500 border border-gray-200"
+                  >
                     Không tìm thấy người dùng phù hợp.
                   </td>
                 </tr>

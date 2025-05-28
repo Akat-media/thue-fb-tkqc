@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import Layout from "../../components/layout/Layout";
 import Button from "../../components/ui/Button";
+import {
+  BadgeInfo,
+  CircleDollarSign,
+  Clock9,
+  Banknote,
+  User,
+  Eye,
+  RefreshCcw,
+} from "lucide-react";
 
 interface UserInfo {
   id: string;
@@ -92,6 +101,7 @@ const AdminTransactionsPage = () => {
   const [activeTab, setActiveTab] = useState<"deposit" | "platform">("deposit");
   const [selectedUser, setSelectedUser] = useState<UserInfo | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeRowId, setActiveRowId] = useState<string | null>(null);
 
   const depositTransactions = mockTransactions.filter(
     (tx) =>
@@ -104,7 +114,12 @@ const AdminTransactionsPage = () => {
       tx.type === "platform" &&
       tx.id.toLowerCase().includes(search.toLowerCase())
   );
-
+  const handleSync = async () => {
+    // const response = await fetch("api note");
+    // const data = await response.json();
+    // setFiltered(data);
+    //setFiltered(mockData);
+  };
   const formatDate = (input: string) => {
     return new Date(input).toLocaleString("vi-VN", {
       day: "2-digit",
@@ -118,7 +133,21 @@ const AdminTransactionsPage = () => {
   return (
     <Layout>
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Quản lý giao dịch</h1>
+        <div className="flex items-end justify-between mb-4">
+          <h1 className="text-1xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
+            Quản lý giao dịch
+          </h1>
+          <button
+            onClick={handleSync}
+            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition"
+          >
+            <div className="flex items-center gap-2">
+              <RefreshCcw className="w-4 h-4" />
+              Đồng Bộ Giao Dịch
+            </div>
+          </button>
+        </div>
+
         <div className="border-b mb-4">
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
             <button
@@ -161,35 +190,73 @@ const AdminTransactionsPage = () => {
         {/* Bảng giao dịch */}
         <div className="overflow-auto">
           {activeTab === "deposit" && (
-            <table className="w-full table-auto border rounded-lg text-sm text-left shadow">
-              <thead className="bg-gray-100 text-gray-600 font-semibold">
+            <table className="min-w-[1200px] table-fixed border border-gray-300 border-collapse bg-white text-sm text-gray-800">
+              <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-700">
                 <tr>
-                  <th className="px-4 py-2">Mã giao dịch</th>
-                  <th className="px-4 py-2">Số tiền</th>
-                  <th className="px-4 py-2">Tạo lúc</th>
-                  <th className="px-4 py-2">Thanh toán</th>
-                  <th className="px-4 py-2">Trạng thái</th>
-                  <th className="px-4 py-2">Ngân hàng</th>
-                  <th className="px-4 py-2">Chủ tài khoản</th>
-                  <th className="px-4 py-2">Số tài khoản</th>
-                  <th className="px-4 py-2"></th>
+                  <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                    <BadgeInfo className="inline w-4 h-4 mr-2 text-gray-500" />
+                    Mã giao dịch
+                  </th>
+                  <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                    <CircleDollarSign className="inline w-4 h-4 mr-2 text-gray-500" />
+                    Số tiền
+                  </th>
+                  <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                    <Clock9 className="inline w-4 h-4 mr-2 text-gray-500" />
+                    Thời gian tạo
+                  </th>
+                  <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                    <Clock9 className="inline w-4 h-4 mr-2 text-gray-500" />
+                    Thanh toán
+                  </th>
+                  <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                    <BadgeInfo className="inline w-4 h-4 mr-2 text-gray-500" />
+                    Trạng thái
+                  </th>
+                  <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                    <Banknote className="inline w-4 h-4 mr-2 text-gray-500" />
+                    Ngân hàng
+                  </th>
+                  <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                    <User className="inline w-4 h-4 mr-2 text-gray-500" />
+                    Chủ tài khoản
+                  </th>
+                  <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200">
+                    <Banknote className="inline w-4 h-4 mr-2 text-gray-500" />
+                    Số tài khoản
+                  </th>
+                  <th className="px-4 py-3 text-center whitespace-nowrap border border-gray-200"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="text-sm text-gray-800">
                 {depositTransactions.length > 0 ? (
                   depositTransactions.map((tx) => (
-                    <tr key={tx.id} className="border-t hover:bg-gray-50">
-                      <td className="px-4 py-2 font-semibold">{tx.id}</td>
-                      <td className="px-4 py-2">
+                    <tr
+                      key={tx.id}
+                      className={`border-t cursor-pointer ${
+                        activeRowId === tx.id
+                          ? "bg-blue-100"
+                          : "hover:bg-gray-50"
+                      }`}
+                      onClick={() =>
+                        setActiveRowId(activeRowId === tx.id ? null : tx.id)
+                      }
+                    >
+                      <td className="px-4 py-2 text-center border border-gray-200 font-semibold">
+                        {tx.id}
+                      </td>
+                      <td className="px-4 py-2 text-center border border-gray-200">
                         {tx.amount.toLocaleString()} VND
                       </td>
-                      <td className="px-4 py-2">{formatDate(tx.createdAt)}</td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-2 text-center border border-gray-200">
+                        {formatDate(tx.createdAt)}
+                      </td>
+                      <td className="px-4 py-2 text-center border border-gray-200">
                         {tx.paidAt || (
                           <span className="text-gray-400 italic">_</span>
                         )}
                       </td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-2 text-center border border-gray-200">
                         <span
                           className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
                             tx.status === "Đã thanh toán"
@@ -200,27 +267,36 @@ const AdminTransactionsPage = () => {
                           {tx.status}
                         </span>
                       </td>
-                      <td className="px-4 py-2">{tx.bank}</td>
-                      <td className="px-4 py-2">{tx.accountName}</td>
-                      <td className="px-4 py-2">{tx.accountNumber}</td>
-                      <td className="px-4 py-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
+                      <td className="px-4 py-2 text-center border border-gray-200">
+                        {tx.bank}
+                      </td>
+                      <td className="px-4 py-2 text-center border border-gray-200">
+                        {tx.accountName}
+                      </td>
+                      <td className="px-4 py-2 text-center border border-gray-200">
+                        {tx.accountNumber}
+                      </td>
+                      <td className="px-4 py-2 text-center border border-gray-200">
+                        <button
                           onClick={() => {
                             const user = users.find((u) => u.id === tx.userId);
                             setSelectedUser(user || null);
                             setIsModalOpen(true);
                           }}
+                          className="text-gray-600 hover:text-blue-600"
+                          title="Xem chi tiết"
                         >
-                          Chi tiết
-                        </Button>
+                          <Eye className="w-5 h-5 mx-auto" />
+                        </button>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={8} className="text-center py-6 text-gray-500">
+                    <td
+                      colSpan={9}
+                      className="text-center py-6 text-gray-500 border border-gray-200"
+                    >
                       Không có giao dịch nạp tiền nào.
                     </td>
                   </tr>

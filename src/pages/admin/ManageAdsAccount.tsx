@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Layout from "../../components/layout/Layout";
 import Button from "../../components/ui/Button";
+
 import {
   BadgeInfo,
   BadgeCheck,
@@ -17,6 +18,7 @@ import {
   LucideUserRoundCheck,
   HandCoins,
   RefreshCcw,
+  SquarePen,
 } from "lucide-react";
 
 interface AdsAccount {
@@ -146,6 +148,11 @@ const ManageAdsAccount: React.FC = () => {
   const [filtered, setFiltered] = useState(mockData);
   const [activeCell, setActiveCell] = useState<string | null>(null);
   const [activeRow, setActiveRow] = useState<string | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<AdsAccount | null>(
+    null
+  );
+  const [showModal, setShowModal] = useState(false);
+  const [typeFilter, setTypeFilter] = useState("all");
 
   const handleFilter = () => {
     const result = mockData.filter((item) => {
@@ -157,6 +164,29 @@ const ManageAdsAccount: React.FC = () => {
         statusFilter === "all" || item.status === statusFilter;
 
       return matchSearch && matchStatus;
+    });
+
+    setFiltered(result);
+  };
+  const handleSearchLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value.toLowerCase();
+    setSearch(term);
+
+    const result = mockData.filter((item) => {
+      const matchSearch =
+        item.accountName.toLowerCase().includes(term) ||
+        item.facebookAdsId.toLowerCase().includes(term) ||
+        item.note.toLowerCase().includes(term);
+
+      const matchStatus =
+        statusFilter === "all" || item.status === statusFilter;
+
+      const matchType =
+        typeFilter === "all" ||
+        (typeFilter === "business" && item.accountName.includes("B")) || // giả sử tên chứa "B" là Business
+        (typeFilter === "personal" && item.accountName.includes("C")); // giả sử tên chứa "C" là Personal
+
+      return matchSearch && matchStatus && matchType;
     });
 
     setFiltered(result);
@@ -176,16 +206,18 @@ const ManageAdsAccount: React.FC = () => {
   return (
     <Layout>
       <div className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-1xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+        <div className="flex items-end justify-between mb-4">
+          <h1 className="text-1xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
             Quản lý tài khoản
           </h1>
           <button
             onClick={handleSync}
-            className="mt-0 flex items-center gap-1 text-sm text-blue-600 hover:underline"
+            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition"
           >
-            <RefreshCcw className="w-4 h-4" />
-            Đồng Bộ Tài Khoản
+            <div className="flex items-center gap-2">
+              <RefreshCcw className="w-4 h-4" />
+              Đồng Bộ Tài Khoản
+            </div>
           </button>
         </div>
 
@@ -197,8 +229,8 @@ const ManageAdsAccount: React.FC = () => {
               placeholder="Tìm kiếm theo ID, Tài Khoản"
               className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />{" "}
+              onChange={handleSearchLabel}
+            />
           </div>
           <div className="flex items-center gap-1">
             <select
@@ -292,6 +324,7 @@ const ManageAdsAccount: React.FC = () => {
                   <HandCoins className="inline w-4 h-4 mr-2 text-gray-500" />
                   Prepay Account
                 </th>
+                <th className="px-4 py-3 text-center min-w-[100px] border border-gray-200"></th>
               </tr>
             </thead>
 
@@ -310,8 +343,16 @@ const ManageAdsAccount: React.FC = () => {
                         : ""
                     }`}
                     onClick={() => {
-                      setActiveRow(item.id);
-                      setActiveCell(`${item.id}-id`);
+                      if (
+                        activeRow === item.id &&
+                        activeCell === `${item.id}-id`
+                      ) {
+                        setActiveRow(null);
+                        setActiveCell(null);
+                      } else {
+                        setActiveRow(item.id);
+                        setActiveCell(`${item.id}-id`);
+                      }
                     }}
                   >
                     {item.id}
@@ -474,10 +515,45 @@ const ManageAdsAccount: React.FC = () => {
                   >
                     Có
                   </td>
+                  <td className="px-4 py-2 text-center border border-gray-200">
+                    <button
+                      onClick={() => {
+                        setSelectedAccount(item);
+                        setShowModal(true);
+                      }}
+                      className="text-gray-600 hover:text-blue-600"
+                      title="Xem chi tiết"
+                    >
+                      <SquarePen className="w-5 h-5 mx-auto" />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          {showModal && selectedAccount && (
+            <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative">
+                <button
+                  className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                  onClick={() => setShowModal(false)}
+                >
+                  ×
+                </button>
+                <h2 className="text-xl font-bold mb-4">Chi tiết tài khoản</h2>
+                <ul className="space-y-2 text-sm">
+                  {Object.entries(selectedAccount).map(([key, value]) => (
+                    <li key={key}>
+                      <strong>{key}:</strong>{" "}
+                      {typeof value === "number"
+                        ? value.toLocaleString()
+                        : value}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Layout>
