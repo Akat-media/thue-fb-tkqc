@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Briefcase,
@@ -13,19 +13,20 @@ import {
   PanelRightClose,
   AlignStartHorizontal,
   PackagePlus,
-  QrCode,
   CircleDollarSign,
   Archive,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { useAuth } from "../../context/AuthContext";
+import socket from "../../socket";
+import { useUserStore } from "../../stores/useUserStore";
 
 const Sidebar: React.FC<{
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
 }> = ({ isSidebarOpen, toggleSidebar }) => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
@@ -55,7 +56,24 @@ const Sidebar: React.FC<{
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [isSidebarOpen, toggleSidebar]);
-
+  const fetchUser = useUserStore((state) => state.fetchUser);
+  const userobj = useUserStore((state) => state.user);
+  useEffect(() => {
+    fetchUser();
+  }, []);
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      socket.emit("joinRoom");
+    });
+    socket.on("payment_success", (data) => {
+      console.log("Payment thành công:", data);
+      fetchUser();
+    });
+    return () => {
+      socket.off("payment_success");
+    };
+  }, [fetchUser]);
   return (
     <aside
       className={clsx(
@@ -248,21 +266,23 @@ const Sidebar: React.FC<{
         </Link>
 
         {/* User profile (nếu đang đăng nhập) */}
-        {user && isSidebarOpen && (
+        {userobj && isSidebarOpen && (
           <div className="relative mt-2">
             <button
               onClick={toggleProfileMenu}
               className="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 transition"
             >
               <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold	 shrink-0 -ml-1">
-                  {user.name?.charAt(0)?.toUpperCase()}
+                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0 -ml-1">
+                  {userobj?.username}
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="text-sm font-medium text-gray-900">
-                    {user.name}
+                    {userobj?.username}
                   </span>
-                  <span className="text-xs text-gray-500">{user.email}</span>
+                  <span className="text-xs text-gray-500">
+                    {userobj?.email}
+                  </span>
                 </div>
               </div>
               <ChevronDown className="w-6 h-4 text-gray-400 ml-2" />
@@ -271,10 +291,10 @@ const Sidebar: React.FC<{
             {openProfileMenu && (
               <div className="absolute left-0 bottom-12 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                 <div className="px-4 py-3 text-sm text-gray-700 border-b">
-                  <p className="font-semibold text-base">{user.name}</p>
-                  <p className="text-gray-500">{user.email}</p>
+                  <p className="font-semibold text-base">{userobj?.username}</p>
+                  <p className="text-gray-500">{userobj?.email}</p>
                   <p className="font-semibold text-green-600 mt-1">
-                    {user.balance?.toLocaleString("vi-VN")} VNĐ
+                    {userobj?.points} points
                   </p>
                 </div>
                 <Link
