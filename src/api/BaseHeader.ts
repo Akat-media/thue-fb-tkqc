@@ -1,5 +1,7 @@
 import axios from "axios";
 export const BaseUrl = import.meta.env.VITE_BASE_URL;
+export const BaseUrlSocket =
+  import.meta.env.VITE_BASE_URL_SOCKET || "https://api.duynam.store";
 
 const BaseHeader = axios.create({
   baseURL: BaseUrl,
@@ -65,7 +67,7 @@ BaseHeader.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     } else if (error.response?.status !== 401) {
-      window.location.href = "/login";
+      // window.location.href = "/login";
     }
 
     return Promise.reject(error);

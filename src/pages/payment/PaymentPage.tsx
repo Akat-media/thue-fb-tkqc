@@ -11,9 +11,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
 import { Transaction } from "../../types";
-import { QRCodeSVG } from "qrcode.react";
-
-// Mock transactions data
+import BaseHeader from "../../api/BaseHeader";
 
 const paymentAccounts = [
   { id: "vcb", name: "Vietcombank", qrDataPrefix: "vcb_" },
@@ -70,23 +68,34 @@ const mockTransactions: Transaction[] = [
 ];
 
 const PaymentPage: React.FC = () => {
+  const objetUser = localStorage.getItem("user");
+  const userParse = JSON.parse(objetUser || "{}");
   const [activeTab, setActiveTab] = useState("deposit");
   const [transactions] = useState<Transaction[]>(mockTransactions);
   const [selectedAmount, setSelectedAmount] = useState(1000000);
   const [customAmount, setCustomAmount] = useState<string>("");
-  const [customAmountRaw, setCustomAmountRaw] = useState("");
-  const [customAmountDisplay, setCustomAmountDisplay] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
   const { addNotification } = useNotification();
   const [showQRCode, setShowQRCode] = useState(false);
-  const selectedBank = paymentAccounts[0];
-  const qrData = `${selectedBank.qrDataPrefix}${
-    customAmount || selectedAmount
-  }`;
   const [isShowingQR, setIsShowingQR] = useState(false);
   const [countdown, setCountdown] = useState(120);
   const [qrImageUrl, setQrImageUrl] = useState<string | null>(null);
+  const hanleCalTransaction = async (number: any) => {
+    try {
+      const res = await BaseHeader({
+        url: "transaction",
+        method: "post",
+        data: {
+          amountVND: number,
+          user_id: userParse.user_id || "",
+        },
+      });
+      return res.data.data.short_code;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const storedUserData = localStorage.getItem("user");
   const shortCode = storedUserData
     ? JSON.parse(storedUserData)?.user?.short_code || "NAP0000"
@@ -103,41 +112,32 @@ const PaymentPage: React.FC = () => {
 
   const handleDeposit = async () => {
     const amount = customAmount ? parseInt(customAmount) : selectedAmount;
-
     if (isNaN(amount) || amount <= 0) {
       addNotification("Lỗi", "Vui lòng nhập số tiền hợp lệ", "error");
       return;
     }
-
+    const shortCode = await hanleCalTransaction(amount);
     setIsLoading(true);
-
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500));
-
       addNotification(
         "Tạo lệnh nạp tiền thành công",
         "Vui lòng chuyển khoản theo thông tin đã cung cấp",
         "success"
       );
-
       setIsShowingQR(true);
-
-      const encodedName = encodeURIComponent(user?.name || "AKADS");
-      const storedUserData = localStorage.getItem("user");
-      const shortCode = storedUserData
-        ? JSON.parse(storedUserData)?.user?.short_code || "NAP0000"
-        : "NAP0000";
-
-      const qrUrl = `https://apiqr.web2m.com/api/generate/ACB/20478471/${encodedName}?amount=${amount}&memo=${shortCode}&is_mask=1&bg=1`;
-
+      const qrUrl = `https://apiqr.web2m.com/api/generate/ACB/20478471/duy%20nam?amount=${amount}&memo=${shortCode}&is_mask=1&bg=1`;
       setQrImageUrl(qrUrl);
-
       setTimeout(() => {
         setShowQRCode(true);
         setIsShowingQR(false);
         setCountdown(120);
       }, 1200);
+      if (qrUrl) {
+        setIsLoading(false);
+      }
     } catch (error) {
+      setIsLoading(false);
       console.error("Deposit error:", error);
       addNotification(
         "Có lỗi xảy ra",
@@ -148,7 +148,6 @@ const PaymentPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   const formatTransactionDate = (date: Date) => {
     return new Intl.DateTimeFormat("vi-VN", {
       day: "2-digit",
@@ -273,7 +272,7 @@ const PaymentPage: React.FC = () => {
                             inputMode="numeric"
                             className={`shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full h-12 px-4 pr-16 sm:text-sm rounded-md ${
                               customAmount &&
-                              (parseInt(customAmount) < 50000 ||
+                              (parseInt(customAmount) <= 1000 ||
                                 parseInt(customAmount) % 1000 !== 0)
                                 ? "border-red-500"
                                 : "border border-gray-300"
@@ -289,7 +288,8 @@ const PaymentPage: React.FC = () => {
                               setCustomAmount(raw);
                               setShowQRCode(false);
                             }}
-                            min="50000"
+                            // min="50000"
+                            min="1000"
                             step="1000"
                           />
                           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">
@@ -298,10 +298,10 @@ const PaymentPage: React.FC = () => {
                         </div>
 
                         {customAmount &&
-                          (parseInt(customAmount) < 50000 ||
+                          (parseInt(customAmount) <= 1000 ||
                             parseInt(customAmount) % 1000 !== 0) && (
                             <p className="text-red-500 text-xs mt-1">
-                              Vui lòng nhập số tiền từ 50.000 VNĐ trở lên và là
+                              Vui lòng nhập số tiền từ 1.000 VNĐ trở lên và là
                               số tiền chẵn hàng nghìn (vd: 50.000 VNĐ, 68.000
                               VNĐ, 100.000 VNĐ).
                             </p>
@@ -326,7 +326,7 @@ const PaymentPage: React.FC = () => {
                             } border rounded-md py-2 px-3 text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
                             onClick={() => {
                               setSelectedAmount(amount);
-                              setCustomAmount("");
+                              setCustomAmount(String(amount));
                               setShowQRCode(false);
                             }}
                           >
@@ -475,7 +475,7 @@ const PaymentPage: React.FC = () => {
                             Mã QR sẽ hết hạn sau: {Math.floor(countdown / 60)}:
                             {(countdown % 60).toString().padStart(2, "0")}
                           </p>
-                          <p> </p>
+                          <p>  </p>
                           <p>
                             <strong>Ngân hàng:</strong> Vietcombank
                           </p>
