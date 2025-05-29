@@ -22,7 +22,8 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            {/*<Route path="/dashboard" element={<Dashboard />} />*/}
+            <Route path="/dashboard" element={<Analytics />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/marketplace" element={<MarketplacePage />} />
@@ -31,7 +32,7 @@ function App() {
             <Route path="/payments" element={<PaymentPage />} />
             <Route path="/deposit" element={<PaymentForm />} />
             <Route path="/adsaccountmanager" element={<ManageAdsAccount />} />
-            <Route path="/analytics" element={<Analytics />} />
+            {/*<Route path="/analytics" element={<Analytics />} />*/}
             <Route
               path="/admintransaction"
               element={<AdminTransactionsPage />}

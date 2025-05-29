@@ -44,7 +44,7 @@ const Sidebar: React.FC<{
     // { label: "QR Here", icon: QrCode, path: "/deposit" },
     { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
-    { label: "Phan tich", icon: Users, path: "/analytics" },
+    // { label: "Phan tich", icon: Users, path: "/analytics" },
   ];
 
   React.useEffect(() => {
