@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Layout from "../../components/layout/Layout";
 import Button from "../../components/ui/Button";
+import { useOnOutsideClick } from "../../hook/useOutside";
 
 import {
   BadgeInfo,
@@ -285,6 +286,7 @@ const ManageAdsAccount: React.FC = () => {
   } | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [highlightedRows, setHighlightedRows] = useState<string[]>([]);
+  const [openSortKey, setOpenSortKey] = useState<keyof AdsAccount | null>(null);
 
   const toggleCheckbox = (id: string) => {
     setSelectedIds((prev) => {
@@ -296,6 +298,9 @@ const ManageAdsAccount: React.FC = () => {
       return updated;
     });
   };
+  const { innerBorderRef } = useOnOutsideClick(() => {
+    setShowModal(false);
+  });
 
   const handleFilter = () => {
     const result = mockData.filter((item) => {
@@ -368,60 +373,38 @@ const ManageAdsAccount: React.FC = () => {
     setFiltered(mockData);
   };
 
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const table = document.querySelector("table");
+      if (table && !table.contains(e.target as Node)) {
+        setActiveCell(null);
+        setActiveRow(null);
+        setOpenSortKey(null);
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+  }, []);
+
   const SortableHeader = ({
     label,
     sortKey,
+    openSortKey,
+    setOpenSortKey,
   }: {
     label: string;
     sortKey: keyof AdsAccount;
+    openSortKey: keyof AdsAccount | null;
+    setOpenSortKey: (key: keyof AdsAccount | null) => void;
   }) => {
-    const [open, setOpen] = useState(false);
+    const isOpen = openSortKey === sortKey;
 
     const toggleSort = (direction: "asc" | "desc") => {
       setSortConfig({ key: sortKey, direction });
-      setOpen(false);
-    };
-    const SortableHeader = ({
-      label,
-      sortKey,
-    }: {
-      label: string;
-      sortKey: keyof AdsAccount;
-    }) => {
-      const [open, setOpen] = useState(false);
-
-      const toggleSort = (direction: "asc" | "desc") => {
-        setSortConfig({ key: sortKey, direction });
-        setOpen(false);
-      };
-
-      return (
-        <div className="relative flex justify-center items-center">
-          <span>{label}</span>
-          <button
-            className="ml-1 p-1 hover:bg-gray-200 rounded"
-            onClick={() => setOpen((prev) => !prev)}
-          >
-            <MoreVertical className="w-4 h-4 text-gray-500" />
-          </button>
-          {open && (
-            <div className="absolute right-0 top-6 w-32 bg-white border rounded shadow z-10">
-              <div
-                onClick={() => toggleSort("asc")}
-                className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
-              >
-                <ArrowUp className="w-4 h-4 mr-2" /> ASC
-              </div>
-              <div
-                onClick={() => toggleSort("desc")}
-                className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
-              >
-                <ArrowDown className="w-4 h-4 mr-2" /> DESC
-              </div>
-            </div>
-          )}
-        </div>
-      );
+      setOpenSortKey(null);
     };
 
     return (
@@ -429,11 +412,14 @@ const ManageAdsAccount: React.FC = () => {
         <span>{label}</span>
         <button
           className="ml-1 p-1 hover:bg-gray-200 rounded"
-          onClick={() => setOpen((prev) => !prev)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpenSortKey(isOpen ? null : sortKey);
+          }}
         >
           <MoreVertical className="w-4 h-4 text-gray-500" />
         </button>
-        {open && (
+        {isOpen && (
           <div className="absolute right-0 top-6 w-32 bg-white border rounded shadow z-10">
             <div
               onClick={() => toggleSort("asc")}
@@ -459,15 +445,6 @@ const ManageAdsAccount: React.FC = () => {
         <h1 className="text-1xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
           Quản lý tài khoản
         </h1>
-        <button
-          onClick={handleSync}
-          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition"
-        >
-          <div className="flex items-center gap-2">
-            <RefreshCcw className="w-4 h-4" />
-            Đồng Bộ Tài Khoản
-          </div>
-        </button>
       </div>
 
       <div className="pl-1 p-4 mt-3 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -482,160 +459,230 @@ const ManageAdsAccount: React.FC = () => {
           />
         </div>
         <div className="flex items-center gap-1">
-          <select
-            className="form-select focus:outline-none focus:ring-0"
-            value={statusFilter}
-            onChange={(e) => {
-              const value = e.target.value;
-              setStatusFilter(value);
-              const result = mockData.filter((item) => {
-                const matchSearch =
-                  item.facebookAdsId.includes(search) ||
-                  item.note.toLowerCase().includes(search.toLowerCase());
-
-                const matchStatus = value === "all" || item.status === value;
-
-                return matchSearch && matchStatus;
-              });
-              setFiltered(result);
-            }}
+          <button
+            onClick={handleSync}
+            className="px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition"
           >
-            <option value="all">Tất cả</option>
-            <option value="Thành công">Thành công</option>
-            <option value="Đang xử lý">Đang xử lý</option>
-            <option value="Thất bại">Thất bại</option>
-          </select>
+            <div className="flex items-center gap-2">
+              <RefreshCcw className="w-4 h-4" />
+              Đồng Bộ Tài Khoản
+            </div>
+          </button>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <div className="max-h-[576px] overflow-y-auto">
-          <table className="min-w-[1200px] table-fixed border border-gray-300 border-collapse bg-white text-sm text-gray-800">
-            <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-700 sticky top-0 z-10">
+      <div className="overflow-x-auto rounded-lg border border-gray-300">
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="max-h-[576px] overflow-y-auto"
+        >
+          <table className="w-full table-auto border border-gray-300 border-collapse bg-white text-sm text-gray-800">
+            <thead className="bg-[#f5f5ff] text-sm font-semibold uppercase text-[#2b3245] sticky top-0 z-10">
               <tr>
-                <th className="px-2 py-3 text-center min-w-[40px] border border-gray-200">
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      const newSelected = e.target.checked
-                        ? sortedData.map((i) => i.id)
-                        : [];
-                      setSelectedIds(newSelected);
-                      setHighlightedRows(newSelected);
-                    }}
-                    checked={
-                      selectedIds.length === sortedData.length &&
-                      selectedIds.length > 0
-                    }
-                  />
+                <th className="px-2 py-3 text-center min-w-[50px] border border-gray-200">
+                  <label className="relative inline-flex items-center justify-center cursor-pointer w-4 h-4">
+                    <input
+                      type="checkbox"
+                      checked={
+                        selectedIds.length === sortedData.length &&
+                        selectedIds.length > 0
+                      }
+                      onChange={(e) => {
+                        const newSelected = e.target.checked
+                          ? sortedData.map((i) => i.id)
+                          : [];
+                        setSelectedIds(newSelected);
+                        setHighlightedRows(newSelected);
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-4 h-4 rounded border border-gray-300 bg-white peer-checked:bg-[#78bb07] peer-checked:border-[#78bb07] after:content-['✔'] after:absolute after:left-[2px] after:top-[-1px] after:text-white after:text-xs after:font-bold peer-checked:after:block after:hidden"></div>
+                  </label>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[50px] border border-gray-200">
+                  <SquarePen className="w-4 h-4 text-gray-500" />
                 </th>
                 <th className="px-4 py-3 text-center min-w-[80px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-2">
                     <BadgeInfo className="w-4 h-4 text-gray-500" />
                     <span>ID</span>
-                    <SortableHeader label="" sortKey="id" />
+                    <SortableHeader
+                      label=""
+                      sortKey="id"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[160px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <BadgeCheck className="w-4 h-4 text-gray-500" />
-                    <span>Account ID</span>
-                    <SortableHeader label="" sortKey="accountName" />
+                    <span>Account Name</span>
+                    <SortableHeader
+                      label=""
+                      sortKey="accountName"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[160px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <CircleDollarSign className="w-4 h-4 text-gray-500" />
                     <span>Account Status</span>
-                    <SortableHeader label="" sortKey="status" />
+                    <SortableHeader
+                      label=""
+                      sortKey="status"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[120px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <Scale className="w-4 h-4 text-gray-500" />
                     <span>Amount Spent</span>
-                    <SortableHeader label="" sortKey="amount" />
+                    <SortableHeader
+                      label=""
+                      sortKey="amount"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[120px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <Briefcase className="w-4 h-4 text-gray-500" />
                     <span>Balance</span>
-                    <SortableHeader label="" sortKey="total" />
+                    <SortableHeader
+                      label=""
+                      sortKey="total"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[150px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <DollarSign className="w-4 h-4 text-gray-500" />
                     <span>Business</span>
-                    <SortableHeader label="" sortKey="business" />
+                    <SortableHeader
+                      label=""
+                      sortKey="business"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[100px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <AlarmClockPlus className="w-4 h-4 text-gray-500" />
                     <span>Currency</span>
-                    <SortableHeader label="" sortKey="currency" />
+                    <SortableHeader
+                      label=""
+                      sortKey="currency"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[140px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <Pen className="w-4 h-4 text-gray-500" />
                     <span>Created Time</span>
-                    <SortableHeader label="" sortKey="createdAt" />
+                    <SortableHeader
+                      label=""
+                      sortKey="createdAt"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[240px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <ALargeSmall className="w-4 h-4 text-gray-500" />
                     <span>Reason Status</span>
-                    <SortableHeader label="" sortKey="note" />
+                    <SortableHeader
+                      label=""
+                      sortKey="note"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[150px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <Infinity className="w-4 h-4 text-gray-500" />
                     <span>Name</span>
-                    <SortableHeader label="" sortKey="accountName" />
+                    <SortableHeader
+                      label=""
+                      sortKey="accountName"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[120px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <Clock9 className="w-4 h-4 text-gray-500" />
                     <span>Spend Cap</span>
-                    <SortableHeader label="" sortKey="limitAfter" />
+                    <SortableHeader
+                      label=""
+                      sortKey="limitAfter"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[100px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <User className="w-4 h-4 text-gray-500" />
                     <span>Time</span>
-                    <SortableHeader label="" sortKey="createdAt" />
+                    <SortableHeader
+                      label=""
+                      sortKey="createdAt"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[140px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <LucideUserRoundCheck className="w-4 h-4 text-gray-500" />
                     <span>Owner</span>
-                    <SortableHeader label="" sortKey="accountName" />
+                    <SortableHeader
+                      label=""
+                      sortKey="status"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[100px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <HandCoins className="w-4 h-4 text-gray-500" />
                     <span>Personal</span>
-                    <SortableHeader label="" sortKey="accountName" />
+                    <SortableHeader
+                      label=""
+                      sortKey="status"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
                 <th className="px-4 py-3 text-center min-w-[150px] whitespace-nowrap border border-gray-200">
                   <div className="flex items-center justify-center gap-1">
                     <HandCoins className="w-4 h-4 text-gray-500" />
                     <span>Prepay Account</span>
-                    <SortableHeader label="" sortKey="accountName" />
+                    <SortableHeader
+                      label=""
+                      sortKey="status"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
                   </div>
                 </th>
-                <th className="px-4 py-3 text-center min-w-[100px] border border-gray-200"></th>
               </tr>
             </thead>
 
@@ -643,44 +690,52 @@ const ManageAdsAccount: React.FC = () => {
               {sortedData.map((item: any) => (
                 <tr
                   key={item.id}
-                  className={`border-t ${
+                  className={`${
                     highlightedRows.includes(item.id)
-                      ? "bg-green-100"
+                      ? "bg-[#dcfce7] ring-2 ring-[#47b46c]"
                       : activeRow === item.id
                       ? "bg-green-100"
                       : "hover:bg-gray-50"
                   }`}
                 >
-                  <td className="px-2 py-2 text-center border border-gray-200">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.includes(item.id)}
-                      onChange={() => toggleCheckbox(item.id)}
-                    />
+                  <td className="px-4 py-3 text-center border border-gray-100">
+                    <label className="relative inline-flex items-center justify-center cursor-pointer w-4 h-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(item.id)}
+                        onChange={() => toggleCheckbox(item.id)}
+                        className="sr-only peer"
+                      />
+                      <div className="w-4 h-4 rounded border border-gray-300 bg-white peer-checked:bg-[#78bb07] peer-checked:border-[#78bb07] after:content-['✔'] after:absolute after:left-[2px] after:top-[-1px] after:text-white after:text-xs after:font-bold peer-checked:after:block after:hidden"></div>
+                    </label>
+                  </td>
+
+                  <td className="px-4 py-2 text-center border border-gray-100">
+                    <button
+                      onClick={() => {
+                        setSelectedAccount(item);
+                        setShowModal(true);
+                      }}
+                      className="text-gray-600 hover:text-blue-600"
+                      title="Xem chi tiết"
+                    >
+                      <SquarePen className="w-4 h-4 mx-auto" />
+                    </button>
                   </td>
 
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-id` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
-                      if (
-                        activeRow === item.id &&
-                        activeCell === `${item.id}-id`
-                      ) {
-                        setActiveRow(null);
-                        setActiveCell(null);
-                      } else {
-                        setActiveRow(item.id);
-                        setActiveCell(`${item.id}-id`);
-                      }
+                      setActiveCell(`${item.id}-id`);
+                      setActiveRow(null);
                     }}
                   >
                     {item.id}
                   </td>
-
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-accountName`
                         ? "bg-green-100"
                         : ""
@@ -693,7 +748,7 @@ const ManageAdsAccount: React.FC = () => {
                     {item.accountName}
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-status` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
@@ -704,7 +759,7 @@ const ManageAdsAccount: React.FC = () => {
                     {item.status}
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-amount` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
@@ -715,7 +770,7 @@ const ManageAdsAccount: React.FC = () => {
                     {item.amount.toLocaleString()}₫
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-total` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
@@ -726,7 +781,7 @@ const ManageAdsAccount: React.FC = () => {
                     {item.total.toLocaleString()}₫
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-business` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
@@ -737,7 +792,7 @@ const ManageAdsAccount: React.FC = () => {
                     Business name
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-currency` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
@@ -748,7 +803,7 @@ const ManageAdsAccount: React.FC = () => {
                     VND
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-createdAt`
                         ? "bg-green-100"
                         : ""
@@ -761,7 +816,7 @@ const ManageAdsAccount: React.FC = () => {
                     {item.createdAt}
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-note` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
@@ -772,7 +827,7 @@ const ManageAdsAccount: React.FC = () => {
                     {item.note}
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-name` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
@@ -783,7 +838,7 @@ const ManageAdsAccount: React.FC = () => {
                     {item.accountName}
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-limitAfter`
                         ? "bg-green-100"
                         : ""
@@ -796,7 +851,7 @@ const ManageAdsAccount: React.FC = () => {
                     {item.limitAfter.toLocaleString()}₫
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-time` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
@@ -807,7 +862,7 @@ const ManageAdsAccount: React.FC = () => {
                     {item.createdAt}
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-owner` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
@@ -818,7 +873,7 @@ const ManageAdsAccount: React.FC = () => {
                     Owner Name
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-personal` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
@@ -829,7 +884,7 @@ const ManageAdsAccount: React.FC = () => {
                     Personal
                   </td>
                   <td
-                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                    className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                       activeCell === `${item.id}-prepay` ? "bg-green-100" : ""
                     }`}
                     onClick={() => {
@@ -839,18 +894,6 @@ const ManageAdsAccount: React.FC = () => {
                   >
                     Có
                   </td>
-                  <td className="px-4 py-2 text-center border border-gray-200">
-                    <button
-                      onClick={() => {
-                        setSelectedAccount(item);
-                        setShowModal(true);
-                      }}
-                      className="text-gray-600 hover:text-blue-600"
-                      title="Xem chi tiết"
-                    >
-                      <SquarePen className="w-5 h-5 mx-auto" />
-                    </button>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -858,7 +901,10 @@ const ManageAdsAccount: React.FC = () => {
         </div>
         {showModal && selectedAccount && (
           <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative">
+            <div
+              ref={innerBorderRef}
+              className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative"
+            >
               <button
                 className="absolute top-2 right-2 text-gray-500 hover:text-black"
                 onClick={() => setShowModal(false)}
