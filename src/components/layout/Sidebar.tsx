@@ -274,7 +274,7 @@ const Sidebar: React.FC<{
             >
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0 -ml-1">
-                  {userobj?.username}
+                  {userobj?.username?.charAt(0)?.toUpperCase()}
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="text-sm font-medium text-gray-900">
