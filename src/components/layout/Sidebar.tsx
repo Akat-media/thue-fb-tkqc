@@ -44,15 +44,15 @@ const Sidebar: React.FC<{
     // { label: "QR Here", icon: QrCode, path: "/deposit" },
     { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
+    // { label: "Phan tich", icon: Users, path: "/analytics" },
   ];
 
   React.useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        if (isSidebarOpen) toggleSidebar();
+      if (window.innerWidth < 768 && isSidebarOpen) {
+        toggleSidebar();
       }
     };
-    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [isSidebarOpen, toggleSidebar]);
