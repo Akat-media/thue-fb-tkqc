@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
 import { BaseUrl } from "../../api/BaseHeader";
 import axios from "axios";
+import AtomicSpinner from "atomic-spinner";
 
 const RegisterPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -21,7 +22,7 @@ const RegisterPage: React.FC = () => {
     confirmPassword?: string;
   }>({});
 
-  // const { register, isLoading } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const { addNotification } = useNotification();
   const navigate = useNavigate();
 
@@ -46,6 +47,7 @@ const RegisterPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    setIsLoading(true);
     try {
       // await register(name, email, phone, password);
       const registerRes = await axios.post(`${BaseUrl}/user`, {
@@ -75,166 +77,178 @@ const RegisterPage: React.FC = () => {
       } else {
         addNotification("Đăng ký thất bại", registerRes.data.message, "error");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Registration error:", error);
-      addNotification(
-        "Đăng ký thất bại",
-        "Có lỗi xảy ra trong quá trình đăng ký",
-        "error"
-      );
+
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        const errorMessage = error.response.data.message;
+
+        if (errorMessage === "Email đã tồn tại") {
+          setErrors({ email: "Email đã tồn tại. Vui lòng nhập email khác." });
+          setEmail("");
+        } else {
+          addNotification("Đăng ký thất bại", errorMessage, "error");
+        }
+      } else {
+        addNotification(
+          "Đăng ký thất bại",
+          "Có lỗi xảy ra trong quá trình đăng ký",
+          "error"
+        );
+      }
+
+      setIsLoading(false); // đảm bảo tắt loading trong catch
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <>
-      <div className="h-screen bg-gradient-to-br from-blue-200 via-white to-blue-200 to-transparent relative overflow-hidden">
-        <Bot
-          className="absolute top-10 left-10 text-blue-500 opacity-20 animate-floating"
-          size={40}
-        />
-        <Mail
-          className="absolute bottom-10 right-16 text-blue-300 opacity-20 animate-floating delay-1000"
-          size={50}
+    <div className="h-screen w-screen flex">
+      <div className="hidden md:block w-1/2 h-full">
+        <img
+          src="src/public/sand.jpg"
+          alt="Background"
+          className="w-full h-full object-cover"
         />
       </div>
 
-      <div
-        className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-500 ${
-          isOpen ? "bg-black bg-opacity-0" : "pointer-events-none opacity-0"
-        }`}
-      >
-        <div className="bg-gradient-to-br from-white via-blue-100 to-blue rounded-lg overflow-hidden shadow-xl w-full max-w-md p-8">
-          <div className="flex flex-col justify-center">
-            <h1 className="text-2xl font-semibold text-[#0167F8] mb-2">
-              Tạo Tài Khoản Mới
-            </h1>
-            <p className="text-sm text-gray-600 mb-6">
-              Đăng ký ngay để sử dụng các dịch vụ của AKAds.
-            </p>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-xs font-semibold uppercase text-[#0167F8]"
-                >
-                  Họ tên
-                </label>
-                <input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="P Nguyễn"
-                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                />
-                {errors.name && (
-                  <p className="text-sm text-red-500 mt-1">{errors.name}</p>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-xs font-semibold uppercase text-[#0167F8]"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
-                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-500 mt-1">{errors.email}</p>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-xs font-semibold uppercase text-[#0167F8]"
-                >
-                  Số điện thoại
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="0901234567"
-                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                />
-                {errors.phone && (
-                  <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-xs font-semibold uppercase text-[#0167F8]"
-                >
-                  Mật khẩu
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                />
-                {errors.password && (
-                  <p className="text-sm text-red-500 mt-1">{errors.password}</p>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-xs font-semibold uppercase text-[#0167F8]"
-                >
-                  Xác nhận mật khẩu
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm Password"
-                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                />
-                {errors.confirmPassword && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.confirmPassword}
-                  </p>
-                )}
-              </div>
-              <button
-                type="submit"
-                className="px-8 py-2 bg-[#0167F8] text-white rounded-full hover:bg-[#005fce] transition mx-auto block shadow-md hover:shadow-lg"
+      <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-l from-transparent via-blue-100/70 to-white backdrop-blur-sm relative">
+        <Link
+          to="/"
+          className="absolute top-5 right-9 text-[#0167F8] font-semibold	 text-3xl hover:underline"
+        >
+          AKAds
+        </Link>
+
+        <div className="max-w-lg w-full p-10 mt-10 rounded-lg">
+          <h1 className="text-2xl font-semibold text-[#0167F8] mb-2">
+            Tạo Tài Khoản Mới
+          </h1>
+          <p className="text-sm text-gray-600 mb-6">
+            Đăng ký ngay để sử dụng các dịch vụ của AKAds.
+          </p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-xs font-semibold uppercase text-[#0167F8]"
               >
-                Đăng ký
-              </button>
-            </form>
-            <p className="mt-3 text-center text-sm">
-              Đã có tài khoản?{" "}
-              <Link to="/login" className="text-[#0167F8] hover:underline">
-                Đăng nhập
-              </Link>
-            </p>
-          </div>
-          {/* <div className="hidden md:flex w-1/2 max-w-[400px] items-center justify-center overflow-hidden">
-            <Link to="/" className="block w-full h-auto">
-              <img
-                src="src/public/AKA.png"
-                alt="AKAds Logo"
-                className="object-contain w-full max-h-[400px] rounded"
-                loading="eager"
+                Họ tên
+              </label>
+              <input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="P Nguyễn"
+                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
               />
+              {errors.name && (
+                <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-xs font-semibold uppercase text-[#0167F8]"
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
+              />
+              {errors.email && (
+                <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="phone"
+                className="block text-xs font-semibold uppercase text-[#0167F8]"
+              >
+                Số điện thoại
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="0901234567"
+                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
+              />
+              {errors.phone && (
+                <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-xs font-semibold uppercase text-[#0167F8]"
+              >
+                Mật khẩu
+              </label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
+              />
+              {errors.password && (
+                <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-xs font-semibold uppercase text-[#0167F8]"
+              >
+                Xác nhận mật khẩu
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm Password"
+                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
+              />
+              {errors.confirmPassword && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.confirmPassword}
+                </p>
+              )}
+            </div>
+            <button
+              type="submit"
+              className="px-8 py-2 bg-[#0167F8] text-white rounded-full hover:bg-[#005fce] transition mx-auto block shadow-md hover:shadow-lg"
+            >
+              Đăng ký
+            </button>
+          </form>
+          <p className="mt-3 text-center text-sm">
+            Đã có tài khoản?{" "}
+            <Link to="/login" className="text-[#0167F8] hover:underline">
+              Đăng nhập
             </Link>
-          </div> */}
+          </p>
+          <p className="mt-4 text-center text-xs text-gray-400">
+            © Bản quyền thuộc về AKA Media
+          </p>
         </div>
       </div>
-    </>
+      {isLoading && (
+        <div className="fixed inset-0 z-[9999] backdrop-blur-sm bg-white/60 flex items-center justify-center">
+          <AtomicSpinner size={60} color="#ffffff" />
+        </div>
+      )}
+    </div>
   );
 };
 

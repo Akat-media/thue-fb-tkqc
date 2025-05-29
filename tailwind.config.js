@@ -17,6 +17,9 @@ export default {
           },
         },
       },
+      fontFamily: {
+        work: ['"Work Sans"', "sans-serif"],
+      },
       colors: {
         revenue: '#4CAF50',
         adCost: '#FF5252',

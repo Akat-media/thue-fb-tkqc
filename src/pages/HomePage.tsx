@@ -229,7 +229,7 @@ const HomePage: React.FC = () => {
             <Card className="flex flex-col justify-between h-full">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                  <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold	">
                     TH
                   </div>
                   <div className="ml-4">
@@ -260,7 +260,7 @@ const HomePage: React.FC = () => {
             <Card className="flex flex-col justify-between h-full">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                  <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold	">
                     NL
                   </div>
                   <div className="ml-4">
@@ -291,7 +291,7 @@ const HomePage: React.FC = () => {
             <Card className="flex flex-col justify-between h-full">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                  <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold	">
                     PT
                   </div>
                   <div className="ml-4">

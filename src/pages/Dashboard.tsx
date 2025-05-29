@@ -24,7 +24,6 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 
-
 interface StatCard {
   icon: React.ElementType;
   title: string;
@@ -81,7 +80,9 @@ function StatCard({
         </h3>
       </div>
       <div className="flex items-end gap-2 sm:gap-3 mb-2">
-        <p className="text-2xl sm:text-3xl font-bold text-gray-900">{value}</p>
+        <p className="text-2xl sm:text-3xl font-semibold	 text-gray-900">
+          {value}
+        </p>
         {trend && (
           <div
             className={`flex items-center gap-1 text-sm ${
@@ -270,7 +271,7 @@ function AdPerformanceChart() {
 //             <MonitorDotIcon className="w-5 h-5 text-blue-600" />
 //             <h3 className="font-medium">Tài khoản quảng cáo</h3>
 //           </div>
-//           <p className="text-3xl font-bold text-gray-900">{accounts.length}</p>
+//           <p className="text-3xl font-semibold	 text-gray-900">{accounts.length}</p>
 //           <p className="text-sm text-gray-600 mt-1">Tài khoản đang hoạt động</p>
 //         </div>
 //         <div className="p-4 bg-gray-50 rounded-xl">
@@ -278,7 +279,7 @@ function AdPerformanceChart() {
 //             <Facebook className="w-5 h-5 text-blue-600" />
 //             <h3 className="font-medium">Facebook Pages</h3>
 //           </div>
-//           <p className="text-3xl font-bold text-gray-900">{pages.length}</p>
+//           <p className="text-3xl font-semibold	 text-gray-900">{pages.length}</p>
 //           <p className="text-sm text-gray-600 mt-1">Trang đã kết nối</p>
 //         </div>
 //       </div>
@@ -328,71 +329,71 @@ function Dashboard() {
   ];
 
   return (
-        <Layout>
-          <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full">
-            <div className="mb-6 sm:mb-8">
-              <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                Báo Cáo Hiệu Suất
-              </h2>
-            </div>
+    <Layout>
+      <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate">
+            Báo Cáo Hiệu Suất
+          </h2>
+        </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-              {stats.map((stat, index) => (
-                <StatCard key={index} {...stat} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          {stats.map((stat, index) => (
+            <StatCard key={index} {...stat} />
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
+          <AdPerformanceChart />
+          {/* <ConnectedAccountsSection /> */}
+          <div className="bg-white border border-gray-100 p-4 sm:p-6 rounded-2xl shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+                Chiến dịch hàng đầu
+              </h2>
+              <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                Xem tất cả
+              </button>
+            </div>
+            <div className="space-y-4">
+              {[
+                {
+                  name: "Summer Sale 2025",
+                  spend: 105450000,
+                  reach: "458K",
+                  ctr: 2.8,
+                },
+                {
+                  name: "New Collection Launch",
+                  spend: 89250000,
+                  reach: "356K",
+                  ctr: 3.2,
+                },
+                {
+                  name: "Holiday Special",
+                  spend: 68450000,
+                  reach: "289K",
+                  ctr: 2.5,
+                },
+              ].map((campaign, index) => (
+                <div key={index} className="p-4 bg-gray-50 rounded-xl">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-medium">{campaign.name}</h3>
+                    <span className="text-green-600 text-sm">
+                      {campaign.ctr}% CTR
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-gray-600">
+                    <span>{(campaign.spend / 1000000).toFixed(1)}M ₫</span>
+                    <span>{campaign.reach} tiếp cận</span>
+                  </div>
+                </div>
               ))}
             </div>
+          </div>
+        </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
-              <AdPerformanceChart />
-              {/* <ConnectedAccountsSection /> */}
-              <div className="bg-white border border-gray-100 p-4 sm:p-6 rounded-2xl shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
-                    Chiến dịch hàng đầu
-                  </h2>
-                  <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                    Xem tất cả
-                  </button>
-                </div>
-                <div className="space-y-4">
-                  {[
-                    {
-                      name: "Summer Sale 2025",
-                      spend: 105450000,
-                      reach: "458K",
-                      ctr: 2.8,
-                    },
-                    {
-                      name: "New Collection Launch",
-                      spend: 89250000,
-                      reach: "356K",
-                      ctr: 3.2,
-                    },
-                    {
-                      name: "Holiday Special",
-                      spend: 68450000,
-                      reach: "289K",
-                      ctr: 2.5,
-                    },
-                  ].map((campaign, index) => (
-                    <div key={index} className="p-4 bg-gray-50 rounded-xl">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium">{campaign.name}</h3>
-                        <span className="text-green-600 text-sm">
-                          {campaign.ctr}% CTR
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm text-gray-600">
-                        <span>{(campaign.spend / 1000000).toFixed(1)}M ₫</span>
-                        <span>{campaign.reach} tiếp cận</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <div className="bg-white border border-gray-100 p-4 sm:p-6 rounded-2xl shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
@@ -439,8 +440,8 @@ function Dashboard() {
                 </div>
               </div>
             </div> */}
-          </div>
-        </Layout>
+      </div>
+    </Layout>
   );
 }
 

@@ -1,6 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Layout from "../../components/layout/Layout";
 import Button from "../../components/ui/Button";
+
+import {
+  BadgeInfo,
+  BadgeCheck,
+  CircleDollarSign,
+  Scale,
+  Briefcase,
+  DollarSign,
+  AlarmClockPlus,
+  Pen,
+  ALargeSmall,
+  Infinity,
+  Clock9,
+  User,
+  LucideUserRoundCheck,
+  HandCoins,
+  RefreshCcw,
+  SquarePen,
+  MoreVertical,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 interface AdsAccount {
   id: string;
@@ -9,6 +31,8 @@ interface AdsAccount {
   note: string;
   amount: number;
   fee: number;
+  business: string;
+  currency: string;
   total: number;
   status: string;
   limitBefore: number;
@@ -25,6 +49,8 @@ const mockData: AdsAccount[] = [
     amount: 2000000,
     fee: 50000,
     total: 2050000,
+    business: "Vip",
+    currency: "VNĐ",
     status: "Thành công",
     limitBefore: 5000000,
     limitAfter: 7000000,
@@ -38,6 +64,8 @@ const mockData: AdsAccount[] = [
     amount: 1000000,
     fee: 30000,
     total: 1030000,
+    business: "Vip",
+    currency: "USD",
     status: "Đang xử lý",
     limitBefore: 3000000,
     limitAfter: 4000000,
@@ -51,6 +79,8 @@ const mockData: AdsAccount[] = [
     amount: 1500000,
     fee: 40000,
     total: 1540000,
+    business: "Vip",
+    currency: "VNĐ",
     status: "Thất bại",
     limitBefore: 2000000,
     limitAfter: 2000000,
@@ -64,6 +94,8 @@ const mockData: AdsAccount[] = [
     amount: 3000000,
     fee: 60000,
     total: 3060000,
+    business: "Vip",
+    currency: "VNĐ",
     status: "Thành công",
     limitBefore: 6000000,
     limitAfter: 9000000,
@@ -76,6 +108,8 @@ const mockData: AdsAccount[] = [
     note: "Đang chờ xử lý",
     amount: 500000,
     fee: 20000,
+    business: "Vip",
+    currency: "VNĐ",
     total: 520000,
     status: "Đang xử lý",
     limitBefore: 1000000,
@@ -91,6 +125,8 @@ const mockData: AdsAccount[] = [
     fee: 30000,
     total: 830000,
     status: "Thất bại",
+    business: "Vip 2",
+    currency: "USD",
     limitBefore: 1200000,
     limitAfter: 1200000,
     createdAt: "2024-05-06",
@@ -102,6 +138,8 @@ const mockData: AdsAccount[] = [
     note: "Giao dịch thành công",
     amount: 2500000,
     fee: 50000,
+    business: "Vip",
+    currency: "VNĐ",
     total: 2550000,
     status: "Thành công",
     limitBefore: 4000000,
@@ -114,6 +152,113 @@ const mockData: AdsAccount[] = [
     facebookAdsId: "202020202",
     note: "Đang xác minh giao dịch",
     amount: 1200000,
+    business: "Vip",
+    currency: "VNĐ",
+    fee: 30000,
+    total: 1230000,
+    status: "Đang xử lý",
+    limitBefore: 3000000,
+    limitAfter: 4200000,
+    createdAt: "2024-05-08",
+  },
+  {
+    id: "T009",
+    accountName: "Ads Account H",
+    facebookAdsId: "202020202",
+    note: "Đang xác minh giao dịch",
+    amount: 1200000,
+    business: "Vip 3",
+    currency: "USD",
+    fee: 30000,
+    total: 1230000,
+    status: "Đang xử lý",
+    limitBefore: 3000000,
+    limitAfter: 4200000,
+    createdAt: "2024-05-08",
+  },
+  {
+    id: "T010",
+    accountName: "Ads Account H",
+    facebookAdsId: "202020202",
+    note: "Đang xác minh giao dịch",
+    amount: 1200000,
+    business: "Vip 3",
+    currency: "Franc",
+    fee: 30000,
+    total: 1230000,
+    status: "Đang xử lý",
+    limitBefore: 3000000,
+    limitAfter: 4200000,
+    createdAt: "2024-05-08",
+  },
+  {
+    id: "T011",
+    accountName: "Ads Account H",
+    facebookAdsId: "202020202",
+    note: "Đang xác minh giao dịch",
+    amount: 1200000,
+    business: "Vip 3",
+    currency: "Franc",
+    fee: 30000,
+    total: 1230000,
+    status: "Đang xử lý",
+    limitBefore: 3000000,
+    limitAfter: 4200000,
+    createdAt: "2024-05-08",
+  },
+  {
+    id: "T012",
+    accountName: "Ads Account H",
+    facebookAdsId: "202020202",
+    note: "Đang xác minh giao dịch",
+    amount: 1200000,
+    business: "Vip 3",
+    currency: "Franc",
+    fee: 30000,
+    total: 1230000,
+    status: "Đang xử lý",
+    limitBefore: 3000000,
+    limitAfter: 4200000,
+    createdAt: "2024-05-08",
+  },
+  {
+    id: "T013",
+    accountName: "Ads Account H",
+    facebookAdsId: "202020202",
+    note: "Đang xác minh giao dịch",
+    amount: 1200000,
+    business: "Vip 3",
+    currency: "Franc",
+    fee: 30000,
+    total: 1230000,
+    status: "Đang xử lý",
+    limitBefore: 3000000,
+    limitAfter: 4200000,
+    createdAt: "2024-05-08",
+  },
+  {
+    id: "T014",
+    accountName: "Ads Account H",
+    facebookAdsId: "202020202",
+    note: "Đang xác minh giao dịch",
+    amount: 1200000,
+    business: "Vip 3",
+    currency: "Franc",
+    fee: 30000,
+    total: 1230000,
+    status: "Đang xử lý",
+    limitBefore: 3000000,
+    limitAfter: 4200000,
+    createdAt: "2024-05-08",
+  },
+  {
+    id: "T015",
+    accountName: "Ads Account H",
+    facebookAdsId: "202020202",
+    note: "Đang xác minh giao dịch",
+    amount: 1200000,
+    business: "Vip 3",
+    currency: "Franc",
     fee: 30000,
     total: 1230000,
     status: "Đang xử lý",
@@ -127,6 +272,30 @@ const ManageAdsAccount: React.FC = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [filtered, setFiltered] = useState(mockData);
+  const [activeCell, setActiveCell] = useState<string | null>(null);
+  const [activeRow, setActiveRow] = useState<string | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<AdsAccount | null>(
+    null
+  );
+  const [showModal, setShowModal] = useState(false);
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof AdsAccount;
+    direction: "asc" | "desc";
+  } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [highlightedRows, setHighlightedRows] = useState<string[]>([]);
+
+  const toggleCheckbox = (id: string) => {
+    setSelectedIds((prev) => {
+      const updated = prev.includes(id)
+        ? prev.filter((item) => item !== id)
+        : [...prev, id];
+
+      setHighlightedRows(updated);
+      return updated;
+    });
+  };
 
   const handleFilter = () => {
     const result = mockData.filter((item) => {
@@ -142,111 +311,572 @@ const ManageAdsAccount: React.FC = () => {
 
     setFiltered(result);
   };
+  const handleSearchLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value.toLowerCase();
+    setSearch(term);
+
+    const result = mockData.filter((item) => {
+      const matchSearch =
+        item.accountName.toLowerCase().includes(term) ||
+        item.facebookAdsId.toLowerCase().includes(term) ||
+        item.note.toLowerCase().includes(term);
+
+      const matchStatus =
+        statusFilter === "all" || item.status === statusFilter;
+
+      const matchType =
+        typeFilter === "all" ||
+        (typeFilter === "business" && item.accountName.includes("B"));
+      typeFilter === "personal" && item.accountName.includes("C");
+
+      return matchSearch && matchStatus && matchType;
+    });
+
+    setFiltered(result);
+  };
+
+  const sortedData = useMemo(() => {
+    const sortableItems = [...filtered];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return sortConfig.direction === "asc"
+            ? aValue - bValue
+            : bValue - aValue;
+        }
+
+        return sortConfig.direction === "asc"
+          ? String(aValue).localeCompare(String(bValue))
+          : String(bValue).localeCompare(String(aValue));
+      });
+    }
+    return sortableItems;
+  }, [filtered, sortConfig]);
 
   const handleReset = () => {
     setSearch("");
     setStatusFilter("all");
     setFiltered(mockData);
   };
+  const handleSync = async () => {
+    // const response = await fetch("api note");
+    // const data = await response.json();
+    // setFiltered(data);
+    setFiltered(mockData);
+  };
+
+  const SortableHeader = ({
+    label,
+    sortKey,
+  }: {
+    label: string;
+    sortKey: keyof AdsAccount;
+  }) => {
+    const [open, setOpen] = useState(false);
+
+    const toggleSort = (direction: "asc" | "desc") => {
+      setSortConfig({ key: sortKey, direction });
+      setOpen(false);
+    };
+    const SortableHeader = ({
+      label,
+      sortKey,
+    }: {
+      label: string;
+      sortKey: keyof AdsAccount;
+    }) => {
+      const [open, setOpen] = useState(false);
+
+      const toggleSort = (direction: "asc" | "desc") => {
+        setSortConfig({ key: sortKey, direction });
+        setOpen(false);
+      };
+
+      return (
+        <div className="relative flex justify-center items-center">
+          <span>{label}</span>
+          <button
+            className="ml-1 p-1 hover:bg-gray-200 rounded"
+            onClick={() => setOpen((prev) => !prev)}
+          >
+            <MoreVertical className="w-4 h-4 text-gray-500" />
+          </button>
+          {open && (
+            <div className="absolute right-0 top-6 w-32 bg-white border rounded shadow z-10">
+              <div
+                onClick={() => toggleSort("asc")}
+                className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
+              >
+                <ArrowUp className="w-4 h-4 mr-2" /> ASC
+              </div>
+              <div
+                onClick={() => toggleSort("desc")}
+                className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
+              >
+                <ArrowDown className="w-4 h-4 mr-2" /> DESC
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    return (
+      <div className="relative flex justify-center items-center">
+        <span>{label}</span>
+        <button
+          className="ml-1 p-1 hover:bg-gray-200 rounded"
+          onClick={() => setOpen((prev) => !prev)}
+        >
+          <MoreVertical className="w-4 h-4 text-gray-500" />
+        </button>
+        {open && (
+          <div className="absolute right-0 top-6 w-32 bg-white border rounded shadow z-10">
+            <div
+              onClick={() => toggleSort("asc")}
+              className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
+            >
+              <ArrowUp className="w-4 h-4 mr-2" /> ASC
+            </div>
+            <div
+              onClick={() => toggleSort("desc")}
+              className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
+            >
+              <ArrowDown className="w-4 h-4 mr-2" /> DESC
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <Layout>
-      <div className="p-6">
-        <h1 className="text-1xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+      <div className="flex items-end justify-between mb-4">
+        <h1 className="text-1xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
           Quản lý tài khoản
         </h1>
-        <div className="bg-white shadow-sm rounded-lg p-4 mt-3 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          {/* Search bar */}
-          <div className="relative w-full md:w-[350px]">
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo ID, Tài Khoản"
-              className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+        <button
+          onClick={handleSync}
+          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition"
+        >
+          <div className="flex items-center gap-2">
+            <RefreshCcw className="w-4 h-4" />
+            Đồng Bộ Tài Khoản
           </div>
-          <div className="flex items-center gap-3">
-            <select
-              className="form-select focus:outline-none focus:ring-0"
-              value={statusFilter}
-              onChange={(e) => {
-                const value = e.target.value;
-                setStatusFilter(value);
-                const result = mockData.filter((item) => {
-                  const matchSearch =
-                    item.facebookAdsId.includes(search) ||
-                    item.note.toLowerCase().includes(search.toLowerCase());
+        </button>
+      </div>
 
-                  const matchStatus = value === "all" || item.status === value;
-
-                  return matchSearch && matchStatus;
-                });
-
-                setFiltered(result);
-              }}
-            >
-              <option value="all">Tất cả trạng thái</option>
-              <option value="Thành công">Thành công</option>
-              <option value="Đang xử lý">Đang xử lý</option>
-              <option value="Thất bại">Thất bại</option>
-            </select>
-          </div>
+      <div className="pl-1 p-4 mt-3 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Search bar */}
+        <div className="relative w-full md:w-[350px]">
+          <input
+            type="text"
+            placeholder="Tìm kiếm theo ID, Tài Khoản"
+            className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
+            value={search}
+            onChange={handleSearchLabel}
+          />
         </div>
+        <div className="flex items-center gap-1">
+          <select
+            className="form-select focus:outline-none focus:ring-0"
+            value={statusFilter}
+            onChange={(e) => {
+              const value = e.target.value;
+              setStatusFilter(value);
+              const result = mockData.filter((item) => {
+                const matchSearch =
+                  item.facebookAdsId.includes(search) ||
+                  item.note.toLowerCase().includes(search.toLowerCase());
 
-        {/* Table */}
-        <div className="overflow-auto">
-          <table className="min-w-full border rounded-lg table-auto text-sm text-left">
-            <thead className="bg-gray-100 text-gray-700 font-semibold">
+                const matchStatus = value === "all" || item.status === value;
+
+                return matchSearch && matchStatus;
+              });
+              setFiltered(result);
+            }}
+          >
+            <option value="all">Tất cả</option>
+            <option value="Thành công">Thành công</option>
+            <option value="Đang xử lý">Đang xử lý</option>
+            <option value="Thất bại">Thất bại</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <div className="max-h-[576px] overflow-y-auto">
+          <table className="min-w-[1200px] table-fixed border border-gray-300 border-collapse bg-white text-sm text-gray-800">
+            <thead className="bg-gray-100 text-xs font-semibold uppercase text-gray-700 sticky top-0 z-10">
               <tr>
-                <th className="px-4 py-2">ID</th>
-                <th className="px-4 py-2">Tài khoản</th>
-                <th className="px-4 py-2">FB Ads Id</th>
-                <th className="px-4 py-2">Ghi chú</th>
-                <th className="px-4 py-2">Số tiền</th>
-                <th className="px-4 py-2">Phí</th>
-                <th className="px-4 py-2">Tổng</th>
-                <th className="px-4 py-2">Trạng thái</th>
-                <th className="px-4 py-2">Ngưỡng Thanh Toán</th>
-                <th className="px-4 py-2">Giới Hạn Chi Tiêu</th>
-                <th className="px-4 py-2">Ngày tạo</th>
+                <th className="px-2 py-3 text-center min-w-[40px] border border-gray-200">
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      const newSelected = e.target.checked
+                        ? sortedData.map((i) => i.id)
+                        : [];
+                      setSelectedIds(newSelected);
+                      setHighlightedRows(newSelected);
+                    }}
+                    checked={
+                      selectedIds.length === sortedData.length &&
+                      selectedIds.length > 0
+                    }
+                  />
+                </th>
+                <th className="px-4 py-3 text-center min-w-[80px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-2">
+                    <BadgeInfo className="w-4 h-4 text-gray-500" />
+                    <span>ID</span>
+                    <SortableHeader label="" sortKey="id" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[160px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <BadgeCheck className="w-4 h-4 text-gray-500" />
+                    <span>Account ID</span>
+                    <SortableHeader label="" sortKey="accountName" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[160px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <CircleDollarSign className="w-4 h-4 text-gray-500" />
+                    <span>Account Status</span>
+                    <SortableHeader label="" sortKey="status" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[120px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <Scale className="w-4 h-4 text-gray-500" />
+                    <span>Amount Spent</span>
+                    <SortableHeader label="" sortKey="amount" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[120px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <Briefcase className="w-4 h-4 text-gray-500" />
+                    <span>Balance</span>
+                    <SortableHeader label="" sortKey="total" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[150px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <DollarSign className="w-4 h-4 text-gray-500" />
+                    <span>Business</span>
+                    <SortableHeader label="" sortKey="business" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[100px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <AlarmClockPlus className="w-4 h-4 text-gray-500" />
+                    <span>Currency</span>
+                    <SortableHeader label="" sortKey="currency" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[140px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <Pen className="w-4 h-4 text-gray-500" />
+                    <span>Created Time</span>
+                    <SortableHeader label="" sortKey="createdAt" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[240px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <ALargeSmall className="w-4 h-4 text-gray-500" />
+                    <span>Reason Status</span>
+                    <SortableHeader label="" sortKey="note" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[150px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <Infinity className="w-4 h-4 text-gray-500" />
+                    <span>Name</span>
+                    <SortableHeader label="" sortKey="accountName" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[120px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <Clock9 className="w-4 h-4 text-gray-500" />
+                    <span>Spend Cap</span>
+                    <SortableHeader label="" sortKey="limitAfter" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[100px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <User className="w-4 h-4 text-gray-500" />
+                    <span>Time</span>
+                    <SortableHeader label="" sortKey="createdAt" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[140px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <LucideUserRoundCheck className="w-4 h-4 text-gray-500" />
+                    <span>Owner</span>
+                    <SortableHeader label="" sortKey="accountName" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[100px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <HandCoins className="w-4 h-4 text-gray-500" />
+                    <span>Personal</span>
+                    <SortableHeader label="" sortKey="accountName" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[150px] whitespace-nowrap border border-gray-200">
+                  <div className="flex items-center justify-center gap-1">
+                    <HandCoins className="w-4 h-4 text-gray-500" />
+                    <span>Prepay Account</span>
+                    <SortableHeader label="" sortKey="accountName" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center min-w-[100px] border border-gray-200"></th>
               </tr>
             </thead>
-            <tbody>
-              {filtered.length > 0 ? (
-                filtered.map((item) => (
-                  <tr key={item.id} className="border-t hover:bg-gray-50">
-                    <td className="px-4 py-2">{item.id}</td>
-                    <td className="px-4 py-2">{item.accountName}</td>
-                    <td className="px-4 py-2">{item.facebookAdsId}</td>
-                    <td className="px-4 py-2">{item.note}</td>
-                    <td className="px-4 py-2">
-                      {item.amount.toLocaleString()}₫
-                    </td>
-                    <td className="px-4 py-2">{item.fee.toLocaleString()}₫</td>
-                    <td className="px-4 py-2">
-                      {item.total.toLocaleString()}₫
-                    </td>
-                    <td className="px-4 py-2">{item.status}</td>
-                    <td className="px-4 py-2">
-                      {item.limitBefore.toLocaleString()}₫
-                    </td>
-                    <td className="px-4 py-2">
-                      {item.limitAfter.toLocaleString()}₫
-                    </td>
-                    <td className="px-4 py-2">{item.createdAt}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={11} className="text-center py-4 text-gray-500">
-                    Không có giao dịch nào khớp với bộ lọc.
+
+            <tbody className="text-sm text-gray-800">
+              {sortedData.map((item: any) => (
+                <tr
+                  key={item.id}
+                  className={`border-t ${
+                    highlightedRows.includes(item.id)
+                      ? "bg-green-100"
+                      : activeRow === item.id
+                      ? "bg-green-100"
+                      : "hover:bg-gray-50"
+                  }`}
+                >
+                  <td className="px-2 py-2 text-center border border-gray-200">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(item.id)}
+                      onChange={() => toggleCheckbox(item.id)}
+                    />
+                  </td>
+
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-id` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      if (
+                        activeRow === item.id &&
+                        activeCell === `${item.id}-id`
+                      ) {
+                        setActiveRow(null);
+                        setActiveCell(null);
+                      } else {
+                        setActiveRow(item.id);
+                        setActiveCell(`${item.id}-id`);
+                      }
+                    }}
+                  >
+                    {item.id}
+                  </td>
+
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-accountName`
+                        ? "bg-green-100"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-accountName`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.accountName}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-status` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-status`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.status}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-amount` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-amount`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.amount.toLocaleString()}₫
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-total` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-total`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.total.toLocaleString()}₫
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-business` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-business`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    Business name
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-currency` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-currency`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    VND
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-createdAt`
+                        ? "bg-green-100"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-createdAt`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.createdAt}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-note` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-note`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.note}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-name` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-name`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.accountName}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-limitAfter`
+                        ? "bg-green-100"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-limitAfter`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.limitAfter.toLocaleString()}₫
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-time` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-time`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    {item.createdAt}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-owner` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-owner`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    Owner Name
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-personal` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-personal`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    Personal
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
+                      activeCell === `${item.id}-prepay` ? "bg-green-100" : ""
+                    }`}
+                    onClick={() => {
+                      setActiveCell(`${item.id}-prepay`);
+                      setActiveRow(null);
+                    }}
+                  >
+                    Có
+                  </td>
+                  <td className="px-4 py-2 text-center border border-gray-200">
+                    <button
+                      onClick={() => {
+                        setSelectedAccount(item);
+                        setShowModal(true);
+                      }}
+                      className="text-gray-600 hover:text-blue-600"
+                      title="Xem chi tiết"
+                    >
+                      <SquarePen className="w-5 h-5 mx-auto" />
+                    </button>
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
+        {showModal && selectedAccount && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative">
+              <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                onClick={() => setShowModal(false)}
+              >
+                ×
+              </button>
+              <h2 className="text-xl font-semibold	 mb-4">Chi tiết tài khoản</h2>
+              <ul className="space-y-2 text-sm">
+                {Object.entries(selectedAccount).map(([key, value]) => (
+                  <li key={key}>
+                    <strong>{key}:</strong>{" "}
+                    {typeof value === "number" ? value.toLocaleString() : value}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );
