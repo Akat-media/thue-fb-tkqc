@@ -7,13 +7,14 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import MarketplacePage from "./pages/marketplace/MarketplacePage";
 import RentalsPage from "./pages/rentals/RentalsPage";
 import PaymentPage from "./pages/payment/PaymentPage";
-import Dashboard from "./pages/Dashboard";
+// import Dashboard from "./pages/Dashboard";
 import AddAccountPage from "./pages/marketplace/AddAccountPage.tsx";
 import PaymentForm from "./pages/marketplace/PaymentForm.tsx";
 import ManageAdsAccount from "./pages/admin/ManageAdsAccount";
 import AdminTransactionsPage from "./pages/admin/AdminTransactionsPage";
 import UserManagementPage from "./pages/admin/UserManagementPage";
 import Analytics from "./pages/analytics/Analytics";
+import ProfilePage from "./pages/profile/Profile.tsx";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
               element={<AdminTransactionsPage />}
             />
             <Route path="/usermanage" element={<UserManagementPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Routes>
         </Router>
       </NotificationProvider>

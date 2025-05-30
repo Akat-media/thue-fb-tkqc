@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Menu, X, Bell, User, CreditCard, LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Button from "../ui/Button";
 
@@ -13,20 +13,24 @@ const Navbar: React.FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const navigate = useNavigate();
   const toggleProfileMenu = () => {
-    setIsProfileMenuOpen(!isProfileMenuOpen);
+    // setIsProfileMenuOpen(!isProfileMenuOpen);
+    navigate("/profile");
+
   };
 
   return (
     <nav className="bg-white shadow-sm w-full">
-      <div className="flex justify-between items-center h-16 px-4 sm:px-6 lg:px-8">
-        <div className="flex-shrink-0">
-          <Link to="/" className="text-blue-600 text-3xl font-semibold	">
-            AKAds
-          </Link>
-        </div>
+      <div className="flex justify-center items-center h-20 px-4 sm:px-6 lg:px-8">
         <div className="flex-1">
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="max-w-7xl mx-auto flex justify-between items-center py-10 text-gray-700 text-lg font-sans-serif font-medium ">
+            <div className="">
+              <Link to="/" className="text-blue-600 text-3xl font-semibold ">
+                AKAds
+              </Link>
+            </div>
+
             <div className="hidden sm:flex sm:space-x-8">
               <Link to="/dashboard" className="nav-link">
                 Trang chủ
@@ -40,7 +44,11 @@ const Navbar: React.FC = () => {
               <Link to="/payments" className="nav-link">
                 Nạp tiền
               </Link>
+              <Link to="/usermanage" className="nav-link">
+                Quản lý người dùng
+              </Link>
             </div>
+
             <div className="hidden sm:flex sm:items-center space-x-4">
               {isAuthenticated ? (
                 <>
@@ -51,6 +59,7 @@ const Navbar: React.FC = () => {
                     <span className="sr-only">Xem thông báo</span>
                     <Bell className="h-6 w-6" />
                   </button>
+
                   <div className="relative">
                     <button
                       type="button"
