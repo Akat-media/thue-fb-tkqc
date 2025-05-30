@@ -498,8 +498,18 @@ const UserManagementPage: React.FC = () => {
                   key={user.id}
                   className={
                     highlightedRows.includes(user.id)
-                      ? "bg-[#dcfce7] ring-2 ring-[#47b46c]"
+                      ? "bg-[#dcfce7] relative"
                       : "hover:bg-gray-50"
+                  }
+                  style={
+                    highlightedRows.includes(user.id)
+                      ? {
+                          outline: "1px solid #47b46c",
+                          outlineOffset: "0px",
+                          position: "relative",
+                          zIndex: 5,
+                        }
+                      : {}
                   }
                 >
                   <td className="text-center px-4 py-4 border border-gray-100 w-4 h-4">
