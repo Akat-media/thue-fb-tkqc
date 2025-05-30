@@ -2,25 +2,18 @@ import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import { useAuth } from "../../context/AuthContext";
-
-const getInitialSidebar = () => {
-    const role = localStorage.getItem("role") || "user";
-    return role !== "user";
-};
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(getInitialSidebar);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => {
-     console.log("before",isSidebarOpen);
       return !prev;
   });
-    console.log("after",isSidebarOpen);
 
+  const user = localStorage.getItem("user");
+  const role = typeof user === "string" ? JSON.parse(user)?.user.role : "";
 
-  return isAuthenticated ? (
+  return role !== "user" ? (
     <div className="flex bg-gray-50">
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <main
