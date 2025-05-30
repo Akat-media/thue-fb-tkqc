@@ -5,6 +5,7 @@ export interface User {
   phone?: string;
   balance: number;
   createdAt: Date;
+  user: any;
 }
 
 export interface Transaction {
