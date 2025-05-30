@@ -7,7 +7,7 @@ const AccountSidebar: React.FC = () => {
             <div className="bg-white rounded-xl p-6 shadow-md w-full max-w-xs">
             <div className="flex justify-center mb-10">
                 <img
-                    src="/ic-glass-bag.svg"
+                    src="/avatar.jpg"
                     alt="Avatar"
                     className="w-28 h-28 rounded-full border-4 border-white shadow"
                 />

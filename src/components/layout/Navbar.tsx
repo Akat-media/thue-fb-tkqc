@@ -44,8 +44,8 @@ const Navbar: React.FC = () => {
               <Link to="/payments" className="nav-link">
                 Nạp tiền
               </Link>
-              <Link to="/usermanage" className="nav-link">
-                Quản lý người dùng
+              <Link to="/adsaccountmanager" className="nav-link">
+                Lịch sử giao dịch
               </Link>
             </div>
 
@@ -63,18 +63,23 @@ const Navbar: React.FC = () => {
                   <div className="relative">
                     <button
                       type="button"
-                      className="bg-white flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      className="bg-white flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200"
                       id="user-menu"
                       aria-haspopup="true"
                       onClick={toggleProfileMenu}
                     >
                       <span className="sr-only">Mở menu người dùng</span>
-                      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                        {user?.name?.charAt(0)?.toUpperCase()}
+                      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden">
+                        <img
+                            src="/avatar.jpg"
+                            alt="Ảnh demo"
+                            className="h-8 w-8 object-cover rounded-full"
+                        />
                       </div>
+
                     </button>
                     {isProfileMenuOpen && (
-                      <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                        <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                         <div className="px-4 py-3 text-sm text-gray-700 border-b space-y-1">
                           <p className="font-semibold text-base">
                             {user?.name}
