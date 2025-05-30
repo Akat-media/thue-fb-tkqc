@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, Filter, ChevronDown } from "lucide-react";
 import Layout from "../../components/layout/Layout";
 import { Card, CardContent } from "../../components/ui/Card";
@@ -6,10 +6,11 @@ import AdAccountCard from "./AdAccountCard";
 import RentModal from "./RentModal";
 import { AdAccount } from "../../types";
 import { useAdAccountStore } from "./adAccountStore"; // Import store
+import BaseHeader from "../../api/BaseHeader";
 
 const MarketplacePage: React.FC = () => {
   const {
-    filteredAccounts,
+    // filteredAccounts,
     searchTerm,
     selectedType,
     selectedAccountType,
@@ -22,8 +23,25 @@ const MarketplacePage: React.FC = () => {
     null
   );
   const [isRentModalOpen, setIsRentModalOpen] = useState(false);
-
-  const handleRentClick = (account: AdAccount) => {
+  const [filteredAccounts, setFilteredAccounts] = useState<any>([]);
+  const handleCallAPi = async () => {
+    try {
+      const response = await BaseHeader({
+        method: "get",
+        url: "ad-accounts",
+        params: {},
+      });
+      console.log(response.data.data);
+      setFilteredAccounts(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    handleCallAPi();
+  }, []);
+  const handleRentClick = (account: any) => {
+    console.log("account", account);
     setSelectedAccount(account);
     setIsRentModalOpen(true);
   };
@@ -121,7 +139,7 @@ const MarketplacePage: React.FC = () => {
         )}
 
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredAccounts.map((account) => (
+          {filteredAccounts.map((account: any) => (
             <AdAccountCard
               key={account.id}
               account={account}
