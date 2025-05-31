@@ -1,0 +1,172 @@
+import React, {useState} from "react";
+import Layout from "../../components/layout/Layout.tsx";
+import { Mail, Phone, Send, X } from 'lucide-react';
+
+interface FormData {
+    name: string;
+    email: string;
+    message: string;
+}
+
+const Support: React.FC = () => {
+    const [formData, setFormData] = useState<FormData>({
+        name: '',
+        email: '',
+        message: '',
+    });
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        // Simulate form submission
+        setIsSubmitted(true);
+        setFormData({ name: '', email: '', message: '' });
+        setTimeout(() => setIsSubmitted(false), 3000);
+    };
+
+    return (
+        <Layout>
+            <div className="min-h-screen bg-gradient-to-br from-blue-100 via-sky-200 to-cyan-100">
+                {/* Main Content */}
+                <main className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                            Chúng Tôi Ở Đây Để Hỗ Trợ Bạn
+                        </h2>
+                        <p className="mt-4 text-lg text-gray-600">
+                            Liên hệ với chúng tôi qua form dưới đây hoặc thông tin liên hệ trực tiếp.<br/> Đội ngũ hỗ trợ của AKA MEDIA sẽ phản hồi trong thời gian sớm nhất.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Contact Form */}
+                        <div className="bg-white p-6 rounded-lg shadow-xl">
+                            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                                Gửi Yêu Cầu Hỗ Trợ
+                            </h3>
+                            <div className="space-y-6">
+                                <div>
+                                    <label
+                                        htmlFor="name"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Họ và Tên
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        id="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        placeholder="Nhập họ và tên"
+                                    />
+                                </div>
+                                <div>
+                                    <label
+                                        htmlFor="email"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        placeholder="Nhập email của bạn"
+                                    />
+                                </div>
+                                <div>
+                                    <label
+                                        htmlFor="message"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Nội dung
+                                    </label>
+                                    <textarea
+                                        name="message"
+                                        id="message"
+                                        value={formData.message}
+                                        onChange={handleInputChange}
+                                        rows={4}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        placeholder="Mô tả vấn đề của bạn"
+                                    />
+                                </div>
+                                <button
+                                    onClick={handleSubmit}
+                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                >
+                                    <Send className="w-5 h-5 mr-2" />
+                                    Gửi Yêu Cầu
+                                </button>
+                            </div>
+                            {isSubmitted && (
+                                <div className="mt-4 p-4 bg-green-100 text-green-700 rounded-md flex items-center">
+                                    <span>Yêu cầu của bạn đã được gửi thành công!</span>
+                                    <button
+                                        onClick={() => setIsSubmitted(false)}
+                                        className="ml-auto focus:outline-none"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Contact Info */}
+                        <div className="bg-white p-6 rounded-lg shadow-xl">
+                            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                                Thông Tin Liên Hệ
+                            </h3>
+                            <div className="space-y-4">
+                                <div className="flex items-center">
+                                    <Mail className="w-6 h-6 text-blue-600 mr-3" />
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-700">Email</p>
+                                        <a
+                                            href="mailto:support@akamedia.com"
+                                            className="text-blue-600 hover:underline"
+                                        >
+                                            support@akamedia.com
+                                        </a>
+                                    </div>
+                                </div>
+                                <div className="flex items-center">
+                                    <Phone className="w-6 h-6 text-blue-600 mr-3" />
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-700">Hotline</p>
+                                        <a
+                                            href="tel:+84234567890"
+                                            className="text-blue-600 hover:underline"
+                                        >
+                                            +84 234 567 890
+                                        </a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-700">Giờ làm việc</p>
+                                    <p className="text-gray-600">Thứ 2 - Thứ 6: 9:00 - 17:00</p>
+                                    <p className="text-gray-600">Thứ 7: 9:00 - 12:00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+            </div>
+        </Layout>
+    )
+}
+
+export default Support;

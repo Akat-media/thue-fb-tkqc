@@ -11,7 +11,7 @@ interface User {
 
 interface AuthState {
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
   fetchUser: () => Promise<void>;
   logout: () => void;
 }

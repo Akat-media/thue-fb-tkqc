@@ -15,6 +15,8 @@ import UserManagementPage from "./pages/admin/UserManagementPage";
 import Analytics from "./pages/analytics/Analytics";
 import ProfilePage from "./pages/profile/Profile.tsx";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import Support from "./pages/support/Support.tsx";
+import Policy from "./pages/policy/Policy.tsx";
 
 function App() {
   return (
@@ -23,12 +25,16 @@ function App() {
           <Router>
             <Routes>
               {/* Route công khai: Không yêu cầu đăng nhập */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
               <Route path="/" element={<HomePage />} />
               <Route path="/dashboard" element={<HomePage />} />
+              <Route path="/marketplace" element={<MarketplacePage />} />
+              <Route path="/support" element={<Support />} />
+              <Route path="/policy" element={<Policy />} />
 
               {/* Route yêu cầu đăng nhập */}
               <Route element={<ProtectedRoute />}>
-                <Route path="/marketplace" element={<MarketplacePage />} />
                 <Route path="/add-account" element={<AddAccountPage />} />
                 <Route path="/rentals" element={<RentalsPage />} />
                 <Route path="/payments" element={<PaymentPage />} />
@@ -39,10 +45,6 @@ function App() {
                 <Route path="/usermanage" element={<UserManagementPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
               </Route>
-
-              {/* Route công khai: Đăng nhập và đăng ký */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
             </Routes>
           </Router>
         </NotificationProvider>
