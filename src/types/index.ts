@@ -44,7 +44,13 @@ export interface Rental {
   requestedLimit: number;
   totalPrice: number;
   spentBudget: number;
-  status: "pending" | "active" | "expired" | "cancelled";
+  status:
+    | "rented"
+    | "available"
+    | "expired"
+    | "cancelled"
+    | "unavailable"
+    | "active";
   createdAt: Date;
 }
 

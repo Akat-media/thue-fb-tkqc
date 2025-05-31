@@ -54,9 +54,8 @@ const LoginPage: React.FC = () => {
             "Chào mừng bạn quay trở lại!",
             "success"
           );
-        });
-
-      navigate("/");
+        })
+        .catch((err) => console.log(err));
     } catch (error) {
       console.error("Login error:", error);
       addNotification(
