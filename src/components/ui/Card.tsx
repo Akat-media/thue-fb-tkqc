@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface CardProps {
   className?: string;
@@ -7,7 +7,11 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ className, children }) => {
   return (
-    <div className={`bg-white rounded-lg shadow-md overflow-hidden ${className || ''}`}>
+    <div
+      className={`bg-white rounded-lg shadow-md overflow-hidden ${
+        className || ""
+      }`}
+    >
       {children}
     </div>
   );
@@ -18,9 +22,12 @@ interface CardHeaderProps {
   children: React.ReactNode;
 }
 
-export const CardHeader: React.FC<CardHeaderProps> = ({ className, children }) => {
+export const CardHeader: React.FC<CardHeaderProps> = ({
+  className,
+  children,
+}) => {
   return (
-    <div className={`px-6 py-4 border-b border-gray-200 ${className || ''}`}>
+    <div className={`px-6 py-4 border-b border-gray-200 ${className || ""}`}>
       {children}
     </div>
   );
@@ -31,9 +38,12 @@ interface CardTitleProps {
   children: React.ReactNode;
 }
 
-export const CardTitle: React.FC<CardTitleProps> = ({ className, children }) => {
+export const CardTitle: React.FC<CardTitleProps> = ({
+  className,
+  children,
+}) => {
   return (
-    <h3 className={`text-lg font-semibold text-gray-900 ${className || ''}`}>
+    <h3 className={`text-lg font-semibold text-gray-900 ${className || ""}`}>
       {children}
     </h3>
   );
@@ -44,9 +54,12 @@ interface CardDescriptionProps {
   children: React.ReactNode;
 }
 
-export const CardDescription: React.FC<CardDescriptionProps> = ({ className, children }) => {
+export const CardDescription: React.FC<CardDescriptionProps> = ({
+  className,
+  children,
+}) => {
   return (
-    <p className={`text-sm text-gray-500 mt-1 ${className || ''}`}>
+    <p className={`text-sm text-gray-500 mt-1 ${className || ""}`}>
       {children}
     </p>
   );
@@ -57,12 +70,11 @@ interface CardContentProps {
   children: React.ReactNode;
 }
 
-export const CardContent: React.FC<CardContentProps> = ({ className, children }) => {
-  return (
-    <div className={`px-6 py-4 ${className || ''}`}>
-      {children}
-    </div>
-  );
+export const CardContent: React.FC<CardContentProps> = ({
+  className,
+  children,
+}) => {
+  return <div className={`px-6 py-4 ${className || ""}`}>{children}</div>;
 };
 
 interface CardFooterProps {
@@ -70,10 +82,11 @@ interface CardFooterProps {
   children: React.ReactNode;
 }
 
-export const CardFooter: React.FC<CardFooterProps> = ({ className, children }) => {
+export const CardFooter: React.FC<CardFooterProps> = ({
+  className,
+  children,
+}) => {
   return (
-    <div className={`px-6 py-4 border-t border-gray-200 bg-gray-50 ${className || ''}`}>
-      {children}
-    </div>
+    <div className={`px-6 py-4 border-t ${className || ""}`}>{children}</div>
   );
 };
