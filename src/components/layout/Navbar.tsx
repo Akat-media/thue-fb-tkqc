@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X, User, CreditCard, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useUserStore } from "../../stores/useUserStore.ts";
 import LoginModal from "../../pages/auth/LoginModal.tsx";
 import { toast,ToastContainer } from "react-toastify";
+// import { useAuth } from "../../context/AuthContext";
+import Button from "../ui/Button";
+import { useUserStore } from "../../stores/useUserStore.ts";
+import socket from "../../socket/index.ts";
 
 const ProfileDropdown: React.FC<{
   user: any;
@@ -12,34 +15,41 @@ const ProfileDropdown: React.FC<{
   onClose: () => void;
 }> = ({ user, isProfileMenuOpen, handleLogout, onClose }) => {
   return (
-      <div
-          className={`absolute right-0 mt-2 min-w-[200px] max-w-[90vw] rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 z-50 transition-all duration-200 ease-in-out transform ${
-              isProfileMenuOpen ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 pointer-events-none"
-          }`}
-      >
-        <div className="flex justify-between items-center px-4 py-2 border-b">
-          <p className="font-semibold text-base">{user?.username || "User"}</p>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <X size={16} />
-          </button>
-        </div>
-        <div className="px-4 py-3 text-sm text-gray-700 border-b space-y-1">
-
-          <p className="text-gray-500 truncate">{user?.email || "email@example.com"}</p>
-          <p className="font-semibold text-green-600 mt-1">
-            {user?.points || 0} điểm
-          </p>
-        </div>
-        <Link to="/profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-          <User className="mr-2 h-4 w-4" /> Tài khoản
-        </Link>
-        <Link to="/payments" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-          <CreditCard className="mr-2 h-4 w-4" /> Nạp tiền
-        </Link>
-        <button onClick={handleLogout} className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-          <LogOut className="mr-2 h-4 w-4" /> Đăng xuất
-        </button>
+    <div
+      className={`absolute right-0 mt-2 min-w-[200px] max-w-[90vw] rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 z-50 transition-all duration-200 ease-in-out transform ${
+        isProfileMenuOpen
+          ? "opacity-100 scale-100"
+          : "opacity-0 scale-95 pointer-events-none"
+      }`}
+    >
+      <div className="px-4 py-3 text-sm text-gray-700 border-b space-y-1">
+        <p className="font-semibold text-base">{user?.username || "User"}</p>
+        <p className="text-gray-500 truncate">
+          {user?.email || "email@example.com"}
+        </p>
+        <p className="font-semibold text-green-600 mt-1">
+          {user?.points || 0} điểm
+        </p>
       </div>
+      <Link
+        to="/profile"
+        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+      >
+        <User className="mr-2 h-4 w-4" /> Tài khoản
+      </Link>
+      <Link
+        to="/payments"
+        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+      >
+        <CreditCard className="mr-2 h-4 w-4" /> Nạp tiền
+      </Link>
+      <button
+        onClick={handleLogout}
+        className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors text-left"
+      >
+        <LogOut className="mr-2 h-4 w-4" /> Đăng xuất
+      </button>
+    </div>
   );
 };
 
@@ -91,6 +101,22 @@ const Navbar: React.FC = () => {
     };
   }, [fetchUser]);
 
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      socket.emit("joinRoom");
+    });
+    socket.on("payment_success", (data) => {
+      console.log("Payment thành công:", data);
+      fetchUser();
+    });
+    return () => {
+      socket.off("payment_success");
+    };
+  }, [fetchUser]);
+  // console.log("fetchUser", fetchUser)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isAuthMenuOpen, setIsAuthMenuOpen] = useState(false);
 
