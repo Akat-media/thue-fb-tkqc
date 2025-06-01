@@ -6,6 +6,7 @@ export default {
       animation: {
         "spin-slow": "spin 240s linear infinite",
         "background-slow": "bgMove 20s ease-in-out infinite",
+        "float": "float 20s ease-in-out infinite",
       },
       keyframes: {
         bgMove: {
@@ -15,6 +16,10 @@ export default {
           "50%": {
             backgroundPosition: "100% 100%",
           },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
         },
       },
       fontFamily: {
@@ -26,9 +31,9 @@ export default {
         reach: "#2196F3",
         engagement: "#AB47BC",
       },
-      fontFamily: {
-        sans: ["Poppins", "ui-sans-serif", "system-ui"],
-      },
+      // fontFamily: {
+      //   sans: ["Poppins", "ui-sans-serif", "system-ui"],
+      // },
     },
   },
   plugins: [],

@@ -34,7 +34,7 @@ const HomePage: React.FC = () => {
                 </Link>
               </div>
             </div>
-            <div className="mt-12 lg:mt-0 flex justify-center">
+            <div className="mt-20 lg:mt-0 flex justify-center animate-bounce">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="h-64 w-64 bg-blue-500 bg-opacity-30 rounded-full animate-pulse"></div>
