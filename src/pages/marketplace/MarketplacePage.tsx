@@ -4,13 +4,13 @@ import Layout from "../../components/layout/Layout";
 import { Card, CardContent } from "../../components/ui/Card";
 import AdAccountCard from "./AdAccountCard";
 import RentModal from "./RentModal";
+import CreateBMModal from "./CreateBMModal";
 import { AdAccount } from "../../types";
-import { useAdAccountStore } from "./adAccountStore"; // Import store
+import { useAdAccountStore } from "./adAccountStore";
 import BaseHeader from "../../api/BaseHeader";
 
 const MarketplacePage: React.FC = () => {
   const {
-    // filteredAccounts,
     searchTerm,
     selectedType,
     selectedAccountType,
@@ -24,6 +24,10 @@ const MarketplacePage: React.FC = () => {
   );
   const [isRentModalOpen, setIsRentModalOpen] = useState(false);
   const [filteredAccounts, setFilteredAccounts] = useState<any>([]);
+
+  // New state for CreateBM modal
+  const [isCreateBMModalOpen, setIsCreateBMModalOpen] = useState(false);
+
   const handleCallAPi = async () => {
     try {
       const response = await BaseHeader({
@@ -37,9 +41,11 @@ const MarketplacePage: React.FC = () => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     handleCallAPi();
   }, []);
+
   const handleRentClick = (account: any) => {
     console.log("account", account);
     setSelectedAccount(account);
@@ -62,23 +68,23 @@ const MarketplacePage: React.FC = () => {
         </div>
 
         <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Tìm kiếm BM, tài khoản..."
+                className="min-w-[380px] block pl-10 pr-3 py-[10px] rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Tìm kiếm BM, tài khoản..."
-              className="min-w-[380px] block pl-10 pr-3 py-[10px] rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
 
-          <div className="mt-3 md:mt-0 flex items-center">
             <button
               type="button"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="inline-flex items-center px-4 py-[10px] border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               onClick={toggleFilters}
             >
               <Filter className="h-5 w-5 mr-2 text-gray-400" />
@@ -88,6 +94,16 @@ const MarketplacePage: React.FC = () => {
                   isFiltersOpen ? "rotate-180" : ""
                 }`}
               />
+            </button>
+          </div>
+
+          <div className="mt-3 md:mt-0">
+            <button
+              type="button"
+              className="inline-flex items-center px-4 py-[10px] border border-blue-600 rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              onClick={() => setIsCreateBMModalOpen(true)}
+            >
+              Tạo tài khoản BM
             </button>
           </div>
         </div>
@@ -164,6 +180,11 @@ const MarketplacePage: React.FC = () => {
             account={selectedAccount}
           />
         )}
+        <CreateBMModal
+          isOpen={isCreateBMModalOpen}
+          onClose={() => setIsCreateBMModalOpen(false)}
+          onSuccess={handleCallAPi}
+        />
       </div>
     </Layout>
   );
