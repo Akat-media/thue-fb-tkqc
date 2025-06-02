@@ -732,7 +732,7 @@ const ManageAdsAccount: React.FC = () => {
               className="max-h-[576px] overflow-y-auto"
             >
               <table className="w-full table-auto border border-gray-300 border-collapse bg-white text-sm text-gray-800">
-                <thead className="bg-[#f5f5ff] text-sm font-semibold uppercase text-[#2b3245] sticky top-0 z-10">
+                <thead className="bg-[#f5f5ff] text-sm font-semibold uppercase text-[#2b3245] sticky top-0 z-20">
                   <tr>
                     {headers.map((col) =>
                       col.render ? (
@@ -766,11 +766,21 @@ const ManageAdsAccount: React.FC = () => {
                       key={item.id}
                       className={`${
                         highlightedRows.includes(item.id)
-                          ? "bg-[#dcfce7] ring-2 ring-[#47b46c]"
+                          ? "bg-[#dcfce7] relative"
                           : activeRow === item.id
                           ? "bg-green-100"
                           : "hover:bg-gray-50"
                       }`}
+                      style={
+                        highlightedRows.includes(item.id)
+                          ? {
+                              outline: "1px solid #47b46c",
+                              outlineOffset: "0px",
+                              position: "relative",
+                              zIndex: 5,
+                            }
+                          : {}
+                      }
                     >
                       <td className="px-4 py-3 text-center border border-gray-100">
                         <label className="relative inline-flex items-center justify-center cursor-pointer w-4 h-4">
@@ -1022,7 +1032,7 @@ const ManageAdsAccount: React.FC = () => {
               className="max-h-[576px] overflow-y-auto"
             >
               <table className="w-full table-auto border border-gray-300 border-collapse bg-white text-sm text-gray-800">
-                <thead className="bg-[#f5f5ff] text-sm font-semibold uppercase text-[#2b3245] sticky top-0 z-10">
+                <thead className="bg-[#f5f5ff] text-sm font-semibold uppercase text-[#2b3245] sticky top-0 z-20">
                   <tr>
                     {headersPoints.map((col) =>
                       col.render ? (
