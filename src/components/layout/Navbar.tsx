@@ -165,7 +165,7 @@ const Navbar: React.FC = () => {
       icon: "🏠",
       label: "Trang chủ",
       href: "/dashboard",
-      hoverColor: "bg-gradient-to-r from-blue-500 to-blue-300",
+      hoverColor: "bg-gradient-to-r from-blue-400 to-blue-800",
     },
     {
       icon: "📋",
@@ -322,8 +322,9 @@ const Navbar: React.FC = () => {
               <div className="hidden sm:relative sm:overflow-hidden sm:w-full sm:h-[38px] sm:flex sm:items-center">
                 <div className="absolute right-0 whitespace-nowrap animate-marquee text-[13px]">
                   <span className="mx-4 font-[13px]">
-                    Chào mừng bạn đến với AKA MEDIA - Giải pháp nhanh chóng, an
-                    toàn và đáng tin cậy trên các nền tảng số
+                    {user
+                      ? `Chào mừng ${user.username} đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và đáng tin cậy trên các nền tảng số`
+                      : "Chào mừng bạn đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và đáng tin cậy trên các nền tảng số"}
                   </span>
                 </div>
               </div>

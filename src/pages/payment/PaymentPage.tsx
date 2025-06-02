@@ -12,7 +12,6 @@ import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
 import { Transaction } from "../../types";
 import BaseHeader from "../../api/BaseHeader";
-import SpeederLoading from "../../components/ui/SpeederLoading";
 
 const mockTransactions: Transaction[] = [
   {
