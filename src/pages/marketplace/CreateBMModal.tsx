@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import { toast } from "react-toastify";
 import BaseHeader from "../../api/BaseHeader";
+import AtomicSpinner from "atomic-spinner";
 
 interface CreateBMModalProps {
   isOpen: boolean;
@@ -29,6 +30,8 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
   onClose,
   onSuccess,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -46,9 +49,10 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
   if (!isOpen) return null;
 
   const onSubmit = async (data: BMFormData) => {
+    setIsLoading(true);
     try {
       const response = await BaseHeader({
-        url: "business-managers",
+        url: "facebook-bm",
         method: "post",
         data: {
           bm_name: data.bm_name,
@@ -58,14 +62,14 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
       });
 
       toast.success("Tạo tài khoản BM thành công!");
-      reset();
-      onClose();
-      if (onSuccess) {
-        onSuccess();
-      }
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     } catch (error) {
       console.error("Error creating BM account:", error);
       toast.error("Có lỗi xảy ra khi tạo tài khoản BM");
+      setIsLoading(false);
     }
   };
 
@@ -75,6 +79,7 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl"
+          disabled={isLoading}
         >
           <X size={20} />
         </button>
@@ -96,6 +101,7 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
                   errors.bm_name ? "border-red-500" : "border-gray-300"
                 } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 placeholder="Nhập tên BM"
+                disabled={isLoading}
               />
               {errors.bm_name && (
                 <p className="text-red-500 text-sm mt-1">
@@ -115,6 +121,7 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
                   errors.bm_id ? "border-red-500" : "border-gray-300"
                 } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 placeholder="Nhập BM ID"
+                disabled={isLoading}
               />
               {errors.bm_id && (
                 <p className="text-red-500 text-sm mt-1">
@@ -136,6 +143,7 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
                     : "border-gray-300"
                 } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 placeholder="Nhập System User Token"
+                disabled={isLoading}
               />
               {errors.system_user_token && (
                 <p className="text-red-500 text-sm mt-1">
@@ -149,22 +157,29 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
                 type="button"
                 onClick={onClose}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                disabled={isLoading}
               >
                 Hủy
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isLoading}
                 className={`px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ${
-                  isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                  isLoading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
               >
-                {isSubmitting ? "Đang xử lý..." : "Tạo tài khoản BM"}
+                {isLoading ? "Đang xử lý..." : "Tạo tài khoản BM"}
               </button>
             </div>
           </form>
         </div>
       </div>
+
+      {isLoading && (
+        <div className="fixed inset-0 z-[9999] backdrop-blur-sm bg-white/60 flex items-center justify-center">
+          <AtomicSpinner size={60} color="#ffffff" />
+        </div>
+      )}
     </div>
   );
 };

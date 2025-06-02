@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Search, Filter, ChevronDown } from "lucide-react";
+import { Search, Filter, ChevronDown, Check, Briefcase } from "lucide-react";
 import Layout from "../../components/layout/Layout";
 import { Card, CardContent } from "../../components/ui/Card";
 import AdAccountCard from "./AdAccountCard";
@@ -8,6 +8,8 @@ import CreateBMModal from "./CreateBMModal";
 import { AdAccount } from "../../types";
 import { useAdAccountStore } from "./adAccountStore";
 import BaseHeader from "../../api/BaseHeader";
+import url from "../../assets/bg.svg";
+import { useOnOutsideClick } from "../../hook/useOutside";
 
 const MarketplacePage: React.FC = () => {
   const {
@@ -24,9 +26,13 @@ const MarketplacePage: React.FC = () => {
   );
   const [isRentModalOpen, setIsRentModalOpen] = useState(false);
   const [filteredAccounts, setFilteredAccounts] = useState<any>([]);
+  const [bmList, setBmList] = useState<any>([]);
 
   // New state for CreateBM modal
   const [isCreateBMModalOpen, setIsCreateBMModalOpen] = useState(false);
+
+  const [selectedBM, setSelectedBM] = useState<any>(null);
+  const [isBMDetailModalOpen, setIsBMDetailModalOpen] = useState(false);
 
   const handleCallAPi = async () => {
     try {
@@ -42,8 +48,23 @@ const MarketplacePage: React.FC = () => {
     }
   };
 
+  const fetchBMList = async () => {
+    try {
+      const response = await BaseHeader({
+        method: "get",
+        url: "facebook-bm",
+        params: {},
+      });
+      console.log("BM List:", response.data.data);
+      setBmList(response.data.data);
+    } catch (error) {
+      console.log("Error fetching BM list:", error);
+    }
+  };
+
   useEffect(() => {
     handleCallAPi();
+    fetchBMList();
   }, []);
 
   const handleRentClick = (account: any) => {
@@ -52,9 +73,19 @@ const MarketplacePage: React.FC = () => {
     setIsRentModalOpen(true);
   };
 
+  const handleBMClick = (bm: any) => {
+    console.log("BM clicked:", bm);
+    setSelectedBM(bm);
+    setIsBMDetailModalOpen(true);
+  };
+
   const toggleFilters = () => {
     setIsFiltersOpen(!isFiltersOpen);
   };
+
+  const { innerBorderRef } = useOnOutsideClick(() => {
+    setIsBMDetailModalOpen(false);
+  });
 
   return (
     <Layout>
@@ -154,24 +185,76 @@ const MarketplacePage: React.FC = () => {
           </Card>
         )}
 
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredAccounts.map((account: any) => (
-            <AdAccountCard
-              key={account.id}
-              account={account}
-              onRentClick={() => handleRentClick(account)}
-            />
-          ))}
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold mb-4">
+            Danh Sách Tài Khoản BM ({bmList.length})
+          </h3>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {bmList.map((bm: any) => (
+              <Card
+                key={bm.id}
+                className="h-full flex flex-col relative cursor-pointer hover:shadow-lg transition-shadow duration-200"
+                onClick={() => handleBMClick(bm)}
+              >
+                <CardContent className="flex-grow relative z-10 p-6">
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-[22px] font-semibold text-gray-900">
+                      {bm.bm_name}
+                    </h3>
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium gap-1 cursor-pointer bg-green-100 text-green-800">
+                      <Check className="h-4 w-4" />
+                      <span className="ml-1">Hoạt động</span>
+                    </span>
+                  </div>
+                  <div className="mt-4 space-y-3">
+                    <div className="flex items-center text-sm">
+                      <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
+                        <Briefcase className="h-4 w-4 text-gray-400" />
+                        BM ID:
+                      </span>
+                      <span className="text-gray-900 font-medium">
+                        {bm.bm_id}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+                <div className="absolute bottom-0 left-0 w-full">
+                  <img className="w-full" src={url} alt="img" />
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {bmList.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">Không tìm thấy BM nào.</p>
+            </div>
+          )}
         </div>
 
-        {filteredAccounts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">
-              Không tìm thấy BM/tài khoản quảng cáo phù hợp với tiêu chí tìm
-              kiếm.
-            </p>
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold mb-4">
+            Danh Sách TKQC ({filteredAccounts.length})
+          </h3>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredAccounts.map((account: any) => (
+              <AdAccountCard
+                key={account.id}
+                account={account}
+                onRentClick={() => handleRentClick(account)}
+              />
+            ))}
           </div>
-        )}
+
+          {filteredAccounts.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">
+                Không tìm thấy BM/tài khoản quảng cáo phù hợp với tiêu chí tìm
+                kiếm.
+              </p>
+            </div>
+          )}
+        </div>
 
         {selectedAccount && (
           <RentModal
@@ -183,8 +266,73 @@ const MarketplacePage: React.FC = () => {
         <CreateBMModal
           isOpen={isCreateBMModalOpen}
           onClose={() => setIsCreateBMModalOpen(false)}
-          onSuccess={handleCallAPi}
+          onSuccess={fetchBMList}
         />
+
+        {selectedBM && isBMDetailModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div
+              ref={innerBorderRef}
+              className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative max-h-[80vh] overflow-y-auto"
+            >
+              <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                onClick={() => setIsBMDetailModalOpen(false)}
+              >
+                ×
+              </button>
+              <h2 className="text-xl font-semibold mb-4">
+                Chi Tiết Tài Khoản BM:
+              </h2>
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <span className="font-medium w-1/3">Tên BM:</span>
+                  <span>{selectedBM.bm_name}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="font-medium w-1/3">BM ID:</span>
+                  <span>{selectedBM.bm_id}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="font-medium w-1/3">Trạng thái:</span>
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <Check className="h-3 w-3 mr-1" />
+                    Hoạt động
+                  </span>
+                </div>
+                {selectedBM.system_user_token && (
+                  <div className="flex flex-col">
+                    <span className="font-medium mb-1">System User Token:</span>
+                    <div className="bg-gray-100 p-2 rounded-md text-xs overflow-x-auto">
+                      <code className="break-all whitespace-pre-wrap">
+                        {selectedBM.system_user_token}
+                      </code>
+                    </div>
+                  </div>
+                )}
+                {Object.entries(selectedBM).map(
+                  ([key, value]: [string, any]) => {
+                    if (
+                      ["bm_name", "bm_id", "system_user_token"].includes(key)
+                    ) {
+                      return null;
+                    }
+                    return (
+                      <div key={key} className="flex items-start">
+                        <span className="font-medium w-1/3">{key}:</span>
+                        <span className="break-all">
+                          {typeof value === "number"
+                            ? value.toLocaleString()
+                            : String(value)}
+                        </span>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );
