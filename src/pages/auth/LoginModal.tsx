@@ -62,7 +62,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30 px-4">
+    <div className="fixed inset-0 z-1000 flex items-center justify-center backdrop-blur-sm bg-black/30 px-4">
       <div className="bg-white  w-full max-w-5xl rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden relative">
         <button
           onClick={onClose}

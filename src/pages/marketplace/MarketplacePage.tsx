@@ -10,8 +10,14 @@ import { useAdAccountStore } from "./adAccountStore";
 import BaseHeader from "../../api/BaseHeader";
 import url from "../../assets/bg.svg";
 import { useOnOutsideClick } from "../../hook/useOutside";
+import { toast } from "react-toastify";
+import BMCard from "./BMCard";
 
 const MarketplacePage: React.FC = () => {
+  const userString = localStorage.getItem("user");
+  const userInfo = userString ? JSON.parse(userString) : null;
+  const isAdmin = userInfo?.user?.role === "admin";
+
   const {
     searchTerm,
     selectedType,
@@ -28,7 +34,6 @@ const MarketplacePage: React.FC = () => {
   const [filteredAccounts, setFilteredAccounts] = useState<any>([]);
   const [bmList, setBmList] = useState<any>([]);
 
-  // New state for CreateBM modal
   const [isCreateBMModalOpen, setIsCreateBMModalOpen] = useState(false);
 
   const [selectedBM, setSelectedBM] = useState<any>(null);
@@ -74,9 +79,13 @@ const MarketplacePage: React.FC = () => {
   };
 
   const handleBMClick = (bm: any) => {
-    console.log("BM clicked:", bm);
-    setSelectedBM(bm);
-    setIsBMDetailModalOpen(true);
+    if (isAdmin) {
+      console.log("BM clicked:", bm);
+      setSelectedBM(bm);
+      setIsBMDetailModalOpen(true);
+    } else {
+      toast.info("Bạn cần có quyền admin để xem chi tiết tài khoản BM");
+    }
   };
 
   const toggleFilters = () => {
@@ -129,13 +138,15 @@ const MarketplacePage: React.FC = () => {
           </div>
 
           <div className="mt-3 md:mt-0">
-            <button
-              type="button"
-              className="inline-flex items-center px-4 py-[10px] border border-blue-600 rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              onClick={() => setIsCreateBMModalOpen(true)}
-            >
-              Tạo tài khoản BM
-            </button>
+            {isAdmin && (
+              <button
+                type="button"
+                className="inline-flex items-center px-4 py-[10px] border border-blue-600 rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                onClick={() => setIsCreateBMModalOpen(true)}
+              >
+                Tạo tài khoản BM
+              </button>
+            )}
           </div>
         </div>
 
@@ -185,58 +196,26 @@ const MarketplacePage: React.FC = () => {
           </Card>
         )}
 
-        <div className="mt-8">
-          <h3 className="text-xl font-semibold mb-4">
-            Danh Sách Tài Khoản BM ({bmList.length})
-          </h3>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {bmList.map((bm: any) => (
-              <Card
-                key={bm.id}
-                className="h-full flex flex-col relative cursor-pointer hover:shadow-lg transition-shadow duration-200"
-                onClick={() => handleBMClick(bm)}
-              >
-                <CardContent className="flex-grow relative z-10 p-6">
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-[22px] font-semibold text-gray-900">
-                      {bm.bm_name}
-                    </h3>
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium gap-1 cursor-pointer bg-green-100 text-green-800">
-                      <Check className="h-4 w-4" />
-                      <span className="ml-1">Hoạt động</span>
-                    </span>
-                  </div>
-                  <div className="mt-4 space-y-3">
-                    <div className="flex items-center text-sm">
-                      <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
-                        <Briefcase className="h-4 w-4 text-gray-400" />
-                        BM ID:
-                      </span>
-                      <span className="text-gray-900 font-medium">
-                        {bm.bm_id}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-                <div className="absolute bottom-0 left-0 w-full">
-                  <img className="w-full" src={url} alt="img" />
-                </div>
-              </Card>
-            ))}
-          </div>
-
-          {bmList.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">Không tìm thấy BM nào.</p>
+        {/* BM List Section */}
+        {bmList.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-xl font-medium text-gray-900 mb-4">
+              Danh sách BM
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {bmList.map((bm: any) => (
+                <BMCard key={bm.id} bm={bm} onClick={() => handleBMClick(bm)} />
+              ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
+        {/* Ad Accounts Section */}
         <div className="mt-8">
-          <h3 className="text-xl font-semibold mb-4">
-            Danh Sách TKQC ({filteredAccounts.length})
+          <h3 className="text-xl font-medium text-gray-900 mb-4">
+            Danh sách tài khoản quảng cáo
           </h3>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredAccounts.map((account: any) => (
               <AdAccountCard
                 key={account.id}
@@ -245,15 +224,6 @@ const MarketplacePage: React.FC = () => {
               />
             ))}
           </div>
-
-          {filteredAccounts.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">
-                Không tìm thấy BM/tài khoản quảng cáo phù hợp với tiêu chí tìm
-                kiếm.
-              </p>
-            </div>
-          )}
         </div>
 
         {selectedAccount && (
