@@ -21,6 +21,7 @@ import clsx from "clsx";
 import { useAuth } from "../../context/AuthContext";
 import socket from "../../socket";
 import { useUserStore } from "../../stores/useUserStore";
+import { useNotificationStore } from '../../stores/notificationStore';
 
 const Sidebar: React.FC<{
   isSidebarOpen: boolean;
@@ -46,6 +47,9 @@ const Sidebar: React.FC<{
     // { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     // { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
   ];
+
+  // notify admin
+  const { openNotification } = useNotificationStore();
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -270,9 +274,10 @@ const Sidebar: React.FC<{
           </span>
         </Link>
 
-        <Link
-          to="/notifications"
-          className="flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300"
+        <button
+          onClick={() => openNotification('third')}
+          // to="/admin/notifications"
+          className="flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300 w-full"
         >
           <div className="w-12 flex justify-center">
             <Bell className="w-5 h-5" />
@@ -285,7 +290,7 @@ const Sidebar: React.FC<{
           >
             Thông báo
           </span>
-        </Link>
+        </button>
 
         {/* User profile (nếu đang đăng nhập) */}
         {userobj && isSidebarOpen && (
