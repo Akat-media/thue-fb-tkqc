@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Mail, Lock, Bot } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useNotification } from "../../context/NotificationContext";
 import axios from "axios";
@@ -11,7 +11,7 @@ const LoginPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {}
   );
@@ -34,8 +34,8 @@ const LoginPage: React.FC = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const setUser = useUserStore((state) => state.setUser);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -87,9 +87,9 @@ const LoginPage: React.FC = () => {
         </Link>
         <div className="w-[420px] p-8 mt-10 rounded-lg">
           <h1 className="text-2xl font-semibold text-[#0167F8] mb-2">
-            Chào Mừng Bạn Quay Trở Lại
+            Vui Lòng Đăng Nhập
           </h1>
-          <h3 className="text-sm text-gray-500 mb-6"> JQK </h3>
+          <h3 className="text-sm text-gray-500 mb-6"> RPA </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
@@ -98,14 +98,17 @@ const LoginPage: React.FC = () => {
               >
                 Tài Khoản
               </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-              />
+              <div className="relative mt-1">
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8] pr-10"
+                />
+                <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              </div>
               {errors.email && (
                 <p className="text-sm text-red-500 mt-1">{errors.email}</p>
               )}
@@ -117,14 +120,29 @@ const LoginPage: React.FC = () => {
               >
                 Mật Khẩu
               </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-              />
+              <div className="relative mt-1">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8] pr-10"
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
               {errors.password && (
                 <p className="text-sm text-red-500 mt-1">{errors.password}</p>
               )}

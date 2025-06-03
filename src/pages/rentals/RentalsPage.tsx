@@ -8,6 +8,7 @@ import {
   Calendar,
   DollarSign,
   Wallet,
+  XOctagonIcon,
 } from "lucide-react";
 import Layout from "../../components/layout/Layout";
 import Button from "../../components/ui/Button";
@@ -359,12 +360,12 @@ const RentalsPage: React.FC = () => {
                       {rental.status === "available" && (
                         <>
                           <Button
-                            className="bg-yellow-500 hover:bg-yellow-400 py-2"
+                            className="bg-red-500 hover:bg-red-400 py-2"
                             size="sm"
-                            icon={<BarChart3 className="h-4 w-4" />}
+                            icon={<XOctagonIcon className="h-4 w-4" />}
                             fullWidth
                           >
-                            Xem báo cáo
+                            Hủy
                           </Button>
                           <Button className="py-2" size="sm" fullWidth>
                             Nâng cấp
@@ -381,12 +382,13 @@ const RentalsPage: React.FC = () => {
                         rental.spentBudget >= rental.requestedLimit && (
                           <>
                             <Button
-                              className="bg-yellow-500 hover:bg-yellow-400 py-2"
+                              className="bg-red-500 hover:bg-red-400 py-2"
                               size="sm"
-                              icon={<BarChart3 className="h-4 w-4" />}
+                              icon={<XOctagonIcon className="h-4 w-4" />}
                               fullWidth
+                              disabled
                             >
-                              Xem báo cáo
+                              Hủy
                             </Button>
                             <Button
                               className="py-2 bg-fuchsia-700 hover:bg-fuchsia-600"
@@ -399,7 +401,7 @@ const RentalsPage: React.FC = () => {
                         )}
                       {rental.status === "unavailable" && (
                         <Button
-                          className="bg-red-500 hover:bg-red-400 py-2"
+                          className="bg-yellow-500 hover:bg-yellow-400 py-2"
                           size="sm"
                           icon={<RefreshCw className="h-4 w-4" />}
                           fullWidth
