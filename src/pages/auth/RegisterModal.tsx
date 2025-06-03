@@ -5,6 +5,7 @@ import { BaseUrl } from "../../api/BaseHeader";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AtomicSpinner from "atomic-spinner";
+import { Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -24,6 +25,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<{
     name?: string;
     email?: string;
@@ -140,7 +143,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-2">
-            Tạo tài khoản mới
+            Tạo Tài Khoản Mới
           </h2>
           <p className="text-sm text-gray-500 mb-6">
             Đăng ký ngay để sử dụng các dịch vụ của AKAds.
@@ -154,14 +157,17 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               >
                 Họ tên
               </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="P Nguyễn"
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400"
-              />
+              <div className="relative mt-1">
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="P Nguyễn"
+                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400 pr-10"
+                />
+                <User className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              </div>
               {errors.name && (
                 <p className="text-sm text-red-500 mt-1">{errors.name}</p>
               )}
@@ -174,14 +180,17 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               >
                 Email
               </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400"
-              />
+              <div className="relative mt-1">
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400 pr-10"
+                />
+                <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              </div>
               {errors.email && (
                 <p className="text-sm text-red-500 mt-1">{errors.email}</p>
               )}
@@ -194,14 +203,17 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               >
                 Số điện thoại
               </label>
-              <input
-                type="tel"
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="0901234567"
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400"
-              />
+              <div className="relative mt-1">
+                <input
+                  type="tel"
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="0901234567"
+                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400 pr-10"
+                />
+                <Phone className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              </div>
               {errors.phone && (
                 <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
               )}
@@ -214,14 +226,29 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               >
                 Mật khẩu
               </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400"
-              />
+              <div className="relative mt-1">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400 pr-10"
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
               {errors.password && (
                 <p className="text-sm text-red-500 mt-1">{errors.password}</p>
               )}
@@ -234,14 +261,29 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               >
                 Xác nhận mật khẩu
               </label>
-              <input
-                type="password"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400"
-              />
+              <div className="relative mt-1">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400 pr-10"
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
               {errors.confirmPassword && (
                 <p className="text-sm text-red-500 mt-1">
                   {errors.confirmPassword}
