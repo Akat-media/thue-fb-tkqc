@@ -35,14 +35,14 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
   const calculateTotalPrice = () => {
     return requestedLimit + requestedLimit * 0.1;
   };
-
+  console.log("userBmId", userBmId);
   const handleSubmit = async () => {
     try {
       const response = await BaseHeader({
         url: "points-used",
         method: "post",
         data: {
-          bm_id: "1043878897701771",
+          bm_id: userBmId || "",
           ads_account_id: account?.account_id || "",
           user_id: userParse.user_id || "",
           amountPoint: calculateTotalPrice(),
