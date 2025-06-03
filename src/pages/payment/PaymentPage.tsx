@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CreditCard, Copy, FileText, Landmark } from "lucide-react";
+import { CreditCard, Copy, Landmark, Check, X } from "lucide-react";
 import Layout from "../../components/layout/Layout";
 import Button from "../../components/ui/Button";
 import {
@@ -12,6 +12,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
 import { Transaction } from "../../types";
 import BaseHeader from "../../api/BaseHeader";
+import socket from "../../socket/index.ts";
 
 const mockTransactions: Transaction[] = [
   {
@@ -77,6 +78,9 @@ const PaymentPage: React.FC = () => {
   const [countdown, setCountdown] = useState(120);
   const [qrImageUrl, setQrImageUrl] = useState<string | null>(null);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<
+    "loading" | "success" | "failed" | null
+  >(null);
 
   const hanleCalTransaction = async (number: any) => {
     try {
@@ -147,11 +151,14 @@ const PaymentPage: React.FC = () => {
   };
 
   const handleConfirmTransfer = () => {
-    setIsConfirming(true);
+    setPaymentStatus("loading");
     setTimeout(() => {
-      setShowQRCode(false);
-      setIsConfirming(false);
-      setCustomAmount("");
+      setPaymentStatus("success");
+      setTimeout(() => {
+        setPaymentStatus(null);
+        setShowQRCode(false);
+        setCustomAmount("");
+      }, 2000);
     }, 3000);
   };
 
@@ -172,7 +179,13 @@ const PaymentPage: React.FC = () => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          setShowQRCode(false);
+          setPaymentStatus("failed");
+          setTimeout(() => {
+            setPaymentStatus(null);
+            setShowQRCode(false);
+            setCustomAmount("");
+          }, 3000);
+
           return 0;
         }
         return prev - 1;
@@ -181,6 +194,25 @@ const PaymentPage: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [showQRCode]);
+
+  useEffect(() => {
+    socket.on("payment_success", (data) => {
+      console.log("Payment success event received:", data);
+      setPaymentStatus("success");
+      setTimeout(() => {
+        setPaymentStatus(null);
+        setShowQRCode(false);
+        setCustomAmount("");
+        if (typeof window !== "undefined") {
+          window.location.reload();
+        }
+      }, 2000);
+    });
+
+    return () => {
+      socket.off("payment_success");
+    };
+  }, []);
 
   return (
     <Layout>
@@ -738,14 +770,56 @@ const PaymentPage: React.FC = () => {
           )}
         </div>
       </div>
-      {isConfirming && (
+      {paymentStatus && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-lg text-center max-w-sm w-full">
-            <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-blue-500 mx-auto mb-4"></div>
-            <p className="text-gray-700 text-sm">
-              Vui lòng chờ một chút để hệ thống nạp tiền vào tài khoản của
-              bạn...
-            </p>
+            {paymentStatus === "loading" ? (
+              <>
+                <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-blue-500 mx-auto mb-4"></div>
+                <p className="text-gray-700 text-sm">
+                  Vui lòng chờ một chút để hệ thống xác nhận thanh toán...
+                </p>
+              </>
+            ) : paymentStatus === "success" ? (
+              <>
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="h-8 w-8 text-green-500" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Thanh toán thành công!
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Số dư tài khoản của bạn đã được cập nhật.
+                </p>
+                <button
+                  onClick={() => setPaymentStatus(null)}
+                  className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Đóng
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <X className="h-8 w-8 text-red-500" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Thanh toán thất bại!
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Không nhận được xác nhận thanh toán. Vui lòng thử lại sau.
+                </p>
+                <button
+                  onClick={() => {
+                    setPaymentStatus(null);
+                    setShowQRCode(false);
+                  }}
+                  className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Đóng
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
