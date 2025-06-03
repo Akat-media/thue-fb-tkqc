@@ -121,7 +121,7 @@ const Navbar: React.FC = () => {
   }, [fetchUser]);
 
   useEffect(() => {
-      setIsProfileMenuOpen(false);
+    setIsProfileMenuOpen(false);
   }, [user]);
 
   useEffect(() => {
@@ -261,7 +261,7 @@ const Navbar: React.FC = () => {
   const role = userStorage != null ? JSON.parse(userStorage)?.user.role : "";
   const hiddenPaths = ["/login", "/register"];
   if (hiddenPaths.includes(location.pathname) || role === "admin") {
-      return null;
+    return null;
   }
 
   return (

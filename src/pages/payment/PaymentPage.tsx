@@ -196,6 +196,10 @@ const PaymentPage: React.FC = () => {
   }, [showQRCode]);
 
   useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      socket.emit("joinRoom");
+    });
     socket.on("payment_success", (data) => {
       console.log("Payment success event received:", data);
       setPaymentStatus("success");
@@ -203,10 +207,7 @@ const PaymentPage: React.FC = () => {
         setPaymentStatus(null);
         setShowQRCode(false);
         setCustomAmount("");
-        if (typeof window !== "undefined") {
-          window.location.reload();
-        }
-      }, 2000);
+      }, 5000);
     });
 
     return () => {
@@ -507,12 +508,12 @@ const PaymentPage: React.FC = () => {
                             className="w-[400px] h-[500px] rounded shadow"
                           />
                         )}
-                        <Button
+                        {/* <Button
                           onClick={handleConfirmTransfer}
                           className="mt-4"
                         >
                           Đã thanh toán
-                        </Button>
+                        </Button> */}
                         <div className="space-y-1">
                           <p className="text-sm text-red-500 font-semibold">
                             Mã QR sẽ hết hạn sau: {Math.floor(countdown / 60)}:
@@ -789,7 +790,7 @@ const PaymentPage: React.FC = () => {
                   Thanh toán thành công!
                 </h3>
                 <p className="text-gray-600 text-sm mb-4">
-                  Số dư tài khoản của bạn đã được cập nhật.
+                  Vui lòng chờ trong giây lát để cộng điểm!!
                 </p>
                 <button
                   onClick={() => setPaymentStatus(null)}
