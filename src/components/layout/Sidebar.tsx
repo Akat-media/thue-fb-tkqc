@@ -74,6 +74,15 @@ const Sidebar: React.FC<{
       socket.off("payment_success");
     };
   }, [fetchUser]);
+
+  const { setUser } = useUserStore();
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login");
+  }
   return (
     <aside
       className={clsx(
@@ -324,7 +333,7 @@ const Sidebar: React.FC<{
                 </Link>
                 <button
                   onClick={() => {
-                    logout();
+                    handleLogout()
                     navigate("/login");
                   }}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
