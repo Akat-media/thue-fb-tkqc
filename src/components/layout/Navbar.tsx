@@ -121,6 +121,10 @@ const Navbar: React.FC = () => {
   }, [fetchUser]);
 
   useEffect(() => {
+      setIsProfileMenuOpen(false);
+  }, [user]);
+
+  useEffect(() => {
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id);
       socket.emit("joinRoom");
@@ -210,6 +214,7 @@ const Navbar: React.FC = () => {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const handleLoginSuccess = () => {
     setShowLoginModal(false);
+    setIsProfileMenuOpen(false);
     fetchUser();
     toast.success("Đăng nhập thành công!", {
       position: "top-right",
@@ -251,6 +256,13 @@ const Navbar: React.FC = () => {
     setShowRegisterModal(false);
     setShowLoginModal(true);
   };
+
+  const userStorage = localStorage.getItem("user");
+  const role = userStorage != null ? JSON.parse(userStorage)?.user.role : "";
+  const hiddenPaths = ["/login", "/register"];
+  if (hiddenPaths.includes(location.pathname) || role === "admin") {
+      return null;
+  }
 
   return (
     <nav className="bg-white shadow-sm w-full flex flex-row sm:flex-col">

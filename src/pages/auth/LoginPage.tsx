@@ -5,6 +5,7 @@ import { useNotification } from "../../context/NotificationContext";
 import axios from "axios";
 import { BaseUrl } from "../../api/BaseHeader";
 import AtomicSpinner from "atomic-spinner";
+import { useUserStore } from "../../stores/useUserStore";
 
 const LoginPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -34,6 +35,7 @@ const LoginPage: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const setUser = useUserStore((state) => state.setUser);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -45,7 +47,13 @@ const LoginPage: React.FC = () => {
           password: password,
         })
         .then((res) => {
-          navigate("/");
+          setUser(res.data.data);
+          const role = res.data.data.user.role;
+          if (role === "user") {
+            navigate("/");
+          } else if (role === "admin") {
+            navigate("/analytics");
+          }
           localStorage.setItem("access_token", res.data.data.access_token);
           localStorage.setItem("refresh_token", res.data.data.refresh_token);
           localStorage.setItem("user", JSON.stringify(res.data.data));

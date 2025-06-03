@@ -18,12 +18,14 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import Support from "./pages/support/Support.tsx";
 import Policy from "./pages/policy/Policy.tsx";
 import AdminProfilePage from "./pages/profile/AdminProfilePage.tsx";
+import Navbar from "./components/layout/Navbar.tsx";
 
 function App() {
   return (
     <AuthProvider>
       <NotificationProvider>
         <Router>
+          <Navbar />
           <Routes>
             {/* Route công khai: Không yêu cầu đăng nhập */}
             <Route path="/login" element={<LoginPage />} />

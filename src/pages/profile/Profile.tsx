@@ -6,7 +6,7 @@ const ProfilePage: React.FC = () => {
 
     return (
         <div>
-            <Navbar />
+            {/*<Navbar />*/}
 
             <div className="max-w-[1200px] mx-auto">
                 <AccountPage />
