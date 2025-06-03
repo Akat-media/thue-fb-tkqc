@@ -48,12 +48,7 @@ const LoginPage: React.FC = () => {
         })
         .then((res) => {
           setUser(res.data.data);
-          const role = res.data.data.user.role;
-          if (role === "user") {
-            navigate("/");
-          } else if (role === "admin") {
-            navigate("/analytics");
-          }
+          navigate("/");
           localStorage.setItem("access_token", res.data.data.access_token);
           localStorage.setItem("refresh_token", res.data.data.refresh_token);
           localStorage.setItem("user", JSON.stringify(res.data.data));

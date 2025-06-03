@@ -87,12 +87,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
         localStorage.setItem("refresh_token", refresh_token);
         localStorage.setItem("user", JSON.stringify(userData));
         setUser(loginRes.data.data);
-        const role = loginRes.data.data.user.role;
-        if (role === "user") {
-          navigate("/");
-        } else if (role === "admin") {
-          navigate("/analytics");
-        }
+        navigate("/");
 
         onClose();
 

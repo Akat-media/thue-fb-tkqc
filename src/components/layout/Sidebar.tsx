@@ -38,7 +38,7 @@ const Sidebar: React.FC<{
   const toggleProfileMenu = () => setOpenProfileMenu(!openProfileMenu);
 
   const links = [
-    { label: "Trang chủ", icon: LayoutDashboard, path: "/analytics" },
+    { label: "Trang chủ", icon: LayoutDashboard, path: "/" },
     { label: "Danh sách BM", icon: Briefcase, path: "/marketplace" },
     { label: "Tài khoản đang thuê", icon: ShoppingCart, path: "/rentals" },
     { label: "Nạp tiền", icon: CircleDollarSign, path: "/payments" },
@@ -98,7 +98,7 @@ const Sidebar: React.FC<{
           )}
         >
           <Link
-            to="/analytics"
+            to="/"
             className={clsx(
               "text-2xl font-semibold text-blue-600 hover:underline transition-all duration-300",
               !isSidebarOpen && "opacity-0 w-0 overflow-hidden"
@@ -254,7 +254,7 @@ const Sidebar: React.FC<{
 
       <div className="space-y-2 mt-6">
         <Link
-          to="/help"
+          to="/admin/support"
           className="flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300"
         >
           <div className="w-12 flex justify-center">
