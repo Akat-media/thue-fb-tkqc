@@ -1,7 +1,8 @@
 import Layout from "../../components/layout/Layout.tsx";
 // import React from "react";
 import {Bell, Settings, User} from "lucide-react";
-import ContactForm from "./ContactForm.tsx";
+// import ContactForm from "./ContactForm.tsx";
+import AdminSupportRequests from "./AdminSupportRequests.tsx";
 
 const AdminSupport = () => {
     return (
@@ -49,7 +50,8 @@ const AdminSupport = () => {
                         </div>
 
                         <div>
-                            <ContactForm />
+                            {/*<ContactForm />*/}
+                            <AdminSupportRequests />
                         </div>
                     </div>
 
