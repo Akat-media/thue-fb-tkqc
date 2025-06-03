@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Search, Filter, ChevronDown, Check, Briefcase } from "lucide-react";
-import { RefreshCcw } from "lucide-react";
+import {
+  Search,
+  Filter,
+  ChevronDown,
+  Check,
+  Briefcase,
+  RefreshCcw,
+  X,
+} from "lucide-react";
 import Layout from "../../components/layout/Layout";
 import { Card, CardContent } from "../../components/ui/Card";
 import AdAccountCard from "./AdAccountCard";
@@ -34,11 +41,12 @@ const MarketplacePage: React.FC = () => {
   const [isRentModalOpen, setIsRentModalOpen] = useState(false);
   const [filteredAccounts, setFilteredAccounts] = useState<any>([]);
   const [bmList, setBmList] = useState<any>([]);
-
   const [isCreateBMModalOpen, setIsCreateBMModalOpen] = useState(false);
-
   const [selectedBM, setSelectedBM] = useState<any>(null);
   const [isBMDetailModalOpen, setIsBMDetailModalOpen] = useState(false);
+  const [selectedBMId, setSelectedBMId] = useState<string>("all");
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [selectedSyncBMId, setSelectedSyncBMId] = useState<string>("");
 
   const handleCallAPi = async () => {
     try {
@@ -97,23 +105,46 @@ const MarketplacePage: React.FC = () => {
     setIsBMDetailModalOpen(false);
   });
 
-  const handleSync = async () => {
+  const handleBMFilterChange = (bmId: string) => {
+    setSelectedBMId(bmId);
+
+    if (bmId === "all") {
+      handleCallAPi();
+    } else {
+      const filteredByBM = filteredAccounts.filter(
+        (account: any) => account.facebook_bm_id === bmId
+      );
+      setFilteredAccounts(filteredByBM);
+    }
+  };
+  const handleSync = () => {
+    setIsSyncModalOpen(true);
+  };
+
+  const handleSyncConfirm = async () => {
     try {
       const response = await BaseHeader({
         url: "/async-ad-accounts",
         method: "post",
         data: {
-          bm_id: "1043878897701771",
+          bm_id: selectedSyncBMId,
         },
       });
       if (response.status == 200) {
-        alert("Đồng bộ tài khoản thành công");
+        toast.success("Đồng bộ tài khoản thành công");
         await handleCallAPi();
+        setIsSyncModalOpen(false);
       }
     } catch (error) {
       console.log(error);
+      toast.error("Đồng bộ tài khoản thất bại");
     }
   };
+
+  const { innerBorderRef: syncModalRef } = useOnOutsideClick(() => {
+    setIsSyncModalOpen(false);
+  });
+
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -139,28 +170,19 @@ const MarketplacePage: React.FC = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <input
-              type="text"
-              placeholder="Tìm kiếm BM, tài khoản..."
-              className="min-w-[380px] block pl-10 pr-3 py-[10px] rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          {isAdmin && (
-            <div className="flex items-center gap-1">
-              <button
-                onClick={handleSync}
-                className="px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition"
-              >
-                <div className="flex items-center gap-2">
-                  <RefreshCcw className="w-4 h-4" />
-                  Đồng Bộ Tài Khoản
-                </div>
-              </button>
-            </div>
-          )}
-          {/* <div className="mt-3 md:mt-0 flex items-center">
+            {isAdmin && (
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={handleSync}
+                  className="px-3 py-2 bg-yellow-500 text-white text-sm font-medium rounded-md hover:bg-yellow-600 transition"
+                >
+                  <div className="flex items-center gap-2">
+                    <RefreshCcw className="w-4 h-4" />
+                    Đồng Bộ Tài Khoản
+                  </div>
+                </button>
+              </div>
+            )}
             <button
               type="button"
               className="inline-flex items-center px-4 py-[10px] border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -180,14 +202,13 @@ const MarketplacePage: React.FC = () => {
             {isAdmin && (
               <button
                 type="button"
-                className="inline-flex items-center px-4 py-[10px] border border-blue-600 rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center px-4 py-[10px] border border-green-600 rounded-xl shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 onClick={() => setIsCreateBMModalOpen(true)}
               >
                 Tạo tài khoản BM
               </button>
             )}
           </div>
-          </div> */}
         </div>
 
         {isFiltersOpen && (
@@ -196,20 +217,23 @@ const MarketplacePage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label
-                    htmlFor="bmType"
+                    htmlFor="bmFilter"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Loại BM
+                    Tài khoản BM
                   </label>
                   <select
-                    id="bmType"
+                    id="bmFilter"
                     className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
+                    value={selectedBMId}
+                    onChange={(e) => handleBMFilterChange(e.target.value)}
                   >
                     <option value="all">Tất cả</option>
-                    <option value="personal">Cá nhân</option>
-                    <option value="agency">Agency</option>
+                    {bmList.map((bm: any) => (
+                      <option key={bm.id} value={bm.bm_id}>
+                        {bm.bm_name || `BM ${bm.bm_id}`}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -339,6 +363,77 @@ const MarketplacePage: React.FC = () => {
                     );
                   }
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Sync Modal */}
+        {isSyncModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30 px-4">
+            <div
+              ref={syncModalRef}
+              className="bg-white w-full max-w-md rounded-lg shadow-lg overflow-hidden relative"
+            >
+              <button
+                onClick={() => setIsSyncModalOpen(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="p-6">
+                <h2 className="text-2xl font-bold text-blue-600 mb-4">
+                  Đồng bộ tài khoản quảng cáo
+                </h2>
+
+                <div className="mb-6">
+                  <label
+                    htmlFor="syncBmFilter"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Chọn tài khoản BM để đồng bộ
+                  </label>
+                  <select
+                    id="syncBmFilter"
+                    className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    value={selectedSyncBMId}
+                    onChange={(e) => setSelectedSyncBMId(e.target.value)}
+                  >
+                    <option value="" disabled>
+                      Chọn BM
+                    </option>
+                    {bmList.map((bm: any) => (
+                      <option key={bm.id} value={bm.bm_id}>
+                        {bm.bm_name || `BM ${bm.bm_id}`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex justify-end space-x-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setIsSyncModalOpen(false)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    onClick={handleSyncConfirm}
+                    disabled={!selectedSyncBMId}
+                    className={`px-4 py-2 rounded-lg text-white ${
+                      !selectedSyncBMId
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <RefreshCcw className="w-4 h-4" />
+                      Đồng Bộ
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
