@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Search, Filter, ChevronDown } from "lucide-react";
+import { Search, Filter, ChevronDown, Check, Briefcase } from "lucide-react";
 import Layout from "../../components/layout/Layout";
 import { Card, CardContent } from "../../components/ui/Card";
 import AdAccountCard from "./AdAccountCard";
 import RentModal from "./RentModal";
+import CreateBMModal from "./CreateBMModal";
 import { AdAccount } from "../../types";
-import { useAdAccountStore } from "./adAccountStore"; // Import store
+import { useAdAccountStore } from "./adAccountStore";
 import BaseHeader from "../../api/BaseHeader";
+import url from "../../assets/bg.svg";
+import { useOnOutsideClick } from "../../hook/useOutside";
+import { toast } from "react-toastify";
+import BMCard from "./BMCard";
 
 const MarketplacePage: React.FC = () => {
+  const userString = localStorage.getItem("user");
+  const userInfo = userString ? JSON.parse(userString) : null;
+  const isAdmin = userInfo?.user?.role === "admin";
+
   const {
-    // filteredAccounts,
     searchTerm,
     selectedType,
     selectedAccountType,
@@ -24,6 +32,13 @@ const MarketplacePage: React.FC = () => {
   );
   const [isRentModalOpen, setIsRentModalOpen] = useState(false);
   const [filteredAccounts, setFilteredAccounts] = useState<any>([]);
+  const [bmList, setBmList] = useState<any>([]);
+
+  const [isCreateBMModalOpen, setIsCreateBMModalOpen] = useState(false);
+
+  const [selectedBM, setSelectedBM] = useState<any>(null);
+  const [isBMDetailModalOpen, setIsBMDetailModalOpen] = useState(false);
+
   const handleCallAPi = async () => {
     try {
       const response = await BaseHeader({
@@ -37,18 +52,49 @@ const MarketplacePage: React.FC = () => {
       console.log(error);
     }
   };
+
+  const fetchBMList = async () => {
+    try {
+      const response = await BaseHeader({
+        method: "get",
+        url: "facebook-bm",
+        params: {},
+      });
+      console.log("BM List:", response.data.data);
+      setBmList(response.data.data);
+    } catch (error) {
+      console.log("Error fetching BM list:", error);
+    }
+  };
+
   useEffect(() => {
     handleCallAPi();
+    fetchBMList();
   }, []);
+
   const handleRentClick = (account: any) => {
     console.log("account", account);
     setSelectedAccount(account);
     setIsRentModalOpen(true);
   };
 
+  const handleBMClick = (bm: any) => {
+    if (isAdmin) {
+      console.log("BM clicked:", bm);
+      setSelectedBM(bm);
+      setIsBMDetailModalOpen(true);
+    } else {
+      toast.info("Bạn cần có quyền admin để xem chi tiết tài khoản BM");
+    }
+  };
+
   const toggleFilters = () => {
     setIsFiltersOpen(!isFiltersOpen);
   };
+
+  const { innerBorderRef } = useOnOutsideClick(() => {
+    setIsBMDetailModalOpen(false);
+  });
 
   return (
     <Layout>
@@ -62,23 +108,23 @@ const MarketplacePage: React.FC = () => {
         </div>
 
         <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Tìm kiếm BM, tài khoản..."
+                className="min-w-[380px] block pl-10 pr-3 py-[10px] rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Tìm kiếm BM, tài khoản..."
-              className="min-w-[380px] block pl-10 pr-3 py-[10px] rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
 
-          <div className="mt-3 md:mt-0 flex items-center">
             <button
               type="button"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="inline-flex items-center px-4 py-[10px] border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               onClick={toggleFilters}
             >
               <Filter className="h-5 w-5 mr-2 text-gray-400" />
@@ -89,6 +135,18 @@ const MarketplacePage: React.FC = () => {
                 }`}
               />
             </button>
+          </div>
+
+          <div className="mt-3 md:mt-0">
+            {isAdmin && (
+              <button
+                type="button"
+                className="inline-flex items-center px-4 py-[10px] border border-blue-600 rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                onClick={() => setIsCreateBMModalOpen(true)}
+              >
+                Tạo tài khoản BM
+              </button>
+            )}
           </div>
         </div>
 
@@ -138,24 +196,35 @@ const MarketplacePage: React.FC = () => {
           </Card>
         )}
 
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredAccounts.map((account: any) => (
-            <AdAccountCard
-              key={account.id}
-              account={account}
-              onRentClick={() => handleRentClick(account)}
-            />
-          ))}
-        </div>
-
-        {filteredAccounts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">
-              Không tìm thấy BM/tài khoản quảng cáo phù hợp với tiêu chí tìm
-              kiếm.
-            </p>
+        {/* BM List Section */}
+        {bmList.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-xl font-medium text-gray-900 mb-4">
+              Danh sách BM
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {bmList.map((bm: any) => (
+                <BMCard key={bm.id} bm={bm} onClick={() => handleBMClick(bm)} />
+              ))}
+            </div>
           </div>
         )}
+
+        {/* Ad Accounts Section */}
+        <div className="mt-8">
+          <h3 className="text-xl font-medium text-gray-900 mb-4">
+            Danh sách tài khoản quảng cáo
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredAccounts.map((account: any) => (
+              <AdAccountCard
+                key={account.id}
+                account={account}
+                onRentClick={() => handleRentClick(account)}
+              />
+            ))}
+          </div>
+        </div>
 
         {selectedAccount && (
           <RentModal
@@ -163,6 +232,76 @@ const MarketplacePage: React.FC = () => {
             onClose={() => setIsRentModalOpen(false)}
             account={selectedAccount}
           />
+        )}
+        <CreateBMModal
+          isOpen={isCreateBMModalOpen}
+          onClose={() => setIsCreateBMModalOpen(false)}
+          onSuccess={fetchBMList}
+        />
+
+        {selectedBM && isBMDetailModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
+            <div
+              ref={innerBorderRef}
+              className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative max-h-[80vh] overflow-y-auto"
+            >
+              <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                onClick={() => setIsBMDetailModalOpen(false)}
+              >
+                ×
+              </button>
+              <h2 className="text-xl font-semibold mb-4">
+                Chi Tiết Tài Khoản BM:
+              </h2>
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <span className="font-medium w-1/3">Tên BM:</span>
+                  <span>{selectedBM.bm_name}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="font-medium w-1/3">BM ID:</span>
+                  <span>{selectedBM.bm_id}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="font-medium w-1/3">Trạng thái:</span>
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <Check className="h-3 w-3 mr-1" />
+                    Hoạt động
+                  </span>
+                </div>
+                {selectedBM.system_user_token && (
+                  <div className="flex flex-col">
+                    <span className="font-medium mb-1">System User Token:</span>
+                    <div className="bg-gray-100 p-2 rounded-md text-xs overflow-x-auto">
+                      <code className="break-all whitespace-pre-wrap">
+                        {selectedBM.system_user_token}
+                      </code>
+                    </div>
+                  </div>
+                )}
+                {Object.entries(selectedBM).map(
+                  ([key, value]: [string, any]) => {
+                    if (
+                      ["bm_name", "bm_id", "system_user_token"].includes(key)
+                    ) {
+                      return null;
+                    }
+                    return (
+                      <div key={key} className="flex items-start">
+                        <span className="font-medium w-1/3">{key}:</span>
+                        <span className="break-all">
+                          {typeof value === "number"
+                            ? value.toLocaleString()
+                            : String(value)}
+                        </span>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </Layout>

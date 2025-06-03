@@ -25,15 +25,27 @@ export const useUserStore = create<AuthState>((set) => ({
     try {
       const token = localStorage.getItem("access_token");
       if (!token) return;
+
       const objetUser = localStorage.getItem("user");
+      if (!objetUser) return;
+
       const userParse = JSON.parse(objetUser || "{}");
+      if (!userParse.user_id) {
+        console.error("Không tìm thấy user_id trong localStorage");
+        return;
+      }
+
+      console.log("Fetching user with ID:", userParse.user_id);
       const res = await BaseHeader({
         url: `user/${userParse.user_id}`,
       });
+
+      console.log("User data response:", res.data);
       set({ user: res.data.data });
     } catch (err) {
       console.error("Lỗi fetch user:", err);
-      set({ user: null });
+      // Không xóa user state nếu có lỗi
+      // set({ user: null });
     }
   },
 

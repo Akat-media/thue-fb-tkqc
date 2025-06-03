@@ -13,11 +13,6 @@ import { useNotification } from "../../context/NotificationContext";
 import { Transaction } from "../../types";
 import BaseHeader from "../../api/BaseHeader";
 
-const paymentAccounts = [
-  { id: "vcb", name: "Vietcombank", qrDataPrefix: "vcb_" },
-  { id: "tcb", name: "Techcombank", qrDataPrefix: "tcb_" },
-];
-
 const mockTransactions: Transaction[] = [
   {
     id: "1",
@@ -81,6 +76,8 @@ const PaymentPage: React.FC = () => {
   const [isShowingQR, setIsShowingQR] = useState(false);
   const [countdown, setCountdown] = useState(120);
   const [qrImageUrl, setQrImageUrl] = useState<string | null>(null);
+  const [isConfirming, setIsConfirming] = useState(false);
+
   const hanleCalTransaction = async (number: any) => {
     try {
       const res = await BaseHeader({
@@ -148,6 +145,16 @@ const PaymentPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  const handleConfirmTransfer = () => {
+    setIsConfirming(true);
+    setTimeout(() => {
+      setShowQRCode(false);
+      setIsConfirming(false);
+      setCustomAmount("");
+    }, 3000);
+  };
+
   const formatTransactionDate = (date: Date) => {
     return new Intl.DateTimeFormat("vi-VN", {
       day: "2-digit",
@@ -468,6 +475,12 @@ const PaymentPage: React.FC = () => {
                             className="w-[400px] h-[500px] rounded shadow"
                           />
                         )}
+                        <Button
+                          onClick={handleConfirmTransfer}
+                          className="mt-4"
+                        >
+                          Đã thanh toán
+                        </Button>
                         <div className="space-y-1">
                           <p className="text-sm text-red-500 font-semibold">
                             Mã QR sẽ hết hạn sau: {Math.floor(countdown / 60)}:
@@ -725,6 +738,17 @@ const PaymentPage: React.FC = () => {
           )}
         </div>
       </div>
+      {isConfirming && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg text-center max-w-sm w-full">
+            <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-blue-500 mx-auto mb-4"></div>
+            <p className="text-gray-700 text-sm">
+              Vui lòng chờ một chút để hệ thống nạp tiền vào tài khoản của
+              bạn...
+            </p>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };

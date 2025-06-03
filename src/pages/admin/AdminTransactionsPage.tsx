@@ -429,56 +429,35 @@ const AdminTransactionsPage = () => {
                       key={tx.id}
                       className={`cursor-pointer ${
                         selectedTxId === tx.id
-                          ? "bg-[#dcfce7] ring-2 ring-[#a3d9b5]"
+                          ? "bg-[#dcfce7]"
                           : "hover:bg-gray-50"
                       }`}
+                      style={
+                        selectedTxId === tx.id
+                          ? {
+                              outline: "1px solid #47b46c",
+                              position: "relative",
+                              zIndex: 5,
+                            }
+                          : undefined
+                      }
                       onClick={() => setSelectedTxId(tx.id)}
                     >
-                      <td
-                        className={`px-4 py-2 text-center font-semibold border ${
-                          selectedTxId === tx.id
-                            ? "border-[#a3d9b5]"
-                            : "border-gray-200"
-                        }`}
-                      >
+                      <td className="px-4 py-2 text-center font-semibold border border-gray-200">
                         {tx.id}
                       </td>
-                      <td
-                        className={`px-4 py-2 text-center border ${
-                          selectedTxId === tx.id
-                            ? "border-[#a3d9b5]"
-                            : "border-gray-200"
-                        }`}
-                      >
+                      <td className="px-4 py-2 text-center border border-gray-200">
                         {tx.amount.toLocaleString()} VND
                       </td>
-                      <td
-                        className={`px-4 py-2 text-center border ${
-                          selectedTxId === tx.id
-                            ? "border-[#a3d9b5]"
-                            : "border-gray-200"
-                        }`}
-                      >
+                      <td className="px-4 py-2 text-center border border-gray-200">
                         {formatDate(tx.createdAt)}
                       </td>
-                      <td
-                        className={`px-4 py-2 text-center border ${
-                          selectedTxId === tx.id
-                            ? "border-[#a3d9b5]"
-                            : "border-gray-200"
-                        }`}
-                      >
+                      <td className="px-4 py-2 text-center border border-gray-200">
                         {tx.paidAt || (
                           <span className="text-gray-400 italic">_</span>
                         )}
                       </td>
-                      <td
-                        className={`px-4 py-2 text-center border ${
-                          selectedTxId === tx.id
-                            ? "border-[#a3d9b5]"
-                            : "border-gray-200"
-                        }`}
-                      >
+                      <td className="px-4 py-2 text-center border border-gray-200">
                         <span
                           className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
                             tx.status === "Đã thanh toán"
@@ -489,45 +468,21 @@ const AdminTransactionsPage = () => {
                           {tx.status}
                         </span>
                       </td>
-                      <td
-                        className={`px-4 py-2 text-center border ${
-                          selectedTxId === tx.id
-                            ? "border-[#a3d9b5]"
-                            : "border-gray-200"
-                        }`}
-                      >
+                      <td className="px-4 py-2 text-center border border-gray-200">
                         {tx.bank}
                       </td>
-                      <td
-                        className={`px-4 py-2 text-center border ${
-                          selectedTxId === tx.id
-                            ? "border-[#a3d9b5]"
-                            : "border-gray-200"
-                        }`}
-                      >
+                      <td className="px-4 py-2 text-center border border-gray-200">
                         {tx.accountName}
                       </td>
-                      <td
-                        className={`px-4 py-2 text-center border ${
-                          selectedTxId === tx.id
-                            ? "border-[#a3d9b5]"
-                            : "border-gray-200"
-                        }`}
-                      >
+                      <td className="px-4 py-2 text-center border border-gray-200">
                         {tx.accountNumber}
                       </td>
-                      <td
-                        className={`px-4 py-2 text-center border ${
-                          selectedTxId === tx.id
-                            ? "border-[#a3d9b5]"
-                            : "border-gray-200"
-                        }`}
-                      >
+                      <td className="px-4 py-2 text-center border border-gray-200">
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={(e) => {
-                            e.stopPropagation(); // tránh mất chọn khi bấm nút
+                            e.stopPropagation();
                             const matchedUser = users.find(
                               (u) => u.id === tx.userId
                             );
@@ -633,11 +588,20 @@ const AdminTransactionsPage = () => {
                     sortedPlatformData.map((tx) => (
                       <tr
                         key={tx.id}
-                        className={`cursor-pointer rounded ${
+                        className={`cursor-pointer ${
                           selectedTxId === tx.id
-                            ? "bg-[#f5fef8] ring-2 ring-[#47b46c]"
+                            ? "bg-[#dcfce7]"
                             : "hover:bg-gray-50"
                         }`}
+                        style={
+                          selectedTxId === tx.id
+                            ? {
+                                outline: "1px solid #47b46c",
+                                position: "relative",
+                                zIndex: 5,
+                              }
+                            : undefined
+                        }
                         onClick={() => setSelectedTxId(tx.id)}
                       >
                         <td

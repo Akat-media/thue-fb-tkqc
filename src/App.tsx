@@ -17,38 +17,43 @@ import ProfilePage from "./pages/profile/Profile.tsx";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Support from "./pages/support/Support.tsx";
 import Policy from "./pages/policy/Policy.tsx";
+import AdminProfilePage from "./pages/profile/AdminProfilePage.tsx";
 
 function App() {
   return (
-      <AuthProvider>
-        <NotificationProvider>
-          <Router>
-            <Routes>
-              {/* Route công khai: Không yêu cầu đăng nhập */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/" element={<HomePage />} />
-              <Route path="/dashboard" element={<HomePage />} />
-              <Route path="/marketplace" element={<MarketplacePage />} />
-              <Route path="/support" element={<Support />} />
-              <Route path="/policy" element={<Policy />} />
+    <AuthProvider>
+      <NotificationProvider>
+        <Router>
+          <Routes>
+            {/* Route công khai: Không yêu cầu đăng nhập */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/dashboard" element={<HomePage />} />
+            <Route path="/marketplace" element={<MarketplacePage />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/policy" element={<Policy />} />
 
-              {/* Route yêu cầu đăng nhập */}
-              <Route element={<ProtectedRoute />}>
-                <Route path="/add-account" element={<AddAccountPage />} />
-                <Route path="/rentals" element={<RentalsPage />} />
-                <Route path="/payments" element={<PaymentPage />} />
-                <Route path="/deposit" element={<PaymentForm />} />
-                <Route path="/adsaccountmanager" element={<ManageAdsAccount />} />
-                <Route path="/analytics" element={<Analytics />} />
-                <Route path="/admintransaction" element={<AdminTransactionsPage />} />
-                <Route path="/usermanage" element={<UserManagementPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-              </Route>
-            </Routes>
-          </Router>
-        </NotificationProvider>
-      </AuthProvider>
+            {/* Route yêu cầu đăng nhập */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/add-account" element={<AddAccountPage />} />
+              <Route path="/rentals" element={<RentalsPage />} />
+              <Route path="/payments" element={<PaymentPage />} />
+              <Route path="/deposit" element={<PaymentForm />} />
+              <Route path="/adsaccountmanager" element={<ManageAdsAccount />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route
+                path="/admintransaction"
+                element={<AdminTransactionsPage />}
+              />
+              <Route path="/usermanage" element={<UserManagementPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/admin/profile" element={<AdminProfilePage />} />
+            </Route>
+          </Routes>
+        </Router>
+      </NotificationProvider>
+    </AuthProvider>
   );
 }
 

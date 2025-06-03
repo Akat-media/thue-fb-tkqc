@@ -128,7 +128,7 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
                     onChange={(e) => setUserBmId(e.target.value)}
                     error={errors.bmId}
                     helperText="BM ID để chúng tôi cấp quyền truy cập"
-                    fullWidth
+                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                   />
                 </div>
 
@@ -163,7 +163,11 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
                     //   "vi-VN"
                     // )} VNĐ. Phí 5% cho phần vượt quá`}
                     fullWidth
+                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                   />
+                  <div className="text-sm text-gray-500 mt-1 pl-2">
+                    Hạn mức: {requestedLimit.toLocaleString("vi-VN")} VNĐ
+                  </div>
                 </div>
               </div>
 
@@ -208,7 +212,7 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
                     <div className="flex justify-between text-sm font-medium">
                       <span className="text-gray-900">Tổng thanh toán</span>
                       <span className="text-blue-600">
-                        {calculateTotalPrice()} VNĐ
+                        {calculateTotalPrice().toLocaleString("vi-VN")} VNĐ
                       </span>
                     </div>
                   </div>

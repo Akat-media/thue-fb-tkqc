@@ -32,7 +32,8 @@ const Sidebar: React.FC<{
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
   const isAdsMenuActive =
     location.pathname.startsWith("/adsaccountmanager") ||
-    location.pathname === "/add-account";
+    location.pathname === "/add-account" ||
+    location.pathname === "/usermanage";
   const [openAdsSubmenu, setOpenAdsSubmenu] = useState(isAdsMenuActive);
   const toggleProfileMenu = () => setOpenProfileMenu(!openProfileMenu);
 
@@ -42,8 +43,8 @@ const Sidebar: React.FC<{
     { label: "Tài khoản đang thuê", icon: ShoppingCart, path: "/rentals" },
     { label: "Nạp tiền", icon: CircleDollarSign, path: "/payments" },
     // { label: "QR Here", icon: QrCode, path: "/deposit" },
-    { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
-    { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
+    // { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
+    // { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
   ];
 
   React.useEffect(() => {
@@ -154,7 +155,7 @@ const Sidebar: React.FC<{
                 isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
               )}
             >
-              Quản lý TKQC
+              Quản lý hệ thống
             </span>
             {isSidebarOpen && (
               <ChevronDown
@@ -186,7 +187,7 @@ const Sidebar: React.FC<{
                 <div className="w-8 flex justify-center">
                   <Archive className="w-4 h-4" />
                 </div>
-                <span className="text-gray-600">Quản lý tài khoản</span>
+                <span className="text-gray-600">Quản lý giao dịch</span>
               </Link>
               <Link
                 to="/add-account"
@@ -200,6 +201,19 @@ const Sidebar: React.FC<{
                   <PackagePlus className="w-4 h-4" />
                 </div>
                 <span className="text-gray-600">Thêm TKQC</span>
+              </Link>
+              <Link
+                to="/usermanage"
+                className={clsx(
+                  "flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700",
+                  location.pathname === "/usermanage" &&
+                    "bg-blue-100 font-semibold"
+                )}
+              >
+                <div className="w-8 flex justify-center">
+                  <Users className="w-4 h-4" />
+                </div>
+                <span className="text-gray-600">Quản lý người dùng</span>
               </Link>
             </div>
           </div>
@@ -297,7 +311,7 @@ const Sidebar: React.FC<{
                   </p>
                 </div>
                 <Link
-                  to="/account"
+                  to="/admin/profile"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   Tài khoản

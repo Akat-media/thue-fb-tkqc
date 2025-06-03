@@ -1,21 +1,24 @@
-import React from "react";
-// import { useAuth } from "./context/AuthContext";
+import React, { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import {useUserStore} from "../stores/useUserStore.ts";
+import { useUserStore } from "../stores/useUserStore.ts";
 
 const ProtectedRoute: React.FC = () => {
-    // const { isAuthenticated, isLoading } = useAuth();
-    const user = useUserStore((state) => state.user);
+  const user = useUserStore((state) => state.user);
+  const fetchUser = useUserStore((state) => state.fetchUser);
 
-    // if (isLoading) {
-    //     return <div>Đang tải...</div>; // Hoặc một component loading
-    // }
+  useEffect(() => {
+    // Thử fetch user khi component mount
+    fetchUser();
+  }, [fetchUser]);
 
-    if (!user) {
-        return <Navigate to="/login" replace />;
-    }
+  // Kiểm tra cả localStorage để đảm bảo
+  const hasToken = localStorage.getItem("access_token");
 
-    return <Outlet />;
+  if (!user && !hasToken) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
