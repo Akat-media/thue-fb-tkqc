@@ -4,12 +4,13 @@ import { Facebook, DollarSign, Shield, Clock } from "lucide-react";
 import Layout from "../components/layout/Layout";
 import Button from "../components/ui/Button";
 import { Card, CardContent } from "../components/ui/Card";
+import FacebookIcon from "./dashboard/FacebookIcon";
 
 const HomePage: React.FC = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
             <div>
@@ -23,24 +24,36 @@ const HomePage: React.FC = () => {
               </p>
               <div className="mt-10 flex space-x-4">
                 <Link to="/marketplace">
-                  <Button variant="outline" size="lg">
+                  <Button
+                      variant="outline"
+                      size="lg"
+                      className="text-blue-500 border-white hover:bg-blue-700 hover:text-white"
+                  >
                     Xem danh sách BM
                   </Button>
                 </Link>
                 <Link to="/register">
-                  <Button variant="outline" size="lg">
+                  <Button
+                      variant="outline"
+                      size="lg"
+                      className="text-blue-500 border-white hover:bg-blue-700 hover:text-white"
+                  >
                     Đăng ký ngay
                   </Button>
                 </Link>
               </div>
             </div>
-            <div className="mt-20 lg:mt-0 flex justify-center animate-bounce">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-64 w-64 bg-blue-500 bg-opacity-30 rounded-full animate-pulse"></div>
-                </div>
-                <Facebook className="relative h-48 w-48 text-white" />
-              </div>
+
+            {/*<div className="mt-20 lg:mt-0 flex justify-center animate-bounce">*/}
+            {/*  <div className="relative">*/}
+            {/*    <div className="absolute inset-0 flex items-center justify-center">*/}
+            {/*      <div className="h-64 w-64 bg-blue-500 bg-opacity-30 rounded-full animate-pulse"></div>*/}
+            {/*    </div>*/}
+            {/*    <Facebook className="relative h-48 w-48 text-white" />*/}
+            {/*  </div>*/}
+            {/*</div>*/}
+            <div className="flex justify-center items-center">
+              <FacebookIcon />
             </div>
           </div>
         </div>
@@ -196,7 +209,7 @@ const HomePage: React.FC = () => {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="text-white border-white hover:bg-blue-700"
+                  className="text-blue-500 border-white hover:bg-blue-700 hover:text-white"
                 >
                   Xem danh sách BM
                 </Button>
@@ -207,7 +220,7 @@ const HomePage: React.FC = () => {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="text-white border-white hover:bg-blue-700"
+                  className="text-blue-500 border-white hover:bg-blue-700 hover:text-white"
                 >
                   Đăng ký ngay
                 </Button>

@@ -4,6 +4,8 @@ import axios from "axios";
 import { BaseUrl } from "../../api/BaseHeader";
 import { toast } from "react-toastify";
 import AtomicSpinner from "atomic-spinner";
+import {useUserStore} from "../../stores/useUserStore.ts";
+import { useNavigate } from "react-router-dom";
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -31,6 +33,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     confirmPassword?: string;
   }>({});
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const setUser = useUserStore((state) => state.setUser);
 
   if (!isOpen) return null;
 
@@ -78,6 +82,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
         localStorage.setItem("access_token", access_token);
         localStorage.setItem("refresh_token", refresh_token);
         localStorage.setItem("user", JSON.stringify(userData));
+
+        setUser(loginRes.data.data);
+        const role = loginRes.data.data.user.role;
+        if (role === "user") {
+          navigate("/");
+        } else if (role === "admin") {
+          navigate("/analytics");
+        }
 
         onClose();
 

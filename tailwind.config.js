@@ -6,7 +6,8 @@ export default {
       animation: {
         "spin-slow": "spin 240s linear infinite",
         "background-slow": "bgMove 20s ease-in-out infinite",
-        "float": "float 20s ease-in-out infinite",
+        // "float": "float 20s ease-in-out infinite",
+        float: 'float 3s ease-in-out infinite',
       },
       keyframes: {
         bgMove: {
