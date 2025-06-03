@@ -704,7 +704,7 @@ const ManageAdsAccount: React.FC = () => {
                 onChange={handleSearchLabel}
               />
               <Button
-                className="min-w-[100px] bg-fuchsia-800 text-white hover:bg-fuchsia-700 hover:text-white"
+                className="min-w-[100px] bg-white-500 text-fuchsia-800 hover:bg-fuchsia-800 hover:text-white"
                 variant="outline"
                 size="sm"
               >
@@ -1004,7 +1004,7 @@ const ManageAdsAccount: React.FC = () => {
                 onChange={handleSearchLabel}
               />
               <Button
-                className="min-w-[100px] bg-fuchsia-800 text-white hover:bg-fuchsia-700 hover:text-white"
+                className="min-w-[100px] bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-800 hover:text-white"
                 variant="outline"
                 size="sm"
               >

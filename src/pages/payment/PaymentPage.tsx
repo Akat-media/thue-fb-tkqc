@@ -188,7 +188,7 @@ const PaymentPage: React.FC = () => {
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate">
-              Quản lý tài chính
+              Cổng Thanh Toán
             </h2>
             {user && (
               <p className="mt-1 text-sm text-gray-500">
@@ -213,8 +213,8 @@ const PaymentPage: React.FC = () => {
               onChange={(e) => setActiveTab(e.target.value)}
             >
               <option value="deposit">Nạp tiền</option>
-              <option value="history">Lịch sử nạp</option>
-              <option value="platform">Thanh toán nền tảng</option>
+              {/* <option value="history">Lịch sử nạp</option>
+              <option value="platform">Thanh toán nền tảng</option> */}
             </select>
           </div>
           <div className="hidden sm:block">
@@ -231,7 +231,7 @@ const PaymentPage: React.FC = () => {
                   <CreditCard className="h-5 w-5 mr-2 inline-block" />
                   Nạp tiền
                 </button>
-                <button
+                {/* <button
                   className={`${
                     activeTab === "history"
                       ? "border-blue-500 text-blue-600"
@@ -251,7 +251,7 @@ const PaymentPage: React.FC = () => {
                   onClick={() => setActiveTab("platform")}
                 >
                   Thanh toán nền tảng
-                </button>
+                </button> */}
               </nav>
             </div>
           </div>

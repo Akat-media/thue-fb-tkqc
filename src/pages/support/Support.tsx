@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Layout from "../../components/layout/Layout.tsx";
 import { Mail, Phone, Send, X, Timer } from "lucide-react";
+import styled from "styled-components";
+import url from "../../assets/bg.svg";
 
 interface FormData {
   name: string;
@@ -50,140 +52,160 @@ const Support: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Contact Form */}
-            <div className="bg-white p-6 rounded-lg shadow-xl bg">
-              <h3 className="text-xl font-semibold text-blue-900 mb-4">
-                Gửi Yêu Cầu Hỗ Trợ
-              </h3>
-              <div className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Họ và Tên
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                    placeholder="Nhập họ và tên"
-                  />
+            <CardContainer url={url}>
+              <div className="relative main-card h-full flex flex-col bg-white rounded-xl shadow-xl hover:shadow-lg transition-shadow duration-200">
+                <div className="p-6 flex-grow relative z-10">
+                  <h3 className="text-xl font-semibold text-blue-900 mb-4">
+                    Gửi Yêu Cầu Hỗ Trợ
+                  </h3>
+                  <div className="space-y-6">
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Họ và Tên
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
+                        placeholder="Nhập họ và tên"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
+                        placeholder="Nhập email của bạn"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="message"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Nội dung
+                      </label>
+                      <textarea
+                        name="message"
+                        id="message"
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        rows={4}
+                        className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
+                        placeholder="Mô tả vấn đề của bạn"
+                      />
+                    </div>
+                    <button
+                      onClick={handleSubmit}
+                      className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                      <Send className="w-5 h-5 mr-2" />
+                      Gửi Yêu Cầu
+                    </button>
+                  </div>
+                  {isSubmitted && (
+                    <div className="mt-4 p-4 bg-green-100 text-green-700 rounded-md flex items-center">
+                      <span>Yêu cầu của bạn đã được gửi thành công!</span>
+                      <button
+                        onClick={() => setIsSubmitted(false)}
+                        className="ml-auto focus:outline-none"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                    placeholder="Nhập email của bạn"
-                  />
+                <div className="absolute bottom-0 left-0 w-full">
+                  <img className="w-full" src={url} alt="background" />
                 </div>
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Nội dung
-                  </label>
-                  <textarea
-                    name="message"
-                    id="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    rows={4}
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                    placeholder="Mô tả vấn đề của bạn"
-                  />
-                </div>
-                <button
-                  onClick={handleSubmit}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <Send className="w-5 h-5 mr-2" />
-                  Gửi Yêu Cầu
-                </button>
               </div>
-              {isSubmitted && (
-                <div className="mt-4 p-4 bg-green-100 text-green-700 rounded-md flex items-center">
-                  <span>Yêu cầu của bạn đã được gửi thành công!</span>
-                  <button
-                    onClick={() => setIsSubmitted(false)}
-                    className="ml-auto focus:outline-none"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              )}
-            </div>
+            </CardContainer>
 
             {/* Contact Info */}
-            <div className="bg-white p-6 rounded-lg shadow-xl">
-              <h3 className="text-xl font-semibold text-blue-900 mb-4">
-                Thông Tin Liên Hệ
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <Mail className="w-6 h-6 text-blue-600 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Email</p>
-                    <a
-                      href="mailto:support@akamedia.com"
-                      className="text-blue-600 hover:underline"
-                    >
-                      support@akamedia.com
-                    </a>
+            <CardContainer url={url}>
+              <div className="relative main-card h-full flex flex-col bg-white rounded-xl shadow-xl hover:shadow-lg transition-shadow duration-200">
+                <div className="p-6 flex-grow relative z-10">
+                  <h3 className="text-xl font-semibold text-blue-900 mb-4">
+                    Thông Tin Liên Hệ
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center">
+                      <Mail className="w-6 h-6 text-blue-600 mr-3" />
+                      <div>
+                        <p className="text-lg font-medium text-gray-700">
+                          Email
+                        </p>
+                        <a
+                          href="mailto:support@akamedia.com"
+                          className="text-blue-600 hover:underline"
+                        >
+                          support@akamedia.com
+                        </a>
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <Phone className="w-6 h-6 text-blue-600 mr-3" />
+                      <div>
+                        <p className="text-lg font-medium text-gray-700">
+                          Hotline
+                        </p>
+                        <a
+                          href="tel:+84234567890"
+                          className="text-blue-600 hover:underline"
+                        >
+                          +84 234 567 890
+                        </a>
+                      </div>
+                    </div>
+                    <div className="flex flex-col">
+                      <div className="flex items-center">
+                        <Timer className="w-6 h-6 text-blue-600 mr-3" />
+                        <p className="text-lg font-medium text-gray-700">
+                          Giờ làm việc
+                        </p>
+                      </div>
+                      <a
+                        className="block mt-1 pl-9 text-gray-600"
+                        href="tel:+Thứ 2 - Thứ 6: 9:00 SA - 17:00 CH"
+                      >
+                        Thứ 2 - Thứ 6: 9:00 - 17:00
+                      </a>
+                      <a
+                        className="block pl-9 text-gray-600"
+                        href="tel:+Thứ 7: 9:00 SA - 12:00 CH"
+                      >
+                        Thứ 7: 9:00 - 17:00
+                      </a>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <Phone className="w-6 h-6 text-blue-600 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Hotline</p>
-                    <a
-                      href="tel:+84234567890"
-                      className="text-blue-600 hover:underline"
-                    >
-                      +84 234 567 890
-                    </a>
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="flex items-center">
-                    <Timer className="w-6 h-6 text-blue-600 mr-3" />
-                    <p className="text-sm font-medium text-gray-700">
-                      Giờ làm việc
-                    </p>
-                  </div>
-                  <a
-                    className="block mt-1 pl-9 text-gray-600"
-                    href="tel:+Thứ 2 - Thứ 6: 9:00 SA - 17:00 CH"
-                  >
-                    Thứ 2 - Thứ 6: 9:00 - 17:00
-                  </a>
-                  <a
-                    className="block pl-9 text-gray-600"
-                    href="tel:+Thứ 7: 9:00 SA - 12:00 CH"
-                  >
-                    Thứ 7: 9:00 - 17:00
-                  </a>
+                <div className="absolute bottom-0 left-0 w-full">
+                  <img className="w-full" src={url} alt="background" />
                 </div>
               </div>
-            </div>
+            </CardContainer>
           </div>
         </main>
       </div>
     </Layout>
   );
 };
+
+const CardContainer = styled.div<{ url: any }>``;
 
 export default Support;
