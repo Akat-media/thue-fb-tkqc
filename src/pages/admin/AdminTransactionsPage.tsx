@@ -25,273 +25,47 @@ import BaseHeader from "../../api/BaseHeader";
 import { Pagination } from "antd";
 import usePagination from "../../hook/usePagination";
 
-interface AdsAccount {
+interface Transaction {
   id: string;
-  accountName: string;
-  facebookAdsId: string;
-  note: string;
-  amount: number;
-  fee: number;
-  business: string;
-  currency: string;
-  total: number;
-  status: string;
-  limitBefore: number;
-  limitAfter: number;
+  short_code: string;
+  user_id: string;
+  amountVND: number;
+  points: number;
   createdAt: string;
+  bank: string;
+  description: string;
+  transactionID: number;
+  type: string;
+  date: string;
+  status: string;
+  error_message: string | null;
 }
-
-const mockData: AdsAccount[] = [
-  {
-    id: "T001",
-    accountName: "Ads Account A",
-    facebookAdsId: "123123123",
-    note: "Giao dịch thành công",
-    amount: 2000000,
-    fee: 50000,
-    total: 2050000,
-    business: "Vip",
-    currency: "VNĐ",
-    status: "Thành công",
-    limitBefore: 5000000,
-    limitAfter: 7000000,
-    createdAt: "2024-05-01",
-  },
-  {
-    id: "T002",
-    accountName: "Ads Account B",
-    facebookAdsId: "986968968",
-    note: "Chờ xác nhận",
-    amount: 1000000,
-    fee: 30000,
-    total: 1030000,
-    business: "Vip",
-    currency: "USD",
-    status: "Đang xử lý",
-    limitBefore: 3000000,
-    limitAfter: 4000000,
-    createdAt: "2024-05-02",
-  },
-  {
-    id: "T003",
-    accountName: "Ads Account C",
-    facebookAdsId: "555666777",
-    note: "Thất bại do lỗi hệ thống",
-    amount: 1500000,
-    fee: 40000,
-    total: 1540000,
-    business: "Vip",
-    currency: "VNĐ",
-    status: "Thất bại",
-    limitBefore: 2000000,
-    limitAfter: 2000000,
-    createdAt: "2024-05-03",
-  },
-  {
-    id: "T004",
-    accountName: "Ads Account D",
-    facebookAdsId: "111222333",
-    note: "Giao dịch thành công",
-    amount: 3000000,
-    fee: 60000,
-    total: 3060000,
-    business: "Vip",
-    currency: "VNĐ",
-    status: "Thành công",
-    limitBefore: 6000000,
-    limitAfter: 9000000,
-    createdAt: "2024-05-04",
-  },
-  {
-    id: "T005",
-    accountName: "Ads Account E",
-    facebookAdsId: "444555666",
-    note: "Đang chờ xử lý",
-    amount: 500000,
-    fee: 20000,
-    business: "Vip",
-    currency: "VNĐ",
-    total: 520000,
-    status: "Đang xử lý",
-    limitBefore: 1000000,
-    limitAfter: 1500000,
-    createdAt: "2024-05-05",
-  },
-  {
-    id: "T006",
-    accountName: "Ads Account F",
-    facebookAdsId: "777888999",
-    note: "Thất bại do sai thông tin thẻ",
-    amount: 800000,
-    fee: 30000,
-    total: 830000,
-    status: "Thất bại",
-    business: "Vip 2",
-    currency: "USD",
-    limitBefore: 1200000,
-    limitAfter: 1200000,
-    createdAt: "2024-05-06",
-  },
-  {
-    id: "T007",
-    accountName: "Ads Account G",
-    facebookAdsId: "101010101",
-    note: "Giao dịch thành công",
-    amount: 2500000,
-    fee: 50000,
-    business: "Vip",
-    currency: "VNĐ",
-    total: 2550000,
-    status: "Thành công",
-    limitBefore: 4000000,
-    limitAfter: 6500000,
-    createdAt: "2024-05-07",
-  },
-  {
-    id: "T008",
-    accountName: "Ads Account H",
-    facebookAdsId: "202020202",
-    note: "Đang xác minh giao dịch",
-    amount: 1200000,
-    business: "Vip",
-    currency: "VNĐ",
-    fee: 30000,
-    total: 1230000,
-    status: "Đang xử lý",
-    limitBefore: 3000000,
-    limitAfter: 4200000,
-    createdAt: "2024-05-08",
-  },
-  {
-    id: "T009",
-    accountName: "Ads Account H",
-    facebookAdsId: "202020202",
-    note: "Đang xác minh giao dịch",
-    amount: 1200000,
-    business: "Vip 3",
-    currency: "USD",
-    fee: 30000,
-    total: 1230000,
-    status: "Đang xử lý",
-    limitBefore: 3000000,
-    limitAfter: 4200000,
-    createdAt: "2024-05-08",
-  },
-  {
-    id: "T010",
-    accountName: "Ads Account H",
-    facebookAdsId: "202020202",
-    note: "Đang xác minh giao dịch",
-    amount: 1200000,
-    business: "Vip 3",
-    currency: "Franc",
-    fee: 30000,
-    total: 1230000,
-    status: "Đang xử lý",
-    limitBefore: 3000000,
-    limitAfter: 4200000,
-    createdAt: "2024-05-08",
-  },
-  {
-    id: "T011",
-    accountName: "Ads Account H",
-    facebookAdsId: "202020202",
-    note: "Đang xác minh giao dịch",
-    amount: 1200000,
-    business: "Vip 3",
-    currency: "Franc",
-    fee: 30000,
-    total: 1230000,
-    status: "Đang xử lý",
-    limitBefore: 3000000,
-    limitAfter: 4200000,
-    createdAt: "2024-05-08",
-  },
-  {
-    id: "T012",
-    accountName: "Ads Account H",
-    facebookAdsId: "202020202",
-    note: "Đang xác minh giao dịch",
-    amount: 1200000,
-    business: "Vip 3",
-    currency: "Franc",
-    fee: 30000,
-    total: 1230000,
-    status: "Đang xử lý",
-    limitBefore: 3000000,
-    limitAfter: 4200000,
-    createdAt: "2024-05-08",
-  },
-  {
-    id: "T013",
-    accountName: "Ads Account H",
-    facebookAdsId: "202020202",
-    note: "Đang xác minh giao dịch",
-    amount: 1200000,
-    business: "Vip 3",
-    currency: "Franc",
-    fee: 30000,
-    total: 1230000,
-    status: "Đang xử lý",
-    limitBefore: 3000000,
-    limitAfter: 4200000,
-    createdAt: "2024-05-08",
-  },
-  {
-    id: "T014",
-    accountName: "Ads Account H",
-    facebookAdsId: "202020202",
-    note: "Đang xác minh giao dịch",
-    amount: 1200000,
-    business: "Vip 3",
-    currency: "Franc",
-    fee: 30000,
-    total: 1230000,
-    status: "Đang xử lý",
-    limitBefore: 3000000,
-    limitAfter: 4200000,
-    createdAt: "2024-05-08",
-  },
-  {
-    id: "T015",
-    accountName: "Ads Account H",
-    facebookAdsId: "202020202",
-    note: "Đang xác minh giao dịch",
-    amount: 1200000,
-    business: "Vip 3",
-    currency: "Franc",
-    fee: 30000,
-    total: 1230000,
-    status: "Đang xử lý",
-    limitBefore: 3000000,
-    limitAfter: 4200000,
-    createdAt: "2024-05-08",
-  },
-];
 
 const AdminTransactionsPage: React.FC = () => {
   const user = localStorage.getItem("user");
   const userParse = JSON.parse(user || "{}");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [filtered, setFiltered] = useState(mockData);
+  const [filtered, setFiltered] = useState<Transaction[]>([]);
   const [activeCell, setActiveCell] = useState<string | null>(null);
   const [activeRow, setActiveRow] = useState<string | null>(null);
-  const [selectedAccount, setSelectedAccount] = useState<AdsAccount | null>(
+  const [selectedAccount, setSelectedAccount] = useState<Transaction | null>(
     null
   );
   const [showModal, setShowModal] = useState(false);
   const [typeFilter, setTypeFilter] = useState("all");
   const [sortConfig, setSortConfig] = useState<{
-    key: keyof AdsAccount;
+    key: keyof Transaction;
     direction: "asc" | "desc";
   } | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [highlightedRows, setHighlightedRows] = useState<string[]>([]);
-  const [openSortKey, setOpenSortKey] = useState<keyof AdsAccount | null>(null);
+  const [openSortKey, setOpenSortKey] = useState<keyof Transaction | null>(
+    null
+  );
   const [active, setActive] = useState("money");
-  const [transactions, setTransactions] = useState<any>([]);
-  const [transactionPoints, setTransactionPoints] = useState<any>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactionPoints, setTransactionPoints] = useState<Transaction[]>([]);
 
   const toggleCheckbox = (id: string) => {
     setSelectedIds((prev) => {
@@ -308,10 +82,13 @@ const AdminTransactionsPage: React.FC = () => {
   });
 
   const handleFilter = () => {
-    const result = mockData.filter((item) => {
+    // Lọc dữ liệu từ transactions thay vì mockData
+    const result = transactions.filter((item) => {
       const matchSearch =
-        item.facebookAdsId.includes(search) ||
-        item.note.toLowerCase().includes(search.toLowerCase());
+        (item.short_code &&
+          item.short_code.toLowerCase().includes(search.toLowerCase())) ||
+        (item.description &&
+          item.description.toLowerCase().includes(search.toLowerCase()));
 
       const matchStatus =
         statusFilter === "all" || item.status === statusFilter;
@@ -325,25 +102,17 @@ const AdminTransactionsPage: React.FC = () => {
     const term = e.target.value.toLowerCase();
     setSearch(term);
 
-    const result = mockData.filter((item) => {
+    // Lọc dữ liệu từ transactions thay vì mockData
+    const result = transactions.filter((item) => {
       const matchSearch =
-        item.accountName.toLowerCase().includes(term) ||
-        item.facebookAdsId.toLowerCase().includes(term) ||
-        item.note.toLowerCase().includes(term);
+        (item.short_code && item.short_code.toLowerCase().includes(term)) ||
+        (item.user_id && item.user_id.toLowerCase().includes(term)) ||
+        (item.description && item.description.toLowerCase().includes(term));
 
       const matchStatus =
         statusFilter === "all" || item.status === statusFilter;
 
-      const matchType =
-        typeFilter === "all"
-          ? true
-          : typeFilter === "business"
-          ? item.accountName.includes("B")
-          : typeFilter === "personal"
-          ? item.accountName.includes("C")
-          : false;
-
-      return matchSearch && matchStatus && matchType;
+      return matchSearch && matchStatus;
     });
 
     setFiltered(result);
@@ -362,6 +131,13 @@ const AdminTransactionsPage: React.FC = () => {
             : bValue - aValue;
         }
 
+        // Xử lý trường hợp null
+        if (aValue === null && bValue !== null)
+          return sortConfig.direction === "asc" ? -1 : 1;
+        if (aValue !== null && bValue === null)
+          return sortConfig.direction === "asc" ? 1 : -1;
+        if (aValue === null && bValue === null) return 0;
+
         return sortConfig.direction === "asc"
           ? String(aValue).localeCompare(String(bValue))
           : String(bValue).localeCompare(String(aValue));
@@ -373,10 +149,14 @@ const AdminTransactionsPage: React.FC = () => {
   const handleReset = () => {
     setSearch("");
     setStatusFilter("all");
-    setFiltered(mockData);
+    setFiltered(transactions); // Sử dụng transactions thay vì mockData
   };
   const handleSync = async () => {
-    setFiltered(mockData);
+    if (active === "money") {
+      await hanleTransactionMoney();
+    } else if (active === "points") {
+      await hanleTransactionPoint();
+    }
   };
 
   useEffect(() => {
@@ -402,9 +182,9 @@ const AdminTransactionsPage: React.FC = () => {
     setOpenSortKey,
   }: {
     label: string;
-    sortKey: keyof AdsAccount;
-    openSortKey: keyof AdsAccount | null;
-    setOpenSortKey: (key: keyof AdsAccount | null) => void;
+    sortKey: keyof Transaction;
+    openSortKey: keyof Transaction | null;
+    setOpenSortKey: (key: keyof Transaction | null) => void;
   }) => {
     const isOpen = openSortKey === sortKey;
 
@@ -514,17 +294,17 @@ const AdminTransactionsPage: React.FC = () => {
       minWidth: "120px",
     },
     {
-      key: "date",
+      key: "createdAt",
       label: "Ngày tạo",
       icon: <AlarmClockPlus className="w-4 h-4 text-gray-500" />,
-      sortKey: "date",
+      sortKey: "createdAt",
       minWidth: "150px",
     },
     {
-      key: "currency",
+      key: "type",
       label: "Loại",
       icon: <AlarmClockPlus className="w-4 h-4 text-gray-500" />,
-      sortKey: "currency",
+      sortKey: "type",
       minWidth: "100px",
     },
     {
@@ -653,7 +433,9 @@ const AdminTransactionsPage: React.FC = () => {
           user_id: userParse?.user_id,
         },
       });
-      setTransactions(response.data.data.data);
+      const transactionData = response.data.data.data;
+      setTransactions(transactionData);
+      setFiltered(transactionData); // Cập nhật filtered khi nhận dữ liệu mới
       setTotal(response.data.data.count);
     } catch (error) {
       console.log(error);
@@ -668,7 +450,9 @@ const AdminTransactionsPage: React.FC = () => {
           user_id: userParse?.user_id,
         },
       });
-      setTransactionPoints(response.data.data.data);
+      const pointsData = response.data.data.data;
+      setTransactionPoints(pointsData);
+      setFiltered(pointsData); // Cập nhật filtered khi nhận dữ liệu mới
       setTotalPoints(response.data.data.count);
     } catch (error) {
       console.log(error);
@@ -682,6 +466,14 @@ const AdminTransactionsPage: React.FC = () => {
       hanleTransactionPoint();
     }
   }, [active]);
+
+  useEffect(() => {
+    if (active === "money") {
+      setFiltered(transactions);
+    } else if (active === "points") {
+      setFiltered(transactionPoints);
+    }
+  }, [transactions, transactionPoints, active]);
 
   return (
     <Layout>
@@ -749,7 +541,7 @@ const AdminTransactionsPage: React.FC = () => {
                             <span>{col.label}</span>
                             <SortableHeader
                               label=""
-                              sortKey={col.sortKey as keyof AdsAccount}
+                              sortKey={col.sortKey as keyof Transaction}
                               openSortKey={openSortKey}
                               setOpenSortKey={setOpenSortKey}
                             />
@@ -1049,7 +841,7 @@ const AdminTransactionsPage: React.FC = () => {
                             <span>{col.label}</span>
                             <SortableHeader
                               label=""
-                              sortKey={col.sortKey as keyof AdsAccount}
+                              sortKey={col.sortKey as keyof Transaction}
                               openSortKey={openSortKey}
                               setOpenSortKey={setOpenSortKey}
                             />
