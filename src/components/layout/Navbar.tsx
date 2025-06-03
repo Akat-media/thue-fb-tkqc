@@ -463,7 +463,18 @@ const Navbar: React.FC = () => {
         <nav className="relative overflow-hidden shadow-lg">
           <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/5 to-white/10 animate-[shimmer_3s_ease-in-out_infinite]" />
 
-          <ToastContainer />
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            style={{ zIndex: 10001 }}
+          />
           <div className="relative z-10 hidden sm:flex flex-wrap justify-center items-center gap-4 max-w-screen-xl mx-auto px-4 py-6">
             {menuItems.map((item, i) => {
               const protectedRoutes = [
