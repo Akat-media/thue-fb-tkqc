@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ReactDOM from "react-dom";
 import axios from "axios";
 import { BaseUrl } from "../../api/BaseHeader";
 import { toast } from "react-toastify";
@@ -68,7 +69,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
       if (registerRes.status == 200) {
         toast.success("Đăng ký thành công!");
 
-        // Tự động đăng nhập sau khi đăng ký
         const loginRes = await axios.post(`${BaseUrl}/login`, {
           email: email,
           password: password,
@@ -107,8 +107,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30 px-4">
+  return ReactDOM.createPortal(
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center backdrop-blur-sm bg-black/30 px-4">
       <div className="bg-white w-full max-w-5xl rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden relative">
         <button
           onClick={onClose}
@@ -127,7 +127,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-2">
-            Tạo Tài Khoản Mới
+            Tạo tài khoản mới
           </h2>
           <p className="text-sm text-gray-500 mb-6">
             Đăng ký ngay để sử dụng các dịch vụ của AKAds.
@@ -273,7 +273,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               <span
                 onClick={() => {
                   if (onSwitchToLogin) {
-                    onSwitchToLogin(); // Gọi hàm chuyển sang LoginModal
+                    onSwitchToLogin();
                   } else {
                     onClose();
                   }
@@ -292,7 +292,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           <AtomicSpinner size={60} color="#ffffff" />
         </div>
       )}
-    </div>
+    </div>,
+    document.body
   );
 };
 

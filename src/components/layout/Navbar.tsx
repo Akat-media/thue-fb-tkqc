@@ -514,18 +514,22 @@ const Navbar: React.FC = () => {
                 </Link>
               );
             })}
-            <LoginModal
-              isOpen={showLoginModal}
-              onClose={() => setShowLoginModal(false)}
-              onLoginSuccess={handleLoginSuccess}
-              onSwitchToRegister={switchToRegister}
-            />
-            <RegisterModal
-              isOpen={showRegisterModal}
-              onClose={() => setShowRegisterModal(false)}
-              onRegisterSuccess={handleRegisterSuccess}
-              onSwitchToLogin={switchToLogin}
-            />
+            {showLoginModal && (
+              <LoginModal
+                isOpen={showLoginModal}
+                onClose={() => setShowLoginModal(false)}
+                onLoginSuccess={handleLoginSuccess}
+                onSwitchToRegister={switchToRegister}
+              />
+            )}
+            {showRegisterModal && (
+              <RegisterModal
+                isOpen={showRegisterModal}
+                onClose={() => setShowRegisterModal(false)}
+                onRegisterSuccess={handleRegisterSuccess}
+                onSwitchToLogin={switchToLogin}
+              />
+            )}
           </div>
         </nav>
       </div>

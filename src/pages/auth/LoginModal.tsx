@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ReactDOM from "react-dom";
 import axios from "axios";
 import { BaseUrl } from "../../api/BaseHeader";
 import { toast } from "react-toastify";
@@ -8,14 +9,14 @@ interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLoginSuccess?: () => void;
-  onSwitchToRegister?: () => void; // Thêm prop này
+  onSwitchToRegister?: () => void;
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({
   isOpen,
   onClose,
   onLoginSuccess,
-  onSwitchToRegister, // Thêm prop này
+  onSwitchToRegister,
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,9 +62,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-1000 flex items-center justify-center backdrop-blur-sm bg-black/30 px-4">
-      <div className="bg-white  w-full max-w-5xl rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden relative">
+  return ReactDOM.createPortal(
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center backdrop-blur-sm bg-black/30 px-4">
+      <div className="bg-white w-full max-w-5xl rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden relative">
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl"
@@ -181,7 +182,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
           </form>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

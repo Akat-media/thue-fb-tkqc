@@ -240,7 +240,7 @@ const MarketplacePage: React.FC = () => {
         />
 
         {selectedBM && isBMDetailModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
             <div
               ref={innerBorderRef}
               className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative max-h-[80vh] overflow-y-auto"
