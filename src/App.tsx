@@ -12,13 +12,14 @@ import PaymentForm from "./pages/marketplace/PaymentForm.tsx";
 import ManageAdsAccount from "./pages/admin/ManageAdsAccount";
 import AdminTransactionsPage from "./pages/admin/AdminTransactionsPage";
 import UserManagementPage from "./pages/admin/UserManagementPage";
-import Analytics from "./pages/analytics/Analytics";
+// import Analytics from "./pages/analytics/Analytics";
 import ProfilePage from "./pages/profile/Profile.tsx";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Support from "./pages/support/Support.tsx";
 import Policy from "./pages/policy/Policy.tsx";
 import AdminProfilePage from "./pages/profile/AdminProfilePage.tsx";
 import Navbar from "./components/layout/Navbar.tsx";
+import AdminSupport from "./pages/support/AdminSupport";
 
 function App() {
   return (
@@ -43,7 +44,7 @@ function App() {
               <Route path="/payments" element={<PaymentPage />} />
               <Route path="/deposit" element={<PaymentForm />} />
               <Route path="/adsaccountmanager" element={<ManageAdsAccount />} />
-              <Route path="/analytics" element={<Analytics />} />
+              {/*<Route path="/analytics" element={<Analytics />} />*/}
               <Route
                 path="/admintransaction"
                 element={<AdminTransactionsPage />}
@@ -51,6 +52,7 @@ function App() {
               <Route path="/usermanage" element={<UserManagementPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/admin/profile" element={<AdminProfilePage />} />
+              <Route path="/admin/support" element={<AdminSupport />} />
             </Route>
           </Routes>
         </Router>
