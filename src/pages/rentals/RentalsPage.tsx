@@ -170,7 +170,7 @@ const RentalsPage: React.FC = () => {
       if (isAdmin) {
         response = await BaseHeader({
           method: "get",
-          url: "ad-accounts",
+          url: "ads-rent-accounts-all",
           params: {
             page: currentPage,
             limit: pageSize,
