@@ -34,7 +34,8 @@ const Sidebar: React.FC<{
   const isAdsMenuActive =
     location.pathname.startsWith("/adsaccountmanager") ||
     location.pathname === "/add-account" ||
-    location.pathname === "/usermanage";
+    // location.pathname === "/usermanage";
+      location.pathname === "/admin/account";
   const [openAdsSubmenu, setOpenAdsSubmenu] = useState(isAdsMenuActive);
   const toggleProfileMenu = () => setOpenProfileMenu(!openProfileMenu);
 
@@ -202,24 +203,24 @@ const Sidebar: React.FC<{
                 </div>
                 <span className="text-gray-600">Quản lý giao dịch</span>
               </Link>
+              {/*<Link*/}
+              {/*  to="/add-account"*/}
+              {/*  className={clsx(*/}
+              {/*    "flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700",*/}
+              {/*    location.pathname === "/add-account" &&*/}
+              {/*      "bg-blue-100 font-semibold"*/}
+              {/*  )}*/}
+              {/*>*/}
+              {/*  <div className="w-8 flex justify-center">*/}
+              {/*    <PackagePlus className="w-4 h-4" />*/}
+              {/*  </div>*/}
+              {/*  <span className="text-gray-600">Thêm TKQC</span>*/}
+              {/*</Link>*/}
               <Link
-                to="/add-account"
+                to="/admin/account"
                 className={clsx(
                   "flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700",
-                  location.pathname === "/add-account" &&
-                    "bg-blue-100 font-semibold"
-                )}
-              >
-                <div className="w-8 flex justify-center">
-                  <PackagePlus className="w-4 h-4" />
-                </div>
-                <span className="text-gray-600">Thêm TKQC</span>
-              </Link>
-              <Link
-                to="/usermanage"
-                className={clsx(
-                  "flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700",
-                  location.pathname === "/usermanage" &&
+                  location.pathname === "/admin/account" &&
                     "bg-blue-100 font-semibold"
                 )}
               >

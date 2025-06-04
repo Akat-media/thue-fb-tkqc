@@ -20,7 +20,7 @@ const HomePage: React.FC = () => {
           <>
             {/* Hero Section */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[30px] pb-[40px] sm:py-24">
                 <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
                   <div>
                     <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
@@ -61,7 +61,7 @@ const HomePage: React.FC = () => {
                   {/*    <Facebook className="relative h-48 w-48 text-white" />*/}
                   {/*  </div>*/}
                   {/*</div>*/}
-                  <div className="flex justify-center items-center">
+                  <div className="flex justify-center items-center pt-[40px] sm:pt-0">
                     <FacebookIcon />
                   </div>
                 </div>
@@ -69,7 +69,7 @@ const HomePage: React.FC = () => {
             </div>
 
             {/* Features Section */}
-            <div className="py-24 bg-white">
+            <div className="pb-24 pt-[40px] sm:pt-24 bg-white">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center">
                   <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
