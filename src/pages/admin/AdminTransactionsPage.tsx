@@ -82,7 +82,6 @@ const AdminTransactionsPage: React.FC = () => {
   });
 
   const handleFilter = () => {
-    // Lọc dữ liệu từ transactions thay vì mockData
     const result = transactions.filter((item) => {
       const matchSearch =
         (item.short_code &&
@@ -102,7 +101,6 @@ const AdminTransactionsPage: React.FC = () => {
     const term = e.target.value.toLowerCase();
     setSearch(term);
 
-    // Lọc dữ liệu từ transactions thay vì mockData
     const result = transactions.filter((item) => {
       const matchSearch =
         (item.short_code && item.short_code.toLowerCase().includes(term)) ||
@@ -131,12 +129,11 @@ const AdminTransactionsPage: React.FC = () => {
             : bValue - aValue;
         }
 
-        // Xử lý trường hợp null
-        if (aValue === null && bValue !== null)
+        if (aValue == null && bValue != null)
           return sortConfig.direction === "asc" ? -1 : 1;
-        if (aValue !== null && bValue === null)
+        if (aValue != null && bValue == null)
           return sortConfig.direction === "asc" ? 1 : -1;
-        if (aValue === null && bValue === null) return 0;
+        if (aValue == null && bValue == null) return 0;
 
         return sortConfig.direction === "asc"
           ? String(aValue).localeCompare(String(bValue))
@@ -149,7 +146,7 @@ const AdminTransactionsPage: React.FC = () => {
   const handleReset = () => {
     setSearch("");
     setStatusFilter("all");
-    setFiltered(transactions); // Sử dụng transactions thay vì mockData
+    setFiltered(transactions);
   };
   const handleSync = async () => {
     if (active === "money") {
@@ -553,7 +550,7 @@ const AdminTransactionsPage: React.FC = () => {
                 </thead>
 
                 <tbody className="text-sm text-gray-800">
-                  {transactions.map((item: any) => (
+                  {sortedData.map((item: any) => (
                     <tr
                       key={item.id}
                       className={`${
@@ -853,7 +850,7 @@ const AdminTransactionsPage: React.FC = () => {
                 </thead>
 
                 <tbody className="text-sm text-gray-800">
-                  {transactionPoints?.map((item: any) => (
+                  {sortedData.map((item: any) => (
                     <tr
                       key={item.id}
                       className={`${
