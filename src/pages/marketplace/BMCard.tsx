@@ -20,7 +20,7 @@ const BMCard: React.FC<BMCardProps> = ({ bm, onClick }) => {
               {bm?.bm_name}
             </h3>
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium gap-1 cursor-pointer bg-green-100 text-green-700 border border-green-200 shadow-sm hover:shadow-md transition-all duration-200">
-              Active
+              Hoạt động
             </span>
           </div>
           <div className="mt-4 space-y-3">

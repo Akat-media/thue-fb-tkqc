@@ -47,6 +47,7 @@ const MarketplacePage: React.FC = () => {
   const [selectedBMId, setSelectedBMId] = useState<string>("all");
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [selectedSyncBMId, setSelectedSyncBMId] = useState<string>("");
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const handleCallAPi = async () => {
     try {
@@ -123,6 +124,7 @@ const MarketplacePage: React.FC = () => {
 
   const handleSyncConfirm = async () => {
     try {
+      setIsSyncing(true);
       const response = await BaseHeader({
         url: "/async-ad-accounts",
         method: "post",
@@ -138,6 +140,8 @@ const MarketplacePage: React.FC = () => {
     } catch (error) {
       console.log(error);
       toast.error("Đồng bộ tài khoản thất bại");
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -416,21 +420,51 @@ const MarketplacePage: React.FC = () => {
                     type="button"
                     onClick={() => setIsSyncModalOpen(false)}
                     className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                    disabled={isSyncing}
                   >
                     Hủy
                   </button>
                   <button
                     onClick={handleSyncConfirm}
-                    disabled={!selectedSyncBMId}
+                    disabled={!selectedSyncBMId || isSyncing}
                     className={`px-4 py-2 rounded-lg text-white ${
                       !selectedSyncBMId
                         ? "bg-gray-400 cursor-not-allowed"
+                        : isSyncing
+                        ? "bg-blue-500 cursor-not-allowed"
                         : "bg-blue-600 hover:bg-blue-700"
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <RefreshCcw className="w-4 h-4" />
-                      Đồng Bộ
+                      {isSyncing ? (
+                        <>
+                          <svg
+                            className="animate-spin h-4 w-4 text-white"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                              fill="none"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                            />
+                          </svg>
+                          Đang đồng bộ...
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCcw className="w-4 h-4" />
+                          Đồng Bộ
+                        </>
+                      )}
                     </div>
                   </button>
                 </div>

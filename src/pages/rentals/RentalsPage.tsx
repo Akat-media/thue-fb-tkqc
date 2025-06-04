@@ -72,9 +72,11 @@ interface AdsRental {
 }
 
 const RentalsPage: React.FC = () => {
+  const objetUser = localStorage.getItem("user");
+  const userParse = JSON.parse(objetUser || "{}");
   const [rentals, setRentals] = useState<(Rental & { adAccount: any })[]>([]);
   const [activeTab, setActiveTab] = useState<"available" | "active" | "all">(
-    "available"
+    userParse?.user?.role === "admin" ? "active" : "available"
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRental, setSelectedRental] = useState<
@@ -96,6 +98,10 @@ const RentalsPage: React.FC = () => {
   useEffect(() => {
     fetchRentals();
   }, [currentPage, pageSize]);
+
+  useEffect(() => {
+    console.log("Active tab changed to:", activeTab);
+  }, [activeTab]);
 
   const fetchAdAccountDetail = async (accountId: string) => {
     try {
@@ -319,6 +325,9 @@ const RentalsPage: React.FC = () => {
 
   const filteredRentals = rentals.filter((rental) => {
     if (activeTab === "all") return true;
+    if (userParse?.user?.role === "admin" && activeTab === "active") {
+      return rental.status === "available"; // Đoạn ni hiển thị tài khoản "available" cho tab "active" với admin
+    }
     return rental.status === activeTab;
   });
 
@@ -386,8 +395,10 @@ const RentalsPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
-            <h2 className="text-2xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate">
-              Tài khoản đang thuê
+            <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
+              {userParse?.user?.role === "admin"
+                ? "Tài khoản đang hoạt động"
+                : "Tài khoản đang thuê"}
             </h2>
           </div>
         </div>
@@ -403,44 +414,80 @@ const RentalsPage: React.FC = () => {
                 setActiveTab(e.target.value as "available" | "active" | "all")
               }
             >
-              <option value="active">Đang thuê</option>
-              <option value="active">Đang hoạt động</option>
-              <option value="all">Tất cả</option>
+              {userParse?.user?.role === "admin" ? (
+                <>
+                  <option value="active">Đang hoạt động</option>
+                  <option value="all">Tất cả</option>
+                </>
+              ) : (
+                <>
+                  <option value="available">Đang thuê</option>
+                  <option value="active">Đang hoạt động</option>
+                  <option value="all">Tất cả</option>
+                </>
+              )}
             </select>
           </div>
           <div className="hidden sm:block">
             <div className="border-b border-gray-200">
               <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-                <button
-                  className={`${
-                    activeTab === "available"
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                  onClick={() => setActiveTab("available")}
-                >
-                  Đang thuê
-                </button>
-                <button
-                  className={`${
-                    activeTab === "active"
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                  onClick={() => setActiveTab("active")}
-                >
-                  Đang hoạt động
-                </button>
-                <button
-                  className={`${
-                    activeTab === "all"
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                  onClick={() => setActiveTab("all")}
-                >
-                  Tất cả
-                </button>
+                {userParse?.user?.role === "admin" ? (
+                  <>
+                    <button
+                      className={`${
+                        activeTab === "active"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                      onClick={() => setActiveTab("active")}
+                    >
+                      Đang hoạt động
+                    </button>
+                    <button
+                      className={`${
+                        activeTab === "all"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                      onClick={() => setActiveTab("all")}
+                    >
+                      Tất cả
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className={`${
+                        activeTab === "available"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                      onClick={() => setActiveTab("available")}
+                    >
+                      Đang thuê
+                    </button>
+                    <button
+                      className={`${
+                        activeTab === "active"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                      onClick={() => setActiveTab("active")}
+                    >
+                      Đang hoạt động
+                    </button>
+                    <button
+                      className={`${
+                        activeTab === "all"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                      onClick={() => setActiveTab("all")}
+                    >
+                      Tất cả
+                    </button>
+                  </>
+                )}
               </nav>
             </div>
           </div>
@@ -575,7 +622,7 @@ const RentalsPage: React.FC = () => {
                   </CardContent>
                   <div className="px-6 py-4 relative z-10">
                     <div className="flex space-x-3">
-                      {rental.status === "available" && (
+                      {userParse?.user?.role === "admin" ? (
                         <>
                           <Button
                             className="bg-red-500 hover:bg-red-400 py-2"
@@ -583,50 +630,69 @@ const RentalsPage: React.FC = () => {
                             icon={<XOctagonIcon className="h-4 w-4" />}
                             fullWidth
                           >
-                            Hủy
+                            Vô hiệu hóa
                           </Button>
                           <Button className="py-2" size="sm" fullWidth>
                             Nâng cấp
                           </Button>
                         </>
-                      )}
-                      {rental.status === "active" &&
-                        rental.spentBudget < rental.requestedLimit && (
-                          <Button size="sm" fullWidth>
-                            Yêu cầu hoàn tiền
-                          </Button>
-                        )}
-                      {rental.status === "active" &&
-                        rental.spentBudget >= rental.requestedLimit && (
-                          <>
+                      ) : (
+                        <>
+                          {rental.status === "available" && (
+                            <>
+                              <Button
+                                className="bg-red-500 hover:bg-red-400 py-2"
+                                size="sm"
+                                icon={<XOctagonIcon className="h-4 w-4" />}
+                                fullWidth
+                              >
+                                Hủy
+                              </Button>
+                              <Button className="py-2" size="sm" fullWidth>
+                                Nâng cấp
+                              </Button>
+                            </>
+                          )}
+                          {/* Giữ nguyên các điều kiện khác cho người dùng thông thường */}
+                          {rental.status === "active" &&
+                            rental.spentBudget < rental.requestedLimit && (
+                              <Button size="sm" fullWidth>
+                                Yêu cầu hoàn tiền
+                              </Button>
+                            )}
+                          {rental.status === "active" &&
+                            rental.spentBudget >= rental.requestedLimit && (
+                              <>
+                                <Button
+                                  className="bg-red-500 hover:bg-red-400 py-2"
+                                  size="sm"
+                                  icon={<XOctagonIcon className="h-4 w-4" />}
+                                  fullWidth
+                                  disabled
+                                >
+                                  Hủy
+                                </Button>
+                                <Button
+                                  className="py-2 bg-fuchsia-700 hover:bg-fuchsia-600"
+                                  size="sm"
+                                  fullWidth
+                                >
+                                  Thuê gói
+                                </Button>
+                              </>
+                            )}
+                          {rental.status === "unavailable" && (
                             <Button
-                              className="bg-red-500 hover:bg-red-400 py-2"
+                              className="bg-yellow-500 hover:bg-yellow-400 py-2"
                               size="sm"
-                              icon={<XOctagonIcon className="h-4 w-4" />}
+                              icon={<RefreshCw className="h-4 w-4" />}
                               fullWidth
                               disabled
                             >
-                              Hủy
+                              Đang xử lý
                             </Button>
-                            <Button
-                              className="py-2 bg-fuchsia-700 hover:bg-fuchsia-600"
-                              size="sm"
-                              fullWidth
-                            >
-                              Thuê gói
-                            </Button>
-                          </>
-                        )}
-                      {rental.status === "unavailable" && (
-                        <Button
-                          className="bg-yellow-500 hover:bg-yellow-400 py-2"
-                          size="sm"
-                          icon={<RefreshCw className="h-4 w-4" />}
-                          fullWidth
-                          disabled
-                        >
-                          Đang xử lý
-                        </Button>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>

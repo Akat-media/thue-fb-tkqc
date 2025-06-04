@@ -62,13 +62,18 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
       });
 
       toast.success("Tạo tài khoản BM thành công!");
+      if (onSuccess) {
+        onSuccess();
+      }
+      onClose();
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 3000);
     } catch (error) {
       console.error("Error creating BM account:", error);
       toast.error("Có lỗi xảy ra khi tạo tài khoản BM");
+    } finally {
       setIsLoading(false);
     }
   };
