@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
+// import Navbar from "./Navbar";
 import Footer from "./Footer";
+import NotificationOverlay from '../../pages/notify/NotificationOverlay';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -23,6 +24,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       >
         {children}
       </main>
+      <NotificationOverlay />
     </div>
   ) : (
     <div className="flex flex-col min-h-screen bg-gray-50">

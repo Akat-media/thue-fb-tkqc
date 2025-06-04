@@ -20,6 +20,7 @@ import Policy from "./pages/policy/Policy.tsx";
 import AdminProfilePage from "./pages/profile/AdminProfilePage.tsx";
 import Navbar from "./components/layout/Navbar.tsx";
 import AdminSupport from "./pages/support/AdminSupport";
+import NotificationOverlay from "./pages/notify/NotificationOverlay.tsx";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/admin/profile" element={<AdminProfilePage />} />
               <Route path="/admin/support" element={<AdminSupport />} />
+              <Route path="/admin/notifications" element={<NotificationOverlay />} />
             </Route>
           </Routes>
         </Router>
