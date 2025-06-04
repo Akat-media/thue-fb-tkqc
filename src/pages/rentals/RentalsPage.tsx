@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Clock,
   AlertTriangle,
-  BarChart3,
   RefreshCw,
   Lightbulb,
   Calendar,
   DollarSign,
   Wallet,
   XOctagonIcon,
+  X,
+  CreditCard,
 } from "lucide-react";
 import Layout from "../../components/layout/Layout";
 import Button from "../../components/ui/Button";
@@ -20,98 +21,301 @@ import {
 } from "../../components/ui/Card";
 import { Rental } from "../../types";
 import url from "../../assets/bg.svg";
+import BaseHeader from "../../api/BaseHeader";
+import { useOnOutsideClick } from "../../hook/useOutside";
+import usePagination from "../../hook/usePagination";
+import { Pagination } from "antd";
 
-const mockRentals: (Rental & { adAccount: any })[] = [
-  {
-    id: "1",
-    userId: "1",
-    adAccountId: "1",
-    userBmId: "123456789",
-    startDate: new Date(2023, 5, 15),
-    endDate: new Date(2023, 5, 22),
-    requestedLimit: 5000000,
-    totalPrice: 1500000,
-    spentBudget: 2500000,
-    status: "available",
-    createdAt: new Date(2023, 5, 15),
-    adAccount: {
-      id: "1",
-      name: "BM Cá nhân",
-      bmId: "bm_123456",
-      bmName: "Business Manager Cá nhân",
-      bmType: "personal",
-      accountType: "visa",
-      defaultLimit: 5000000,
-      pricePerDay: 200000,
-      remainingBudget: 2500000,
-      includesAdAccount: true,
-      status: "active",
-    },
-  },
-  {
-    id: "2",
-    userId: "1",
-    adAccountId: "2",
-    userBmId: "123456789",
-    startDate: new Date(2023, 5, 10),
-    endDate: new Date(2023, 5, 17),
-    requestedLimit: 10000000,
-    totalPrice: 2450000,
-    spentBudget: 10000000,
-    status: "active",
-    createdAt: new Date(2023, 5, 10),
-    adAccount: {
-      id: "2",
-      name: "BM Agency - Visa",
-      bmId: "bm_789012",
-      bmName: "Business Manager Agency",
-      bmType: "agency",
-      accountType: "visa",
-      defaultLimit: 10000000,
-      pricePerDay: 350000,
-      remainingBudget: 0,
-      includesAdAccount: true,
-      status: "available",
-    },
-  },
-  {
-    id: "3",
-    userId: "1",
-    adAccountId: "3",
-    userBmId: "123456789",
-    startDate: new Date(2023, 5, 18),
-    endDate: new Date(2023, 5, 19),
-    requestedLimit: 2000000,
-    totalPrice: 110000,
-    spentBudget: 0,
-    status: "unavailable",
-    createdAt: new Date(2023, 5, 18),
-    adAccount: {
-      id: "3",
-      name: "BM Cá nhân - Limit thấp",
-      bmId: "bm_345678",
-      bmName: "Business Manager Cá nhân",
-      bmType: "personal",
-      accountType: "low_limit",
-      defaultLimit: 2000000,
-      pricePerDay: 100000,
-      remainingBudget: 2000000,
-      includesAdAccount: true,
-      status: "active",
-    },
-  },
-];
+interface AdAccountDetail {
+  id: string;
+  account_id: string;
+  account_status: number;
+  amount_spent: string;
+  balance: string;
+  business: {
+    id: string;
+    name: string;
+  };
+  currency: string;
+  created_time: string;
+  disable_reason: number;
+  name: string;
+  spend_cap: string;
+  timezone_name: string;
+  timezone_offset_hours_utc: number;
+  owner: string;
+  is_personal: number;
+  funding_source_details: {
+    id: string;
+    type: number;
+    display_string: string;
+  };
+  status_rented: string;
+  spend_limit: number;
+  note_aka: string;
+}
+
+interface AdsRental {
+  id: string;
+  bm_id: string;
+  bm_origin: string;
+  ads_account_id: string;
+  user_id: string;
+  status: string;
+  status_partner: number;
+  status_limit_spend: number;
+  status_dischard_limit_spend: number | null;
+  status_dischard_partner: number | null;
+  created_at: string;
+  updated_at: string;
+  accounts: any;
+}
 
 const RentalsPage: React.FC = () => {
   const [rentals, setRentals] = useState<(Rental & { adAccount: any })[]>([]);
   const [activeTab, setActiveTab] = useState<"available" | "active" | "all">(
     "available"
   );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [selectedRental, setSelectedRental] = useState<
+    (Rental & { adAccount: any }) | null
+  >(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [adAccountDetail, setAdAccountDetail] =
+    useState<AdAccountDetail | null>(null);
+  const [loadingDetail, setLoadingDetail] = useState<boolean>(false);
+  const [totalAccounts, setTotalAccounts] = useState<number>(0);
+
+  const { innerBorderRef } = useOnOutsideClick(() => {
+    setShowModal(false);
+  });
+
+  const { currentPage, pageSize, handleChange, setCurrentPage, setPageSize } =
+    usePagination(1, 10);
 
   useEffect(() => {
-    // This would be an API call in a real application
-    setRentals(mockRentals);
-  }, []);
+    fetchRentals();
+  }, [currentPage, pageSize]);
+
+  const fetchAdAccountDetail = async (accountId: string) => {
+    try {
+      setLoadingDetail(true);
+      const response = await BaseHeader({
+        method: "get",
+        url: "ad-accounts",
+        params: {
+          account_id: accountId,
+        },
+      });
+
+      console.log("Ad account detail:", response.data);
+      const adAccountData = Array.isArray(response.data)
+        ? response.data[0]
+        : response.data.data
+        ? response.data.data[0]
+        : response.data;
+      setAdAccountDetail(adAccountData);
+      if (selectedRental && adAccountData) {
+        const updatedRental = {
+          ...selectedRental,
+          requestedLimit:
+            adAccountData.spend_limit || selectedRental.requestedLimit,
+          spentBudget: parseInt(adAccountData.amount_spent) || 0,
+          adAccount: {
+            ...selectedRental.adAccount,
+            name: adAccountData.name || selectedRental.adAccount.name,
+            bmName:
+              adAccountData.business?.name || selectedRental.adAccount.bmName,
+            bmType: adAccountData.is_personal === 1 ? "personal" : "business",
+            accountType:
+              adAccountData.funding_source_details?.display_string?.includes(
+                "VISA"
+              )
+                ? "visa"
+                : "other",
+            remainingBudget: parseInt(adAccountData.balance) || 0,
+            currency: adAccountData.currency,
+          },
+        };
+        setSelectedRental(updatedRental);
+      }
+    } catch (error) {
+      console.error("Error fetching ad account detail:", error);
+      setAdAccountDetail(null);
+    } finally {
+      setLoadingDetail(false);
+    }
+  };
+
+  const fetchRentals = async () => {
+    try {
+      setLoading(true);
+      const userString = localStorage.getItem("user");
+      const userInfo = userString ? JSON.parse(userString) : null;
+      const userId = userInfo?.user_id || userInfo?.user?.id || "";
+      const isAdmin = userInfo?.user?.role === "admin";
+
+      console.log(
+        "Fetching rentals for user ID:",
+        userId,
+        "Is admin:",
+        isAdmin,
+        "Page:",
+        currentPage,
+        "PageSize:",
+        pageSize
+      );
+
+      let response;
+      if (isAdmin) {
+        response = await BaseHeader({
+          method: "get",
+          url: "ad-accounts",
+          params: {
+            page: currentPage,
+            limit: pageSize,
+          },
+        });
+      } else {
+        response = await BaseHeader({
+          method: "get",
+          url: "ads-rent-accounts",
+          params: {
+            user_id: userId,
+            page: currentPage,
+            limit: pageSize,
+          },
+        });
+      }
+
+      console.log("API response:", response.data);
+
+      // Lưu tổng số tài khoản để hiển thị phân trang
+      const total = response.data.total || response.data.meta?.total || 0;
+      setTotalAccounts(total);
+
+      if (isAdmin) {
+        const adAccounts = Array.isArray(response.data)
+          ? response.data
+          : response.data.data || [];
+
+        if (adAccounts.length === 0) {
+          console.log("No accounts found");
+          setRentals([]);
+          setLoading(false);
+          return;
+        }
+        const formattedAccounts = adAccounts.map((account: any) => {
+          return {
+            id: account.id || `acc-${account.account_id}`,
+            userId: account.owner || "Unknown",
+            adAccountId: account.account_id,
+            userBmId: account.business?.id || "",
+            startDate: new Date(account.created_time || Date.now()),
+            endDate: new Date(account.updated_at || Date.now()),
+            requestedLimit: account.spend_limit || account.spend_cap || 5000000,
+            totalPrice: 1500000,
+            spentBudget: parseInt(account.amount_spent) || 0,
+            status: account.status_rented
+              ? mapApiStatus(account.status_rented)
+              : "available",
+            createdAt: new Date(account.created_time || Date.now()),
+            adAccount: {
+              id: account.account_id,
+              name: account.name || `Account ${account.account_id}`,
+              bmId: account.business?.id || "",
+              bmName: account.business?.name || `Business Manager`,
+              bmType: account.is_personal === 1 ? "personal" : "business",
+              accountType:
+                account.funding_source_details?.display_string?.includes("VISA")
+                  ? "visa"
+                  : "other",
+              defaultLimit: account.spend_limit || account.spend_cap || 5000000,
+              pricePerDay: 200000,
+              remainingBudget: parseInt(account.balance) || 0,
+              includesAdAccount: true,
+              status: account.account_status === 1 ? "active" : "inactive",
+              currency: account.currency,
+            },
+          };
+        });
+
+        console.log("Formatted accounts for admin:", formattedAccounts);
+        setRentals(formattedAccounts);
+      } else {
+        const adsrentals: AdsRental[] = Array.isArray(response.data)
+          ? response.data
+          : response.data.data || [];
+
+        if (adsrentals.length === 0) {
+          console.log("No rentals found");
+          setRentals([]);
+          setLoading(false);
+          return;
+        }
+
+        const formattedRentals = adsrentals.map((rental) => {
+          const adAccountData = rental.accounts || {};
+          return {
+            id: rental.id,
+            userId: rental.user_id,
+            adAccountId: rental.ads_account_id,
+            userBmId: rental.bm_origin,
+            startDate: new Date(rental.created_at),
+            endDate: new Date(rental.updated_at),
+            requestedLimit: adAccountData.spend_limit || 5000000,
+            totalPrice: 1500000,
+            spentBudget: parseInt(adAccountData.amount_spent) || 0,
+            status: mapApiStatus(rental.status),
+            createdAt: new Date(rental.created_at),
+            adAccount: {
+              id: adAccountData.account_id,
+              name: adAccountData.name || `BM ${rental.bm_id}`,
+              bmId: rental.bm_id,
+              bmName:
+                adAccountData.business?.name ||
+                `Business Manager ${rental.bm_id}`,
+              bmType: adAccountData.is_personal === 1 ? "personal" : "business",
+              accountType:
+                adAccountData.funding_source_details?.display_string?.includes(
+                  "VISA"
+                )
+                  ? "visa"
+                  : "other",
+              defaultLimit: adAccountData.spend_limit || 5000000,
+              pricePerDay: 200000,
+              remainingBudget: parseInt(adAccountData.balance) || 0,
+              includesAdAccount: true,
+              status: rental.status,
+              currency: adAccountData.currency,
+            },
+          };
+        });
+
+        console.log("Formatted rentals for user:", formattedRentals);
+        setRentals(formattedRentals);
+      }
+    } catch (error) {
+      console.error("Error fetching rentals:", error);
+      setRentals([]);
+      setTotalAccounts(0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const mapApiStatus = (
+    status: string
+  ): "available" | "active" | "unavailable" => {
+    switch (status) {
+      case "success":
+        return "available";
+      case "pending":
+        return "unavailable";
+      default:
+        return "active";
+    }
+  };
 
   const filteredRentals = rentals.filter((rental) => {
     if (activeTab === "all") return true;
@@ -171,12 +375,18 @@ const RentalsPage: React.FC = () => {
     }
   };
 
+  const handleCardClick = async (rental: Rental & { adAccount: any }) => {
+    setSelectedRental(rental);
+    setShowModal(true);
+    await fetchAdAccountDetail(rental.adAccountId);
+  };
+
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
-            <h2 className="text-2xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate">
+            <h2 className="text-2xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate">
               Tài khoản đang thuê
             </h2>
           </div>
@@ -237,10 +447,18 @@ const RentalsPage: React.FC = () => {
         </div>
 
         <div className="mt-6">
-          {filteredRentals.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">Đang tải dữ liệu...</p>
+            </div>
+          ) : filteredRentals.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredRentals.map((rental) => (
-                <Card key={rental.id} className="h-full flex flex-col relative">
+                <Card
+                  key={rental.userBmId}
+                  className="h-full flex flex-col relative cursor-pointer hover:shadow-lg transition-shadow duration-200"
+                  onClick={() => handleCardClick(rental)}
+                >
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <CardTitle className="text-[22px]">
@@ -275,7 +493,7 @@ const RentalsPage: React.FC = () => {
                         <div className="flex justify-between items-center text-sm">
                           <span className="flex items-center gap-1 text-gray-500">
                             <DollarSign className="w-4 h-4 text-green-400" />
-                            Limit yêu cầu:
+                            Giới hạn chi:
                           </span>
                           <span className="font-semibold">
                             {rental.requestedLimit.toLocaleString("vi-VN")} VNĐ
@@ -436,6 +654,198 @@ const RentalsPage: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Modal hiển thị chi tiết tài khoản */}
+        {showModal && selectedRental && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div
+              ref={innerBorderRef}
+              className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative max-h-[80vh] overflow-y-auto"
+            >
+              <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                onClick={() => setShowModal(false)}
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <h2 className="text-xl font-semibold mb-4">
+                Chi tiết tài khoản quảng cáo
+              </h2>
+
+              {loadingDetail ? (
+                <div className="text-center py-4">
+                  <p className="text-gray-500">
+                    Đang tải thông tin chi tiết...
+                  </p>
+                </div>
+              ) : adAccountDetail ? (
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-medium text-lg mb-2">
+                      Thông tin tài khoản
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-sm text-gray-500">ID tài khoản:</p>
+                        <p className="font-medium">
+                          {adAccountDetail.account_id}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Tên tài khoản:</p>
+                        <p className="font-medium">{adAccountDetail.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">
+                          Business Manager:
+                        </p>
+                        <p className="font-medium">
+                          {adAccountDetail.business?.name || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Trạng thái:</p>
+                        <p className="font-medium">
+                          {getStatusBadge(selectedRental.status)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-medium text-lg mb-2">
+                      Thông tin tài chính
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-sm text-gray-500">Số dư:</p>
+                        <p className="font-medium">
+                          {parseInt(adAccountDetail.balance).toLocaleString()}{" "}
+                          {adAccountDetail.currency}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Đã chi tiêu:</p>
+                        <p className="font-medium">
+                          {parseInt(
+                            adAccountDetail.amount_spent
+                          ).toLocaleString()}{" "}
+                          {adAccountDetail.currency}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">
+                          Hạn mức chi tiêu:
+                        </p>
+                        <p className="font-medium">
+                          {adAccountDetail.spend_limit
+                            ? adAccountDetail.spend_limit.toLocaleString()
+                            : "Không giới hạn"}{" "}
+                          {adAccountDetail.currency}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">
+                          Phương thức thanh toán:
+                        </p>
+                        <p className="font-medium flex items-center">
+                          <CreditCard className="h-4 w-4 mr-1 text-blue-500" />
+                          {adAccountDetail.funding_source_details
+                            ?.display_string || "N/A"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-medium text-lg mb-2">Thông tin thuê</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-sm text-gray-500">Ngày bắt đầu:</p>
+                        <p className="font-medium">
+                          {formatDate(selectedRental.startDate)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">
+                          Ngày tạo tài khoản:
+                        </p>
+                        <p className="font-medium">
+                          {new Date(
+                            adAccountDetail.created_time
+                          ).toLocaleDateString("vi-VN")}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Múi giờ:</p>
+                        <p className="font-medium">
+                          {adAccountDetail.timezone_name}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Loại tài khoản:</p>
+                        <p className="font-medium">
+                          {adAccountDetail.is_personal === 1
+                            ? "Cá nhân"
+                            : "Doanh nghiệp"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Tổng tiền:</p>
+                        <p className="font-medium">
+                          {selectedRental.totalPrice.toLocaleString()} VND
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Giá thuê/ngày:</p>
+                        <p className="font-medium">
+                          {selectedRental.adAccount.pricePerDay.toLocaleString()}{" "}
+                          VND
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {adAccountDetail.note_aka && (
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="font-medium text-lg mb-2">Ghi chú</h3>
+                      <p className="text-sm">{adAccountDetail.note_aka}</p>
+                    </div>
+                  )}
+
+                  <div className="mt-4 flex justify-end">
+                    <Button onClick={() => setShowModal(false)}>Đóng</Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-gray-500">
+                    Không thể tải thông tin chi tiết tài khoản. Vui lòng thử lại
+                    sau.
+                  </p>
+                  <Button
+                    className="mt-3"
+                    onClick={() =>
+                      fetchAdAccountDetail(selectedRental.adAccountId)
+                    }
+                  >
+                    Thử lại
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {totalAccounts > 0 && (
+          <div className="mt-6">
+            <Pagination
+              total={totalAccounts}
+              current={currentPage}
+              pageSize={pageSize}
+              onChange={handleChange}
+            />
+          </div>
+        )}
       </div>
     </Layout>
   );

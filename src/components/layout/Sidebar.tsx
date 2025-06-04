@@ -21,7 +21,7 @@ import clsx from "clsx";
 import { useAuth } from "../../context/AuthContext";
 import socket from "../../socket";
 import { useUserStore } from "../../stores/useUserStore";
-import { useNotificationStore } from '../../stores/notificationStore';
+import { useNotificationStore } from "../../stores/notificationStore";
 
 const Sidebar: React.FC<{
   isSidebarOpen: boolean;
@@ -41,7 +41,7 @@ const Sidebar: React.FC<{
   const links = [
     { label: "Trang chủ", icon: LayoutDashboard, path: "/" },
     { label: "Danh sách BM", icon: Briefcase, path: "/marketplace" },
-    { label: "Tài khoản đang thuê", icon: ShoppingCart, path: "/rentals" },
+    { label: "Danh sách tài khoản", icon: ShoppingCart, path: "/rentals" },
     { label: "Nạp tiền", icon: CircleDollarSign, path: "/payments" },
     // { label: "QR Here", icon: QrCode, path: "/deposit" },
     // { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
@@ -86,7 +86,7 @@ const Sidebar: React.FC<{
     localStorage.removeItem("user");
     setUser(null);
     navigate("/login");
-  }
+  };
   return (
     <aside
       className={clsx(
@@ -275,7 +275,7 @@ const Sidebar: React.FC<{
         </Link>
 
         <button
-          onClick={() => openNotification('third')}
+          onClick={() => openNotification("third")}
           // to="/admin/notifications"
           className="flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300 w-full"
         >
@@ -338,7 +338,7 @@ const Sidebar: React.FC<{
                 </Link>
                 <button
                   onClick={() => {
-                    handleLogout()
+                    handleLogout();
                     navigate("/login");
                   }}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
