@@ -26,7 +26,6 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
   const getAccountTypeLabel = (type: string) => {
     return type === "personal" ? "Cá nhân" : "BM";
   };
-  console.log(dataURI);
   const getLimitTypeLabel = (type: string) => {
     switch (type) {
       case "visa":

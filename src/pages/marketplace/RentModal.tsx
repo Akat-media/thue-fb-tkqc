@@ -17,9 +17,17 @@ interface RentModalProps {
   isOpen: boolean;
   onClose: () => void;
   account: any;
+  setSuccessRent: React.Dispatch<React.SetStateAction<any>>;
+  setErrorRent: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
+const RentModal: React.FC<RentModalProps> = ({
+  isOpen,
+  onClose,
+  account,
+  setSuccessRent,
+  setErrorRent,
+}) => {
   const objetUser = localStorage.getItem("user");
   const userParse = JSON.parse(objetUser || "{}");
   const [userBmId, setUserBmId] = useState("");
@@ -35,19 +43,28 @@ const RentModal: React.FC<RentModalProps> = ({ isOpen, onClose, account }) => {
   const calculateTotalPrice = () => {
     return requestedLimit + requestedLimit * 0.1;
   };
-  console.log("userBmId", userBmId);
+  console.log("userBmId", userBmId, account);
   const handleSubmit = async () => {
     try {
       const response = await BaseHeader({
         url: "points-used",
         method: "post",
         data: {
+          bm_origin: account?.owner || "",
+          ads_name: account?.name || "",
           bm_id: userBmId || "",
           ads_account_id: account?.account_id || "",
           user_id: userParse.user_id || "",
           amountPoint: calculateTotalPrice(),
         },
       });
+      if (response.status == 200) {
+        onClose();
+        setSuccessRent(response.data.message);
+      } else {
+        onClose();
+        setErrorRent(response.data.message);
+      }
       console.log(response.data);
     } catch (error) {
       console.error("Rental error:", error);

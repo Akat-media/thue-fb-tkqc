@@ -20,6 +20,7 @@ import url from "../../assets/bg.svg";
 import { useOnOutsideClick } from "../../hook/useOutside";
 import { toast } from "react-toastify";
 import BMCard from "./BMCard";
+import { NotiError, NotiSuccess } from "../../components/noti";
 
 const MarketplacePage: React.FC = () => {
   const userString = localStorage.getItem("user");
@@ -46,6 +47,8 @@ const MarketplacePage: React.FC = () => {
   const [isBMDetailModalOpen, setIsBMDetailModalOpen] = useState(false);
   const [selectedBMId, setSelectedBMId] = useState<string>("all");
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [successRent, setSuccessRent] = useState<any>(null);
+  const [errorRent, setErrorRent] = useState<any>(null);
   const [selectedSyncBMId, setSelectedSyncBMId] = useState<string>("");
   const [isSyncing, setIsSyncing] = useState(false);
 
@@ -299,7 +302,20 @@ const MarketplacePage: React.FC = () => {
             isOpen={isRentModalOpen}
             onClose={() => setIsRentModalOpen(false)}
             account={selectedAccount}
+            setSuccessRent={setSuccessRent}
+            setErrorRent={setErrorRent}
           />
+        )}
+
+        {successRent && (
+          <NotiSuccess
+            onClose={() => setSuccessRent("")}
+            message={"Vui lòng đợi giây lát để hệ thống setup"}
+          />
+        )}
+
+        {errorRent && (
+          <NotiError onClose={() => setErrorRent("")} message={errorRent} />
         )}
         <CreateBMModal
           isOpen={isCreateBMModalOpen}
