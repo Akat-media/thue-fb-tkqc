@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { DollarSign, Shield, Clock, Bell, Settings, User } from "lucide-react";
+import {
+  DollarSign,
+  Shield,
+  Clock,
+  Bell,
+  Settings,
+  User,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import Layout from "../components/layout/Layout";
 import Button from "../components/ui/Button";
 import { Card, CardContent } from "../components/ui/Card";
@@ -13,424 +22,461 @@ const HomePage: React.FC = () => {
   const user = localStorage.getItem("user");
   const role = typeof user === "string" ? JSON.parse(user)?.user.role : "";
 
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const newsArticles = [
+    {
+      id: 1,
+      title: "Thuê tài khoản quảng cáo Facebook",
+      date: "15/03/2025",
+      excerpt:
+        "Giải pháp thuê tài khoản quảng cáo Facebook an toàn, hiệu quả cho doanh nghiệp.",
+      url: "https://akamedia.vn/thue-tai-khoan-quang-cao-facebook",
+      image:
+        "https://akamedia.vn/assets/images/news-and-events/content/thue-tai-khoan-quang-cao-facebook.png",
+    },
+    {
+      id: 2,
+      title: "Tài Khoản Quảng Cáo Facebook: Hướng Dẫn Chi Tiết Cho Người Mới",
+      date: "18/05/2025",
+      excerpt:
+        "Trong thời đại số hóa ngày nay, việc quảng bá sản phẩm và dịch vụ trên các nền tảng mạng xã hội trở nên quan trọng hơn bao giờ hết. Facebook có hơn 2,9 tỷ người dùng hoạt động hàng tháng.",
+      url: "https://akamedia.vn/tai-khoan-quang-cao-facebook",
+      image:
+        "https://akamedia.vn/assets/images/news-and-events/content/T%C3%A0i%20kho%E1%BA%A3n%20qu%E1%BA%A3ng%20c%C3%A1o%20Facebook.png",
+    },
+    {
+      id: 3,
+      title: "Chạy quảng cáo Facebook giá rẻ",
+      date: "05/04/2025",
+      excerpt:
+        "Chiến lược tối ưu ngân sách khi chạy quảng cáo Facebook với chi phí thấp nhất.",
+      url: "https://akamedia.vn/chay-quang-cao-facebook-gia-re",
+      image:
+        "https://akamedia.vn/assets/images/news-and-events/content/chay-quang-cao-facebook-gia-re.png",
+    },
+  ];
+  const totalSlides = 1;
+
   return (
     <Layout>
-      {
-        role !== "admin" && (
-          <>
-            {/* Hero Section */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[30px] pb-[40px] sm:py-24">
-                <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
-                  <div>
-                    <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                      Cho Thuê Tài Khoản Quảng Cáo Facebook
-                    </h1>
-                    <p className="mt-6 text-xl max-w-3xl">
-                      Giải pháp nhanh chóng, an toàn và đáng tin cậy để tiếp cận tài
-                      khoản quảng cáo Facebook khi tài khoản của bạn bị khóa hoặc hạn
-                      chế.
-                    </p>
-                    <div className="mt-10 flex space-x-4">
-                      <Link to="/marketplace">
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            className="text-blue-500 border-white hover:bg-blue-700 hover:text-white"
-                        >
-                          Xem danh sách BM
-                        </Button>
-                      </Link>
-                      <Link to="/register">
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            className="text-blue-500 border-white hover:bg-blue-700 hover:text-white"
-                        >
-                          Đăng ký ngay
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/*<div className="mt-20 lg:mt-0 flex justify-center animate-bounce">*/}
-                  {/*  <div className="relative">*/}
-                  {/*    <div className="absolute inset-0 flex items-center justify-center">*/}
-                  {/*      <div className="h-64 w-64 bg-blue-500 bg-opacity-30 rounded-full animate-pulse"></div>*/}
-                  {/*    </div>*/}
-                  {/*    <Facebook className="relative h-48 w-48 text-white" />*/}
-                  {/*  </div>*/}
-                  {/*</div>*/}
-                  <div className="flex justify-center items-center pt-[40px] sm:pt-0">
-                    <FacebookIcon />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Features Section */}
-            <div className="pb-24 pt-[40px] sm:pt-24 bg-white">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center">
-                  <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Tại sao chọn dịch vụ của chúng tôi?
-                  </h2>
-                  <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-                    Chúng tôi cung cấp dịch vụ cho thuê tài khoản quảng cáo Facebook
-                    với nhiều ưu điểm vượt trội.
+      {role !== "admin" && (
+        <>
+          <div className="bg-gradient-to-r from-blue-900 to-blue-600 text-white relative overflow-hidden">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
+              <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
+                <div>
+                  <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl mb-6">
+                    Cho Thuê Tài Khoản Quảng Cáo Facebook
+                  </h1>
+                  <p className="mt-4 text-xl max-w-3xl opacity-90">
+                    Giải pháp nhanh chóng, an toàn và đáng tin cậy để tiếp cận
+                    tài khoản quảng cáo Facebook khi tài khoản của bạn bị khóa
+                    hoặc hạn chế.
                   </p>
-                </div>
-
-                <div className="mt-16">
-                  <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                    <div className="pt-6">
-                      <div className="flow-root bg-gray-50 rounded-lg px-6 pb-8">
-                        <div className="-mt-6">
-                          <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-blue-600 rounded-md shadow-lg">
-                        <Shield className="h-6 w-6 text-white" />
-                      </span>
-                          </div>
-                          <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">
-                            An toàn & Bảo mật
-                          </h3>
-                          <p className="mt-5 text-base text-gray-500">
-                            Hệ thống bảo mật cao, đảm bảo quyền riêng tư và an toàn
-                            cho tài khoản của cả người cho thuê và người thuê.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-6">
-                      <div className="flow-root bg-gray-50 rounded-lg px-6 pb-8">
-                        <div className="-mt-6">
-                          <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-blue-600 rounded-md shadow-lg">
-                        <Clock className="h-6 w-6 text-white" />
-                      </span>
-                          </div>
-                          <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">
-                            Nhanh chóng & Tiện lợi
-                          </h3>
-                          <p className="mt-5 text-base text-gray-500">
-                            Đăng ký, thuê tài khoản và bắt đầu chạy quảng cáo chỉ
-                            trong vài phút với quy trình đơn giản, dễ dàng.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-6">
-                      <div className="flow-root bg-gray-50 rounded-lg px-6 pb-8">
-                        <div className="-mt-6">
-                          <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-blue-600 rounded-md shadow-lg">
-                        <DollarSign className="h-6 w-6 text-white" />
-                      </span>
-                          </div>
-                          <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">
-                            Giá cả hợp lý
-                          </h3>
-                          <p className="mt-5 text-base text-gray-500">
-                            Chi phí thuê tài khoản cạnh tranh, minh bạch, không phát
-                            sinh chi phí ẩn và được hoàn tiền nếu không sử dụng hết
-                            hạn mức.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* How It Works Section */}
-            <div className="py-24 bg-gray-50">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center">
-                  <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Cách thức hoạt động
-                  </h2>
-                  <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-                    Quy trình đơn giản để bắt đầu sử dụng dịch vụ của chúng tôi
-                  </p>
-                </div>
-
-                <div className="mt-16">
-                  <div className="relative">
-                    {/* Steps */}
-                    <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-                      <div className="relative">
-                        <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white mx-auto">
-                          1
-                        </div>
-                        <h3 className="mt-6 text-center text-lg font-medium text-gray-900">
-                          Đăng ký tài khoản
-                        </h3>
-                        <p className="mt-2 text-base text-gray-500 text-center">
-                          Tạo tài khoản trên hệ thống của chúng tôi chỉ với email và
-                          mật khẩu.
-                        </p>
-                      </div>
-
-                      <div className="mt-10 lg:mt-0">
-                        <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white mx-auto">
-                          2
-                        </div>
-                        <h3 className="mt-6 text-center text-lg font-medium text-gray-900">
-                          Nạp tiền và thuê tài khoản
-                        </h3>
-                        <p className="mt-2 text-base text-gray-500 text-center">
-                          Nạp tiền vào tài khoản và chọn BM/tài khoản quảng cáo phù
-                          hợp với nhu cầu của bạn.
-                        </p>
-                      </div>
-
-                      <div className="mt-10 lg:mt-0">
-                        <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white mx-auto">
-                          3
-                        </div>
-                        <h3 className="mt-6 text-center text-lg font-medium text-gray-900">
-                          Bắt đầu chạy quảng cáo
-                        </h3>
-                        <p className="mt-2 text-base text-gray-500 text-center">
-                          Nhận quyền truy cập và bắt đầu chạy quảng cáo ngay lập tức
-                          sau khi thanh toán.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Section */}
-            <div className="bg-blue-600">
-              <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
-                <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                  <span className="block">Bạn cần chạy quảng cáo Facebook?</span>
-                  <span className="block text-blue-200">Bắt đầu ngay hôm nay.</span>
-                </h2>
-                <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
-                  <div className="inline-flex rounded-md shadow">
+                  <div className="mt-8">
                     <Link to="/marketplace">
-                      <Button
-                          variant="outline"
-                          size="lg"
-                          className="text-blue-500 border-white hover:bg-blue-700 hover:text-white"
-                      >
-                        Xem danh sách BM
+                      <Button className="bg-blue-500 hover:bg-blue-400 text-white rounded-full px-6 py-2 flex items-center">
+                        Xem thêm <ChevronRight className="ml-1 h-4 w-4" />
                       </Button>
                     </Link>
                   </div>
-                  <div className="ml-3 inline-flex rounded-md shadow">
-                    <Link to="/register">
-                      <Button
-                          variant="outline"
-                          size="lg"
-                          className="text-blue-500 border-white hover:bg-blue-700 hover:text-white"
-                      >
-                        Đăng ký ngay
+                </div>
+                <div className="flex justify-center items-center mt-10 lg:mt-0">
+                  <div className="relative">
+                    <div className="w-68 h-68 rounded-full flex items-center justify-center animate-float">
+                      <img
+                        src="src/public/homepage.png"
+                        alt="Meta Logo"
+                        className="w-68 h-68 object-contain"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 1440 120"
+                className="w-full"
+              >
+                <path
+                  fill="#ffffff"
+                  fillOpacity="1"
+                  d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+
+          <div className="py-16 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-5xl font-bold text-blue-900">AKADS</h2>
+                <p className="mt-4 max-w-3xl mx-auto text-gray-500">
+                  Chúng tôi cung cấp dịch vụ cho thuê tài khoản quảng cáo
+                  Facebook với nhiều ưu điểm vượt trội, đảm bảo quyền riêng tư
+                  và an toàn cho tài khoản của cả người cho thuê và người thuê.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                <Card className="border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow h-full">
+                  <CardContent className="p-6 flex flex-col h-full">
+                    <div>
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <Shield className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        An toàn & Bảo mật
+                      </h3>
+                      <p className="text-gray-500">
+                        Hệ thống bảo mật cao, đảm bảo quyền riêng tư và an toàn
+                        cho tài khoản của cả người cho thuê và người thuê.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow h-full">
+                  <CardContent className="p-6 flex flex-col h-full">
+                    <div>
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <Clock className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        Nhanh chóng & Tiện lợi
+                      </h3>
+                      <p className="text-gray-500">
+                        Đăng ký, thuê tài khoản và bắt đầu chạy quảng cáo chỉ
+                        trong vài phút với quy trình đơn giản, dễ dàng.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow h-full">
+                  <CardContent className="p-6 flex flex-col h-full">
+                    <div>
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <DollarSign className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        Giá cả hợp lý
+                      </h3>
+                      <p className="text-gray-500">
+                        Chi phí thuê tài khoản cạnh tranh, minh bạch, không phát
+                        sinh chi phí ẩn và được hoàn tiền nếu không sử dụng hết
+                        hạn mức.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+
+          {/* Dark Blue Product Section */}
+          <div className="py-16 bg-blue-900 text-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold">
+                  Dịch vụ sản phẩm hiệu quả
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="flex items-center">
+                  <div className="bg-blue-800 p-8 rounded-xl">
+                    <h3 className="text-xl font-bold mb-4">
+                      Cho Thuê Tài Khoản Facebook
+                    </h3>
+                    <p className="text-blue-100 mb-6">
+                      Giải pháp nhanh chóng, an toàn và đáng tin cậy để tiếp cận
+                      tài khoản quảng cáo Facebook khi tài khoản của bạn bị khóa
+                      hoặc hạn chế.
+                    </p>
+                    <Link to="/marketplace">
+                      <Button className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 flex items-center">
+                        Tìm hiểu thêm <ChevronRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center">
+                  <div className="bg-blue-800 p-8 rounded-xl w-full">
+                    <h3 className="text-xl font-bold mb-4">
+                      Quản lý tài khoản
+                    </h3>
+                    <p className="text-blue-100 mb-6">
+                      Hệ thống quản lý tài khoản quảng cáo hiệu quả, giúp bạn
+                      theo dõi và tối ưu hóa chiến dịch quảng cáo của mình.
+                    </p>
+                    <Link to="/dashboard">
+                      <Button className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 flex items-center">
+                        Tìm hiểu thêm <ChevronRight className="ml-1 h-4 w-4" />
                       </Button>
                     </Link>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Testimonials */}
-            <div className="py-24 bg-white">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center">
-                  <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Khách hàng nói gì về chúng tôi
-                  </h2>
-                </div>
-                <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                  <Card className="flex flex-col justify-between h-full">
-                    <CardContent className="p-6">
-                      <div className="flex items-center mb-4">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold	">
-                          TH
-                        </div>
-                        <div className="ml-4">
-                          <h4 className="text-lg font-medium">Trần Hùng</h4>
-                          <p className="text-gray-500">Chủ shop thời trang</p>
-                        </div>
-                      </div>
-                      <p className="text-gray-600">
-                        "Dịch vụ rất tốt, sau khi tài khoản quảng cáo của tôi bị khóa,
-                        tôi đã thuê BM tại đây và tiếp tục chạy quảng cáo mà không gặp
-                        vấn đề gì."
-                      </p>
-                      <div className="mt-4 flex">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <svg
-                                key={star}
-                                className="h-5 w-5 text-yellow-400"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="flex flex-col justify-between h-full">
-                    <CardContent className="p-6">
-                      <div className="flex items-center mb-4">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold	">
-                          NL
-                        </div>
-                        <div className="ml-4">
-                          <h4 className="text-lg font-medium">Nguyễn Linh</h4>
-                          <p className="text-gray-500">Marketing Manager</p>
-                        </div>
-                      </div>
-                      <p className="text-gray-600">
-                        "Hệ thống nạp tiền tự động hoạt động rất tốt, giúp tôi nhanh
-                        chóng bắt đầu chiến dịch quảng cáo khi cần gấp. Dịch vụ hỗ trợ
-                        cũng rất nhiệt tình."
-                      </p>
-                      <div className="mt-4 flex">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <svg
-                                key={star}
-                                className="h-5 w-5 text-yellow-400"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="flex flex-col justify-between h-full">
-                    <CardContent className="p-6">
-                      <div className="flex items-center mb-4">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold	">
-                          PT
-                        </div>
-                        <div className="ml-4">
-                          <h4 className="text-lg font-medium">Phạm Thảo</h4>
-                          <p className="text-gray-500">Chủ doanh nghiệp</p>
-                        </div>
-                      </div>
-                      <p className="text-gray-600">
-                        "Giá cả hợp lý và minh bạch. Tôi đặc biệt ấn tượng với việc
-                        hoàn tiền phần limit chưa sử dụng, điều này giúp tôi tiết kiệm
-                        được chi phí đáng kể."
-                      </p>
-                      <div className="mt-4 flex">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <svg
-                                key={star}
-                                className="h-5 w-5 text-yellow-400"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </div>
-          </>
-        )
-      }
-
-      {
-        role === "admin" && (
-            <>
-              <div className="flex h-14 items-center justify-between gap-8 px-4 sm:px-6">
-                <div className="flex items-center gap-2">
-                  <Bell className="w-4 h-4 text-yellow-300"/>
-                  <span className="font-medium font-sans">AKA Media</span>
-                </div>
-                <div className="flex items-center gap-6 max-md:hidden">
-                  <button
-                      type="button"
-                      className="inline-flex items-center gap-1 rounded-full bg-gray-950/2 px-2 py-1 inset-ring inset-ring-gray-950/8 dark:bg-white/5 dark:inset-ring-white/2"
-                  >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 16 16"
-                        className="-ml-0.5 size-4 fill-gray-600 dark:fill-gray-500"
-                    >
-                      <path
-                          fillRule="evenodd"
-                          d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                          clipRule="evenodd"
-                      ></path>
-                    </svg>
-                    <kbd className="font-sans text-xs/4 text-gray-500 not-[.os-macos_&]:block dark:text-gray-400">
-                      Ctrl K
-                    </kbd>
-                  </button>
-                  <Settings className="w-5 h-5 text-gray-600 cursor-pointer"/>
-                  <User className="w-5 h-5 text-gray-600 cursor-pointer"/>
-                </div>
+          {/* News Section with Slider */}
+          <div className="py-16 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-bold text-blue-900">
+                  Cẩm nang người dùng
+                </h2>
               </div>
 
-              <div className="flex flex-1 flex-col">
+              <div ref={sliderRef} className="overflow-hidden">
                 <div
-                    className="w-full max-w-screen-3xl mx-auto box-border px-0 sm:px-10 pt-[var(--layout-dashboard-content-pt)] pb-[var(--layout-dashboard-content-pb)] flex flex-col flex-[1_1_auto]"
+                  className="flex transition-transform duration-300 ease-in-out"
+                  style={{
+                    width: `${totalSlides * 100}%`,
+                    transform: `translateX(-${
+                      currentSlide * (100 / totalSlides)
+                    }%)`,
+                  }}
                 >
-                  <div className="mb-10 text-xl font-bold leading-6 font-sans">
-                    Hi, Welcome back 👋
-                  </div>
+                  {Array.from({ length: totalSlides }).map((_, slideIndex) => (
+                    <div
+                      key={slideIndex}
+                      className="flex-shrink-0"
+                      style={{ width: `${100 / totalSlides}%` }}
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {newsArticles
+                          .slice(slideIndex * 3, slideIndex * 3 + 3)
+                          .map((article) => (
+                            <Card
+                              key={article.id}
+                              className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
+                            >
+                              <img
+                                src={article.image}
+                                alt={article.title}
+                                className="w-full h-68 object-cover"
+                              />
+                              <CardContent className="p-6">
+                                <div className="text-sm text-gray-500 mb-2">
+                                  {article.date}
+                                </div>
+                                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                  {article.title}
+                                </h3>
+                                <p className="text-gray-600 line-clamp-2 mb-4">
+                                  {article.excerpt}
+                                </p>
+                                <a
+                                  href={article.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 flex items-center text-sm font-medium"
+                                >
+                                  Đọc thêm{" "}
+                                  <ChevronRight className="ml-1 h-4 w-4" />
+                                </a>
+                              </CardContent>
+                            </Card>
+                          ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full mx-auto">
-                    <StatCard
-                        title="Doanh thu"
-                        value="2.890.000.000 VND"
-                        icon="/ic-glass-bag.svg"
-                        trend={2.6}
-                        color="bg-green-300 text-green-800"
-                    />
-                    <StatCard
-                        title="Số lượng tài khoản quảng cáo "
-                        value="289.500"
-                        icon="/ic-glass-users.svg"
-                        trend={-0.1}
-                        color="bg-purple-300 text-purple-800"
-                    />
-                    <StatCard
-                        title="Số lượng người dùng đăng ký"
-                        value="2.400.000"
-                        icon="/ic-glass-buy.svg"
-                        trend={2.8}
-                        color="bg-yellow-300 text-yellow-800"
-                    />
-                    <StatCard
-                        title="Số lượng chiến dịch"
-                        value="89.200"
-                        icon="/ic-glass-message.svg"
-                        trend={3.6}
-                        color="bg-red-300 text-red-800"
-                    />
-                  </div>
+          <div className="py-16 bg-gradient-to-b from-white via-blue-300 to-white impressive-numbers-wrapper">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="text-3xl font-bold text-blue-900 text-center mb-8">
+                Những con số ấn tượng
+              </h2>
 
-                  <div className="bg-gray-50">
-                    <StatsCharts />
-                  </div>
+              <div className="text-gray-600 text-center mb-10 max-w-4xl mx-auto">
+                <p>
+                  AKAds là nền tảng cho thuê tài khoản quảng cáo Facebook uy tín
+                  thuộc AKA Media – công ty chuyên cung cấp các dịch vụ trên nền
+                  tảng số tại Việt Nam. Với hơn 9 năm kinh nghiệm trong ngành và
+                  sự tin tưởng của 1000+ doanh nghiệp lớn nhỏ, AKA Media cam kết
+                  đem đến giải pháp quảng cáo hiệu quả, an toàn và tối ưu chi
+                  phí cho doanh nghiệp.
+                </p>
+              </div>
 
-                  <div className=" bg-gray-50">
-                    <ChartDashboard />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div className="bg-blue-50 p-6 rounded-xl hover:shadow-md transition-shadow">
+                  <div className="text-4xl font-bold text-blue-600 mb-2">
+                    5000+
+                  </div>
+                  <div className="text-xl font-medium text-blue-900 mb-2">
+                    Tài khoản quảng cáo Meta uy tín
+                  </div>
+                  <div className="text-gray-600">
+                    Hệ thống tài khoản được xác thực và kiểm soát chất lượng bởi
+                    AKAds – giúp chiến dịch quảng cáo hoạt động ổn định và hiệu
+                    quả.
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 p-6 rounded-xl hover:shadow-md transition-shadow">
+                  <div className="text-4xl font-bold text-blue-600 mb-2">
+                    +9 năm kinh nghiệm
+                  </div>
+                  <div className="text-xl font-medium text-blue-900 mb-2">
+                    Đồng hành cùng 1000+ thương hiệu lớn, nhỏ
+                  </div>
+                  <div className="text-gray-600">
+                    AKAds là lựa chọn hàng đầu của các doanh nghiệp trong và
+                    ngoài nước trong việc mở rộng thị trường kỹ thuật số qua
+                    quảng cáo Facebook hiệu quả.
                   </div>
                 </div>
               </div>
-            </>
-          )
-      }
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="bg-blue-50 p-6 rounded-xl hover:shadow-md transition-shadow">
+                  <div className="text-2xl font-bold text-blue-600 mb-2">
+                    Công cụ bảo vệ tài khoản mạnh mẽ
+                  </div>
+                  <div className="text-xl font-medium text-blue-900 mb-2">
+                    Bảo mật tối ưu – kết nối an toàn
+                  </div>
+                  <div className="text-gray-600">
+                    AKAds tích hợp hệ thống bảo mật tiên tiến, đảm bảo tài khoản
+                    quảng cáo an toàn tuyệt đối và thông tin doanh nghiệp được
+                    bảo vệ toàn diện.
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-center">
+                  <div className="w-68 h-68 rounded-full flex items-center justify-center animate-float">
+                    <img
+                      src="src/public/metalogo.png"
+                      alt="Meta Logo"
+                      className="w-68 h-68 object-contain"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 p-6 rounded-xl hover:shadow-md transition-shadow">
+                  <div className="text-4xl font-bold text-blue-600 mb-2">
+                    Xu hướng mới
+                  </div>
+                  <div className="text-xl font-medium text-gray-900 mb-2">
+                    Được nhiều doanh nghiệp nhanh chóng đón nhận
+                  </div>
+                  <div className="text-gray-600">
+                    AKAds đang trở thành lựa chọn hàng đầu cho các doanh nghiệp
+                    muốn tối ưu chi phí và nâng cao hiệu quả quảng cáo Meta.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 1440 120"
+              className="w-full"
+            >
+              <path
+                fill="#1e40af"
+                fillOpacity="1"
+                d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"
+              ></path>
+            </svg>
+          </div>
+        </>
+      )}
+
+      {role === "admin" && (
+        <>
+          <div className="flex h-14 items-center justify-between gap-8 px-4 sm:px-6">
+            <div className="flex items-center gap-2">
+              <Bell className="w-4 h-4 text-yellow-300" />
+              <span className="font-medium font-sans">AKA Media</span>
+            </div>
+            <div className="flex items-center gap-6 max-md:hidden">
+              <button
+                type="button"
+                className="inline-flex items-center gap-1 rounded-full bg-gray-950/2 px-2 py-1 inset-ring inset-ring-gray-950/8 dark:bg-white/5 dark:inset-ring-white/2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  className="-ml-0.5 size-4 fill-gray-600 dark:fill-gray-500"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+                <kbd className="font-sans text-xs/4 text-gray-500 not-[.os-macos_&]:block dark:text-gray-400">
+                  Ctrl K
+                </kbd>
+              </button>
+              <Settings className="w-5 h-5 text-gray-600 cursor-pointer" />
+              <User className="w-5 h-5 text-gray-600 cursor-pointer" />
+            </div>
+          </div>
+
+          <div className="flex flex-1 flex-col">
+            <div className="w-full max-w-screen-3xl mx-auto box-border px-0 sm:px-10 pt-[var(--layout-dashboard-content-pt)] pb-[var(--layout-dashboard-content-pb)] flex flex-col flex-[1_1_auto]">
+              <div className="mb-10 text-xl font-bold leading-6 font-sans">
+                Hi, Welcome back 👋
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full mx-auto">
+                <StatCard
+                  title="Doanh thu"
+                  value="2.890.000.000 VND"
+                  icon="/ic-glass-bag.svg"
+                  trend={2.6}
+                  color="bg-green-300 text-green-800"
+                />
+                <StatCard
+                  title="Số lượng tài khoản quảng cáo "
+                  value="289.500"
+                  icon="/ic-glass-users.svg"
+                  trend={-0.1}
+                  color="bg-purple-300 text-purple-800"
+                />
+                <StatCard
+                  title="Số lượng người dùng đăng ký"
+                  value="2.400.000"
+                  icon="/ic-glass-buy.svg"
+                  trend={2.8}
+                  color="bg-yellow-300 text-yellow-800"
+                />
+                <StatCard
+                  title="Số lượng chiến dịch"
+                  value="89.200"
+                  icon="/ic-glass-message.svg"
+                  trend={3.6}
+                  color="bg-red-300 text-red-800"
+                />
+              </div>
+
+              <div className="bg-gray-50">
+                <StatsCharts />
+              </div>
+
+              <div className=" bg-gray-50">
+                <ChartDashboard />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </Layout>
   );
 };
