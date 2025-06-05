@@ -25,6 +25,7 @@ import BaseHeader from "../../api/BaseHeader";
 import { useOnOutsideClick } from "../../hook/useOutside";
 import usePagination from "../../hook/usePagination";
 import { Pagination } from "antd";
+import CreateAdAccountModal from "./CreateAdAccountModal";
 
 interface AdAccountDetail {
   id: string;
@@ -87,6 +88,8 @@ const RentalsPage: React.FC = () => {
     useState<AdAccountDetail | null>(null);
   const [loadingDetail, setLoadingDetail] = useState<boolean>(false);
   const [totalAccounts, setTotalAccounts] = useState<number>(0);
+  const [showCreateAdAccountModal, setShowCreateAdAccountModal] =
+    useState(false);
 
   const { innerBorderRef } = useOnOutsideClick(() => {
     setShowModal(false);
@@ -401,6 +404,17 @@ const RentalsPage: React.FC = () => {
                 : "Tài khoản đang thuê"}
             </h2>
           </div>
+          {userParse?.user?.role === "admin" && (
+            <div className="mt-4 md:mt-0">
+              <button
+                type="button"
+                className="inline-flex items-center px-4 py-[10px] border border-blue-600 rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                onClick={() => setShowCreateAdAccountModal(true)}
+              >
+                Tạo tài khoản quảng cáo
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="mt-6">
@@ -901,6 +915,17 @@ const RentalsPage: React.FC = () => {
               )}
             </div>
           </div>
+        )}
+
+        {/* Modal tạo tài khoản quảng cáo */}
+        {showCreateAdAccountModal && (
+          <CreateAdAccountModal
+            isOpen={showCreateAdAccountModal}
+            onClose={() => setShowCreateAdAccountModal(false)}
+            onSuccess={() => {
+              fetchRentals();
+            }}
+          />
         )}
         {totalAccounts > 0 && (
           <div className="mt-6">
