@@ -22,6 +22,7 @@ import Navbar from "./components/layout/Navbar.tsx";
 import AdminSupport from "./pages/support/AdminSupport";
 import NotificationOverlay from "./pages/notify/NotificationOverlay.tsx";
 import Account from "./pages/admin/account/Account.tsx";
+import PasswordResetForm from "./pages/auth/PasswordResetForm.tsx";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/support" element={<Support />} />
             <Route path="/policy" element={<Policy />} />
+            <Route path="/reset-password" element={<PasswordResetForm />} />
 
             {/* Route yêu cầu đăng nhập */}
             <Route element={<ProtectedRoute />}>
