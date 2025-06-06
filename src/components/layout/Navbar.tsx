@@ -500,7 +500,7 @@ const Navbar: React.FC = () => {
               const handleClick = (e: React.MouseEvent) => {
                 if (!user && isProtected) {
                   e.preventDefault(); // ngăn chuyển trang
-                  toast.error("Bạn cần đăng nhập để truy cập mục này");
+                  // toast.error("Bạn cần đăng nhập để truy cập mục này");
                   setShowLoginModal(true);
                 }
               };
