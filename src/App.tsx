@@ -23,6 +23,7 @@ import AdminSupport from "./pages/support/AdminSupport";
 import NotificationOverlay from "./pages/notify/NotificationOverlay.tsx";
 import Account from "./pages/admin/account/Account.tsx";
 import PasswordResetForm from "./pages/auth/PasswordResetForm.tsx";
+import CreateBotPage from "./pages/bot/CreateBotPage";
 
 function App() {
   return (
@@ -57,8 +58,12 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/admin/profile" element={<AdminProfilePage />} />
               <Route path="/admin/support" element={<AdminSupport />} />
-              <Route path="/admin/notifications" element={<NotificationOverlay />} />
+              <Route
+                path="/admin/notifications"
+                element={<NotificationOverlay />}
+              />
               <Route path="/admin/account" element={<Account />} />
+              <Route path="/create-bot" element={<CreateBotPage />} />
             </Route>
           </Routes>
         </Router>

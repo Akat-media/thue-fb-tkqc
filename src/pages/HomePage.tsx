@@ -8,15 +8,14 @@ import {
   Settings,
   User,
   ChevronRight,
-  ChevronLeft,
 } from "lucide-react";
 import Layout from "../components/layout/Layout";
 import Button from "../components/ui/Button";
 import { Card, CardContent } from "../components/ui/Card";
-import FacebookIcon from "./dashboard/FacebookIcon";
 import StatCard from "./analytics/StatCard.tsx";
 import StatsCharts from "./analytics/StatsCharts.tsx";
 import ChartDashboard from "./analytics/ChartDashboard.tsx";
+import Counter from "../components/ui/Counter";
 
 const HomePage: React.FC = () => {
   const user = localStorage.getItem("user");
@@ -29,7 +28,7 @@ const HomePage: React.FC = () => {
     {
       id: 1,
       title: "Thuê tài khoản quảng cáo Facebook",
-      date: "15/03/2025",
+      date: "25/04/2025",
       excerpt:
         "Giải pháp thuê tài khoản quảng cáo Facebook an toàn, hiệu quả cho doanh nghiệp.",
       url: "https://akamedia.vn/thue-tai-khoan-quang-cao-facebook",
@@ -39,7 +38,7 @@ const HomePage: React.FC = () => {
     {
       id: 2,
       title: "Tài Khoản Quảng Cáo Facebook: Hướng Dẫn Chi Tiết Cho Người Mới",
-      date: "18/05/2025",
+      date: "06/05/2025",
       excerpt:
         "Trong thời đại số hóa ngày nay, việc quảng bá sản phẩm và dịch vụ trên các nền tảng mạng xã hội trở nên quan trọng hơn bao giờ hết. Facebook có hơn 2,9 tỷ người dùng hoạt động hàng tháng.",
       url: "https://akamedia.vn/tai-khoan-quang-cao-facebook",
@@ -49,7 +48,7 @@ const HomePage: React.FC = () => {
     {
       id: 3,
       title: "Chạy quảng cáo Facebook giá rẻ",
-      date: "05/04/2025",
+      date: "15/05/2025",
       excerpt:
         "Chiến lược tối ưu ngân sách khi chạy quảng cáo Facebook với chi phí thấp nhất.",
       url: "https://akamedia.vn/chay-quang-cao-facebook-gia-re",
@@ -63,7 +62,7 @@ const HomePage: React.FC = () => {
     <Layout>
       {role !== "admin" && (
         <>
-          <div className="bg-gradient-to-r from-blue-900 to-blue-600 text-white relative overflow-hidden">
+          <div className="bg-gradient-to-r from-[#1e3a8a] to-[#3b82f6] text-white relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
               <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
                 <div>
@@ -188,37 +187,47 @@ const HomePage: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="flex items-center">
-                  <div className="bg-blue-800 p-8 rounded-xl">
-                    <h3 className="text-xl font-bold mb-4">
-                      Cho Thuê Tài Khoản Facebook
-                    </h3>
-                    <p className="text-blue-100 mb-6">
-                      Giải pháp nhanh chóng, an toàn và đáng tin cậy để tiếp cận
-                      tài khoản quảng cáo Facebook khi tài khoản của bạn bị khóa
-                      hoặc hạn chế.
-                    </p>
-                    <Link to="/marketplace">
-                      <Button className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 flex items-center">
-                        Tìm hiểu thêm <ChevronRight className="ml-1 h-4 w-4" />
-                      </Button>
-                    </Link>
+                <div className="flex items-center h-full">
+                  <div className="bg-blue-800 p-8 rounded-xl w-full h-full transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-xl flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-xl font-bold mb-4">
+                        Cho Thuê Tài Khoản Facebook
+                      </h3>
+                      <p className="text-blue-100 mb-6">
+                        Giải pháp nhanh chóng, an toàn và đáng tin cậy để tiếp
+                        cận tài khoản quảng cáo Facebook khi tài khoản của bạn
+                        bị khóa hoặc hạn chế.
+                      </p>
+                    </div>
+                    <div>
+                      <Link to="/marketplace">
+                        <Button className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 flex items-center">
+                          Tìm hiểu thêm{" "}
+                          <ChevronRight className="ml-1 h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-center">
-                  <div className="bg-blue-800 p-8 rounded-xl w-full">
-                    <h3 className="text-xl font-bold mb-4">
-                      Quản lý tài khoản
-                    </h3>
-                    <p className="text-blue-100 mb-6">
-                      Hệ thống quản lý tài khoản quảng cáo hiệu quả, giúp bạn
-                      theo dõi và tối ưu hóa chiến dịch quảng cáo của mình.
-                    </p>
-                    <Link to="/dashboard">
-                      <Button className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 flex items-center">
-                        Tìm hiểu thêm <ChevronRight className="ml-1 h-4 w-4" />
-                      </Button>
-                    </Link>
+                <div className="flex items-center h-full">
+                  <div className="bg-blue-800 p-8 rounded-xl w-full h-full transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-xl flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-xl font-bold mb-4">
+                        Quản lý tài khoản
+                      </h3>
+                      <p className="text-blue-100 mb-6">
+                        Hệ thống quản lý tài khoản quảng cáo hiệu quả, giúp bạn
+                        theo dõi và tối ưu hóa chiến dịch quảng cáo của mình.
+                      </p>
+                    </div>
+                    <div>
+                      <Link to="/rentals">
+                        <Button className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 flex items-center">
+                          Tìm hiểu thêm
+                          <ChevronRight className="ml-1 h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -226,12 +235,10 @@ const HomePage: React.FC = () => {
           </div>
 
           {/* News Section with Slider */}
-          <div className="py-16 bg-white">
+          <div className="py-10 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center mb-8">
-                <h2 className="text-3xl font-bold text-blue-900">
-                  Cẩm nang người dùng
-                </h2>
+                <h2 className="text-3xl font-bold text-blue-900">Cẩm nang</h2>
               </div>
 
               <div ref={sliderRef} className="overflow-hidden">
@@ -256,28 +263,30 @@ const HomePage: React.FC = () => {
                           .map((article) => (
                             <Card
                               key={article.id}
-                              className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
+                              className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow flex flex-col"
                             >
                               <img
                                 src={article.image}
                                 alt={article.title}
                                 className="w-full h-68 object-cover"
                               />
-                              <CardContent className="p-6">
-                                <div className="text-sm text-gray-500 mb-2">
-                                  {article.date}
+                              <CardContent className="p-6 flex flex-col flex-grow">
+                                <div className="flex flex-col flex-grow">
+                                  <div className="text-sm text-gray-500 mb-2">
+                                    {article.date}
+                                  </div>
+                                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                    {article.title}
+                                  </h3>
+                                  <p className="text-gray-600 line-clamp-2 mb-4 flex-grow">
+                                    {article.excerpt}
+                                  </p>
                                 </div>
-                                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                  {article.title}
-                                </h3>
-                                <p className="text-gray-600 line-clamp-2 mb-4">
-                                  {article.excerpt}
-                                </p>
                                 <a
                                   href={article.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-blue-600 hover:text-blue-800 flex items-center text-sm font-medium"
+                                  className="text-blue-600 hover:text-blue-800 flex items-center text-sm font-medium mt-auto"
                                 >
                                   Đọc thêm{" "}
                                   <ChevronRight className="ml-1 h-4 w-4" />
@@ -295,8 +304,8 @@ const HomePage: React.FC = () => {
 
           <div className="py-16 bg-gradient-to-b from-white via-blue-300 to-white impressive-numbers-wrapper">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-blue-900 text-center mb-8">
-                Những con số ấn tượng
+              <h2 className="text-4xl font-bold text-blue-900 text-center mb-8">
+                Thành Tựu
               </h2>
 
               <div className="text-gray-600 text-center mb-10 max-w-4xl mx-auto">
@@ -312,9 +321,7 @@ const HomePage: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 <div className="bg-blue-50 p-6 rounded-xl hover:shadow-md transition-shadow">
-                  <div className="text-4xl font-bold text-blue-600 mb-2">
-                    5000+
-                  </div>
+                  <Counter end={5000} suffix=" +" />
                   <div className="text-xl font-medium text-blue-900 mb-2">
                     Tài khoản quảng cáo Meta uy tín
                   </div>
@@ -326,11 +333,15 @@ const HomePage: React.FC = () => {
                 </div>
 
                 <div className="bg-blue-50 p-6 rounded-xl hover:shadow-md transition-shadow">
-                  <div className="text-4xl font-bold text-blue-600 mb-2">
-                    +9 năm kinh nghiệm
-                  </div>
+                  <Counter end={9} prefix="+ " suffix=" năm kinh nghiệm" />
                   <div className="text-xl font-medium text-blue-900 mb-2">
-                    Đồng hành cùng 1000+ thương hiệu lớn, nhỏ
+                    Đồng hành cùng{" "}
+                    <Counter
+                      end={1000}
+                      suffix=" +"
+                      className="inline text-blue-600 font-bold"
+                    />{" "}
+                    thương hiệu lớn, nhỏ
                   </div>
                   <div className="text-gray-600">
                     AKAds là lựa chọn hàng đầu của các doanh nghiệp trong và

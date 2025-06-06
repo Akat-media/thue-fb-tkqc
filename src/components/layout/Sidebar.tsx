@@ -3,8 +3,9 @@ import {
   LayoutDashboard,
   Briefcase,
   ShoppingCart,
-  CreditCard,
+  CircleDollarSign,
   Users,
+  Bot,
   Bell,
   HelpCircle,
   ChevronDown,
@@ -12,8 +13,6 @@ import {
   PanelRightOpen,
   PanelRightClose,
   AlignStartHorizontal,
-  PackagePlus,
-  CircleDollarSign,
   Archive,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -35,7 +34,7 @@ const Sidebar: React.FC<{
     location.pathname.startsWith("/adsaccountmanager") ||
     location.pathname === "/add-account" ||
     // location.pathname === "/usermanage";
-      location.pathname === "/admin/account";
+    location.pathname === "/admin/account";
   const [openAdsSubmenu, setOpenAdsSubmenu] = useState(isAdsMenuActive);
   const toggleProfileMenu = () => setOpenProfileMenu(!openProfileMenu);
 
@@ -44,6 +43,7 @@ const Sidebar: React.FC<{
     { label: "Danh sách BM", icon: Briefcase, path: "/marketplace" },
     { label: "Danh sách tài khoản", icon: ShoppingCart, path: "/rentals" },
     { label: "Nạp tiền", icon: CircleDollarSign, path: "/payments" },
+    { label: "Quản lý bot", icon: Bot, path: "/create-bot" },
     // { label: "QR Here", icon: QrCode, path: "/deposit" },
     // { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     // { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
@@ -91,7 +91,7 @@ const Sidebar: React.FC<{
   return (
     <aside
       className={clsx(
-        "fixed top-0 left-0 h-screen bg-white border-r flex flex-col justify-between py-6 px-4 shadow-sm z-40 transition-all duration-500",
+        "fixed top-0 left-0 h-screen bg-gradient-to-br from-yellow-100 via-indigo-200 to-green-200 border-r flex flex-col justify-between py-6 px-4 shadow-sm z-40 transition-all duration-500",
         isSidebarOpen ? "w-64" : "w-14"
       )}
     >
@@ -130,8 +130,8 @@ const Sidebar: React.FC<{
               key={path}
               to={path}
               className={clsx(
-                "group flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300",
-                location.pathname === path && "bg-blue-100 font-semibold"
+                "group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300",
+                location.pathname === path && "bg-white font-semibold"
               )}
             >
               <div className="w-12 flex justify-center">
@@ -156,8 +156,8 @@ const Sidebar: React.FC<{
               }
             }}
             className={clsx(
-              "group flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300 w-full",
-              isAdsMenuActive && "bg-blue-100 font-semibold"
+              "group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full",
+              isAdsMenuActive && "bg-white font-semibold"
             )}
           >
             <div className="w-12 flex justify-center">
@@ -193,9 +193,9 @@ const Sidebar: React.FC<{
               <Link
                 to="/adsaccountmanager"
                 className={clsx(
-                  "flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700",
+                  "flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700",
                   location.pathname === "/adsaccountmanager" &&
-                    "bg-blue-100 font-semibold"
+                    "bg-white font-semibold"
                 )}
               >
                 <div className="w-8 flex justify-center">
@@ -219,9 +219,9 @@ const Sidebar: React.FC<{
               <Link
                 to="/admin/account"
                 className={clsx(
-                  "flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700",
+                  "flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700",
                   location.pathname === "/admin/account" &&
-                    "bg-blue-100 font-semibold"
+                    "bg-white font-semibold"
                 )}
               >
                 <div className="w-8 flex justify-center">
@@ -237,8 +237,8 @@ const Sidebar: React.FC<{
               key={path}
               to={path}
               className={clsx(
-                "group flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300",
-                location.pathname === path && "bg-blue-100 font-semibold"
+                "group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300",
+                location.pathname === path && "bg-white font-semibold"
               )}
             >
               <div className="w-12 flex justify-center">
@@ -260,7 +260,7 @@ const Sidebar: React.FC<{
       <div className="space-y-2 mt-6">
         <Link
           to="/admin/support"
-          className="flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300"
+          className="flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300"
         >
           <div className="w-12 flex justify-center">
             <HelpCircle className="w-5 h-5" />
@@ -278,7 +278,7 @@ const Sidebar: React.FC<{
         <button
           onClick={() => openNotification("third")}
           // to="/admin/notifications"
-          className="flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300 w-full"
+          className="flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full"
         >
           <div className="w-12 flex justify-center">
             <Bell className="w-5 h-5" />
@@ -298,7 +298,7 @@ const Sidebar: React.FC<{
           <div className="relative mt-2">
             <button
               onClick={toggleProfileMenu}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 transition"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-white transition"
             >
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0 -ml-1">
