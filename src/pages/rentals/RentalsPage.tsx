@@ -214,38 +214,41 @@ const RentalsPage: React.FC = () => {
           return;
         }
 
-        //đây đây
         const formattedAccounts = adAccounts.map((account: any) => {
+          const acc = account.accounts || {};
+
           return {
-            id: account.id || `acc-${account.ads_account_id}`,
+            id: acc.id || `act-${account.ads_account_id}`,
             userId: account.user_id || "Unknown",
             adAccountId: account.ads_account_id,
             userBmId: account.bm_id || "Không tìm thấy BM ID",
-            startDate: new Date(account.created_time || Date.now()),
+            startDate: new Date(acc.created_time || Date.now()),
             endDate: new Date(account.updated_at || Date.now()),
-            requestedLimit: account.spend_cap || 0,
+            requestedLimit: parseInt(acc.spend_cap) || 0,
             totalPrice: 1500000,
-            spentBudget: parseInt(account.amount_spent) || 0,
+            spentBudget: parseInt(acc.amount_spent) || 0,
             status: account.status_rented
               ? mapApiStatus(account.status_rented)
               : "available",
-            createdAt: new Date(account.created_time || Date.now()),
+            createdAt: new Date(acc.created_time || Date.now()),
             adAccount: {
-              id: account.account_id,
-              name: account.name || `Account ${account.account_id}`,
-              bmId: account.business?.id || "",
-              bmName: account.business?.name || `Business Manager`,
-              bmType: account.is_personal === 1 ? "personal" : "business",
-              accountType:
-                account.funding_source_details?.display_string?.includes("VISA")
-                  ? "visa"
-                  : "other",
-              defaultLimit: account.spend_limit || account.spend_cap || 5000000,
+              id: acc.account_id,
+              name: acc.name || `Account ${acc.account_id}`,
+              bmId: acc.business?.id || "",
+              bmName: acc.business?.name || `Business Manager`,
+              bmType: acc.is_personal === 1 ? "personal" : "business",
+              accountType: acc.funding_source_details?.display_string?.includes(
+                "VISA"
+              )
+                ? "visa"
+                : "other",
+              defaultLimit:
+                parseInt(acc.spend_limit) || parseInt(acc.spend_cap) || 5000000,
               pricePerDay: 200000,
-              remainingBudget: parseInt(account.balance) || 0,
+              remainingBudget: parseInt(acc.balance) || 0,
               includesAdAccount: true,
-              status: account.account_status === 1 ? "active" : "available",
-              currency: account.currency,
+              status: acc.account_status === 1 ? "active" : "available",
+              currency: acc.currency,
             },
           };
         });
@@ -617,10 +620,10 @@ const RentalsPage: React.FC = () => {
                                 Hoàn tiền khả dụng
                               </h3>
                               <p className="text-sm text-green-700 mt-1">
-                                Bạn có thể yêu cầu hoàn{" "}
+                                Bạn có thể yêu cầu hoàn
                                 {(
                                   rental.requestedLimit - rental.spentBudget
-                                ).toLocaleString("vi-VN")}{" "}
+                                ).toLocaleString("vi-VN")}
                                 VNĐ chưa sử dụng
                               </p>
                             </div>
