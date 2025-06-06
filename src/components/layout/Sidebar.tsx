@@ -260,7 +260,7 @@ const Sidebar: React.FC<{
       <div className="space-y-2 mt-6">
         <Link
           to="/admin/support"
-          className="flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300"
+          className="flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300"
         >
           <div className="w-12 flex justify-center">
             <HelpCircle className="w-5 h-5" />
@@ -278,7 +278,7 @@ const Sidebar: React.FC<{
         <button
           onClick={() => openNotification("third")}
           // to="/admin/notifications"
-          className="flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700 transition-all duration-300 w-full"
+          className="flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full"
         >
           <div className="w-12 flex justify-center">
             <Bell className="w-5 h-5" />
@@ -298,7 +298,7 @@ const Sidebar: React.FC<{
           <div className="relative mt-2">
             <button
               onClick={toggleProfileMenu}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 transition"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-white transition"
             >
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0 -ml-1">
