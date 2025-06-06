@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 // import Navbar from "./Navbar";
 import Footer from "./Footer";
-import NotificationOverlay from '../../pages/notify/NotificationOverlay';
+import NotificationOverlay from "../../pages/notify/NotificationOverlay";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const toggleSidebar = () => setIsSidebarOpen((prev) => {
+  const toggleSidebar = () =>
+    setIsSidebarOpen((prev) => {
       return !prev;
-  });
+    });
 
   const user = localStorage.getItem("user");
   const role = typeof user === "string" ? JSON.parse(user)?.user.role : "";
