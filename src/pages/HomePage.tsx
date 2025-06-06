@@ -422,10 +422,10 @@ const HomePage: React.FC = () => {
                 })}
               </span>
             </div>
-            <div className="flex items-center gap-6 max-md:hidden">
-              <Settings className="w-5 h-5 text-gray-600 cursor-pointer" />
-              <User className="w-5 h-5 text-gray-600 cursor-pointer" />
-            </div>
+            {/*<div className="flex items-center gap-6 max-md:hidden">*/}
+            {/*  <Settings className="w-5 h-5 text-gray-600 cursor-pointer" />*/}
+            {/*  <User className="w-5 h-5 text-gray-600 cursor-pointer" />*/}
+            {/*</div>*/}
           </div>
 
           <div className="flex flex-1 flex-col">
