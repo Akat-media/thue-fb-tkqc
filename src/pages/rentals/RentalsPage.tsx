@@ -25,6 +25,7 @@ import BaseHeader from "../../api/BaseHeader";
 import { useOnOutsideClick } from "../../hook/useOutside";
 import usePagination from "../../hook/usePagination";
 import { Pagination } from "antd";
+import { NotiError, NotiSuccess } from "../../components/noti";
 
 interface AdAccountDetail {
   id: string;
@@ -89,6 +90,8 @@ const RentalsPage: React.FC = () => {
   const [totalAccounts, setTotalAccounts] = useState<number>(0);
   const [showCreateAdAccountModal, setShowCreateAdAccountModal] =
     useState(false);
+  const [successRent, setSuccessRent] = useState<any>(null);
+  const [errorRent, setErrorRent] = useState<any>(null);
 
   const { innerBorderRef } = useOnOutsideClick(() => {
     setShowModal(false);
@@ -398,7 +401,32 @@ const RentalsPage: React.FC = () => {
     setShowModal(true);
     await fetchAdAccountDetail(rental.adAccountId);
   };
-
+  const hanleCancel = async (account: any) => {
+    console.log("account", account);
+    try {
+      const response = await BaseHeader({
+        url: "points-used",
+        method: "delete",
+        params: {
+          id: account?.id || "",
+          bm_origin: account?.userBmId || "",
+          ads_name: account?.adAccount?.name || "",
+          bm_id: account?.adAccount?.bmId || "",
+          ads_account_id: account?.adAccountId || "",
+          user_id: userParse.user_id || "",
+          amountPoint: account?.adAccount?.defaultLimit || "",
+        },
+      });
+      if (response.status == 200) {
+        setSuccessRent(response.data.message);
+      } else {
+        setErrorRent(response.data.message);
+      }
+      console.log(response.data);
+    } catch (error) {
+      console.error("Rental error:", error);
+    }
+  };
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -513,10 +541,12 @@ const RentalsPage: React.FC = () => {
                 <Card
                   key={rental.userBmId}
                   className="h-full flex flex-col relative cursor-pointer hover:shadow-lg transition-shadow duration-200"
-                  onClick={() => handleCardClick(rental)}
                 >
                   <CardHeader>
-                    <div className="flex justify-between items-start">
+                    <div
+                      onClick={() => handleCardClick(rental)}
+                      className="flex justify-between items-start"
+                    >
                       <CardTitle className="text-[22px]">
                         {rental.adAccount.name}
                       </CardTitle>
@@ -652,6 +682,7 @@ const RentalsPage: React.FC = () => {
                           {rental.status === "available" && (
                             <>
                               <Button
+                                onClick={() => hanleCancel(rental)}
                                 className="bg-red-500 hover:bg-red-400 py-2"
                                 size="sm"
                                 icon={<XOctagonIcon className="h-4 w-4" />}
@@ -924,6 +955,16 @@ const RentalsPage: React.FC = () => {
           </div>
         )}
       </div>
+      {successRent && (
+        <NotiSuccess
+          onClose={() => setSuccessRent("")}
+          message={"Vui lòng đợi giây lát để hệ thống setup"}
+        />
+      )}
+
+      {errorRent && (
+        <NotiError onClose={() => setErrorRent("")} message={errorRent} />
+      )}
     </Layout>
   );
 };
