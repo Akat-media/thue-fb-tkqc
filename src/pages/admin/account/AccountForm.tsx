@@ -16,7 +16,8 @@ import {
     Mail,
     Smartphone,
     CircleUserRound,
-    Edit,
+    Edit, Shield, Activity, Star, TrendingUp, Calendar,
+    X,
 } from "lucide-react";
 import Pagination from "./Pagination.tsx";
 import axios from "axios";
@@ -27,6 +28,7 @@ import UserDetailModal from "./UserDetailModal.tsx";
 import AddUserModal from "./AddUserModal.tsx";
 import { toast,ToastContainer } from "react-toastify";
 import {useUserStore} from "../../../stores/useUserStore.ts";
+import ToggleStatus from "./ToggleStatus.tsx";
 
 // Define the User interface
 interface User {
@@ -81,8 +83,8 @@ const AccountForm: React.FC = () => {
     useEffect(() => {
         fetchData();
     }, [currentPage, pageSize]);
-    console.log("totalItems",totalItems)
-    console.log("data",data)
+    // console.log("totalItems",totalItems)
+    // console.log("data",data)
 
     const user = localStorage.getItem('user');
 
@@ -321,6 +323,18 @@ const AccountForm: React.FC = () => {
                         value={query}
                         onChange={handleSearch}
                     />
+                    {query && (
+                        <button
+                            onClick={() => {
+                                setQuery('');
+                                handleSearch({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>);
+                            }}
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500"
+                            title="Xóa tìm kiếm"
+                        >
+                            <X className="w-4 h-4 transition hover:scale-110" />
+                        </button>
+                    )}
                 </div>
                 <button
                     onClick={() => setShowAddUserModal(true)}
@@ -368,7 +382,7 @@ const AccountForm: React.FC = () => {
                             </th>
                             <th className="px-4 py-3 text-center border border-gray-200 whitespace-nowrap">
                                 <div className="flex items-center justify-center gap-1">
-                                    <BadgeInfo className="w-4 h-4 text-gray-500" />
+                                    <Mail  className="w-4 h-4 text-gray-500" />
                                     Email
                                 </div>
                             </th>
@@ -380,7 +394,7 @@ const AccountForm: React.FC = () => {
                             </th>
                             <th className="px-4 py-3 text-center border border-gray-200 whitespace-nowrap">
                                 <div className="flex items-center justify-center gap-1">
-                                    <User className="w-4 h-4 text-gray-500" />
+                                    <Shield className="w-4 h-4 text-gray-500" />
                                     <SortableHeader
                                         label="Vai trò"
                                         sortKey="role"
@@ -391,7 +405,13 @@ const AccountForm: React.FC = () => {
                             </th>
                             <th className="px-4 py-3 text-center border border-gray-200 whitespace-nowrap">
                                 <div className="flex items-center justify-center gap-1">
-                                    <BadgeInfo className="w-4 h-4 text-gray-500" />
+                                    <Activity  className="w-4 h-4 text-gray-500" />
+                                    Trạng thái
+                                </div>
+                            </th>
+                            <th className="px-4 py-3 text-center border border-gray-200 whitespace-nowrap">
+                                <div className="flex items-center justify-center gap-1">
+                                    <Star className="w-4 h-4 text-gray-500" />
                                     <SortableHeader
                                         label="Điểm"
                                         sortKey="points"
@@ -402,7 +422,7 @@ const AccountForm: React.FC = () => {
                             </th>
                             <th className="px-4 py-3 text-center border border-gray-200 whitespace-nowrap">
                                 <div className="flex items-center justify-center gap-1">
-                                    <DollarSign className="w-4 h-4 text-gray-500" />
+                                    <TrendingUp className="w-4 h-4 text-gray-500" />
                                     <SortableHeader
                                         label="Phần trăm"
                                         sortKey="percentage"
@@ -413,7 +433,7 @@ const AccountForm: React.FC = () => {
                             </th>
                             <th className="px-4 py-3 text-center border border-gray-200 whitespace-nowrap">
                                 <div className="flex items-center justify-center gap-1">
-                                    <Briefcase className="w-4 h-4 text-gray-500" />
+                                    <Calendar className="w-4 h-4 text-gray-500" />
                                     <SortableHeader
                                         label="Ngày tạo"
                                         sortKey="created_at"
@@ -424,7 +444,7 @@ const AccountForm: React.FC = () => {
                             </th>
                             <th className="px-4 py-3 text-center border border-gray-200 whitespace-nowrap">
                                 <div className="flex items-center justify-center gap-1">
-                                    <BadgeInfo className="w-4 h-4 text-gray-500" />
+                                    <Edit className="w-4 h-4 text-gray-500" />
                                     Chỉnh sửa
                                 </div>
                             </th>
@@ -473,6 +493,9 @@ const AccountForm: React.FC = () => {
                                     </td>
                                     <td className="text-center px-2 py-2 border border-gray-100">
                                         {user.role}
+                                    </td>
+                                    <td className="text-center px-2 py-2 border border-gray-100">
+                                       <ToggleStatus />
                                     </td>
                                     <td className="text-center px-2 py-2 border border-gray-100">
                                         {user.points}
@@ -925,6 +948,8 @@ const AccountForm: React.FC = () => {
                         }}
                     />
                 )}
+
+
 
             </div>
         </div>

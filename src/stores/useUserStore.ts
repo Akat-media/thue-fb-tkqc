@@ -35,12 +35,12 @@ export const useUserStore = create<AuthState>((set) => ({
         return;
       }
 
-      console.log("Fetching user with ID:", userParse.user_id);
+      // console.log("Fetching user with ID:", userParse.user_id);
       const res = await BaseHeader({
         url: `user/${userParse.user_id}`,
       });
 
-      console.log("User data response:", res.data);
+      // console.log("User data response:", res.data);
       set({ user: res.data.data });
     } catch (err) {
       console.error("Lỗi fetch user:", err);
