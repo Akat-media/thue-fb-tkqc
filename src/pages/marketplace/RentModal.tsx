@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, AlertCircle } from "lucide-react";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
@@ -34,18 +34,20 @@ const RentModal: React.FC<RentModalProps> = ({
   const [requestedLimit, setRequestedLimit] = useState(50000);
   const [errors, setErrors] = useState<{ bmId?: string; limit?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [cookies, setCookies] = useState<any[]>([]);
+  const [selectedCookieId, setSelectedCookieId] = useState("");
+  const [isLoadingCookies, setIsLoadingCookies] = useState(false);
 
   const { user } = useAuth();
   const { addNotification } = useNotification();
 
-  if (!isOpen) return null;
-
   const calculateTotalPrice = () => {
     return requestedLimit + requestedLimit * 0.1;
   };
-  console.log("userBmId", userBmId, account);
+
   const handleSubmit = async () => {
     try {
+      setIsLoading(true);
       const response = await BaseHeader({
         url: "points-used",
         method: "post",
@@ -56,6 +58,7 @@ const RentModal: React.FC<RentModalProps> = ({
           ads_account_id: account?.account_id || "",
           user_id: userParse.user_id || "",
           amountPoint: calculateTotalPrice(),
+          cookie_id: selectedCookieId || null,
         },
       });
       if (response.status == 200) {
@@ -78,6 +81,30 @@ const RentModal: React.FC<RentModalProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      fetchCookies();
+    }
+  }, [isOpen]);
+
+  const fetchCookies = async () => {
+    try {
+      setIsLoadingCookies(true);
+      const response = await BaseHeader({
+        method: "get",
+        url: "cookies",
+        params: {},
+      });
+      setCookies(response.data.data || []);
+    } catch (error) {
+      console.error("Error fetching cookies:", error);
+    } finally {
+      setIsLoadingCookies(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
@@ -96,7 +123,11 @@ const RentModal: React.FC<RentModalProps> = ({
           <Card className="border-0 shadow-none">
             <CardHeader className="relative">
               <button
-                onClick={onClose}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onClose();
+                }}
                 className="absolute right-4 top-4 text-gray-400 hover:text-gray-500"
               >
                 <X className="h-5 w-5" />
@@ -186,6 +217,33 @@ const RentModal: React.FC<RentModalProps> = ({
                     Hạn mức: {requestedLimit.toLocaleString("vi-VN")} VNĐ
                   </div>
                 </div>
+
+                <div>
+                  <label
+                    htmlFor="cookieSelect"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Lựa chọn BOT
+                  </label>
+                  <select
+                    id="cookieSelect"
+                    value={selectedCookieId}
+                    onChange={(e) => setSelectedCookieId(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-100 rounded focus:outline-none focus:border-[#0167F8]"
+                    disabled={isLoadingCookies}
+                  >
+                    {cookies.map((cookie, index) => (
+                      <option key={cookie.id} value={cookie.id}>
+                        B{index + 1} ({cookie.email})
+                      </option>
+                    ))}
+                  </select>
+                  {isLoadingCookies && (
+                    <div className="text-sm text-gray-500 mt-1 pl-2">
+                      Đang tải danh sách bot...
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="bg-gray-50 p-4 rounded-md">
@@ -261,11 +319,23 @@ const RentModal: React.FC<RentModalProps> = ({
               )} */}
             </CardContent>
             <CardFooter className="flex justify-end space-x-3 bg-gray-50 border-t">
-              <Button variant="outline" onClick={onClose} disabled={isLoading}>
+              <Button
+                variant="outline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onClose();
+                }}
+                disabled={isLoading}
+              >
                 Hủy
               </Button>
               <Button
-                onClick={handleSubmit}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleSubmit();
+                }}
                 isLoading={isLoading}
                 disabled={false}
               >

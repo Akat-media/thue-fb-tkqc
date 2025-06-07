@@ -478,7 +478,7 @@ const AdminTransactionsPage: React.FC = () => {
         <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
           <Subheader active={active} setActive={setActive} />
           <div className="flex items-end justify-between mb-4">
-            <h1 className="text-1xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
+            <h1 className="text-1xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate mt-1">
               Quản lý giao dịch nạp tiền
             </h1>
           </div>

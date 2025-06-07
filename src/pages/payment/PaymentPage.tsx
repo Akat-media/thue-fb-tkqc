@@ -68,8 +68,8 @@ const PaymentPage: React.FC = () => {
   const userParse = JSON.parse(objetUser || "{}");
   const [activeTab, setActiveTab] = useState("deposit");
   const [transactions] = useState<Transaction[]>(mockTransactions);
-  const [selectedAmount, setSelectedAmount] = useState(1000000);
-  const [customAmount, setCustomAmount] = useState<string>("");
+  const [selectedAmount, setSelectedAmount] = useState(500000);
+  const [customAmount, setCustomAmount] = useState<string>("500000");
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
   const { addNotification } = useNotification();
@@ -220,7 +220,7 @@ const PaymentPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
-            <h2 className="text-2xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate">
+            <h2 className="text-2xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate">
               Cổng Thanh Toán
             </h2>
             {user && (
