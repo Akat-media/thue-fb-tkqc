@@ -1,4 +1,3 @@
-// adAccountStore.ts
 import { create } from "zustand";
 import { AdAccount } from "../../types";
 
@@ -74,11 +73,8 @@ export const useAdAccountStore = create<AdAccountState>((set) => ({
     })),
   setSearchTerm: (term) =>
     set((state) => {
-      const results = state.accounts.filter(
-        (account) =>
-          account.name.toLowerCase().includes(term.toLowerCase()) ||
-          account.bmName?.toLowerCase().includes(term.toLowerCase()) ||
-          account.notes?.toLowerCase().includes(term.toLowerCase())
+      const results = state.accounts.filter((account) =>
+        account.name.toLowerCase().includes(term.toLowerCase())
       );
       return { searchTerm: term, filteredAccounts: results };
     }),

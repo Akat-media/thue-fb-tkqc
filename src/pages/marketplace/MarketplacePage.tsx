@@ -153,6 +153,22 @@ const MarketplacePage: React.FC = () => {
     setIsSyncModalOpen(false);
   });
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+
+    if (term === "") {
+      handleCallAPi();
+    } else {
+      const results = filteredAccounts.filter(
+        (account: any) =>
+          account.name &&
+          account.name.toLowerCase().includes(term.toLowerCase())
+      );
+      setFilteredAccounts(results);
+    }
+  };
+
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -175,7 +191,7 @@ const MarketplacePage: React.FC = () => {
                 placeholder="Tìm kiếm BM, tài khoản..."
                 className="min-w-[380px] block pl-10 pr-3 py-[10px] rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearch}
               />
             </div>
             <button

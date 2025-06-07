@@ -224,12 +224,12 @@ const PaymentPage: React.FC = () => {
               Cổng Thanh Toán
             </h2>
             {user && (
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-base text-gray-500">
                 Số dư hiện tại:{" "}
-                <span className="font-medium text-green-600">
-                  {user && typeof user.balance === "number"
-                    ? user.balance.toLocaleString("vi-VN") + " VNĐ"
-                    : "Không có thông tin số dư"}
+                <span className="font-medium text-green-700">
+                  {userParse && userParse.user && userParse.user.points
+                    ? userParse.user.points.toLocaleString("vi-VN") + " điểm"
+                    : "Không có thông tin"}
                 </span>
               </p>
             )}
@@ -326,10 +326,11 @@ const PaymentPage: React.FC = () => {
                             onChange={(e) => {
                               const raw = e.target.value.replace(/[^0-9]/g, "");
                               setCustomAmount(raw);
+                              setSelectedAmount(parseInt(raw) || 0);
                               setShowQRCode(false);
                             }}
-                            // min="50000"
-                            min="1000"
+                            min="50000"
+                            //min="1000"
                             step="1000"
                           />
                           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">
@@ -341,7 +342,7 @@ const PaymentPage: React.FC = () => {
                           (parseInt(customAmount) <= 1000 ||
                             parseInt(customAmount) % 1000 !== 0) && (
                             <p className="text-red-500 text-xs mt-1">
-                              Vui lòng nhập số tiền từ 1.000 VNĐ trở lên và là
+                              Vui lòng nhập số tiền từ 50.000 VNĐ trở lên và là
                               số tiền chẵn hàng nghìn (vd: 50.000 VNĐ, 68.000
                               VNĐ, 100.000 VNĐ).
                             </p>
@@ -360,10 +361,17 @@ const PaymentPage: React.FC = () => {
                             key={amount}
                             type="button"
                             className={`${
-                              selectedAmount === amount && !customAmount
+                              selectedAmount === amount
                                 ? "bg-blue-50 border-blue-500 text-blue-600"
                                 : "bg-white border-gray-300 text-gray-700"
-                            } border rounded-md py-2 px-3 text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+                            } border rounded-md py-2 px-3 text-sm font-medium 
+                            ${
+                              parseInt(customAmount) === amount
+                                ? "ring-2 ring-blue-500 ring-opacity-50"
+                                : ""
+                            }
+                            hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+                            transition-all duration-200`}
                             onClick={() => {
                               setSelectedAmount(amount);
                               setCustomAmount(String(amount));
