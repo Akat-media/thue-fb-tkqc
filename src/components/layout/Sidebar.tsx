@@ -322,7 +322,7 @@ const Sidebar: React.FC<{
                   <p className="font-semibold text-base">{userobj?.username}</p>
                   <p className="text-gray-500">{userobj?.email}</p>
                   <p className="font-semibold text-green-600 mt-1">
-                    {userobj?.points} points
+                    {userobj?.points?.toLocaleString("vi-VN")} point
                   </p>
                 </div>
                 <Link

@@ -122,7 +122,7 @@ const Subheader = ({ active, setActive }: Props) => {
               </span>
             </div>
             <strong className="text-[#FFDA55] text-16 text-left font-bold leading-6">
-              {userobj?.points} point
+              {userobj?.points?.toLocaleString("vi-VN")} point
             </strong>
           </div>
         </div>
