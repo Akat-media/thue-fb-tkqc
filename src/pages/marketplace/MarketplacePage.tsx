@@ -7,6 +7,7 @@ import {
   Briefcase,
   RefreshCcw,
   X,
+  Plus,
 } from "lucide-react";
 import Layout from "../../components/layout/Layout";
 import { Card, CardContent } from "../../components/ui/Card";
@@ -157,7 +158,7 @@ const MarketplacePage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
-            <h2 className="text-2xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate">
+            <h2 className="text-2xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate">
               Danh sách BM / Tài khoản quảng cáo
             </h2>
           </div>
@@ -177,19 +178,6 @@ const MarketplacePage: React.FC = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            {isAdmin && (
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={handleSync}
-                  className="px-3 py-2 bg-yellow-500 text-white text-sm font-medium rounded-md hover:bg-yellow-600 transition"
-                >
-                  <div className="flex items-center gap-2">
-                    <RefreshCcw className="w-4 h-4" />
-                    Đồng Bộ Tài Khoản
-                  </div>
-                </button>
-              </div>
-            )}
             <button
               type="button"
               className="inline-flex items-center px-4 py-[10px] border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -205,14 +193,28 @@ const MarketplacePage: React.FC = () => {
             </button>
           </div>
 
-          <div className="mt-3 md:mt-0">
+          <div className="mt-3 md:mt-0 flex items-center gap-3">
+            {isAdmin && (
+              <button
+                onClick={handleSync}
+                className="group inline-flex items-center px-3 py-[10px] border border-yellow-400 rounded-xl shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 overflow-hidden"
+              >
+                <RefreshCcw className="h-5 w-5 mr-1 flex-shrink-0" />
+                <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 max-w-0 group-hover:max-w-xs transition-all duration-300">
+                  Đồng Bộ Tài Khoản
+                </span>
+              </button>
+            )}
             {isAdmin && (
               <button
                 type="button"
-                className="inline-flex items-center px-4 py-[10px] border border-green-600 rounded-xl shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="group inline-flex items-center px-3 py-[10px] border border-green-600 rounded-xl shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 overflow-hidden"
                 onClick={() => setIsCreateBMModalOpen(true)}
               >
-                Tạo tài khoản BM
+                <Plus className="h-5 w-5 mr-1 flex-shrink-0" />
+                <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 max-w-0 group-hover:max-w-xs transition-all duration-300">
+                  Tạo tài khoản BM
+                </span>
               </button>
             )}
           </div>

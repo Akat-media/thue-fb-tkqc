@@ -478,7 +478,7 @@ const ManageAdsAccount: React.FC = () => {
         <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
           <Subheader active={active} setActive={setActive} />
           <div className="flex items-end justify-between mb-4">
-            <h1 className="text-1xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
+            <h1 className="text-1xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate mt-1">
               Quản lý giao dịch nạp tiền
             </h1>
           </div>
@@ -500,7 +500,7 @@ const ManageAdsAccount: React.FC = () => {
                 Tìm kiếm
               </Button>
             </div>
-            {userParse?.user?.role === "admin" && (
+            {/* {userParse?.user?.role === "admin" && (
               <div className="flex items-center gap-1">
                 <button
                   onClick={handleSync}
@@ -512,7 +512,7 @@ const ManageAdsAccount: React.FC = () => {
                   </div>
                 </button>
               </div>
-            )}
+            )} */}
           </div>
 
           <div className="overflow-x-auto rounded-lg border border-gray-300">
@@ -800,7 +800,7 @@ const ManageAdsAccount: React.FC = () => {
                 Tìm kiếm
               </Button>
             </div>
-            {userParse?.user?.role === "admin" && (
+            {/* {userParse?.user?.role === "admin" && (
               <div className="flex items-center gap-1">
                 <button
                   onClick={handleSync}
@@ -812,7 +812,7 @@ const ManageAdsAccount: React.FC = () => {
                   </div>
                 </button>
               </div>
-            )}
+            )} */}
           </div>
 
           <div className="overflow-x-auto rounded-lg border border-gray-300">
