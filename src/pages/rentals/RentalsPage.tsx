@@ -234,6 +234,10 @@ const RentalsPage: React.FC = () => {
               ? mapApiStatus(account.status_rented)
               : "available",
             createdAt: new Date(acc.created_time || Date.now()),
+            status_dischard_limit_spend: account.status_dischard_limit_spend,
+            status_dischard_partner: account.status_dischard_partner,
+            status_limit_spend: account.status_limit_spend || 0,
+            status_partner: account.status_partner || 0,
             adAccount: {
               id: acc.account_id,
               name: acc.name || `Account ${acc.account_id}`,
@@ -284,6 +288,10 @@ const RentalsPage: React.FC = () => {
             spentBudget: parseInt(adAccountData.spend_cap) || 0,
             status: mapApiStatus(rental.status),
             createdAt: new Date(rental.created_at),
+            status_dischard_limit_spend: rental.status_dischard_limit_spend,
+            status_dischard_partner: rental.status_dischard_partner,
+            status_limit_spend: rental.status_limit_spend || 0,
+            status_partner: rental.status_partner || 0,
             adAccount: {
               id: adAccountData.account_id,
               name: adAccountData.name || `BM ${rental.bm_id}`,
@@ -665,17 +673,31 @@ const RentalsPage: React.FC = () => {
                     <div className="flex space-x-3">
                       {userParse?.user?.role === "admin" ? (
                         <>
-                          <Button
-                            className="bg-red-500 hover:bg-red-400 py-2"
-                            size="sm"
-                            icon={<XOctagonIcon className="h-4 w-4" />}
-                            fullWidth
-                          >
-                            Vô hiệu hóa
-                          </Button>
-                          <Button className="py-2" size="sm" fullWidth>
-                            Nâng cấp
-                          </Button>
+                          {rental.status_dischard_limit_spend === 1 &&
+                          rental.status_dischard_partner === 1 ? (
+                            <Button
+                              className="bg-yellow-500 hover:bg-yellow-400 py-2"
+                              size="sm"
+                              icon={<XOctagonIcon className="h-4 w-4" />}
+                              fullWidth
+                            >
+                              Dừng Hoạt Động
+                            </Button>
+                          ) : (
+                            <>
+                              <Button
+                                className="bg-red-500 hover:bg-red-400 py-2"
+                                size="sm"
+                                icon={<XOctagonIcon className="h-4 w-4" />}
+                                fullWidth
+                              >
+                                Vô hiệu hóa
+                              </Button>
+                              <Button className="py-2" size="sm" fullWidth>
+                                Nâng cấp
+                              </Button>
+                            </>
+                          )}
                         </>
                       ) : (
                         <>
@@ -695,7 +717,6 @@ const RentalsPage: React.FC = () => {
                               </Button>
                             </>
                           )}
-                          {/* Giữ nguyên các điều kiện khác cho người dùng thông thường */}
                           {rental.status === "active" &&
                             rental.spentBudget < rental.requestedLimit && (
                               <Button size="sm" fullWidth>

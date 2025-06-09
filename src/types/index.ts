@@ -52,6 +52,10 @@ export interface Rental {
     | "unavailable"
     | "active";
   createdAt: Date;
+  status_dischard_limit_spend: number | null;
+  status_dischard_partner: number | null;
+  status_limit_spend?: number;
+  status_partner?: number;
 }
 
 export type NotificationType = "success" | "info" | "warning" | "error";

@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { CreditCard, Copy, Landmark, Check, X } from "lucide-react";
+import {
+  CreditCard,
+  Copy,
+  Landmark,
+  Check,
+  X,
+  AlertCircle,
+} from "lucide-react";
 import Layout from "../../components/layout/Layout";
 import Button from "../../components/ui/Button";
 import {
@@ -12,7 +19,8 @@ import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
 import { Transaction } from "../../types";
 import BaseHeader from "../../api/BaseHeader";
-import socket from "../../socket/index.ts";
+import socket from "../../socket";
+import { useUserStore } from "../../stores/useUserStore";
 
 const mockTransactions: Transaction[] = [
   {
@@ -72,6 +80,8 @@ const PaymentPage: React.FC = () => {
   const [customAmount, setCustomAmount] = useState<string>("500000");
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
+  const userStore = useUserStore((state) => state.user);
+  const fetchUser = useUserStore((state) => state.fetchUser);
   const { addNotification } = useNotification();
   const [showQRCode, setShowQRCode] = useState(false);
   const [isShowingQR, setIsShowingQR] = useState(false);
@@ -81,6 +91,10 @@ const PaymentPage: React.FC = () => {
   const [paymentStatus, setPaymentStatus] = useState<
     "loading" | "success" | "failed" | null
   >(null);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   const hanleCalTransaction = async (number: any) => {
     try {
@@ -293,16 +307,16 @@ const PaymentPage: React.FC = () => {
         <div className="mt-6">
           {activeTab === "deposit" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
+              <Card className="h-full">
                 <CardHeader>
                   <CardTitle className="text-xl sm:text-2xl font-semibold">
                     Nạp tiền vào hệ thống
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <div className="col-span-2 sm:col-span-3">
-                      <label className="block text-xl font-medium text-gray-700">
+                      <label className="block text-lg font-medium text-gray-700 mb-3">
                         Nhập số tiền bạn muốn nạp 👇
                       </label>
                       <div className="mt-2">
@@ -350,10 +364,10 @@ const PaymentPage: React.FC = () => {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xl font-medium text-gray-700">
+                      <label className="block text-lg font-medium text-gray-700 mb-3">
                         Vui lòng chọn mệnh giá
                       </label>
-                      <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-3">
                         {[
                           500000, 1000000, 2000000, 3000000, 5000000, 10000000,
                         ].map((amount) => (
@@ -364,14 +378,14 @@ const PaymentPage: React.FC = () => {
                               selectedAmount === amount
                                 ? "bg-blue-50 border-blue-500 text-blue-600"
                                 : "bg-white border-gray-300 text-gray-700"
-                            } border rounded-md py-2 px-3 text-sm font-medium 
+                            } border rounded-md py-2 px-1 md:px-3 text-sm font-medium 
                             ${
                               parseInt(customAmount) === amount
                                 ? "ring-2 ring-blue-500 ring-opacity-50"
                                 : ""
                             }
                             hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
-                            transition-all duration-200`}
+                            transition-all duration-200 whitespace-nowrap`}
                             onClick={() => {
                               setSelectedAmount(amount);
                               setCustomAmount(String(amount));
@@ -384,7 +398,7 @@ const PaymentPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="rounded-md bg-blue-50 p-4">
+                    <div className="rounded-md bg-blue-50 p-3 md:p-4">
                       <div className="flex">
                         <div className="flex-shrink-0">
                           <Landmark
@@ -396,7 +410,7 @@ const PaymentPage: React.FC = () => {
                           <h3 className="text-sm font-medium text-blue-800 mb-2">
                             Thông tin chuyển khoản
                           </h3>
-                          <div className="text-sm text-blue-700 space-y-2 grid grid-cols-2 gap-x-4">
+                          <div className="text-sm text-blue-700 space-y-2 grid grid-cols-[1fr,auto] gap-x-2">
                             <span className="self-center">Ngân hàng:</span>
                             <div className="flex justify-end items-center">
                               <span className="font-medium">ACB Bank</span>
@@ -492,28 +506,28 @@ const PaymentPage: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="h-full">
                 <CardHeader>
                   <CardTitle>
                     {showQRCode ? "Mã QR" : "Hướng dẫn nạp tiền"}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex items-center justify-center">
                   {isShowingQR ? (
-                    <div className="flex justify-center items-center w-full h-full min-h-[400px]">
+                    <div className="flex justify-center items-center w-full h-full min-h-[300px] md:min-h-[350px] lg:min-h-[400px]">
                       <div className="flex flex-col items-center text-sm text-gray-500">
                         <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-transparent mb-3"></div>
                         <p>Đang tạo mã QR, vui lòng chờ...</p>
                       </div>
                     </div>
                   ) : showQRCode ? (
-                    <div className="flex items-center justify-center min-h-[500px]">
+                    <div className="flex items-center justify-center w-full">
                       <div className="flex flex-col items-center text-sm text-gray-700 space-y-6 text-center">
                         {qrImageUrl && (
                           <img
                             src={qrImageUrl}
                             alt="Mã QR chuyển khoản"
-                            className="w-[400px] h-[500px] rounded shadow"
+                            className="w-full max-w-[300px] md:max-w-[350px] lg:max-w-[400px] h-auto rounded shadow"
                           />
                         )}
                         {/* <Button
