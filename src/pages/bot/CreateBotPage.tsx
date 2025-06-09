@@ -3,15 +3,66 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Layout from "../../components/layout/Layout";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import BaseHeader from "../../api/BaseHeader";
 import AtomicSpinner from "atomic-spinner";
+import { NotiError } from "../../components/noti";
+
+const storageStateSchema = z.object({
+  cookies: z.array(z.any()).min(1, "Cookies không được để trống"),
+  origins: z.array(z.any()).default([]),
+});
 
 const botSchema = z.object({
   email: z.string().email({ message: "Email không hợp lệ" }),
   storage_state: z
     .string()
-    .min(1, { message: "Vui lòng nhập thông tin storage state" }),
+    .min(1, { message: "Vui lòng nhập thông tin storage state" })
+    .refine(
+      (val) => {
+        try {
+          JSON.parse(val);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      },
+      {
+        message: "Storage state phải là JSON hợp lệ",
+      }
+    )
+    .refine(
+      (val) => {
+        try {
+          const parsed = JSON.parse(val);
+          return (
+            parsed &&
+            typeof parsed === "object" &&
+            "cookies" in parsed &&
+            Array.isArray(parsed.cookies)
+          );
+        } catch (e) {
+          return false;
+        }
+      },
+      {
+        message: "Storage state phải có trường cookies là một mảng",
+      }
+    )
+    .refine(
+      (val) => {
+        try {
+          const parsed = JSON.parse(val);
+          return parsed.cookies.length > 0;
+        } catch (e) {
+          return false;
+        }
+      },
+      {
+        message:
+          "Storage state phải là JSON hợp lệ với định dạng {cookies: [...], origins: []}",
+      }
+    ),
 });
 
 type BotFormData = z.infer<typeof botSchema>;
@@ -27,6 +78,7 @@ const CreateBotPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [bots, setBots] = useState<Bot[]>([]);
   const [isLoadingBots, setIsLoadingBots] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const {
     register,
@@ -39,6 +91,7 @@ const CreateBotPage: React.FC = () => {
       email: "",
       storage_state: "",
     },
+    mode: "onChange",
   });
 
   useEffect(() => {
@@ -56,6 +109,7 @@ const CreateBotPage: React.FC = () => {
     } catch (error) {
       console.error("Error fetching bots:", error);
       toast.error("Không thể tải danh sách bot");
+      setErrorMessage("Không thể tải danh sách bot. Vui lòng thử lại sau.");
     } finally {
       setIsLoadingBots(false);
     }
@@ -63,14 +117,11 @@ const CreateBotPage: React.FC = () => {
 
   const onSubmit = async (data: BotFormData) => {
     setIsLoading(true);
+    setErrorMessage("");
     try {
-      let parsedStorageState;
-      try {
-        parsedStorageState = JSON.parse(data.storage_state);
-      } catch (e) {
-        toast.error("Storage state phải là JSON hợp lệ");
-        setIsLoading(false);
-        return;
+      let parsedStorageState = JSON.parse(data.storage_state);
+      if (!parsedStorageState.hasOwnProperty("origins")) {
+        parsedStorageState.origins = [];
       }
 
       const response = await BaseHeader({
@@ -88,6 +139,7 @@ const CreateBotPage: React.FC = () => {
     } catch (error) {
       console.error("Error creating bot:", error);
       toast.error("Có lỗi xảy ra khi tạo mới");
+      setErrorMessage("Có lỗi xảy ra khi tạo mới bot. Vui lòng thử lại sau.");
     } finally {
       setIsLoading(false);
     }
@@ -95,7 +147,8 @@ const CreateBotPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full h-full flex flex-col px-4 sm:px-6 lg:px-8 py-8">
+        <ToastContainer position="top-right" autoClose={3000} />
         <div className="md:flex md:items-center md:justify-between mb-6">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
@@ -104,12 +157,15 @@ const CreateBotPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-10 gap-6">
-          <div className="md:col-span-4 bg-white rounded-lg shadow-md p-6">
+        <div className="grid grid-cols-1 md:grid-cols-10 gap-6 flex-grow">
+          <div className="md:col-span-4 bg-gray-100 rounded-lg shadow-md p-6 flex flex-col">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Tạo Bot Mới
             </h3>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-6 flex-grow flex flex-col"
+            >
               <div>
                 <label
                   htmlFor="email"
@@ -131,7 +187,7 @@ const CreateBotPage: React.FC = () => {
                 )}
               </div>
 
-              <div>
+              <div className="flex-grow">
                 <label
                   htmlFor="storage_state"
                   className="block text-sm font-medium text-gray-700"
@@ -142,15 +198,25 @@ const CreateBotPage: React.FC = () => {
                   id="storage_state"
                   {...register("storage_state")}
                   rows={10}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder='{"cookies":[...]}'
+                  className={`mt-1 block w-full h-full min-h-[200px] px-3 py-2 border ${
+                    errors.storage_state
+                      ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                      : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                  } rounded-md shadow-sm focus:outline-none`}
+                  placeholder='{"cookies":[...],"origins":[]}'
                 />
                 {errors.storage_state && (
                   <p className="mt-1 text-sm text-red-600">
                     {errors.storage_state.message}
                   </p>
                 )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Storage state phải có định dạng: {"{"}"cookies": [...],
+                  "origins": []{"}"}
+                </p>
               </div>
+
+              <div className="h-1"></div>
 
               <div className="flex justify-end">
                 <button
@@ -194,7 +260,7 @@ const CreateBotPage: React.FC = () => {
             </form>
           </div>
 
-          <div className="md:col-span-6 bg-white rounded-lg shadow-md p-6">
+          <div className="md:col-span-6 bg-gray-100 rounded-lg shadow-md p-6 flex flex-col">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Danh sách Bot
             </h3>
@@ -226,7 +292,7 @@ const CreateBotPage: React.FC = () => {
                 Chưa có bot nào được tạo
               </p>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto flex-grow">
                 <table className="min-w-full divide-y divide-gray-500">
                   <thead className="bg-gray-50">
                     <tr>
@@ -276,6 +342,10 @@ const CreateBotPage: React.FC = () => {
         <div className="fixed inset-0 z-[9999] backdrop-blur-sm bg-white/60 flex items-center justify-center">
           <AtomicSpinner size={60} color="#ffffff" />
         </div>
+      )}
+
+      {errorMessage && (
+        <NotiError onClose={() => setErrorMessage("")} message={errorMessage} />
       )}
     </Layout>
   );

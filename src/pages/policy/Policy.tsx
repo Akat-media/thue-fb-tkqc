@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/layout/Layout.tsx";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import BaseHeader from "../../api/BaseHeader";
 
 interface PolicySection {
   title: string;
@@ -11,6 +12,56 @@ const Policy: React.FC = () => {
   const [openSections, setOpenSections] = React.useState<
     Record<number, boolean>
   >({});
+  const [policies, setPolicies] = useState<PolicySection[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPolicies();
+  }, []);
+
+  const fetchPolicies = async () => {
+    try {
+      setLoading(true);
+      const response = await BaseHeader({
+        method: "get",
+        url: "policies",
+      });
+      setPolicies(response.data.data || []);
+    } catch (error) {
+      console.error("Error fetching policies:", error);
+      setPolicies([
+        {
+          title: "Điều Khoản Sử Dụng",
+          content: [
+            "Người dùng phải từ 18 tuổi trở lên để sử dụng dịch vụ của AKA MEDIA.",
+            "Mọi hành vi vi phạm pháp luật hoặc gây hại đến hệ thống sẽ bị cấm và có thể dẫn đến khóa tài khoản.",
+            "AKA MEDIA có quyền thay đổi điều khoản mà không cần thông báo trước.",
+            "Người dùng chịu trách nhiệm bảo mật thông tin tài khoản của mình.",
+          ],
+        },
+        {
+          title: "Chính Sách Bảo Mật",
+          content: [
+            "Chúng tôi thu thập thông tin cá nhân (tên, email, số điện thoại) để cung cấp dịch vụ và cải thiện trải nghiệm người dùng.",
+            "Thông tin của bạn sẽ không được chia sẻ với bên thứ ba mà không có sự đồng ý, trừ khi có yêu cầu từ cơ quan pháp luật.",
+            "Chúng tôi sử dụng công nghệ mã hóa để bảo vệ dữ liệu người dùng.",
+            "Người dùng có quyền yêu cầu xóa dữ liệu cá nhân của mình bằng cách liên hệ qua support@akamedia.com.",
+          ],
+        },
+        {
+          title: "Chính Sách Thanh Toán",
+          content: [
+            "Mọi giao dịch thanh toán phải được thực hiện qua các phương thức được AKA MEDIA hỗ trợ.",
+            "Không hoàn tiền cho các giao dịch đã hoàn tất, trừ khi có lỗi từ phía hệ thống.",
+            "Thời gian xử lý giao dịch có thể mất từ 1-3 ngày làm việc.",
+            "Người dùng cần cung cấp thông tin chính xác để tránh sai sót trong quá trình thanh toán.",
+          ],
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleSection = (index: number) => {
     setOpenSections((prev) => ({
@@ -18,36 +69,6 @@ const Policy: React.FC = () => {
       [index]: !prev[index],
     }));
   };
-
-  const policies: PolicySection[] = [
-    {
-      title: "Điều Khoản Sử Dụng",
-      content: [
-        "Người dùng phải từ 18 tuổi trở lên để sử dụng dịch vụ của AKA MEDIA.",
-        "Mọi hành vi vi phạm pháp luật hoặc gây hại đến hệ thống sẽ bị cấm và có thể dẫn đến khóa tài khoản.",
-        "AKA MEDIA có quyền thay đổi điều khoản mà không cần thông báo trước.",
-        "Người dùng chịu trách nhiệm bảo mật thông tin tài khoản của mình.",
-      ],
-    },
-    {
-      title: "Chính Sách Bảo Mật",
-      content: [
-        "Chúng tôi thu thập thông tin cá nhân (tên, email, số điện thoại) để cung cấp dịch vụ và cải thiện trải nghiệm người dùng.",
-        "Thông tin của bạn sẽ không được chia sẻ với bên thứ ba mà không có sự đồng ý, trừ khi có yêu cầu từ cơ quan pháp luật.",
-        "Chúng tôi sử dụng công nghệ mã hóa để bảo vệ dữ liệu người dùng.",
-        "Người dùng có quyền yêu cầu xóa dữ liệu cá nhân của mình bằng cách liên hệ qua support@akamedia.com.",
-      ],
-    },
-    {
-      title: "Chính Sách Thanh Toán",
-      content: [
-        "Mọi giao dịch thanh toán phải được thực hiện qua các phương thức được AKA MEDIA hỗ trợ.",
-        "Không hoàn tiền cho các giao dịch đã hoàn tất, trừ khi có lỗi từ phía hệ thống.",
-        "Thời gian xử lý giao dịch có thể mất từ 1-3 ngày làm việc.",
-        "Người dùng cần cung cấp thông tin chính xác để tránh sai sót trong quá trình thanh toán.",
-      ],
-    },
-  ];
 
   return (
     <Layout>

@@ -24,6 +24,7 @@ import NotificationOverlay from "./pages/notify/NotificationOverlay.tsx";
 import Account from "./pages/admin/account/Account.tsx";
 import PasswordResetForm from "./pages/auth/PasswordResetForm.tsx";
 import CreateBotPage from "./pages/bot/CreateBotPage";
+import PolicyManagement from "./pages/admin/PolicyManagement";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/admin/profile" element={<AdminProfilePage />} />
               <Route path="/admin/support" element={<AdminSupport />} />
+              <Route path="/admin/policy" element={<PolicyManagement />} />
               <Route
                 path="/admin/notifications"
                 element={<NotificationOverlay />}
