@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import Layout from "../../components/layout/Layout";
 import { Plus, Edit, Trash2, Save } from "lucide-react";
 import Button from "../../components/ui/Button";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import BaseHeader from "../../api/BaseHeader";
 
 interface PolicySection {
   id?: string;
   title: string;
-  content: string[];
+  message: string;
 }
 
 const PolicyManagement: React.FC = () => {
@@ -17,7 +18,6 @@ const PolicyManagement: React.FC = () => {
   const [editingPolicy, setEditingPolicy] = useState<PolicySection | null>(
     null
   );
-  const [newContentItem, setNewContentItem] = useState("");
 
   useEffect(() => {
     fetchPolicies();
@@ -42,7 +42,7 @@ const PolicyManagement: React.FC = () => {
   const handleAddPolicy = () => {
     setEditingPolicy({
       title: "Chính sách mới",
-      content: ["Nội dung mới"],
+      message: "Nội dung mới",
     });
   };
 
@@ -54,66 +54,91 @@ const PolicyManagement: React.FC = () => {
     if (!confirm("Bạn có chắc chắn muốn xóa chính sách này?")) return;
 
     try {
-      await BaseHeader({
+      const response = await BaseHeader({
         method: "delete",
         url: `policies/${policyId}`,
       });
-      toast.success("Xóa chính sách thành công");
-      fetchPolicies();
-    } catch (error) {
+
+      if (response.data.success) {
+        toast.success("Xóa chính sách thành công");
+        fetchPolicies();
+      } else {
+        toast.error(response.data.message || "Không thể xóa chính sách");
+      }
+    } catch (error: any) {
       console.error("Error deleting policy:", error);
-      toast.error("Không thể xóa chính sách. Vui lòng thử lại sau.");
+      const errorMessage =
+        error.response?.data?.message ||
+        "Không thể xóa chính sách. Vui lòng thử lại sau.";
+      toast.error(errorMessage);
     }
   };
 
   const handleSavePolicy = async () => {
     if (!editingPolicy) return;
+    if (!editingPolicy.title.trim()) {
+      toast.warning("Tiêu đề không được để trống");
+      return;
+    }
+
+    if (!editingPolicy.message.trim()) {
+      toast.warning("Nội dung không được để trống");
+      return;
+    }
 
     try {
+      let response;
+
       if (editingPolicy.id) {
-        await BaseHeader({
+        response = await BaseHeader({
           method: "put",
           url: `policies/${editingPolicy.id}`,
           data: editingPolicy,
         });
-        toast.success("Cập nhật chính sách thành công");
+
+        if (response.data.success) {
+          toast.success("Cập nhật chính sách thành công");
+        } else {
+          toast.error(response.data.message || "Không thể cập nhật chính sách");
+        }
       } else {
-        await BaseHeader({
+        response = await BaseHeader({
           method: "post",
-          url: "policies",
+          url: "/policies",
           data: editingPolicy,
         });
-        toast.success("Thêm chính sách thành công");
+
+        if (response.data.success) {
+          toast.success("Thêm mới chính sách thành công");
+        } else {
+          toast.error(response.data.message || "Không thể thêm chính sách");
+        }
       }
+
       setEditingPolicy(null);
       fetchPolicies();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving policy:", error);
-      toast.error("Không thể lưu chính sách. Vui lòng thử lại sau.");
+      const errorMessage =
+        error.response?.data?.message ||
+        "Không thể lưu chính sách. Vui lòng thử lại sau.";
+      toast.error(errorMessage);
     }
-  };
-
-  const handleAddContentItem = () => {
-    if (!editingPolicy || !newContentItem.trim()) return;
-    setEditingPolicy({
-      ...editingPolicy,
-      content: [...editingPolicy.content, newContentItem],
-    });
-    setNewContentItem("");
-  };
-
-  const handleRemoveContentItem = (index: number) => {
-    if (!editingPolicy) return;
-    const newContent = [...editingPolicy.content];
-    newContent.splice(index, 1);
-    setEditingPolicy({
-      ...editingPolicy,
-      content: newContent,
-    });
   };
 
   return (
     <Layout>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
         <main className="w-full mx-auto px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
@@ -126,7 +151,10 @@ const PolicyManagement: React.FC = () => {
           </div>
 
           {loading ? (
-            <div className="text-center py-10">Đang tải...</div>
+            <div className="text-center py-10">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
+              <p className="mt-2 text-gray-600">Đang tải...</p>
+            </div>
           ) : (
             <>
               {editingPolicy ? (
@@ -139,7 +167,7 @@ const PolicyManagement: React.FC = () => {
 
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tiêu đề
+                      Tiêu đề <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -150,55 +178,26 @@ const PolicyManagement: React.FC = () => {
                           title: e.target.value,
                         })
                       }
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Nhập tiêu đề chính sách"
                     />
                   </div>
 
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nội dung
+                      Nội dung <span className="text-red-500">*</span>
                     </label>
-                    <ul className="space-y-2 mb-4">
-                      {editingPolicy.content.map((item, idx) => (
-                        <li key={idx} className="flex items-center">
-                          <input
-                            type="text"
-                            value={item}
-                            onChange={(e) => {
-                              const newContent = [...editingPolicy.content];
-                              newContent[idx] = e.target.value;
-                              setEditingPolicy({
-                                ...editingPolicy,
-                                content: newContent,
-                              });
-                            }}
-                            className="flex-1 p-2 border border-gray-300 rounded-md"
-                          />
-                          <button
-                            onClick={() => handleRemoveContentItem(idx)}
-                            className="ml-2 p-1 text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="flex">
-                      <input
-                        type="text"
-                        value={newContentItem}
-                        onChange={(e) => setNewContentItem(e.target.value)}
-                        placeholder="Thêm nội dung mới"
-                        className="flex-1 p-2 border border-gray-300 rounded-l-md"
-                      />
-                      <button
-                        onClick={handleAddContentItem}
-                        className="bg-blue-500 text-white px-3 py-2 rounded-r-md hover:bg-blue-600"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
+                    <textarea
+                      value={editingPolicy.message}
+                      onChange={(e) =>
+                        setEditingPolicy({
+                          ...editingPolicy,
+                          message: e.target.value,
+                        })
+                      }
+                      className="w-full p-2 border border-gray-300 rounded-md min-h-[200px] focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Nhập nội dung chính sách"
+                    />
                   </div>
 
                   <div className="flex justify-end space-x-2">
@@ -215,45 +214,55 @@ const PolicyManagement: React.FC = () => {
                 </div>
               ) : null}
 
-              <div className="space-y-4">
-                {policies.map((policy, index) => (
-                  <div
-                    key={index}
-                    className="bg-white rounded-lg shadow-md overflow-hidden"
+              {policies.length === 0 ? (
+                <div className="bg-white p-8 rounded-lg shadow-md text-center">
+                  <p className="text-gray-500 mb-4">Chưa có chính sách nào</p>
+                  <Button
+                    onClick={handleAddPolicy}
+                    className="flex items-center mx-auto"
                   >
-                    <div className="flex justify-between items-center p-4 bg-gradient-to-r from-white to-blue-50">
-                      <h3 className="text-lg font-semibold text-blue-900">
-                        {policy.title}
-                      </h3>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleEditPolicy(policy)}
-                          className="p-1 text-blue-500 hover:text-blue-700"
-                        >
-                          <Edit className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() =>
-                            policy.id && handleDeletePolicy(policy.id)
-                          }
-                          className="p-1 text-red-500 hover:text-red-700"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
+                    <Plus className="w-4 h-4 mr-2" /> Thêm chính sách đầu tiên
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {policies.map((policy, index) => (
+                    <div
+                      key={policy.id || index}
+                      className="bg-white rounded-lg shadow-md overflow-hidden"
+                    >
+                      <div className="flex justify-between items-center p-4 bg-gradient-to-r from-white to-blue-50">
+                        <h3 className="text-lg font-semibold text-blue-900">
+                          {policy.title}
+                        </h3>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEditPolicy(policy)}
+                            className="p-1 text-blue-500 hover:text-blue-700 transition-colors"
+                            title="Chỉnh sửa"
+                          >
+                            <Edit className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() =>
+                              policy.id && handleDeletePolicy(policy.id)
+                            }
+                            className="p-1 text-red-500 hover:text-red-700 transition-colors"
+                            title="Xóa"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <p className="text-gray-700 whitespace-pre-wrap">
+                          {policy.message}
+                        </p>
                       </div>
                     </div>
-                    <div className="p-4">
-                      <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                        {policy.content.map((item, idx) => (
-                          <li key={idx} className="text-sm">
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </>
           )}
         </main>

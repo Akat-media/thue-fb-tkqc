@@ -1,16 +1,26 @@
 import React from "react";
-import { Briefcase, ShieldCheck, CircleFadingPlus } from "lucide-react";
+import { Briefcase, ShieldCheck, CircleFadingPlus, Trash2 } from "lucide-react";
 import { Card, CardContent, CardFooter } from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import styled from "styled-components";
 import url from "../../assets/bg.svg";
 
-interface BMCardProps {
-  bm: any;
-  onClick: () => void;
+interface BM {
+  id: string;
+  bm_id: string;
+  bm_name: string;
+  system_user_token?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
-const BMCard: React.FC<BMCardProps> = ({ bm, onClick }) => {
+interface BMCardProps {
+  bm: BM;
+  onClick: () => void;
+  onDelete: (bm: BM) => void;
+}
+
+const BMCard: React.FC<BMCardProps> = ({ bm, onClick, onDelete }) => {
   return (
     <CardContainer url={url}>
       <Card className="relative main-card h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
@@ -47,9 +57,22 @@ const BMCard: React.FC<BMCardProps> = ({ bm, onClick }) => {
           </div>
         </CardContent>
         <CardFooter className="relative z-10 px-6 py-4">
-          <Button fullWidth onClick={onClick}>
-            Xem chi tiết
-          </Button>
+          <div className="flex gap-2 w-full">
+            <Button
+              fullWidth
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(bm);
+              }}
+              className="bg-red-500 hover:bg-red-600"
+              icon={<Trash2 className="w-4 h-4" />}
+            >
+              Xóa
+            </Button>
+            <Button fullWidth onClick={onClick}>
+              Xem chi tiết
+            </Button>
+          </div>
         </CardFooter>
         <div className="absolute bottom-0 left-0 w-full">
           <img className="w-full" src={url} alt="img" />
