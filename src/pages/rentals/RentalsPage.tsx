@@ -624,13 +624,18 @@ const RentalsPage: React.FC = () => {
                         <div className="pt-2">
                           <div className="w-full bg-gray-200 rounded-full h-4">
                             <div
-                              className=" h-4 rounded-full"
+                              className="h-4 rounded-full"
                               style={{
-                                width: `${Math.min(
-                                  100,
-                                  (rental.spentBudget / rental.requestedLimit) *
-                                    100
-                                )}%`,
+                                width: `${
+                                  rental.requestedLimit > 0
+                                    ? Math.min(
+                                        100,
+                                        (rental.spentBudget /
+                                          rental.requestedLimit) *
+                                          100
+                                      )
+                                    : 0
+                                }%`,
                                 background:
                                   "linear-gradient(90deg, #4ade80, #22d3ee)",
                               }}
@@ -639,10 +644,13 @@ const RentalsPage: React.FC = () => {
                           <div className="flex justify-between text-xs text-gray-500 mt-1">
                             <span>0%</span>
                             <span>
-                              {Math.round(
-                                (rental.spentBudget / rental.requestedLimit) *
-                                  100
-                              )}
+                              {rental.requestedLimit > 0
+                                ? Math.round(
+                                    (rental.spentBudget /
+                                      rental.requestedLimit) *
+                                      100
+                                  )
+                                : 0}
                               %
                             </span>
                             <span>100%</span>
