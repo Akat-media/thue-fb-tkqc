@@ -136,7 +136,7 @@ const RegisterPage: React.FC = () => {
                 htmlFor="name"
                 className="block text-xs font-semibold uppercase text-[#0167F8]"
               >
-                Họ tên
+                Họ tên <span className="text-red-500">(*)</span>
               </label>
               <div className="relative">
                 <input
@@ -157,7 +157,7 @@ const RegisterPage: React.FC = () => {
                 htmlFor="email"
                 className="block text-xs font-semibold uppercase text-[#0167F8]"
               >
-                Email
+                Email <span className="text-red-500">(*)</span>
               </label>
               <div className="relative">
                 <input
@@ -179,7 +179,7 @@ const RegisterPage: React.FC = () => {
                 htmlFor="phone"
                 className="block text-xs font-semibold uppercase text-[#0167F8]"
               >
-                Số điện thoại
+                Số điện thoại <span className="text-red-500">(*)</span>
               </label>
               <div className="relative">
                 <input
@@ -201,7 +201,7 @@ const RegisterPage: React.FC = () => {
                 htmlFor="password"
                 className="block text-xs font-semibold uppercase text-[#0167F8]"
               >
-                Mật khẩu
+                Mật khẩu <span className="text-red-500">(*)</span>
               </label>
               <div className="relative">
                 <input
@@ -231,7 +231,7 @@ const RegisterPage: React.FC = () => {
                 htmlFor="confirmPassword"
                 className="block text-xs font-semibold uppercase text-[#0167F8]"
               >
-                Xác nhận mật khẩu
+                Xác nhận mật khẩu <span className="text-red-500">(*)</span>
               </label>
               <div className="relative">
                 <input
