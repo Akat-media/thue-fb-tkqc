@@ -5,7 +5,7 @@ import { BaseUrl } from "../../api/BaseHeader";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AtomicSpinner from "atomic-spinner";
-import { Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
+import { Mail, User, Phone, Eye, EyeOff } from "lucide-react";
 import { useUserStore } from "../../stores/useUserStore.ts";
 import { useNavigate } from "react-router-dom";
 
@@ -255,8 +255,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   </button>
                 </div>
               </div>
-              {errors.password && (
+              {errors.password ? (
                 <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+              ) : (
+                <p className="text-xs text-gray-400 mt-1">Mật khẩu tối thiểu 6 ký tự.</p>
               )}
             </div>
 
@@ -294,6 +296,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 <p className="text-sm text-red-500 mt-1">
                   {errors.confirmPassword}
                 </p>
+              )}
+              {!errors.confirmPassword && (
+                  <p className="text-xs text-gray-400 mt-1">Nhập lại mật khẩu để xác nhận.</p>
               )}
             </div>
 

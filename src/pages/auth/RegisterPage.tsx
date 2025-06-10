@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
+import { Mail, User, Phone, Eye, EyeOff } from "lucide-react";
+// import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
 import { BaseUrl } from "../../api/BaseHeader";
 import axios from "axios";
 import AtomicSpinner from "atomic-spinner";
 
 const RegisterPage: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  // const [isOpen, setIsOpen] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -212,22 +212,18 @@ const RegisterPage: React.FC = () => {
                   placeholder="Password"
                   className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8] pr-10"
                 />
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <button
+                <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
-                  </button>
-                </div>
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
-              {errors.password && (
-                <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+              {errors.password ? (
+                  <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+              ) : (
+                  <p className="text-xs text-gray-400 mt-1">Mật khẩu tối thiểu 6 ký tự.</p>
               )}
             </div>
             <div>
@@ -244,9 +240,9 @@ const RegisterPage: React.FC = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm Password"
-                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8] pr-10"
+                  className="w-full mt-1 px-3 py-2 border  border-gray-300 rounded focus:outline-none focus:border-[#0167F8] pr-10"
                 />
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5">
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -264,6 +260,9 @@ const RegisterPage: React.FC = () => {
                 <p className="text-sm text-red-500 mt-1">
                   {errors.confirmPassword}
                 </p>
+              )}
+              {!errors.confirmPassword && (
+                  <p className="text-xs text-gray-400 mt-1">Nhập lại mật khẩu để xác nhận.</p>
               )}
             </div>
             <button
