@@ -59,8 +59,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
       if (onLoginSuccess) {
         onLoginSuccess();
       }
-    } catch (err) {
-      toast.error("Email hoặc mật khẩu không đúng");
+    } catch (err:any) {
+      toast.error(err.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại");
     } finally {
       setLoading(false);
     }

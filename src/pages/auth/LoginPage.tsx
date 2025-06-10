@@ -6,6 +6,8 @@ import axios from "axios";
 import { BaseUrl } from "../../api/BaseHeader";
 import AtomicSpinner from "atomic-spinner";
 import { useUserStore } from "../../stores/useUserStore";
+import {toast} from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 const LoginPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -41,26 +43,25 @@ const LoginPage: React.FC = () => {
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      await axios
-        .post(`${BaseUrl}/login`, {
-          email: email,
-          password: password,
-        })
-        .then((res) => {
-          setUser(res.data.data);
-          navigate("/");
-          localStorage.setItem("access_token", res.data.data.access_token);
-          localStorage.setItem("refresh_token", res.data.data.refresh_token);
-          localStorage.setItem("user", JSON.stringify(res.data.data));
-          addNotification(
-            "Đăng nhập thành công",
-            "Chào mừng bạn quay trở lại!",
-            "success"
-          );
-        })
-        .catch((err) => console.log(err));
-    } catch (error) {
+      const res = await axios.post(`${BaseUrl}/login`,
+          {
+            email: email,
+            password: password,
+          }
+      )
+      setUser(res.data.data);
+      navigate("/");
+      localStorage.setItem("access_token", res.data.data.access_token);
+      localStorage.setItem("refresh_token", res.data.data.refresh_token);
+      localStorage.setItem("user", JSON.stringify(res.data.data));
+      addNotification(
+          "Đăng nhập thành công",
+          "Chào mừng bạn quay trở lại!",
+          "success"
+      );
+    } catch (error:any) {
       console.error("Login error:", error);
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại");
       addNotification(
         "Đăng nhập thất bại",
         "Email hoặc mật khẩu không chính xác",
@@ -73,6 +74,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="h-screen w-screen flex">
+      <ToastContainer />
       <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-r from-transparent via-blue-100/70 to-white backdrop-blur-sm relative">
         <Link
           to="/"
