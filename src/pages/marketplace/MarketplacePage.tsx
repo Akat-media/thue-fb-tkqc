@@ -181,8 +181,12 @@ const MarketplacePage: React.FC = () => {
   };
 
   const handleDeleteBM = (bm: BM) => {
-    setBmToDelete(bm);
-    setIsDeleteModalOpen(true);
+    if (isAdmin) {
+      setBmToDelete(bm);
+      setIsDeleteModalOpen(true);
+    } else {
+      toast.info("Bạn cần có quyền admin để xoá tài khoản BM");
+    }
   };
 
   const confirmDeleteBM = async () => {

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   DollarSign,
@@ -16,13 +16,31 @@ import StatCard from "./analytics/StatCard.tsx";
 import StatsCharts from "./analytics/StatsCharts.tsx";
 import ChartDashboard from "./analytics/ChartDashboard.tsx";
 import Counter from "../components/ui/Counter";
-
+import axios from "axios";
 const HomePage: React.FC = () => {
   const user = localStorage.getItem("user");
   const role = typeof user === "string" ? JSON.parse(user)?.user.role : "";
 
   const sliderRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await axios.get(
+          "https://api-rent.duynam.store/api/v1/statistics"
+        );
+        if (response.data.success) {
+          setStats(response.data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching stats:", err);
+      }
+    };
+
+    if (role === "admin") fetchStats();
+  }, [role]);
 
   const newsArticles = [
     {
@@ -437,30 +455,46 @@ const HomePage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full mx-auto">
                 <StatCard
                   title="Doanh thu"
-                  value="2.890.000.000 VND"
+                  value={
+                    stats
+                      ? `${stats.revenue.amountVND.toLocaleString("vi-VN")} VND`
+                      : "Loading..."
+                  }
                   icon="/ic-glass-bag.svg"
-                  trend={2.6}
+                  trend={stats ? stats.revenueGrowth : 0}
                   color="bg-green-300 text-green-800"
                 />
                 <StatCard
-                  title="Số lượng tài khoản quảng cáo "
-                  value="5000"
+                  title="Số lượng tài khoản quảng cáo"
+                  value={
+                    stats
+                      ? stats.countAds.toLocaleString("vi-VN")
+                      : "Loading..."
+                  }
                   icon="/ic-glass-users.svg"
-                  trend={-0.1}
+                  trend={stats ? stats.adsGrowth : 0}
                   color="bg-purple-300 text-purple-800"
                 />
                 <StatCard
                   title="Số lượng người dùng đăng ký"
-                  value="3268"
+                  value={
+                    stats
+                      ? stats.countUser.toLocaleString("vi-VN")
+                      : "Loading..."
+                  }
                   icon="/ic-glass-buy.svg"
-                  trend={2.8}
+                  trend={stats ? stats.userGrowth : 0}
                   color="bg-yellow-300 text-yellow-800"
                 />
                 <StatCard
-                  title="Số lượng chiến dịch"
-                  value="59.236"
+                  title="Số lượng giao dịch"
+                  value={
+                    stats
+                      ? stats.countTransaction.toLocaleString("vi-VN")
+                      : "Loading..."
+                  }
                   icon="/ic-glass-message.svg"
-                  trend={3.6}
+                  trend={stats ? stats.transactionGrowth : 0}
                   color="bg-red-300 text-red-800"
                 />
               </div>

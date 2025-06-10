@@ -1,19 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/layout/Layout";
 import { Bell, Settings, User } from "lucide-react";
 import StatCard from "./StatCard";
 import StatsCharts from "./StatsCharts";
-// import {
-//     FaShoppingBag,
-//     FaUser,
-//     FaCartPlus,
-//     FaEnvelope
-// } from "react-icons/fa";
 import ChartDashboard from "./ChartDashboard";
-// import RevenueChart from "../dashboard/RevenueChart";
-// import TopCampaignsCard from "./TopCampaignsCard";
+import axios from "axios";
 
 const Analytics: React.FC = () => {
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await axios.get(
+          "https://api-rent.duynam.store/api/v1/statistics"
+        );
+        if (response.data.success) {
+          setStats(response.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch statistics", error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  if (!stats) return <div className="p-10">Đang tải dữ liệu...</div>;
+
   return (
     <Layout>
       <div className="flex h-14 items-center justify-between gap-8 px-4 sm:px-6">
@@ -43,30 +57,30 @@ const Analytics: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full mx-auto">
             <StatCard
               title="Doanh thu"
-              value="2.890.000.000 VND"
+              value={`${stats.revenue.amountVND.toLocaleString("vi-VN")} VND`}
               icon="/ic-glass-bag.svg"
-              trend={2.6}
+              trend={stats.revenueGrowth}
               color="bg-green-300 text-green-800"
             />
             <StatCard
-              title="Số lượng tài khoản quảng cáo "
-              value="5000"
+              title="Số lượng tài khoản quảng cáo"
+              value={stats.countAds.toLocaleString("vi-VN")}
               icon="/ic-glass-users.svg"
-              trend={-0.1}
+              trend={stats.adsGrowth}
               color="bg-purple-300 text-purple-800"
             />
             <StatCard
               title="Số lượng người dùng đăng ký"
-              value="3268"
+              value={stats.countUser.toLocaleString("vi-VN")}
               icon="/ic-glass-buy.svg"
-              trend={2.8}
+              trend={stats.userGrowth}
               color="bg-yellow-300 text-yellow-800"
             />
             <StatCard
-              title="Số lượng chiến dịch"
-              value="59.236"
+              title="Số lượng giao dịch"
+              value={stats.countTransaction.toLocaleString("vi-VN")}
               icon="/ic-glass-message.svg"
-              trend={3.6}
+              trend={stats.transactionGrowth}
               color="bg-red-300 text-red-800"
             />
           </div>
