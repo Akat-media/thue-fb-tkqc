@@ -8,6 +8,7 @@ import AtomicSpinner from "atomic-spinner";
 import { useUserStore } from "../../stores/useUserStore";
 import {toast} from "react-toastify";
 import { ToastContainer } from "react-toastify";
+import ForgotPasswordModal from "./ForgotPasswordModal.tsx";
 
 const LoginPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -20,6 +21,7 @@ const LoginPage: React.FC = () => {
   const { addNotification } = useNotification();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: { email?: string; password?: string } = {};
@@ -145,12 +147,22 @@ const LoginPage: React.FC = () => {
               )}
             </div>
             <div className="flex justify-between items-center text-sm text-gray-600">
-              <Link
-                to="/forgot-password"
-                className="text-blue-600 hover:underline"
+              <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-blue-600 hover:underline"
               >
                 Quên Mật Khẩu?
-              </Link>
+              </button>
+              {showForgotPassword && (
+                  <ForgotPasswordModal
+                      isOpen={showForgotPassword}
+                      onClose={() => setShowForgotPassword(false)}
+                      onSwitchToLogin={() => {
+                        setShowForgotPassword(false);
+                      }}
+                  />
+              )}
             </div>
             <button
               type="submit"
