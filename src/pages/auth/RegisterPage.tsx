@@ -6,6 +6,7 @@ import { useNotification } from "../../context/NotificationContext";
 import { BaseUrl } from "../../api/BaseHeader";
 import axios from "axios";
 import AtomicSpinner from "atomic-spinner";
+import registerimg from "../../public/sand.jpg";
 
 const RegisterPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -109,7 +110,7 @@ const RegisterPage: React.FC = () => {
     <div className="h-screen w-screen flex">
       <div className="hidden md:block w-1/2 h-full">
         <img
-          src="src/public/sand.jpg"
+          src={registerimg}
           alt="Background"
           className="w-full h-full object-cover"
         />

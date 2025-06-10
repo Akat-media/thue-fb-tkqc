@@ -17,9 +17,11 @@ import StatsCharts from "./analytics/StatsCharts.tsx";
 import ChartDashboard from "./analytics/ChartDashboard.tsx";
 import Counter from "../components/ui/Counter";
 import axios from "axios";
-import { DatePicker } from 'antd';
+import { DatePicker } from "antd";
 import dayjs from "dayjs";
-import {createGlobalStyle} from "styled-components";
+import { createGlobalStyle } from "styled-components";
+import img1 from "../public/homepage.png";
+import metalogo from "../public/metalogo.png";
 
 const GlobalStyle = createGlobalStyle`
    @media (max-width: 768px) {
@@ -33,7 +35,7 @@ const HomePage: React.FC = () => {
   const user = localStorage.getItem("user");
   const role = typeof user === "string" ? JSON.parse(user)?.user.role : "";
   const { RangePicker } = DatePicker;
-  const dateFormat = 'YYYY/MM/DD';
+  const dateFormat = "YYYY/MM/DD";
   const sliderRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [stats, setStats] = useState<any>(null);
@@ -117,7 +119,7 @@ const HomePage: React.FC = () => {
                   <div className="relative">
                     <div className="w-68 h-68 rounded-full flex items-center justify-center animate-float">
                       <img
-                        src="src/public/homepage.png"
+                        src={img1}
                         alt="Meta Logo"
                         className="w-68 h-68 object-contain"
                       />
@@ -400,7 +402,7 @@ const HomePage: React.FC = () => {
                 <div className="flex items-center justify-center">
                   <div className="w-68 h-68 rounded-full flex items-center justify-center animate-float">
                     <img
-                      src="src/public/metalogo.png"
+                      src={metalogo}
                       alt="Meta Logo"
                       className="w-68 h-68 object-contain"
                     />

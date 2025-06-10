@@ -12,6 +12,8 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
 import BaseHeader from "../../api/BaseHeader";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface RentModalProps {
   isOpen: boolean;
@@ -61,20 +63,22 @@ const RentModal: React.FC<RentModalProps> = ({
           bot_id: selectedCookieId || null,
         },
       });
-      if (response.status == 200) {
+      if (response.status == 200 && response.data.success) {
         onClose();
         setSuccessRent(response.data.message);
+        toast.success(response.data.message || "Thuê tài khoản thành công!");
       } else {
-        onClose();
+        toast.error(
+          response.data.message || "Không thể hoàn tất yêu cầu thuê tài khoản."
+        );
         setErrorRent(response.data.message);
       }
       console.log(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Rental error:", error);
-      addNotification(
-        "Có lỗi xảy ra",
-        "Không thể hoàn tất yêu cầu thuê tài khoản. Vui lòng thử lại sau",
-        "error"
+      toast.error(
+        error?.response?.data?.message ||
+          "Không thể hoàn tất yêu cầu thuê tài khoản. Vui lòng thử lại sau"
       );
     } finally {
       setIsLoading(false);
@@ -107,6 +111,18 @@ const RentModal: React.FC<RentModalProps> = ({
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        style={{ zIndex: 10001 }}
+      />
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -345,6 +361,7 @@ const RentModal: React.FC<RentModalProps> = ({
           </Card>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
