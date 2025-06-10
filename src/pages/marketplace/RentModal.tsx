@@ -35,7 +35,7 @@ const RentModal: React.FC<RentModalProps> = ({
   const [errors, setErrors] = useState<{ bmId?: string; limit?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [cookies, setCookies] = useState<any[]>([]);
-  const [selectedCookieId, setSelectedCookieId] = useState("");
+  const [selectedCookieId, setSelectedCookieId] = useState<any>("");
   const [isLoadingCookies, setIsLoadingCookies] = useState(false);
 
   const { user } = useAuth();
@@ -58,7 +58,7 @@ const RentModal: React.FC<RentModalProps> = ({
           ads_account_id: account?.account_id || "",
           user_id: userParse.user_id || "",
           amountPoint: calculateTotalPrice(),
-          cookie_id: selectedCookieId || null,
+          bot_id: selectedCookieId || null,
         },
       });
       if (response.status == 200) {
@@ -96,6 +96,7 @@ const RentModal: React.FC<RentModalProps> = ({
         params: {},
       });
       setCookies(response.data.data || []);
+      setSelectedCookieId(response.data.data?.[0].id);
     } catch (error) {
       console.error("Error fetching cookies:", error);
     } finally {
@@ -104,7 +105,6 @@ const RentModal: React.FC<RentModalProps> = ({
   };
 
   if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
