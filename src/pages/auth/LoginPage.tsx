@@ -6,6 +6,8 @@ import axios from "axios";
 import { BaseUrl } from "../../api/BaseHeader";
 import AtomicSpinner from "atomic-spinner";
 import { useUserStore } from "../../stores/useUserStore";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -15,7 +17,6 @@ const LoginPage: React.FC = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {}
   );
-  const { addNotification } = useNotification();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,31 +42,23 @@ const LoginPage: React.FC = () => {
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      await axios
-        .post(`${BaseUrl}/login`, {
-          email: email,
-          password: password,
-        })
-        .then((res) => {
-          setUser(res.data.data);
-          navigate("/");
-          localStorage.setItem("access_token", res.data.data.access_token);
-          localStorage.setItem("refresh_token", res.data.data.refresh_token);
-          localStorage.setItem("user", JSON.stringify(res.data.data));
-          addNotification(
-            "Đăng nhập thành công",
-            "Chào mừng bạn quay trở lại!",
-            "success"
-          );
-        })
-        .catch((err) => console.log(err));
-    } catch (error) {
-      console.error("Login error:", error);
-      addNotification(
-        "Đăng nhập thất bại",
-        "Email hoặc mật khẩu không chính xác",
-        "error"
-      );
+      const res = await axios.post(`${BaseUrl}/login`, { email, password });
+
+      if (!res.data.success) {
+        toast.error(res.data.message || "Đăng nhập thất bại");
+        return;
+      }
+
+      setUser(res.data.data);
+      navigate("/");
+      localStorage.setItem("access_token", res.data.data.access_token);
+      localStorage.setItem("refresh_token", res.data.data.refresh_token);
+      localStorage.setItem("user", JSON.stringify(res.data.data));
+      toast.success("Đăng nhập thành công!");
+    } catch (error: any) {
+      const msg =
+        error?.response?.data?.message || "Không thể kết nối đến máy chủ";
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -73,6 +66,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="h-screen w-screen flex">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-r from-transparent via-blue-100/70 to-white backdrop-blur-sm relative">
         <Link
           to="/"

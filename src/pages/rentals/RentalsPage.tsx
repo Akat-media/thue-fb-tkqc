@@ -239,6 +239,7 @@ const RentalsPage: React.FC = () => {
             status_dischard_partner: account.status_dischard_partner,
             status_limit_spend: account.status_limit_spend || 0,
             status_partner: account.status_partner || 0,
+            bm_origin: account.bm_origin,
             bot_id: account.bot_id,
             adAccount: {
               id: acc.account_id,
@@ -295,6 +296,7 @@ const RentalsPage: React.FC = () => {
             status_limit_spend: rental.status_limit_spend || 0,
             status_partner: rental.status_partner || 0,
             bot_id: rental.bot_id,
+            bm_origin: rental.bm_origin,
             adAccount: {
               id: adAccountData.account_id,
               name: adAccountData.name || `BM ${rental.bm_id}`,
@@ -420,7 +422,7 @@ const RentalsPage: React.FC = () => {
         method: "delete",
         params: {
           id: account?.id || "",
-          bm_origin: account?.adAccount?.bmId || "",
+          bm_origin: account?.bm_origin || "",
           ads_name: account?.adAccount?.name || "",
           bm_id: account?.userBmId || "",
           ads_account_id: account?.adAccountId || "",
