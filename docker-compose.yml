@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: .
+    container_name: akat-frontend
+    ports:
+      - "8080:80"
+    env_file:
+      - .env
