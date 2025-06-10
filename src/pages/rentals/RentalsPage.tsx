@@ -70,6 +70,7 @@ interface AdsRental {
   created_at: string;
   updated_at: string;
   accounts: any;
+  bot_id: any;
 }
 
 const RentalsPage: React.FC = () => {
@@ -219,9 +220,9 @@ const RentalsPage: React.FC = () => {
 
         const formattedAccounts = adAccounts.map((account: any) => {
           const acc = account.accounts || {};
-
+          console.log("acc", acc);
           return {
-            id: acc.id || `act-${account.ads_account_id}`,
+            id: account.id || `act-${account.ads_account_id}`,
             userId: account.user_id || "Unknown",
             adAccountId: account.ads_account_id,
             userBmId: account.bm_id || "Không tìm thấy BM ID",
@@ -238,6 +239,7 @@ const RentalsPage: React.FC = () => {
             status_dischard_partner: account.status_dischard_partner,
             status_limit_spend: account.status_limit_spend || 0,
             status_partner: account.status_partner || 0,
+            bot_id: account.bot_id,
             adAccount: {
               id: acc.account_id,
               name: acc.name || `Account ${acc.account_id}`,
@@ -292,6 +294,7 @@ const RentalsPage: React.FC = () => {
             status_dischard_partner: rental.status_dischard_partner,
             status_limit_spend: rental.status_limit_spend || 0,
             status_partner: rental.status_partner || 0,
+            bot_id: rental.bot_id,
             adAccount: {
               id: adAccountData.account_id,
               name: adAccountData.name || `BM ${rental.bm_id}`,
@@ -417,12 +420,13 @@ const RentalsPage: React.FC = () => {
         method: "delete",
         params: {
           id: account?.id || "",
-          bm_origin: account?.userBmId || "",
+          bm_origin: account?.adAccount?.bmId || "",
           ads_name: account?.adAccount?.name || "",
-          bm_id: account?.adAccount?.bmId || "",
+          bm_id: account?.userBmId || "",
           ads_account_id: account?.adAccountId || "",
           user_id: userParse.user_id || "",
           amountPoint: account?.adAccount?.defaultLimit || "",
+          bot_id: account?.bot_id || "",
         },
       });
       if (response.status == 200) {
@@ -698,6 +702,7 @@ const RentalsPage: React.FC = () => {
                                 size="sm"
                                 icon={<XOctagonIcon className="h-4 w-4" />}
                                 fullWidth
+                                onClick={() => hanleCancel(rental)}
                               >
                                 Vô hiệu hóa
                               </Button>
