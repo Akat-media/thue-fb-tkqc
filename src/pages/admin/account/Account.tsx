@@ -21,7 +21,7 @@ const Account = () => {
 
       {/* Main Content */}
       <div className="flex flex-1 flex-col min-w-0">
-        <div className="w-full max-w-screen-2xl box-border px-4 sm:px-6 md:px-10 pb-6 sm:pb-8 flex flex-col flex-1">
+        <div className="w-full box-border px-4 sm:px-6 md:px-10 pb-6 sm:pb-8 flex flex-col flex-1">
           <div className=" text-lg sm:text-xl font-bold leading-6 font-sans">
             Danh sách tài khoản
             <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-500 font-sans font-medium">

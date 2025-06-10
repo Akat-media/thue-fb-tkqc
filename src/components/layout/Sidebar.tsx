@@ -14,6 +14,7 @@ import {
   PanelRightClose,
   AlignStartHorizontal,
   Archive,
+  FileText,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import clsx from "clsx";
@@ -33,8 +34,8 @@ const Sidebar: React.FC<{
   const isAdsMenuActive =
     location.pathname.startsWith("/adsaccountmanager") ||
     location.pathname === "/add-account" ||
-    // location.pathname === "/usermanage";
-    location.pathname === "/admin/account";
+    location.pathname === "/admin/account" ||
+    location.pathname === "/admin/policy";
   const [openAdsSubmenu, setOpenAdsSubmenu] = useState(isAdsMenuActive);
   const toggleProfileMenu = () => setOpenProfileMenu(!openProfileMenu);
 
@@ -228,6 +229,19 @@ const Sidebar: React.FC<{
                   <Users className="w-4 h-4" />
                 </div>
                 <span className="text-gray-600">Quản lý người dùng</span>
+              </Link>
+              <Link
+                to="/admin/policy"
+                className={clsx(
+                  "flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700",
+                  location.pathname === "/admin/policy" &&
+                    "bg-white font-semibold"
+                )}
+              >
+                <div className="w-8 flex justify-center">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <span className="text-gray-600">Quản lý chính sách</span>
               </Link>
             </div>
           </div>

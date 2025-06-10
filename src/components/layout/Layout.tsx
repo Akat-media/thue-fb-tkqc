@@ -21,7 +21,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <main
         className={`transition-all duration-300 ${
           isSidebarOpen ? "ml-64" : "ml-14"
-        } flex-1 min-h-screen pl-0 pr-4 py-4 overflow-y-auto w-full bg-white shadow-inner`}
+        } flex-1 min-h-screen pl-0 pr-4 py-0 overflow-y-auto w-full bg-white shadow-inner`}
       >
         {children}
       </main>

@@ -23,6 +23,15 @@ import { toast } from "react-toastify";
 import BMCard from "./BMCard";
 import { NotiError, NotiSuccess } from "../../components/noti";
 
+interface BM {
+  id: string;
+  bm_id: string;
+  bm_name: string;
+  system_user_token?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 const MarketplacePage: React.FC = () => {
   const userString = localStorage.getItem("user");
   const userInfo = userString ? JSON.parse(userString) : null;
@@ -42,7 +51,7 @@ const MarketplacePage: React.FC = () => {
   );
   const [isRentModalOpen, setIsRentModalOpen] = useState(false);
   const [filteredAccounts, setFilteredAccounts] = useState<any>([]);
-  const [bmList, setBmList] = useState<any>([]);
+  const [bmList, setBmList] = useState<BM[]>([]);
   const [isCreateBMModalOpen, setIsCreateBMModalOpen] = useState(false);
   const [selectedBM, setSelectedBM] = useState<any>(null);
   const [isBMDetailModalOpen, setIsBMDetailModalOpen] = useState(false);
@@ -52,6 +61,8 @@ const MarketplacePage: React.FC = () => {
   const [errorRent, setErrorRent] = useState<any>(null);
   const [selectedSyncBMId, setSelectedSyncBMId] = useState<string>("");
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [bmToDelete, setBmToDelete] = useState<BM | null>(null);
 
   const handleCallAPi = async () => {
     try {
@@ -169,12 +180,41 @@ const MarketplacePage: React.FC = () => {
     }
   };
 
+  const handleDeleteBM = (bm: BM) => {
+    setBmToDelete(bm);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDeleteBM = async () => {
+    if (!bmToDelete) return;
+
+    try {
+      await BaseHeader({
+        method: "delete",
+        url: `facebook-bm`,
+        params: {
+          id: bmToDelete.id,
+        },
+      });
+      toast.success("Xóa tài khoản BM thành công");
+      fetchBMList();
+      setIsDeleteModalOpen(false);
+    } catch (error) {
+      console.error("Error deleting BM:", error);
+      toast.error("Không thể xóa tài khoản BM. Vui lòng thử lại sau.");
+    }
+  };
+
+  const { innerBorderRef: deleteModalRef } = useOnOutsideClick(() => {
+    setIsDeleteModalOpen(false);
+  });
+
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
-            <h2 className="text-2xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate">
+            <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
               Danh sách BM / Tài khoản quảng cáo
             </h2>
           </div>
@@ -293,7 +333,12 @@ const MarketplacePage: React.FC = () => {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {bmList.map((bm: any) => (
-                <BMCard key={bm.id} bm={bm} onClick={() => handleBMClick(bm)} />
+                <BMCard
+                  key={bm.id}
+                  bm={bm}
+                  onClick={() => handleBMClick(bm)}
+                  onDelete={handleDeleteBM}
+                />
               ))}
             </div>
           </div>
@@ -502,6 +547,41 @@ const MarketplacePage: React.FC = () => {
                     </div>
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {isDeleteModalOpen && bmToDelete && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
+            <div
+              ref={deleteModalRef}
+              className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[500px] relative"
+            >
+              <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                onClick={() => setIsDeleteModalOpen(false)}
+              >
+                ×
+              </button>
+              <h2 className="text-xl font-semibold mb-4">Xác nhận xóa</h2>
+              <p className="mb-6">
+                Bạn có chắc chắn muốn xóa BM{" "}
+                <span className="text-blue-600">{bmToDelete.bm_name}</span> này
+                không?
+              </p>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={confirmDeleteBM}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white"
+                >
+                  Xóa
+                </button>
               </div>
             </div>
           </div>
