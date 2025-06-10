@@ -17,10 +17,23 @@ import StatsCharts from "./analytics/StatsCharts.tsx";
 import ChartDashboard from "./analytics/ChartDashboard.tsx";
 import Counter from "../components/ui/Counter";
 import axios from "axios";
+import { DatePicker } from 'antd';
+import dayjs from "dayjs";
+import {createGlobalStyle} from "styled-components";
+
+const GlobalStyle = createGlobalStyle`
+   @media (max-width: 768px) {
+    .ant-picker-panels {
+      flex-direction: column !important;
+    }
+  }
+`;
+
 const HomePage: React.FC = () => {
   const user = localStorage.getItem("user");
   const role = typeof user === "string" ? JSON.parse(user)?.user.role : "";
-
+  const { RangePicker } = DatePicker;
+  const dateFormat = 'YYYY/MM/DD';
   const sliderRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [stats, setStats] = useState<any>(null);
@@ -428,22 +441,32 @@ const HomePage: React.FC = () => {
 
       {role === "admin" && (
         <>
-          <div className="flex h-14 items-center justify-between gap-8 px-4 sm:px-6">
-            <div className="flex items-center gap-2">
-              <Bell className="w-4 h-4 text-yellow-500" />
-              <span className="font-medium text-red-600 font-sans">
-                {new Date().toLocaleDateString("vi-VN", {
-                  weekday: "long",
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
-              </span>
+          <div className="flex flex-col mb-7 md:flex-row flex-1 max-w-screen-3xl mx-auto box-border px-4 sm:px-10 items-start md:items-center justify-between gap-2">
+            <GlobalStyle />
+            <RangePicker
+              defaultValue={[
+                dayjs("2015/01/01", dateFormat),
+                dayjs("2015/01/01", dateFormat),
+              ]}
+              format={dateFormat}
+            />
+            <div className="flex h-14 items-center justify-between gap-8 sm:px-6">
+              <div className="flex items-center gap-2">
+                <Bell className="w-4 h-4 text-yellow-500" />
+                <span className="font-medium text-red-600 font-sans">
+                  {new Date().toLocaleDateString("vi-VN", {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </span>
+              </div>
+              {/*<div className="flex items-center gap-6 max-md:hidden">*/}
+              {/*  <Settings className="w-5 h-5 text-gray-600 cursor-pointer" />*/}
+              {/*  <User className="w-5 h-5 text-gray-600 cursor-pointer" />*/}
+              {/*</div>*/}
             </div>
-            {/*<div className="flex items-center gap-6 max-md:hidden">*/}
-            {/*  <Settings className="w-5 h-5 text-gray-600 cursor-pointer" />*/}
-            {/*  <User className="w-5 h-5 text-gray-600 cursor-pointer" />*/}
-            {/*</div>*/}
           </div>
 
           <div className="flex flex-1 flex-col">
