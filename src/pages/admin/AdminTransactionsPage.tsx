@@ -423,13 +423,21 @@ const AdminTransactionsPage: React.FC = () => {
   } = usePagination(1, 10);
   const hanleTransactionMoney = async () => {
     try {
-      const response = await BaseHeader({
-        url: "/transaction",
-        method: "get",
-        params: {
-          user_id: userParse?.user_id,
-        },
-      });
+      let response;
+      if (userParse?.user?.role === "admin") {
+        response = await BaseHeader({
+          url: "https://api-rent.duynam.store/api/v1/transaction-all",
+          method: "get",
+        });
+      } else {
+        response = await BaseHeader({
+          url: "/transaction",
+          method: "get",
+          params: {
+            user_id: userParse?.user_id,
+          },
+        });
+      }
       const transactionData = response.data.data.data;
       setTransactions(transactionData);
       setFiltered(transactionData); // Cập nhật filtered khi nhận dữ liệu mới

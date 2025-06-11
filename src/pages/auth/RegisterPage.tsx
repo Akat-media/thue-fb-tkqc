@@ -214,17 +214,23 @@ const RegisterPage: React.FC = () => {
                   className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8] pr-10"
                 />
                 <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
               {errors.password ? (
-                  <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+                <p className="text-sm text-red-500 mt-1">{errors.password}</p>
               ) : (
-                  <p className="text-xs text-gray-400 mt-1">Mật khẩu tối thiểu 6 ký tự.</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Mật khẩu tối thiểu 6 ký tự.
+                </p>
               )}
             </div>
             <div>
@@ -263,7 +269,9 @@ const RegisterPage: React.FC = () => {
                 </p>
               )}
               {!errors.confirmPassword && (
-                  <p className="text-xs text-gray-400 mt-1">Nhập lại mật khẩu để xác nhận.</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Nhập lại mật khẩu để xác nhận.
+                </p>
               )}
             </div>
             <button

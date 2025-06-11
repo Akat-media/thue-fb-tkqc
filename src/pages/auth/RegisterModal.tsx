@@ -8,6 +8,7 @@ import AtomicSpinner from "atomic-spinner";
 import { Mail, User, Phone, Eye, EyeOff } from "lucide-react";
 import { useUserStore } from "../../stores/useUserStore.ts";
 import { useNavigate } from "react-router-dom";
+import registermodal from "../../public/sand.jpg";
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -141,7 +142,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
         <div className="hidden md:block w-1/2 bg-blue-700">
           <img
-            src="src/public/login.jpg"
+            src={registermodal}
             alt="Ảnh mô tả"
             className="w-full h-full object-cover"
           />
@@ -258,7 +259,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               {errors.password ? (
                 <p className="text-sm text-red-500 mt-1">{errors.password}</p>
               ) : (
-                <p className="text-xs text-gray-400 mt-1">Mật khẩu tối thiểu 6 ký tự.</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Mật khẩu tối thiểu 6 ký tự.
+                </p>
               )}
             </div>
 
@@ -298,7 +301,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 </p>
               )}
               {!errors.confirmPassword && (
-                  <p className="text-xs text-gray-400 mt-1">Nhập lại mật khẩu để xác nhận.</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Nhập lại mật khẩu để xác nhận.
+                </p>
               )}
             </div>
 
