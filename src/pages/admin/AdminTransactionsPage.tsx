@@ -618,7 +618,9 @@ const AdminTransactionsPage: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {item?.amountVND}
+                        {typeof item?.amountVND === "number"
+                          ? item.amountVND.toLocaleString()
+                          : item?.amountVND}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
@@ -631,7 +633,9 @@ const AdminTransactionsPage: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {item?.points}
+                        {typeof item?.points === "number"
+                          ? item.points.toLocaleString()
+                          : item?.points}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
@@ -908,7 +912,9 @@ const AdminTransactionsPage: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {item?.points_used}
+                        {typeof item?.points_used === "number"
+                          ? item.points_used.toLocaleString()
+                          : item?.points_used}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${

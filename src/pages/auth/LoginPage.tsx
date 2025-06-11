@@ -8,6 +8,7 @@ import AtomicSpinner from "atomic-spinner";
 import { useUserStore } from "../../stores/useUserStore";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import loginimg from "../../public/login.jpg";
 
 const LoginPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -164,7 +165,7 @@ const LoginPage: React.FC = () => {
       </div>
       <div className="hidden md:block w-1/2 h-full">
         <img
-          src="src/public/login.jpg"
+          src={loginimg}
           alt="Background"
           className="w-full h-full object-cover"
         />
