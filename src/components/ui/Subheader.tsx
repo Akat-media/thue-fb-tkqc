@@ -11,24 +11,24 @@ const Subheader = ({ active, setActive }: Props) => {
   const userobj = useUserStore((state) => state.user);
   return (
     <Container img={img}>
-      <div className="bg-info mb-5 hidden w-full justify-between rounded-lg p-4 md:flex">
-        <div className="flex">
+      <div className="bg-info mb-5 w-full justify-between rounded-lg p-3 sm:p-4 flex flex-col md:flex-row gap-3 md:gap-0">
+        <div className="flex flex-col md:flex-row w-full md:w-auto">
           <a
-            className=" relative flex min-w-[284px] flex-col justify-between "
-            href="/account/profile"
+            className="relative flex min-w-[200px] sm:min-w-[284px] flex-col justify-between"
+            href={userobj?.role === "admin" ? "/admin/profile" : "/profile"}
           >
             <div className="flex w-full flex-row justify-between">
               <div className="flex w-full flex-row">
                 <span
-                  className="rounded-full ant-avatar ant-avatar-circle ant-avatar-icon shrink-1 !h-9 !w-9 !m-[5px] !h-[50px] !w-[50px] !text-[24px] css-1k979oh"
+                  className="rounded-full ant-avatar ant-avatar-circle ant-avatar-icon shrink-1 !h-10 !w-10 sm:!h-[50px] sm:!w-[50px] !m-[5px] !text-[20px] sm:!text-[24px] css-1k979oh"
                   style={{ backgroundColor: "rgb(184, 184, 184)" }}
                 >
                   <img className="rounded-full" src={avatar} alt="avatar" />
                 </span>
-                <div className="ml-3 flex flex-col justify-center py-[5px]">
-                  <span className="text-white text-16 line-clamp-1 flex w-[190px] flex-col gap-y-2 text-ellipsis font-medium leading-6">
+                <div className="ml-2 sm:ml-3 flex flex-col justify-center py-[5px]">
+                  <span className="text-white text-[14px] sm:text-16 line-clamp-1 flex w-[120px] sm:w-[190px] flex-col gap-y-2 text-ellipsis font-medium leading-6">
                     {userobj?.phone}
-                    <div className="text-12 flex gap-2 font-medium leading-4">
+                    <div className="text-10 sm:text-12 flex gap-2 font-medium leading-4">
                       <svg
                         width={16}
                         height={16}
@@ -97,13 +97,13 @@ const Subheader = ({ active, setActive }: Props) => {
             </div>
           </a>
           <div
-            className="mx-3 h-[60px] w-[1px]"
+            className="hidden md:block mx-3 h-[60px] w-[1px]"
             style={{
               background:
                 "linear-gradient(90deg, rgb(1, 171, 77) 0%, rgb(1, 171, 77) 42.52%, rgb(1, 171, 77) 100%)",
             }}
           />
-          <div className="text-secondv2-green1 text-16 items-left justify-left flex min-w-[150px] flex-col gap-y-2 font-normal">
+          <div className="text-secondv2-green1 text-[14px] sm:text-16 items-left justify-left flex min-w-[120px] sm:min-w-[150px] flex-col gap-y-2 font-normal mt-2 md:mt-0">
             <div className="flex flex-row gap-x-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -117,25 +117,25 @@ const Subheader = ({ active, setActive }: Props) => {
                   fill="#FFDA55"
                 />
               </svg>
-              <span className="text-[#FFDA55] text-18 font-medium leading-6">
+              <span className="text-[#FFDA55] text-[16px] sm:text-18 font-medium leading-6">
                 Số dư
               </span>
             </div>
-            <strong className="text-[#FFDA55] text-16 text-left font-bold leading-6">
+            <strong className="text-[#FFDA55] text-[14px] sm:text-16 text-left font-bold leading-6">
               {userobj?.points?.toLocaleString("vi-VN")} point
             </strong>
           </div>
         </div>
-        <div className="flex gap-10 overflow-hidden">
+        <div className="flex gap-3 sm:gap-10 overflow-x-auto md:overflow-hidden">
           <a
             onClick={() => {
               setActive("money");
             }}
             className={`${
               active === "money" ? "bg-[#FFDA55] " : "bg-white "
-            }text-pri-darkest text-14 border-right-border-pc 
-            relative flex h-[60px] min-w-[108px] flex-col items-center rounded-lg
-              py-1.5 font-bold leading-6`}
+            }text-pri-darkest text-[13px] sm:text-14 border-right-border-pc 
+            relative flex h-[48px] sm:h-[60px] min-w-[90px] sm:min-w-[90px] flex-col items-center rounded-lg
+              py-1 font-bold leading-6`}
             href="#"
           >
             <svg
@@ -200,9 +200,9 @@ const Subheader = ({ active, setActive }: Props) => {
             }}
             className={`${
               active === "points" ? "bg-[#FFDA55] " : "bg-white "
-            }text-pri-darkest text-14 border-right-border-pc 
-                      relative flex h-[60px] min-w-[108px] flex-col items-center rounded-lg
-                        py-1.5 font-bold leading-6`}
+            }text-pri-darkest text-[13px] sm:text-14 border-right-border-pc 
+                      relative flex h-[48px] sm:h-[60px] min-w-[90px] sm:min-w-[90px] flex-col items-center rounded-lg
+                        py-1 font-bold leading-6`}
             href="#"
           >
             <svg

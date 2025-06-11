@@ -510,7 +510,7 @@ const PaymentPage: React.FC = () => {
                           !customAmount ||
                           parseInt(customAmount) < 50000 ||
                           parseInt(customAmount) % 1000 !== 0
-                            ? "Số tiền phải từ 50.000 VNĐ và là bội số của 1.000"
+                            ? "Số tiền phải từ 50.000 VNĐ trở lên"
                             : ""
                         }
                       >

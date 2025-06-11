@@ -33,7 +33,7 @@ const RentModal: React.FC<RentModalProps> = ({
   const objetUser = localStorage.getItem("user");
   const userParse = JSON.parse(objetUser || "{}");
   const [userBmId, setUserBmId] = useState("");
-  const [requestedLimit, setRequestedLimit] = useState(50000);
+  const [requestedLimit, setRequestedLimit] = useState<number | null>(50000);
   const [errors, setErrors] = useState<{ bmId?: string; limit?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [cookies, setCookies] = useState<any[]>([]);
@@ -44,10 +44,22 @@ const RentModal: React.FC<RentModalProps> = ({
   const { addNotification } = useNotification();
 
   const calculateTotalPrice = () => {
+    if (requestedLimit === null || isNaN(requestedLimit)) return 0;
     return requestedLimit + requestedLimit * 0.1;
   };
 
   const handleSubmit = async () => {
+    if (
+      requestedLimit === null ||
+      isNaN(requestedLimit) ||
+      requestedLimit <= 10000
+    ) {
+      setErrors((prev) => ({
+        ...prev,
+        limit: "Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ",
+      }));
+      return;
+    }
     try {
       setIsLoading(true);
       const response = await BaseHeader({
@@ -107,6 +119,13 @@ const RentModal: React.FC<RentModalProps> = ({
       setIsLoadingCookies(false);
     }
   };
+
+  const isValidBmId = /^[0-9]+$/.test(userBmId) && userBmId.trim() !== "";
+  const isValidLimit =
+    requestedLimit !== null &&
+    Number.isInteger(requestedLimit) &&
+    requestedLimit > 10000;
+  const isValid = isValidBmId && isValidLimit;
 
   if (!isOpen) return null;
   return (
@@ -190,8 +209,16 @@ const RentModal: React.FC<RentModalProps> = ({
                     placeholder="Ví dụ: 123456789"
                     value={userBmId}
                     onChange={(e) => setUserBmId(e.target.value)}
-                    error={errors.bmId}
-                    helperText="BM ID để chúng tôi cấp quyền truy cập"
+                    error={
+                      !isValidBmId
+                        ? "BM ID phải là chuỗi ID và không được để trống"
+                        : ""
+                    }
+                    helperText={
+                      !isValidBmId
+                        ? "BM ID phải là số nguyên dương và không được để trống"
+                        : "BM ID để chúng tôi cấp quyền truy cập"
+                    }
                     className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                   />
                 </div>
@@ -217,20 +244,54 @@ const RentModal: React.FC<RentModalProps> = ({
                     type="number"
                     min={account.defaultLimit / 2}
                     max={account.defaultLimit * 2}
-                    step={100000}
-                    value={requestedLimit}
-                    onChange={(e) =>
-                      setRequestedLimit(parseInt(e.target.value))
+                    step={50000}
+                    value={requestedLimit === null ? "" : requestedLimit}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === "") {
+                        setRequestedLimit(null);
+                        setErrors((prev) => ({ ...prev, limit: undefined }));
+                        return;
+                      }
+                      const num = parseInt(value, 10);
+                      if (!isNaN(num) && num >= 0) {
+                        setRequestedLimit(num);
+                        setErrors((prev) => ({ ...prev, limit: undefined }));
+                      }
+                    }}
+                    onBlur={() => {
+                      if (
+                        requestedLimit === null ||
+                        !Number.isInteger(requestedLimit) ||
+                        requestedLimit <= 10000
+                      ) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          limit: "Số tiền phải lớn hơn 10.000 VNĐ",
+                        }));
+                      } else {
+                        setErrors((prev) => ({ ...prev, limit: undefined }));
+                      }
+                    }}
+                    error={
+                      !isValidLimit
+                        ? "Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ"
+                        : ""
                     }
-                    error={errors.limit}
-                    // helperText={`Hạn mức mặc định: ${account.defaultLimit.toLocaleString(
-                    //   "vi-VN"
-                    // )} VNĐ. Phí 5% cho phần vượt quá`}
+                    helperText={
+                      !isValidLimit
+                        ? "Số tiền phải lớn hơn 10.000 VNĐ"
+                        : undefined
+                    }
                     fullWidth
                     className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                   />
                   <div className="text-sm text-gray-500 mt-1 pl-2">
-                    Hạn mức: {requestedLimit.toLocaleString("vi-VN")} VNĐ
+                    Hạn mức:{" "}
+                    {requestedLimit !== null && !isNaN(requestedLimit)
+                      ? requestedLimit.toLocaleString("vi-VN")
+                      : "—"}{" "}
+                    VNĐ
                   </div>
                 </div>
 
@@ -278,18 +339,19 @@ const RentModal: React.FC<RentModalProps> = ({
                       VNĐ
                     </span>
                   </div> */}
-                  {requestedLimit > account.defaultLimit && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Phí tăng limit</span>
-                      <span className="text-gray-900 font-medium">
-                        {/* {(
+                  {requestedLimit !== null &&
+                    requestedLimit > account.defaultLimit && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500">Phí tăng limit</span>
+                        <span className="text-gray-900 font-medium">
+                          {/* {(
                           (requestedLimit - account.defaultLimit) *
                           0.05
                         ).toLocaleString("vi-VN")}{" "}
                         VNĐ */}
-                      </span>
-                    </div>
-                  )}
+                        </span>
+                      </div>
+                    )}
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Phí dịch vụ (10%)</span>
                     <span className="text-gray-900 font-medium">
@@ -353,7 +415,12 @@ const RentModal: React.FC<RentModalProps> = ({
                   handleSubmit();
                 }}
                 isLoading={isLoading}
-                disabled={false}
+                disabled={isLoading || !isValidBmId || !isValidLimit}
+                className={
+                  !isValidBmId || !isValidLimit
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : ""
+                }
               >
                 Xác nhận thuê
               </Button>
