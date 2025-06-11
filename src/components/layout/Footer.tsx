@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1">
-            <Link to="/" className="text-white text-xl font-semibold	">
+            <Link to="/" className="text-white text-2xl font-semibold	">
               AKAds
             </Link>
             <p className="mt-2 text-sm text-gray-300">
@@ -16,22 +16,28 @@ const Footer: React.FC = () => {
               và an toàn.
             </p>
             <div className="mt-4 flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a
+                href="https://www.facebook.com/akamedia.giaiphapso"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <span className="sr-only">Facebook</span>
                 <Facebook className="h-6 w-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white">
-                <span className="sr-only">Twitter</span>
-                <Twitter className="h-6 w-6" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a
+                href="https://www.instagram.com/akamedia.vn/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <span className="sr-only">Instagram</span>
                 <Instagram className="h-6 w-6" />
               </a>
             </div>
           </div>
           <div className="col-span-1">
-            <h3 className="text-sm font-semibold text-gray-200 uppercase tracking-wider">
+            <h3 className="text-md font-semibold text-white uppercase tracking-wider">
               Dịch vụ
             </h3>
             <ul className="mt-4 space-y-2">
@@ -64,34 +70,29 @@ const Footer: React.FC = () => {
             </ul>
           </div>
           <div className="col-span-1">
-            <h3 className="text-sm font-semibold text-gray-200 uppercase tracking-wider">
+            <h3 className="text-md font-semibold text-white uppercase tracking-wider">
               Hỗ trợ
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link to="/faq" className="text-gray-300 hover:text-white">
+                <Link to="/policy" className="text-gray-300 hover:text-white">
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="text-gray-300 hover:text-white">
+                <Link to="/policy" className="text-gray-300 hover:text-white">
                   Điều khoản sử dụng
                 </Link>
               </li>
               <li>
-                <Link to="/privacy" className="text-gray-300 hover:text-white">
+                <Link to="/policy" className="text-gray-300 hover:text-white">
                   Chính sách bảo mật
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-gray-300 hover:text-white">
-                  Liên hệ
                 </Link>
               </li>
             </ul>
           </div>
           <div className="col-span-1">
-            <h3 className="text-sm font-semibold text-gray-200 uppercase tracking-wider">
+            <h3 className="text-md font-semibold text-white uppercase tracking-wider">
               Liên hệ
             </h3>
             <ul className="mt-4 space-y-2">

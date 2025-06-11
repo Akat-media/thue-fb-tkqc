@@ -17,6 +17,11 @@ const Support: React.FC = () => {
     message: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errors, setErrors] = useState<{
+    name?: string;
+    email?: string;
+    message?: string;
+  }>({});
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -25,11 +30,26 @@ const Support: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validate = () => {
+    const newErrors: { name?: string; email?: string; message?: string } = {};
+    if (!formData.name.trim()) newErrors.name = "Vui lòng nhập họ và tên.";
+    if (!formData.email.trim()) {
+      newErrors.email = "Vui lòng nhập email.";
+    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formData.email)) {
+      newErrors.email = "Vui lòng nhập đúng định dạng email.";
+    }
+    if (!formData.message.trim())
+      newErrors.message = "Vui lòng nhập nội dung cần hỗ trợ!.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    // Simulate form submission
+    if (!validate()) return;
     setIsSubmitted(true);
     setFormData({ name: "", email: "", message: "" });
+    setErrors({});
     setTimeout(() => setIsSubmitted(false), 3000);
   };
 
@@ -64,7 +84,7 @@ const Support: React.FC = () => {
                         htmlFor="name"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Họ và Tên
+                        Họ và Tên <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -72,16 +92,22 @@ const Support: React.FC = () => {
                         id="name"
                         value={formData.name}
                         onChange={handleInputChange}
+                        required
                         className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                         placeholder="Nhập họ và tên"
                       />
+                      {errors.name && (
+                        <p className="text-xs text-red-500 mt-1">
+                          {errors.name}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label
                         htmlFor="email"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Email
+                        Email <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="email"
@@ -89,30 +115,52 @@ const Support: React.FC = () => {
                         id="email"
                         value={formData.email}
                         onChange={handleInputChange}
+                        required
                         className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                         placeholder="Nhập email của bạn"
                       />
+                      {errors.email && (
+                        <p className="text-xs text-red-500 mt-1">
+                          {errors.email}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label
                         htmlFor="message"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Nội dung
+                        Nội dung <span className="text-red-500">*</span>
                       </label>
                       <textarea
                         name="message"
                         id="message"
                         value={formData.message}
                         onChange={handleInputChange}
+                        required
                         rows={4}
                         className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                         placeholder="Mô tả vấn đề của bạn"
                       />
+                      {errors.message && (
+                        <p className="text-xs text-red-500 mt-1">
+                          {errors.message}
+                        </p>
+                      )}
                     </div>
                     <button
                       onClick={handleSubmit}
-                      className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      disabled={
+                        !formData.name.trim() ||
+                        !formData.email.trim() ||
+                        !formData.message.trim()
+                      }
+                      className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                        (!formData.name.trim() ||
+                          !formData.email.trim() ||
+                          !formData.message.trim()) &&
+                        "opacity-50 cursor-not-allowed"
+                      }`}
                     >
                       <Send className="w-5 h-5 mr-2" />
                       Gửi Yêu Cầu
@@ -183,14 +231,14 @@ const Support: React.FC = () => {
                         className="block mt-1 pl-9 text-gray-600"
                         href="tel:+Thứ 2 - Thứ 6: 9:00 SA - 17:00 CH"
                       >
-                        Thứ 2 - Thứ 6: 9:00 - 17:00
+                        Thứ 2 - Thứ 7: 9:00 SA - 17:00 CH
                       </a>
-                      <a
+                      {/* <a
                         className="block pl-9 text-gray-600"
                         href="tel:+Thứ 7: 9:00 SA - 12:00 CH"
                       >
                         Thứ 7: 9:00 - 17:00
-                      </a>
+                      </a> */}
                     </div>
                   </div>
                 </div>
