@@ -6,6 +6,7 @@ import axios from "axios";
 import { BaseUrl } from "../../api/BaseHeader";
 import AtomicSpinner from "atomic-spinner";
 import { useUserStore } from "../../stores/useUserStore";
+import ForgotPasswordModal from "./ForgotPasswordModal.tsx";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import loginimg from "../../public/login.jpg";
@@ -20,6 +21,7 @@ const LoginPage: React.FC = () => {
   );
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: { email?: string; password?: string } = {};
@@ -36,30 +38,28 @@ const LoginPage: React.FC = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  const setUser = useUserStore((state) => state.setUser);
+
+  const {setUser} = useUserStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      const res = await axios.post(`${BaseUrl}/login`, { email, password });
-
-      if (!res.data.success) {
-        toast.error(res.data.message || "Đăng nhập thất bại");
-        return;
-      }
-
-      setUser(res.data.data);
+      const res = await axios.post(`${BaseUrl}/login`,
+          {
+            email: email,
+            password: password,
+          }
+      )
+      setUser(res.data.data.user);
       navigate("/");
       localStorage.setItem("access_token", res.data.data.access_token);
       localStorage.setItem("refresh_token", res.data.data.refresh_token);
       localStorage.setItem("user", JSON.stringify(res.data.data));
       toast.success("Đăng nhập thành công!");
-    } catch (error: any) {
-      const msg =
-        error?.response?.data?.message || "Không thể kết nối đến máy chủ";
-      toast.error(msg);
+    } catch (error:any) {
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại");
     } finally {
       setIsLoading(false);
     }
@@ -138,12 +138,22 @@ const LoginPage: React.FC = () => {
               )}
             </div>
             <div className="flex justify-between items-center text-sm text-gray-600">
-              <Link
-                to="/forgot-password"
-                className="text-blue-600 hover:underline"
+              <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-blue-600 hover:underline"
               >
                 Quên Mật Khẩu?
-              </Link>
+              </button>
+              {showForgotPassword && (
+                  <ForgotPasswordModal
+                      isOpen={showForgotPassword}
+                      onClose={() => setShowForgotPassword(false)}
+                      onSwitchToLogin={() => {
+                        setShowForgotPassword(false);
+                      }}
+                  />
+              )}
             </div>
             <button
               type="submit"

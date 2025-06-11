@@ -5,7 +5,7 @@ import { BaseUrl } from "../../api/BaseHeader";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AtomicSpinner from "atomic-spinner";
-import { Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
+import { Mail, User, Phone, Eye, EyeOff } from "lucide-react";
 import { useUserStore } from "../../stores/useUserStore.ts";
 import { useNavigate } from "react-router-dom";
 
@@ -148,7 +148,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
         </div>
 
         <div className="w-full md:w-1/2 p-8">
-          <h2 className="text-2xl font-bold text-blue-600 mb-2">
+          <h2 className="text-2xl font-semibold text-blue-600 mb-2">
             Tạo Tài Khoản Mới
           </h2>
           <p className="text-sm text-gray-500 mb-6">
@@ -159,9 +159,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-blue-600"
+                className="block text-sm font-semibold text-blue-600"
               >
-                Họ tên
+                Họ tên <span className="text-red-500">(*)</span>
               </label>
               <div className="relative mt-1">
                 <input
@@ -182,9 +182,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-blue-600"
+                className="block text-sm font-semibold text-blue-600"
               >
-                Email
+                Email <span className="text-red-500">(*)</span>
               </label>
               <div className="relative mt-1">
                 <input
@@ -205,9 +205,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             <div>
               <label
                 htmlFor="phone"
-                className="block text-sm font-medium text-blue-600"
+                className="block text-sm font-semibold text-blue-600"
               >
-                Số điện thoại
+                Số điện thoại <span className="text-red-500">(*)</span>
               </label>
               <div className="relative mt-1">
                 <input
@@ -228,9 +228,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-blue-600"
+                className="block text-sm font-semibold text-blue-600"
               >
-                Mật khẩu
+                Mật khẩu <span className="text-red-500">(*)</span>
               </label>
               <div className="relative mt-1">
                 <input
@@ -255,17 +255,19 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   </button>
                 </div>
               </div>
-              {errors.password && (
+              {errors.password ? (
                 <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+              ) : (
+                <p className="text-xs text-gray-400 mt-1">Mật khẩu tối thiểu 6 ký tự.</p>
               )}
             </div>
 
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block text-sm font-medium text-blue-600"
+                className="block text-sm font-semibold text-blue-600"
               >
-                Xác nhận mật khẩu
+                Xác nhận mật khẩu <span className="text-red-500">(*)</span>
               </label>
               <div className="relative mt-1">
                 <input
@@ -294,6 +296,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 <p className="text-sm text-red-500 mt-1">
                   {errors.confirmPassword}
                 </p>
+              )}
+              {!errors.confirmPassword && (
+                  <p className="text-xs text-gray-400 mt-1">Nhập lại mật khẩu để xác nhận.</p>
               )}
             </div>
 
