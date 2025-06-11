@@ -125,6 +125,14 @@ const Navbar: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      const img = JSON.parse(stored)?.user?.images;
+      if (img) setAvatar(`${img}?t=${Date.now()}`);
+    }
+  }, [user]);
+
+  useEffect(() => {
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id);
       socket.emit("joinRoom");
@@ -142,6 +150,7 @@ const Navbar: React.FC = () => {
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isAuthMenuOpen, setIsAuthMenuOpen] = useState(false);
+  const [avatar, setAvatar] = useState("/avatar.jpg");
 
   const navigate = useNavigate();
 
@@ -358,7 +367,7 @@ const Navbar: React.FC = () => {
                     className="w-10 h-10 rounded-full overflow-hidden border-2 border-white hover:border-gray-300 transition-colors"
                   >
                     <img
-                      src="/avatar.jpg"
+                      src={avatar}
                       alt="User Avatar"
                       className="w-full h-full object-cover"
                     />
@@ -369,7 +378,7 @@ const Navbar: React.FC = () => {
                     className="w-10 h-10 rounded-full overflow-hidden border-2 border-white hover:border-gray-300 transition-colors"
                   >
                     <img
-                      src="/avatar.jpg"
+                      src={avatar}
                       alt="Auth Avatar"
                       className="w-full h-full object-cover"
                     />
@@ -411,7 +420,7 @@ const Navbar: React.FC = () => {
                     className="w-10 h-10 rounded-full overflow-hidden border-2 border-white hover:border-gray-300 transition-colors"
                   >
                     <img
-                      src="/avatar.jpg"
+                      src={avatar}
                       alt="User Avatar"
                       className="w-full h-full object-cover"
                     />

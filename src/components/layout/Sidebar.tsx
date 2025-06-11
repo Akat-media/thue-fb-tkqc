@@ -31,6 +31,7 @@ const Sidebar: React.FC<{
   const location = useLocation();
   const navigate = useNavigate();
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
+  const [avatar, setAvatar] = useState("/avatar.jpg");
   const isAdsMenuActive =
     location.pathname.startsWith("/adsaccountmanager") ||
     location.pathname === "/add-account" ||
@@ -64,9 +65,19 @@ const Sidebar: React.FC<{
   }, [isSidebarOpen, toggleSidebar]);
   const fetchUser = useUserStore((state) => state.fetchUser);
   const userobj = useUserStore((state) => state.user);
+
   useEffect(() => {
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      const img = JSON.parse(stored)?.user?.images;
+      if (img) setAvatar(`${img}?t=${Date.now()}`);
+    }
+  }, []);
+
   useEffect(() => {
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id);
@@ -315,9 +326,11 @@ const Sidebar: React.FC<{
               className="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-white transition"
             >
               <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0 -ml-1">
-                  {userobj?.username?.charAt(0)?.toUpperCase()}
-                </div>
+                <img
+                  src={avatar}
+                  alt="Avatar"
+                  className="h-8 w-8 rounded-full object-cover border shrink-0"
+                />
                 <div className="flex flex-col text-left">
                   <span className="text-sm font-medium text-gray-900">
                     {userobj?.username}
