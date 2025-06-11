@@ -22,7 +22,34 @@ import dayjs from "dayjs";
 import { createGlobalStyle } from "styled-components";
 import img1 from "../public/homepage.png";
 import metalogo from "../public/metalogo.png";
+import { toast, ToastContainer } from "react-toastify";
 
+type MonthlyTotal = {
+  totalRevenue: number;
+  totalUsers: number;
+  totalTransaction: number;
+  totalAdsAccounts:number
+  growUser:number;
+  growTransaction:number;
+  growAdsAccount:number;
+  growRevenue:number
+}
+type MonthlyStatsItem = {
+  month:string,
+  revenue:number,
+  newUsers:number,
+  newAdsAccounts:number,
+  countTransactions:number
+}
+export type UserInfo = {
+  username:string,
+  totalAmount:number
+}
+export type MonthlyStats = { 
+  monthlyStats: MonthlyStatsItem[];
+  totals: MonthlyTotal;
+  userList: UserInfo[]
+}
 const GlobalStyle = createGlobalStyle`
    @media (max-width: 768px) {
     .ant-picker-panels {
@@ -39,7 +66,11 @@ const HomePage: React.FC = () => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [stats, setStats] = useState<any>(null);
-
+  const [statsMonthly, setStatsMonthly] = useState<MonthlyStats>({monthlyStats: [],userList: [], totals: {totalRevenue: 0, totalUsers: 0, totalTransaction: 0, totalAdsAccounts: 0, growUser: 0, growTransaction: 0, growAdsAccount: 0, growRevenue: 0 }});
+  const [dateRange, setDateRange] = useState({
+    targetFrom: dayjs().subtract(5, "month").startOf("month").format("YYYY/MM/DD"),
+    targetTo: dayjs().startOf("month").format("YYYY/MM/DD"),
+  });
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -90,9 +121,45 @@ const HomePage: React.FC = () => {
     },
   ];
   const totalSlides = 1;
-
+  const handleRangeChange = (dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null, dateStrings: [string, string]) => {
+    if (dateStrings.length === 2) {
+      const targetDayFrom = dateStrings[0];
+      const targetDayTo = dateStrings[1];
+      setDateRange({
+        targetFrom: targetDayFrom,
+        targetTo: targetDayTo,})
+      fetchDataChart();
+    }
+  };
+  const fetchDataChart = async () => {
+    try {
+      const response = await axios.get(
+        `https://api-rent.duynam.store/api/v1/monthlyStatistics?targetDayFrom=${dateRange.targetFrom}&targetDayTo=${dateRange.targetTo}`
+      );
+      setStatsMonthly(response.data)
+      console.log("Dữ liệu nhận được:", response.data);
+      console.log("vaooo 2222")
+    } catch (error:any) {
+      console.log("vaooo 111",error)
+      toast.error(error.response?.data?.message || "Lỗi khi lấy dữ liệu thống kê");
+    }
+  };
+  useEffect(() => {
+    fetchDataChart();
+  },[dateRange.targetFrom, dateRange.targetTo]);
   return (
     <Layout>
+      <ToastContainer 
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       {role !== "admin" && (
         <>
           <div className="bg-gradient-to-r from-[#1e3a8a] to-[#3b82f6] text-white relative overflow-hidden">
@@ -447,10 +514,11 @@ const HomePage: React.FC = () => {
             <GlobalStyle />
             <RangePicker
               defaultValue={[
-                dayjs("2015/01/01", dateFormat),
-                dayjs("2015/01/01", dateFormat),
+                dayjs( dateRange.targetFrom , dateFormat),
+                dayjs(dateRange.targetTo, dateFormat),
               ]}
-              format={dateFormat}
+              format="YYYY/MM/DD"
+              onChange={handleRangeChange}
             />
             <div className="flex h-14 items-center justify-between gap-8 sm:px-6">
               <div className="flex items-center gap-2">
@@ -481,55 +549,55 @@ const HomePage: React.FC = () => {
                 <StatCard
                   title="Doanh thu"
                   value={
-                    stats
-                      ? `${stats.revenue.amountVND.toLocaleString("vi-VN")} VND`
+                    statsMonthly
+                      ? `${statsMonthly.totals.totalRevenue?.toLocaleString("vi-VN")} VND`
                       : "Loading..."
                   }
                   icon="/ic-glass-bag.svg"
-                  trend={stats ? stats.revenueGrowth : 0}
+                  trend={statsMonthly ? statsMonthly.totals.growRevenue : 0}
                   color="bg-green-300 text-green-800"
                 />
                 <StatCard
                   title="Số lượng tài khoản quảng cáo"
                   value={
-                    stats
-                      ? stats.countAds.toLocaleString("vi-VN")
+                    statsMonthly
+                      ? statsMonthly.totals.totalAdsAccounts?.toLocaleString("vi-VN")
                       : "Loading..."
                   }
                   icon="/ic-glass-users.svg"
-                  trend={stats ? stats.adsGrowth : 0}
+                  trend={statsMonthly ? statsMonthly.totals.growAdsAccount : 0}
                   color="bg-purple-300 text-purple-800"
                 />
                 <StatCard
                   title="Số lượng người dùng đăng ký"
                   value={
-                    stats
-                      ? stats.countUser.toLocaleString("vi-VN")
+                    statsMonthly
+                      ? statsMonthly.totals.totalUsers?.toLocaleString("vi-VN")
                       : "Loading..."
                   }
                   icon="/ic-glass-buy.svg"
-                  trend={stats ? stats.userGrowth : 0}
+                  trend={statsMonthly ? statsMonthly.totals.growUser: 0}
                   color="bg-yellow-300 text-yellow-800"
                 />
                 <StatCard
                   title="Số lượng giao dịch"
                   value={
-                    stats
-                      ? stats.countTransaction.toLocaleString("vi-VN")
+                    statsMonthly
+                      ? statsMonthly.totals.totalTransaction?.toLocaleString("vi-VN")
                       : "Loading..."
                   }
                   icon="/ic-glass-message.svg"
-                  trend={stats ? stats.transactionGrowth : 0}
+                  trend={statsMonthly ? statsMonthly.totals.growTransaction : 0}
                   color="bg-red-300 text-red-800"
                 />
               </div>
 
               <div className="bg-gray-50">
-                <StatsCharts />
+                <StatsCharts data={statsMonthly}/>
               </div>
 
               <div className=" bg-gray-50">
-                <ChartDashboard />
+                <ChartDashboard data={statsMonthly} />
               </div>
             </div>
           </div>
