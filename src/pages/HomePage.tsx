@@ -137,10 +137,7 @@ const HomePage: React.FC = () => {
         `https://api-rent.duynam.store/api/v1/monthlyStatistics?targetDayFrom=${dateRange.targetFrom}&targetDayTo=${dateRange.targetTo}`
       );
       setStatsMonthly(response.data)
-      console.log("Dữ liệu nhận được:", response.data);
-      console.log("vaooo 2222")
     } catch (error:any) {
-      console.log("vaooo 111",error)
       toast.error(error.response?.data?.message || "Lỗi khi lấy dữ liệu thống kê");
     }
   };
