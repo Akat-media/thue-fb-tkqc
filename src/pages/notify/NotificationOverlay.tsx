@@ -1,69 +1,36 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Bell, X, CheckCircle, Settings, User, AlertCircle, Gift } from 'lucide-react';
-import { useNotificationStore } from '../../stores/notificationStore';
-
-interface Notification {
-    id: string;
-    type: 'success' | 'error' | 'warning' | 'info';
-    title: string;
-    message: string;
-    time: string;
-    isRead: boolean;
-    icon?: React.ReactNode;
-}
+import { Notification, useNotificationStore } from '../../stores/notificationStore';
 
 const NotificationOverlay: React.FC = () => {
-    const { isNotificationOpen, overlaySize, closeNotification } = useNotificationStore();
-    const [notifications, setNotifications] = React.useState<Notification[]>([
-        {
-            id: '1',
-            type: 'success',
-            title: 'Đơn hàng thành công',
-            message: 'Đơn hàng #12345 của bạn đã được xác nhận và đang được xử lý.',
-            time: '2 phút trước',
-            isRead: false,
-            icon: <CheckCircle className='w-5 h-5' />,
-        },
-        {
-            id: '2',
-            type: 'info',
-            title: 'Cập nhật hệ thống',
-            message: 'Hệ thống sẽ bảo trì từ 2:00 - 4:00 sáng ngày mai để cải thiện hiệu suất.',
-            time: '15 phút trước',
-            isRead: false,
-            icon: <Settings className='w-5 h-5' />,
-        },
-        {
-            id: '3',
-            type: 'warning',
-            title: 'Tài khoản cần xác thực',
-            message: 'Vui lòng xác thực email để kích hoạt đầy đủ tính năng tài khoản.',
-            time: '1 giờ trước',
-            isRead: true,
-            icon: <User className='w-5 h-5' />,
-        },
-        {
-            id: '4',
-            type: 'error',
-            title: 'Thanh toán thất bại',
-            message: 'Không thể xử lý thanh toán cho đơn hàng #12344. Vui lòng thử lại.',
-            time: '2 giờ trước',
-            isRead: true,
-            icon: <AlertCircle className='w-5 h-5' />,
-        },
-        {
-            id: '5',
-            type: 'success',
-            title: 'Khuyến mãi đặc biệt',
-            message: 'Bạn nhận được mã giảm giá 20% cho lần mua hàng tiếp theo!',
-            time: '1 ngày trước',
-            isRead: false,
-            icon: <Gift className='w-5 h-5' />,
-        },
-    ]);
+    const {userID, isNotificationOpen,notificationsList,handleMarkAsRead, handleMarkAsAllRead, handleDeletedNotification,fetchNotifications,overlaySize, closeNotification } = useNotificationStore();
+    const unreadCount = notificationsList.filter((n) => !n.is_read).length;
 
-    const unreadCount = notifications.filter((n) => !n.isRead).length;
-
+    useEffect(() => {
+        fetchNotifications();
+    }, []);
+    const notificationsData = useMemo(() => {
+        return notificationsList.map((item: Notification) => {
+            let icon = null;
+            switch (item.type) {
+                case 'success':
+                    icon = <CheckCircle className="w-5 h-5 text-green-500" />;
+                    break;
+                case 'info':
+                    icon = <Settings className="w-5 h-5 text-blue-500" />;
+                    break;
+                case 'warning':
+                    icon = <User className='w-5 h-5' />;
+                    break;
+                case 'error':
+                    icon = <AlertCircle className='w-5 h-5' />;
+                    break;
+                default:
+                    icon = null;
+            }
+            return { ...item, icon };
+        });
+    },[notificationsList])
     const getOverlayWidth = () => {
         return 'w-[90%] sm:w-[80%] md:w-1/2 lg:w-1/3';
     };
@@ -104,19 +71,16 @@ const NotificationOverlay: React.FC = () => {
     };
 
     const markAsRead = (id: string) => {
-        setNotifications((prev) =>
-            prev.map((notification) =>
-                notification.id === id ? { ...notification, isRead: true } : notification
-            )
-        );
+        handleMarkAsRead(id)
     };
 
-    const markAllAsRead = () => {
-        setNotifications((prev) => prev.map((notification) => ({ ...notification, isRead: true })));
+    const markAllAsRead = (userID:string) => {
+        handleMarkAsAllRead(userID)
     };
 
     const deleteNotification = (id: string) => {
-        setNotifications((prev) => prev.filter((notification) => notification.id !== id));
+        handleDeletedNotification(id)
+    
     };
 
     useEffect(() => {
@@ -151,13 +115,13 @@ const NotificationOverlay: React.FC = () => {
                                 <Bell className='w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3' />
                                 <div>
                                     <h2 className='text-lg sm:text-xl font-semibold'>Thông báo</h2>
-                                    <p className='text-blue-100 text-xs sm:text-sm'>{notifications.length} thông báo</p>
+                                    <p className='text-blue-100 text-xs sm:text-sm'>{notificationsList.length} thông báo</p>
                                 </div>
                             </div>
                             <div className='flex items-center space-x-1 sm:space-x-2'>
                                 {unreadCount > 0 && (
                                     <button
-                                        onClick={markAllAsRead}
+                                        onClick={() => markAllAsRead(userID || "")}
                                         className='bg-white bg-opacity-20 hover:bg-opacity-30 px-2 py-1 sm:px-3 sm:py-1 rounded-lg text-xs sm:text-sm transition-colors duration-200'
                                     >
                                         Đánh dấu tất cả đã đọc
@@ -173,22 +137,22 @@ const NotificationOverlay: React.FC = () => {
                         </div>
 
                         <div className='flex-1 overflow-y-auto'>
-                            {notifications.length === 0 ? (
+                            {notificationsData.length === 0 ? (
                                 <div className='flex flex-col items-center justify-center h-64 text-gray-500'>
                                     <Bell className='w-10 h-10 sm:w-12 sm:h-12 mb-4 opacity-50' />
                                     <p className='text-base sm:text-lg font-medium'>Không có thông báo nào</p>
                                     <p className='text-xs sm:text-sm'>Các thông báo mới sẽ xuất hiện ở đây</p>
                                 </div>
                             ) : (
-                                <div className='p-3 sm:p-4 space-y-2 sm:space-y-3'>
-                                    {notifications.map((notification, index) => {
+                                <div className='p-3 sm:p-4 space-y-2 sm:space-y-3 h-[calc(100vh-96px-75px)] overflow-y-auto'>
+                                    {notificationsData.map((notification, index) => {
                                         const style = getNotificationStyle(notification.type);
                                         return (
                                             <div
                                                 key={notification.id}
                                                 className={`border rounded-lg p-3 sm:p-4 transition-all duration-300 hover:shadow-md transform hover:-translate-y-1 ${
                                                     style.bg
-                                                } ${!notification.isRead ? 'border-l-4 border-l-blue-500' : ''}`}
+                                                } ${!notification.is_read ? 'border-l-4 border-l-blue-500' : ''}`}
                                                 style={{
                                                     animationDelay: `${index * 100}ms`,
                                                     animation: isNotificationOpen ? 'slideInRight 0.5s ease-out forwards' : '',
@@ -202,17 +166,17 @@ const NotificationOverlay: React.FC = () => {
                                                                 <h3 className={`font-semibold text-sm sm:text-base ${style.title}`}>
                                                                     {notification.title}
                                                                 </h3>
-                                                                {!notification.isRead && (
+                                                                {!notification.is_read && (
                                                                     <span className='w-2 h-2 bg-blue-500 rounded-full flex-shrink-0'></span>
                                                                 )}
                                                             </div>
                                                             <p className='text-gray-700 text-xs sm:text-sm leading-relaxed mb-1 sm:mb-2'>
-                                                                {notification.message}
+                                                                {notification.content}
                                                             </p>
                                                             <div className='flex items-center justify-between'>
                                                                 <span className='text-xs text-gray-500'>{notification.time}</span>
                                                                 <div className='flex space-x-1 sm:space-x-2'>
-                                                                    {!notification.isRead && (
+                                                                    {!notification.is_read && (
                                                                         <button
                                                                             onClick={() => markAsRead(notification.id)}
                                                                             className='text-xs text-blue-600 hover:text-blue-800 font-medium'

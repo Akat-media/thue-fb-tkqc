@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   LayoutDashboard,
   Briefcase,
@@ -32,6 +32,11 @@ const Sidebar: React.FC<{
   const navigate = useNavigate();
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
   const [avatar, setAvatar] = useState("/avatar.jpg");
+  const { openNotification ,notificationsList,overlaySize} = useNotificationStore();
+
+  const unReadNoti = useMemo(() => {
+    return notificationsList.filter((item) => !item.is_read)
+  },[notificationsList])
   const isAdsMenuActive =
     location.pathname.startsWith("/adsaccountmanager") ||
     location.pathname === "/add-account" ||
@@ -52,7 +57,6 @@ const Sidebar: React.FC<{
   ];
 
   // notify admin
-  const { openNotification } = useNotificationStore();
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -302,11 +306,15 @@ const Sidebar: React.FC<{
 
         <button
           onClick={() => openNotification("third")}
-          // to="/admin/notifications"
-          className="flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full"
+          className="flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full relative"
         >
-          <div className="w-12 flex justify-center">
+          <div className="w-12 flex justify-center relative">
             <Bell className="w-5 h-5" />
+            {unReadNoti.length > 0 && (
+              <div className="absolute top-0 right-0 transform -translate-y-1/2 translate-x-[calc(50%-10px)] bg-red-500 text-white text-[10px] font-semibold rounded-full h-4 min-w-[16px] flex items-center justify-center px-[4px]">
+                {unReadNoti.length}
+              </div>
+            )}
           </div>
           <span
             className={clsx(
