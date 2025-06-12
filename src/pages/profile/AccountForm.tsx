@@ -134,24 +134,14 @@ const AccountForm: React.FC = () => {
         JSON.stringify({ user: { ...initialUser, ...data } })
       );
     } catch (error: any) {
-      // Kiểm tra lỗi email đã tồn tại
-      if (
-        error.response &&
-        error.response.data &&
-        (error.response.data.message?.includes("email") ||
-          error.response.data.error?.includes("email"))
-      ) {
-        toast.error("Email đã tồn tại, vui lòng chọn email khác!", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-      } else {
-        console.error("Lỗi khi lưu dữ liệu:", error);
-        toast.error("Có lỗi xảy ra khi lưu dữ liệu!", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-      }
+      const apiMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Có lỗi xảy ra khi lưu dữ liệu!";
+      toast.error(apiMessage, {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
