@@ -193,7 +193,7 @@ const SupportTicketDetail: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 {/* Header */}
                 <div className="mb-6 py-8">
                     <button
@@ -204,10 +204,10 @@ const SupportTicketDetail: React.FC = () => {
                     </button>
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900">{data.title}</h1>
+                            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{data.title}</h1>
                             <p className="text-gray-600 mt-1">ID: {data.id}</p>
                         </div>
-                        <div className="flex items-center space-x-3">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                             <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border ${getStatusColor(data.status)}`}>
                                 {getStatusIcon(data.status)}
                                 <span className="ml-2">{getStatusText(data.status)}</span>
@@ -233,7 +233,7 @@ const SupportTicketDetail: React.FC = () => {
                                 </h2>
                             </div>
                             <div className="p-6 space-y-4">
-                                <div className="flex items-center space-x-3">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                                     <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                                     <span className="text-blue-600 font-semibold text-lg">
                                         <img src="/avatar.jpg" alt="Avatar" className="w-full h-full object-cover rounded-full" />
@@ -245,11 +245,11 @@ const SupportTicketDetail: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="space-y-3">
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                                         <Mail className="w-4 h-4 text-gray-500" />
                                         <span className="text-sm text-gray-900">{data.email}</span>
                                     </div>
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                                         <Phone className="w-4 h-4 text-gray-500" />
                                         <span className="text-sm text-gray-900">{data.phone}</span>
                                     </div>
@@ -351,7 +351,7 @@ const SupportTicketDetail: React.FC = () => {
                             <div className="flex-1 overflow-y-auto p-6 space-y-4">
                                 {chatMessages.map((message) => (
                                     <div key={message.id} className={`flex ${message.sender === 'admin' ? 'justify-start' : 'justify-end'}`}>
-                                        <div className={`flex max-w-[75%] ${message.sender === 'admin' ? 'flex-row' : 'flex-row-reverse'}`}>
+                                        <div className={`flex max-w-[75%]  min-w-[40%] ${message.sender === 'admin' ? 'flex-row' : 'flex-row-reverse'}`}>
                                             <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${
                                                 message.sender === 'admin' ? 'bg-emerald-600 mr-3' : 'bg-blue-600 ml-3'
                                             }`}>
@@ -385,17 +385,18 @@ const SupportTicketDetail: React.FC = () => {
                                         onChange={(e) => setNewMessage(e.target.value)}
                                         onKeyPress={handleKeyPress}
                                         placeholder="Nhập tin nhắn của bạn..."
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-sm shadow-sm hover:border-gray-400"
                                         rows={2}
+                                        style={{ minHeight: '48px' }}
                                     />
                                     </div>
                                     <button
                                         onClick={handleSendMessage}
                                         disabled={!newMessage.trim()}
-                                        className="px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100"
+                                        className="mb-4 px-4 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 shadow-sm min-w-[48px] h-12"
                                     >
                                         <Send className="w-4 h-4" />
-                                        <span>Gửi</span>
+                                        <span className="hidden sm:inline">Gửi</span>
                                     </button>
                                 </div>
                             </div>
