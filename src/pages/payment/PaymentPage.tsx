@@ -79,9 +79,9 @@ const PaymentPage: React.FC = () => {
   const [selectedAmount, setSelectedAmount] = useState(500000);
   const [customAmount, setCustomAmount] = useState<string>("500000");
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const userStore = useUserStore((state) => state.user);
-  const fetchUser = useUserStore((state) => state.fetchUser);
+  // const fetchUser = useUserStore((state) => state.fetchUser);
   const { addNotification } = useNotification();
   const [showQRCode, setShowQRCode] = useState(false);
   const [isShowingQR, setIsShowingQR] = useState(false);
@@ -91,6 +91,7 @@ const PaymentPage: React.FC = () => {
   const [paymentStatus, setPaymentStatus] = useState<
     "loading" | "success" | "failed" | null
   >(null);
+  const { user, fetchUser } = useUserStore();
 
   useEffect(() => {
     fetchUser();
@@ -214,9 +215,13 @@ const PaymentPage: React.FC = () => {
       console.log("Socket connected:", socket.id);
       socket.emit("joinRoom");
     });
+
     socket.on("payment_success", (data) => {
       console.log("Payment success event received:", data);
+      fetchUser();
+
       setPaymentStatus("success");
+
       setTimeout(() => {
         setPaymentStatus(null);
         setShowQRCode(false);
@@ -225,9 +230,10 @@ const PaymentPage: React.FC = () => {
     });
 
     return () => {
+      socket.off("connect");
       socket.off("payment_success");
     };
-  }, []);
+  }, [fetchUser]);
 
   return (
     <Layout>
@@ -241,9 +247,7 @@ const PaymentPage: React.FC = () => {
               <p className="mt-1 text-base text-gray-500">
                 Số dư hiện tại:{" "}
                 <span className="font-medium text-green-700">
-                  {userParse && userParse.user && userParse.user.points
-                    ? userParse.user.points.toLocaleString("vi-VN") + " điểm"
-                    : "Không có thông tin"}
+                  {user.points?.toLocaleString("vi-VN") || 0} điểm
                 </span>
               </p>
             )}
@@ -326,7 +330,7 @@ const PaymentPage: React.FC = () => {
                             inputMode="numeric"
                             className={`shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full h-12 px-4 pr-16 sm:text-sm rounded-md ${
                               customAmount &&
-                              (parseInt(customAmount) <= 1000 ||
+                              (parseInt(customAmount) <= 50000 ||
                                 parseInt(customAmount) % 1000 !== 0)
                                 ? "border-red-500"
                                 : "border border-gray-300"
@@ -353,7 +357,7 @@ const PaymentPage: React.FC = () => {
                         </div>
 
                         {customAmount &&
-                          (parseInt(customAmount) <= 1000 ||
+                          (parseInt(customAmount) <= 50000 ||
                             parseInt(customAmount) % 1000 !== 0) && (
                             <p className="text-red-500 text-xs mt-1">
                               Vui lòng nhập số tiền từ 50.000 VNĐ trở lên và là
@@ -493,7 +497,26 @@ const PaymentPage: React.FC = () => {
                         fullWidth
                         onClick={handleDeposit}
                         isLoading={isLoading}
-                        disabled={isLoading}
+                        disabled={
+                          isLoading ||
+                          !customAmount ||
+                          parseInt(customAmount) < 50000 ||
+                          parseInt(customAmount) % 1000 !== 0
+                        }
+                        className={
+                          !customAmount ||
+                          parseInt(customAmount) < 50000 ||
+                          parseInt(customAmount) % 1000 !== 0
+                            ? "bg-gray-300 cursor-not-allowed"
+                            : ""
+                        }
+                        title={
+                          !customAmount ||
+                          parseInt(customAmount) < 50000 ||
+                          parseInt(customAmount) % 1000 !== 0
+                            ? "Số tiền phải từ 50.000 VNĐ trở lên"
+                            : ""
+                        }
                       >
                         Tạo lệnh nạp tiền
                       </Button>
@@ -558,7 +581,7 @@ const PaymentPage: React.FC = () => {
                           </h4>
                           <p className="mt-1 text-sm text-gray-500">
                             Chọn một trong các mệnh giá có sẵn hoặc nhập số tiền
-                            tùy chọn (tối thiểu 100.000đ).
+                            tùy chọn (tối thiểu 50.000đ).
                           </p>
                         </div>
                       </div>

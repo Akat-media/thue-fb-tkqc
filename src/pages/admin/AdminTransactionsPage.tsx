@@ -103,6 +103,7 @@ const AdminTransactionsPage: React.FC = () => {
 
     const result = transactions.filter((item) => {
       const matchSearch =
+        (item.id && item.id.toString().toLowerCase().includes(term)) ||
         (item.short_code && item.short_code.toLowerCase().includes(term)) ||
         (item.user_id && item.user_id.toLowerCase().includes(term)) ||
         (item.description && item.description.toLowerCase().includes(term));
@@ -790,7 +791,7 @@ const AdminTransactionsPage: React.FC = () => {
         <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
           <Subheader active={active} setActive={setActive} />
           <div className="flex items-end justify-between mb-4">
-            <h1 className="text-1xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
+            <h1 className="text-1xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate mt-1">
               Quản lý giao dịch đổi điểm
             </h1>
           </div>

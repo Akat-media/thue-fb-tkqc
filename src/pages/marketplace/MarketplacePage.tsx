@@ -22,6 +22,7 @@ import { useOnOutsideClick } from "../../hook/useOutside";
 import { toast, ToastContainer } from "react-toastify";
 import BMCard from "./BMCard";
 import { NotiError, NotiSuccess } from "../../components/noti";
+import LoginModal from "../auth/LoginModal";
 
 interface BM {
   id: string;
@@ -63,6 +64,7 @@ const MarketplacePage: React.FC = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [bmToDelete, setBmToDelete] = useState<BM | null>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleCallAPi = async () => {
     try {
@@ -98,7 +100,14 @@ const MarketplacePage: React.FC = () => {
   }, []);
 
   const handleRentClick = (account: any) => {
-    console.log("account", account);
+    const userString = localStorage.getItem("user");
+    const userInfo = userString ? JSON.parse(userString) : null;
+
+    if (!userInfo) {
+      setShowLoginModal(true);
+      return;
+    }
+
     setSelectedAccount(account);
     setIsRentModalOpen(true);
   };
@@ -217,7 +226,7 @@ const MarketplacePage: React.FC = () => {
 
   return (
     <Layout>
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -227,7 +236,7 @@ const MarketplacePage: React.FC = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-      />
+      /> */}
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
@@ -343,7 +352,7 @@ const MarketplacePage: React.FC = () => {
         )}
 
         {/* BM List Section */}
-        {bmList.length > 0 && (
+        {isAdmin && bmList.length > 0 && (
           <div className="mt-8">
             <h3 className="text-xl font-medium text-gray-900 mb-4">
               Danh sách BM
@@ -602,6 +611,20 @@ const MarketplacePage: React.FC = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {showLoginModal && (
+          <LoginModal
+            isOpen={showLoginModal}
+            onClose={() => setShowLoginModal(false)}
+            onLoginSuccess={() => {
+              setShowLoginModal(false);
+              window.location.reload();
+            }}
+            onSwitchToRegister={() => {
+              setShowLoginModal(false);
+            }}
+          />
         )}
       </div>
     </Layout>
