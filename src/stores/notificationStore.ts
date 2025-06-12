@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { apiClient } from '../lib/apiClient';
+import BaseHeader from '../api/BaseHeader';
 
 export type Notification = {
   id: string;
@@ -30,7 +30,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => {
   const userString = localStorage.getItem('user');
   const userID = userString ? JSON.parse(userString).user.id : null;
   const fetchDataList = () => {
-    return apiClient(`/notification-all?user_id=${userID}`);
+    return BaseHeader(`/notification-all?user_id=${userID}`);
   };
 
   return {
@@ -45,9 +45,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => {
     fetchNotifications: async () => {
       try {
         const response = await fetchDataList();
-        if (!response.ok) throw new Error('Lỗi lấy danh sách thông báo');
-        const data = await response.json();
-        set({ notificationsList: data });
+        set({ notificationsList: response.data });
       } catch (error) {
         console.error('Fetch notifications error:', error);
       }
@@ -60,12 +58,10 @@ export const useNotificationStore = create<NotificationState>((set, get) => {
         ),
       }));
       try {
-        const response = await apiClient(`/notification/${id}/read`, {
+        const response = await BaseHeader(`/notification/${id}/read`, {
           method: 'PUT',
         });
-        if (!response.ok) throw new Error('Lỗi đánh dấu đã đọc');
-        const data = await response.json();
-        set({ notificationsList: data });
+        set({ notificationsList: response.data });
       } catch (error) {
         console.error('Mark as read error:', error);
       }
@@ -76,7 +72,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => {
         notificationsList: state.notificationsList.filter((n) => n.id !== id),
       }));
       try {
-        await apiClient(`/notification/deleted/${id}`, {
+        await BaseHeader(`/notification/deleted/${id}`, {
           method: 'DELETE',
         });
       } catch (error) {
@@ -89,7 +85,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => {
         notificationsList: state.notificationsList.map((n) => ({ ...n, is_read: true })),
       }));
       try {
-        await apiClient(`/notification/mark-all-read?user_id=${userID}`,
+        await BaseHeader(`/notification/mark-all-read?user_id=${userID}`,
           { method: 'PUT' }
         );
       } catch (error) {
