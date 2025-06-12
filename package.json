@@ -34,6 +34,7 @@
     "recharts": "^2.15.3",
     "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.18",
+    "tailwind-scrollbar": "^4.0.2",
     "zod": "^3.25.36",
     "zustand": "^5.0.5"
   },

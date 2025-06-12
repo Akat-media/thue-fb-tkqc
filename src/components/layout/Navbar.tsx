@@ -502,6 +502,7 @@ const Navbar: React.FC = () => {
                 "/rentals",
                 "/payments",
                 "/admintransaction",
+                "/support",
               ];
               const isProtected = protectedRoutes.includes(item.href);
               const isActive = location.pathname === item.href;
