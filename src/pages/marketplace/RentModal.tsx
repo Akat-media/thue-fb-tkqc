@@ -14,6 +14,7 @@ import { useNotification } from "../../context/NotificationContext";
 import BaseHeader from "../../api/BaseHeader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useUserStore } from "../../stores/useUserStore";
 
 interface RentModalProps {
   isOpen: boolean;
@@ -23,13 +24,8 @@ interface RentModalProps {
   setErrorRent: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const RentModal: React.FC<RentModalProps> = ({
-  isOpen,
-  onClose,
-  account,
-  setSuccessRent,
-  setErrorRent,
-}) => {
+const RentModal: React.FC<RentModalProps> = (props) => {
+  const { isOpen, onClose, account, setSuccessRent, setErrorRent } = props;
   const objetUser = localStorage.getItem("user");
   const userParse = JSON.parse(objetUser || "{}");
   const [userBmId, setUserBmId] = useState("");
@@ -40,7 +36,7 @@ const RentModal: React.FC<RentModalProps> = ({
   const [selectedCookieId, setSelectedCookieId] = useState<any>("");
   const [isLoadingCookies, setIsLoadingCookies] = useState(false);
 
-  const { user } = useAuth();
+  const { user } = useUserStore();
   const { addNotification } = useNotification();
 
   const calculateTotalPrice = () => {
@@ -140,7 +136,7 @@ const RentModal: React.FC<RentModalProps> = ({
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        style={{ zIndex: 10001 }}
+        style={{ zIndex: 99999 }}
       />
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
@@ -372,29 +368,28 @@ const RentModal: React.FC<RentModalProps> = ({
                 </div>
               </div>
 
-              {/* {user && (
+              {user && (
                 <div className="text-sm">
                   <span className="text-gray-500">Số dư của bạn: </span>
                   <span
                     className={`font-medium ${
-                      user.balance < calculateTotalPrice()
+                      (user.points ?? 0) < calculateTotalPrice()
                         ? "text-red-600"
                         : "text-green-600"
                     }`}
                   >
-                    {user?.balance != null
-                      ? user.balance.toLocaleString("vi-VN") + " VNĐ"
+                    {user.points != null
+                      ? user.points.toLocaleString("vi-VN") + " VNĐ"
                       : "Đang tải..."}
                   </span>
-
-                  {user.balance < calculateTotalPrice() && (
+                  {(user.points ?? 0) < calculateTotalPrice() && (
                     <div className="mt-2 text-sm text-red-600">
                       Số dư không đủ để thuê tài khoản này. Vui lòng nạp thêm
                       tiền.
                     </div>
                   )}
                 </div>
-              )} */}
+              )}
             </CardContent>
             <CardFooter className="flex justify-end space-x-3 bg-gray-50 border-t">
               <Button
@@ -415,9 +410,18 @@ const RentModal: React.FC<RentModalProps> = ({
                   handleSubmit();
                 }}
                 isLoading={isLoading}
-                disabled={isLoading || !isValidBmId || !isValidLimit}
+                disabled={
+                  !!(
+                    isLoading ||
+                    !isValidBmId ||
+                    !isValidLimit ||
+                    (user && (user.points ?? 0) < calculateTotalPrice())
+                  )
+                }
                 className={
-                  !isValidBmId || !isValidLimit
+                  !isValidBmId ||
+                  !isValidLimit ||
+                  (user && (user.points ?? 0) < calculateTotalPrice())
                     ? "bg-gray-300 cursor-not-allowed"
                     : ""
                 }

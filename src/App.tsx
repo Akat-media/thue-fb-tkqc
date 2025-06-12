@@ -25,6 +25,8 @@ import Account from "./pages/admin/account/Account.tsx";
 import PasswordResetForm from "./pages/auth/PasswordResetForm.tsx";
 import CreateBotPage from "./pages/bot/CreateBotPage";
 import PolicyManagement from "./pages/admin/PolicyManagement";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -69,6 +71,16 @@ function App() {
             </Route>
           </Routes>
         </Router>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+          pauseOnFocusLoss
+          style={{ zIndex: 99999 }}
+        />
       </NotificationProvider>
     </AuthProvider>
   );

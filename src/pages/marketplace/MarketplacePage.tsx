@@ -226,7 +226,7 @@ const MarketplacePage: React.FC = () => {
 
   return (
     <Layout>
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -236,7 +236,7 @@ const MarketplacePage: React.FC = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-      />
+      /> */}
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">

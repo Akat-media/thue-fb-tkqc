@@ -182,7 +182,7 @@ const Navbar: React.FC = () => {
     },
     {
       icon: "📋",
-      label: "Danh sách BM",
+      label: "Danh sách tài khoản",
       href: "/marketplace",
       hoverColor: "bg-gradient-to-r from-pink-400 to-pink-600",
     },

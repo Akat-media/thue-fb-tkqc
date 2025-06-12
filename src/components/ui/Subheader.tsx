@@ -11,24 +11,24 @@ const Subheader = ({ active, setActive }: Props) => {
   const userobj = useUserStore((state) => state.user);
   return (
     <Container img={img}>
-      <div className="bg-info mb-5 w-full justify-between rounded-lg p-3 sm:p-4 flex flex-col md:flex-row gap-3 md:gap-0">
+      <div className="bg-info mb-5 w-full justify-between rounded-lg p-2 sm:p-4 md:p-6 flex flex-col md:flex-row gap-2 md:gap-4">
         <div className="flex flex-col md:flex-row w-full md:w-auto">
           <a
-            className="relative flex min-w-[200px] sm:min-w-[284px] flex-col justify-between"
+            className="relative flex min-w-0 sm:min-w-[200px] md:min-w-[284px] flex-col justify-between"
             href={userobj?.role === "admin" ? "/admin/profile" : "/profile"}
           >
             <div className="flex w-full flex-row justify-between">
               <div className="flex w-full flex-row">
                 <span
-                  className="rounded-full ant-avatar ant-avatar-circle ant-avatar-icon shrink-1 !h-10 !w-10 sm:!h-[50px] sm:!w-[50px] !m-[5px] !text-[20px] sm:!text-[24px] css-1k979oh"
+                  className="rounded-full ant-avatar ant-avatar-circle ant-avatar-icon shrink-1 !h-10 !w-10 sm:!h-[50px] sm:!w-[50px] md:!h-[60px] md:!w-[60px] !m-[5px] !text-[20px] sm:!text-[24px] md:!text-[28px] css-1k979oh"
                   style={{ backgroundColor: "rgb(184, 184, 184)" }}
                 >
                   <img className="rounded-full" src={avatar} alt="avatar" />
                 </span>
-                <div className="ml-2 sm:ml-3 flex flex-col justify-center py-[5px]">
-                  <span className="text-white text-[14px] sm:text-16 line-clamp-1 flex w-[120px] sm:w-[190px] flex-col gap-y-2 text-ellipsis font-medium leading-6">
+                <div className="ml-2 sm:ml-3 md:ml-4 flex flex-col justify-center py-[5px]">
+                  <span className="text-white text-[13px] sm:text-[15px] md:text-[16px] line-clamp-1 flex w-[100px] sm:w-[150px] md:w-[190px] flex-col gap-y-2 text-ellipsis font-medium leading-6">
                     {userobj?.phone}
-                    <div className="text-10 sm:text-12 flex gap-2 font-medium leading-4">
+                    <div className="text-10 sm:text-12 md:text-[13px] flex gap-2 font-medium leading-4">
                       <svg
                         width={16}
                         height={16}
@@ -97,14 +97,14 @@ const Subheader = ({ active, setActive }: Props) => {
             </div>
           </a>
           <div
-            className="hidden md:block mx-3 h-[60px] w-[1px]"
+            className="hidden md:block mx-2 md:mx-3 h-[50px] md:h-[60px] w-[1px]"
             style={{
               background:
                 "linear-gradient(90deg, rgb(1, 171, 77) 0%, rgb(1, 171, 77) 42.52%, rgb(1, 171, 77) 100%)",
             }}
           />
-          <div className="text-secondv2-green1 text-[14px] sm:text-16 items-left justify-left flex min-w-[120px] sm:min-w-[150px] flex-col gap-y-2 font-normal mt-2 md:mt-0">
-            <div className="flex flex-row gap-x-2">
+          <div className="text-secondv2-green1 text-[13px] sm:text-[15px] md:text-[16px] items-left justify-left flex min-w-[90px] sm:min-w-[120px] md:min-w-[150px] flex-col gap-y-1 md:gap-y-2 font-normal mt-2 md:mt-0">
+            <div className="flex flex-row gap-x-1 md:gap-x-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width={24}
@@ -117,24 +117,24 @@ const Subheader = ({ active, setActive }: Props) => {
                   fill="#FFDA55"
                 />
               </svg>
-              <span className="text-[#FFDA55] text-[16px] sm:text-18 font-medium leading-6">
+              <span className="text-[#FFDA55] text-[15px] sm:text-[16px] md:text-[18px] font-medium leading-6">
                 Số dư
               </span>
             </div>
-            <strong className="text-[#FFDA55] text-[14px] sm:text-16 text-left font-bold leading-6">
-              {userobj?.points?.toLocaleString("vi-VN")} point
+            <strong className="text-[#FFDA55] text-[13px] sm:text-[15px] md:text-[16px] text-left font-bold leading-6">
+              {userobj?.points?.toLocaleString("vi-VN")} điểm
             </strong>
           </div>
         </div>
-        <div className="flex gap-3 sm:gap-10 overflow-x-auto md:overflow-hidden">
+        <div className="flex gap-2 sm:gap-4 md:gap-4 overflow-visible">
           <a
             onClick={() => {
               setActive("money");
             }}
             className={`${
               active === "money" ? "bg-[#FFDA55] " : "bg-white "
-            }text-pri-darkest text-[13px] sm:text-14 border-right-border-pc 
-            relative flex h-[48px] sm:h-[60px] min-w-[90px] sm:min-w-[90px] flex-col items-center rounded-lg
+            }text-pri-darkest text-[12px] sm:text-[13px] md:text-[13px] border-right-border-pc 
+            relative flex h-[40px] sm:h-[44px] md:h-[58px] min-w-[70px] sm:min-w-[80px] md:min-w-[80px] flex-col items-center rounded-lg
               py-1 font-bold leading-6`}
             href="#"
           >
@@ -200,8 +200,8 @@ const Subheader = ({ active, setActive }: Props) => {
             }}
             className={`${
               active === "points" ? "bg-[#FFDA55] " : "bg-white "
-            }text-pri-darkest text-[13px] sm:text-14 border-right-border-pc 
-                      relative flex h-[48px] sm:h-[60px] min-w-[90px] sm:min-w-[90px] flex-col items-center rounded-lg
+            }text-pri-darkest text-[12px] sm:text-[13px] md:text-[13px] border-right-border-pc 
+                      relative flex h-[40px] sm:h-[44px] md:h-[58px] min-w-[70px] sm:min-w-[80px] md:min-w-[80px] flex-col items-center rounded-lg
                         py-1 font-bold leading-6`}
             href="#"
           >
@@ -260,8 +260,20 @@ const Container = styled.div<{
   img: string;
 }>`
   .bg-info {
-    background: url(${(props) => props.img}) 900.627px 0 / 14.458% 60% no-repeat,
+    background: url(${(props) => props.img}) right top / 30% 60% no-repeat,
       linear-gradient(180deg, #01ab4d, #017d38);
+  }
+  @media (max-width: 768px) {
+    .bg-info {
+      background: url(${(props) => props.img}) right top / 40% 60% no-repeat,
+        linear-gradient(180deg, #01ab4d, #017d38);
+    }
+  }
+  @media (max-width: 480px) {
+    .bg-info {
+      background: url(${(props) => props.img}) right top / 60% 60% no-repeat,
+        linear-gradient(180deg, #01ab4d, #017d38);
+    }
   }
 `;
 export default Subheader;
