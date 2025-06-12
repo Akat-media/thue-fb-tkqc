@@ -15,6 +15,7 @@ import {
   AlignStartHorizontal,
   Archive,
   FileText,
+  TrendingUp,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import clsx from "clsx";
@@ -32,16 +33,18 @@ const Sidebar: React.FC<{
   const navigate = useNavigate();
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
   const [avatar, setAvatar] = useState("/avatar.jpg");
-  const { openNotification ,notificationsList,overlaySize} = useNotificationStore();
+  const { openNotification, notificationsList, overlaySize } =
+    useNotificationStore();
 
   const unReadNoti = useMemo(() => {
-    return notificationsList.filter((item) => !item.is_read)
-  },[notificationsList])
+    return notificationsList.filter((item) => !item.is_read);
+  }, [notificationsList]);
   const isAdsMenuActive =
     location.pathname.startsWith("/adsaccountmanager") ||
     location.pathname === "/add-account" ||
     location.pathname === "/admin/account" ||
-    location.pathname === "/admin/policy";
+    location.pathname === "/admin/policy" ||
+    location.pathname === "/admin/princing";
   const [openAdsSubmenu, setOpenAdsSubmenu] = useState(isAdsMenuActive);
   const toggleProfileMenu = () => setOpenProfileMenu(!openProfileMenu);
 
@@ -257,6 +260,19 @@ const Sidebar: React.FC<{
                   <FileText className="w-4 h-4" />
                 </div>
                 <span className="text-gray-600">Quản lý chính sách</span>
+              </Link>
+              <Link
+                to="/admin/princing"
+                className={clsx(
+                  "flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700",
+                  location.pathname === "/admin/princing" &&
+                    "bg-white font-semibold"
+                )}
+              >
+                <div className="w-8 flex justify-center">
+                  <TrendingUp className="w-4 h-4" />
+                </div>
+                <span className="text-gray-600">Quản lý ngân sách</span>
               </Link>
             </div>
           </div>
