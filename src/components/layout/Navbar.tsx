@@ -187,6 +187,12 @@ const Navbar: React.FC = () => {
       hoverColor: "bg-gradient-to-r from-pink-400 to-pink-600",
     },
     {
+      icon: "💹",
+      label: "Bảng giá",
+      href: "/princing",
+      hoverColor: "bg-gradient-to-r from-orange-300 to-yellow-600",
+    },
+    {
       icon: "💳",
       label: "Tài khoản đang thuê",
       href: "/rentals",

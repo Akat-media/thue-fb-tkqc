@@ -28,6 +28,8 @@ import RequestForm from "./pages/support/RequestForm.tsx";
 import SupportTicketDetail from "./pages/support/SupportTicketDetail.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import PricingPage from "./pages/Princing.tsx";
+import PricingManagement from "./pages/admin/PricingManagement.tsx";
 
 function App() {
   return (
@@ -44,7 +46,7 @@ function App() {
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/policy" element={<Policy />} />
             <Route path="/reset-password" element={<PasswordResetForm />} />
-
+            <Route path="/princing" element={<PricingPage />} />
             {/* Route yêu cầu đăng nhập */}
             <Route element={<ProtectedRoute />}>
               <Route path="/add-account" element={<AddAccountPage />} />
@@ -61,6 +63,8 @@ function App() {
               <Route path="/admin/profile" element={<AdminProfilePage />} />
               <Route path="/admin/support" element={<AdminSupport />} />
               <Route path="/admin/policy" element={<PolicyManagement />} />
+              <Route path="/admin/princing" element={<PricingManagement />} />
+
               <Route
                 path="/admin/notifications"
                 element={<NotificationOverlay />}

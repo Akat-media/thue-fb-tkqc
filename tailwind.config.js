@@ -7,7 +7,7 @@ export default {
         "spin-slow": "spin 240s linear infinite",
         "background-slow": "bgMove 20s ease-in-out infinite",
         // "float": "float 20s ease-in-out infinite",
-        float: 'float 3s ease-in-out infinite',
+        float: "float 3s ease-in-out infinite",
       },
       keyframes: {
         bgMove: {
@@ -19,8 +19,8 @@ export default {
           },
         },
         float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
         },
       },
       fontFamily: {
@@ -38,6 +38,6 @@ export default {
     },
   },
   plugins: [
-    require('tailwind-scrollbar'),
+    // require('tailwind-scrollbar'),
   ],
 };
