@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import BaseHeader from "../../api/BaseHeader";
 import AtomicSpinner from "atomic-spinner";
 import { NotiError } from "../../components/noti";
+import { Eraser } from "lucide-react";
 
 const storageStateSchema = z.object({
   cookies: z.array(z.any()).min(1, "Cookies không được để trống"),
@@ -79,6 +80,8 @@ const CreateBotPage: React.FC = () => {
   const [bots, setBots] = useState<Bot[]>([]);
   const [isLoadingBots, setIsLoadingBots] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [deleteBot, setDeleteBot] = useState<Bot | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const {
     register,
@@ -142,6 +145,26 @@ const CreateBotPage: React.FC = () => {
       setErrorMessage("Có lỗi xảy ra khi tạo mới bot. Vui lòng thử lại sau.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDeleteBot = async () => {
+    if (!deleteBot) return;
+    setIsDeleting(true);
+    setErrorMessage("");
+    try {
+      await BaseHeader({
+        url: `cookies/${deleteBot.id}`,
+        method: "delete",
+      });
+      toast.success("Xóa bot thành công!");
+      setDeleteBot(null);
+      fetchBots();
+    } catch (error) {
+      toast.error("Có lỗi xảy ra khi xóa bot");
+      setErrorMessage("Có lỗi xảy ra khi xóa bot. Vui lòng thử lại sau.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -296,6 +319,7 @@ const CreateBotPage: React.FC = () => {
                 <table className="min-w-full divide-y divide-gray-500">
                   <thead className="bg-gray-50">
                     <tr>
+                      <th className="px-4 py-3"></th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
@@ -319,6 +343,15 @@ const CreateBotPage: React.FC = () => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {bots.map((bot) => (
                       <tr key={bot.id}>
+                        <td className="px-4 py-4 text-center">
+                          <button
+                            title="Xóa bot"
+                            onClick={() => setDeleteBot(bot)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <Eraser className="h-5 w-5 inline" />
+                          </button>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {bot.id}
                         </td>
@@ -346,6 +379,37 @@ const CreateBotPage: React.FC = () => {
 
       {errorMessage && (
         <NotiError onClose={() => setErrorMessage("")} message={errorMessage} />
+      )}
+
+      {deleteBot && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
+            <h4 className="text-lg font-semibold mb-2 text-blue-900">
+              Xác nhận xóa
+            </h4>
+            <p className="mb-4">
+              Bạn chắc chắn muốn xóa bot
+              <span className="font-bold text-red-900"> {deleteBot.email}</span>
+              ?
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+                onClick={() => setDeleteBot(null)}
+                disabled={isDeleting}
+              >
+                Hủy
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+                onClick={handleDeleteBot}
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Đang xóa..." : "Xác nhận"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </Layout>
   );
