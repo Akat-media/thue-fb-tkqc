@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import {useNavigate,useParams } from "react-router-dom";
 import axios from "axios";
+import {useUserStore} from "../../stores/useUserStore.ts";
 
 interface TicketData {
     id: string;
@@ -36,6 +37,9 @@ interface TicketData {
     created_at: string;
     updated_at: string;
     avatar?: string;
+    senderId: string;
+    message: string;
+    supportRequestId: string;
 }
 
 interface ChatMessage {
@@ -49,55 +53,29 @@ interface ChatMessage {
 
 const SupportTicketDetail: React.FC = () => {
     const [newMessage, setNewMessage] = useState<string>('');
-    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-        {
-            id: 1,
-            sender: 'user',
-            senderName: 'Lê Văn Bảo',
-            message: 'Xin chào, tôi đang gặp vấn đề với tài khoản của mình.',
-            timestamp: '2025-06-11T08:21:00.000Z',
-            avatar: 'LB'
-        },
-        {
-            id: 2,
-            sender: 'admin',
-            senderName: 'Admin Support',
-            message: 'Chào bạn! Tôi đã nhận được yêu cầu hỗ trợ của bạn. Bạn có thể mô tả chi tiết vấn đề đang gặp phải không?',
-            timestamp: '2025-06-11T08:25:00.000Z',
-            avatar: 'AS'
-        },
-        {
-            id: 3,
-            sender: 'user',
-            senderName: 'Lê Văn Bảo',
-            message: 'Tôi không thể đăng nhập vào tài khoản và không nhận được email reset password.',
-            timestamp: '2025-06-11T08:27:00.000Z',
-            avatar: 'LB'
-        },
-        {
-            id: 4,
-            sender: 'admin',
-            senderName: 'Admin Support',
-            message: 'Tôi hiểu vấn đề của bạn. Để hỗ trợ tốt nhất, bạn có thể cung cấp thêm thông tin về thời điểm cuối cùng bạn đăng nhập thành công không?',
-            timestamp: '2025-06-11T08:30:00.000Z',
-            avatar: 'AS'
-        }
-    ]);
     const [data, setData] = useState<TicketData | null>(null);
+    const [dataMessage, setDataMessage] = useState<ChatMessage[]>([]);
     const navigate = useNavigate();
 
+    const { user: currentUser } = useUserStore();
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const fetchData = async () => {
         const response = await axios.get(`${baseUrl}/support/${id}`);
-        console.log("response", response.data.data);
         setData(response.data.data);
+    }
+    const fetchMess = async () => {
+        const response = await axios.get(`${baseUrl}/support/message/${id}`)
+        setDataMessage(response.data.data);
     }
 
     useEffect(() => {
         fetchData();
     },[id])
-    // console.log("data",data.attachments.length)
+
+    useEffect(() => {
+        fetchMess()
+    }, [id]);
 
     if (!data) {
         return (
@@ -106,6 +84,11 @@ const SupportTicketDetail: React.FC = () => {
             </div>
         );
     }
+
+    // if (!currentUser?.id) {
+    //     console.error('');
+    //     return;
+    // }
 
     const getStatusColor = (status: string): string => {
         switch(status) {
@@ -167,28 +150,33 @@ const SupportTicketDetail: React.FC = () => {
         });
     };
 
-    const handleSendMessage = (): void => {
-        if (newMessage.trim()) {
-            const newMsg: ChatMessage = {
-                id: chatMessages.length + 1,
-                sender: 'admin',
-                senderName: 'Admin Support',
-                message: newMessage,
-                timestamp: new Date().toISOString(),
-                avatar: 'AS'
-            };
-            setChatMessages([...chatMessages, newMsg]);
+    const handleSendMessage = async (
+        supportRequestId: string,
+        senderId: string,
+        message: string
+    ): Promise<void>  => {
+        if (!message.trim()) return;
+        try {
+            const response = await axios.post(`${baseUrl}/support/message`, {
+                supportRequestId,
+                senderId,
+                message
+            });
+
+            const newMsg = response.data.data;
+            setDataMessage((prev) => [...prev, newMsg]);
             setNewMessage('');
+        } catch (error) {
+            console.error('Lỗi gửi tin nhắn:', error);
         }
     };
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            handleSendMessage();
+            handleSendMessage(data.id, currentUser!.id, newMessage);
         }
     };
-
 
 
     return (
@@ -342,38 +330,43 @@ const SupportTicketDetail: React.FC = () => {
                                 <h2 className="text-xl font-semibold text-white">Hội thoại hỗ trợ</h2>
                                 <div className="ml-auto">
                                   <span className="bg-emerald-500 text-white text-xs px-3 py-1 rounded-full">
-                                    {chatMessages.length} tin nhắn
+                                    {dataMessage.length} tin nhắn
                                   </span>
                                 </div>
                             </div>
 
                             {/* Chat Messages */}
                             <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                                {chatMessages.map((message) => (
-                                    <div key={message.id} className={`flex ${message.sender === 'admin' ? 'justify-start' : 'justify-end'}`}>
-                                        <div className={`flex max-w-[75%]  min-w-[40%] ${message.sender === 'admin' ? 'flex-row' : 'flex-row-reverse'}`}>
-                                            <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${
-                                                message.sender === 'admin' ? 'bg-emerald-600 mr-3' : 'bg-blue-600 ml-3'
-                                            }`}>
-                                                {message.avatar}
-                                            </div>
-                                            <div className={`flex flex-col ${message.sender === 'admin' ? 'items-start' : 'items-end'}`}>
-                                                <div className={`px-4 py-3 rounded-2xl max-w-full break-words ${
-                                                    message.sender === 'admin'
-                                                        ? 'bg-gray-100 text-gray-900 rounded-bl-md'
-                                                        : 'bg-blue-600 text-white rounded-br-md'
+                                {dataMessage.map((message:any) => {
+                                    const avaUrl = message.sender.role === "user" ? "/avatar.jpg" : "/call2.png";
+                                    return (
+                                        <div key={message.id} className={`flex ${message.sender.role === 'admin' ? 'justify-start' : 'justify-end'}`}>
+                                            <div className={`flex max-w-[75%]  min-w-[40%] ${message.sender.role === 'admin' ? 'flex-row' : 'flex-row-reverse'}`}>
+                                                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${
+                                                    message.sender.role === 'admin' ? 'bg-emerald-600 mr-3' : 'bg-blue-600 ml-3'
                                                 }`}>
-                                                    <p className="text-sm leading-relaxed">{message.message}</p>
+                                                    <div className="w-12 h-12 rounded-full overflow-hidden">
+                                                        <img src={avaUrl} alt="akamedia" className="w-full h-full object-cover rounded-full"/>
+                                                    </div>
                                                 </div>
-                                                <div className="flex items-center mt-2 space-x-2">
-                                                    <span className="text-xs text-gray-500 font-medium">{message.senderName}</span>
-                                                    <span className="text-xs text-gray-400">•</span>
-                                                    <span className="text-xs text-gray-400">{formatDate(message.timestamp)}</span>
+                                                <div className={`flex flex-col ${message.sender.role === 'admin' ? 'items-start' : 'items-end'}`}>
+                                                    <div className={`px-4 py-3 rounded-2xl max-w-full break-words ${
+                                                        message.sender.role === 'admin'
+                                                            ? 'bg-gray-100 text-gray-900 rounded-bl-md'
+                                                            : 'bg-blue-600 text-white rounded-br-md'
+                                                    }`}>
+                                                        <p className="text-sm leading-relaxed">{message.message}</p>
+                                                    </div>
+                                                    <div className="flex items-center mt-2 space-x-2">
+                                                        <span className="text-xs text-gray-500 font-medium">{message.sender.role}</span>
+                                                        <span className="text-xs text-gray-400">•</span>
+                                                        <span className="text-xs text-gray-400">{formatDate(message.updated_at)}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </div>
 
                             {/* Message Input */}
@@ -391,7 +384,7 @@ const SupportTicketDetail: React.FC = () => {
                                     />
                                     </div>
                                     <button
-                                        onClick={handleSendMessage}
+                                        onClick={() => handleSendMessage(data.id, currentUser!.id, newMessage)}
                                         disabled={!newMessage.trim()}
                                         className="mb-4 px-4 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 shadow-sm min-w-[48px] h-12"
                                     >

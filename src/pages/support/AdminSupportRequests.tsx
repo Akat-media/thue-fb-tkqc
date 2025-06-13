@@ -1,9 +1,10 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import { Search, Filter, Eye, MessageSquare, Clock, CheckCircle, AlertCircle, User, Mail, Calendar } from 'lucide-react';
+import { Search,Send, Filter, Eye, MessageSquare, Clock, CheckCircle, AlertCircle, User, Mail, Calendar } from 'lucide-react';
 import axios from "axios";
 import debounce from "lodash.debounce";
 import Pagination from "../admin/account/Pagination.tsx";
 import usePagination from "../../hook/usePagination.tsx";
+import ChatModal from './ChatModal.tsx';
 
 interface SupportRequest {
     id: string;
@@ -32,6 +33,10 @@ const AdminSupportRequests: React.FC = () => {
     const [data, setData] = useState<SupportRequest[]>([]);
     const { currentPage, pageSize, setCurrentPage, setPageSize } = usePagination(1, 5);
     const [totalItems, setTotalItems] = useState(0);
+    // const [showMessage, setShowMessage] = useState(false);
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    // const [showChat, setShowChat] = useState(false);
+    const [showDetailModal, setShowDetailModal] = useState(false);
 
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const fetchData = async(
@@ -132,6 +137,11 @@ const AdminSupportRequests: React.FC = () => {
         setPageSize(Number(e.target.value));
         setCurrentPage(1);
     };
+
+    // const sendMessage= () => {
+    //     // setShowMessage(true)
+    //     setShowMessageModal(true);
+    // }
 
     return (
         <div className="min-w-0">
@@ -249,13 +259,23 @@ const AdminSupportRequests: React.FC = () => {
                                 <td className="px-4 py-4">
                                     <div className="flex items-center space-x-2">
                                         <button
-                                            onClick={() => setSelectedRequest(request)}
+                                            onClick={() => {
+                                                setSelectedRequest(request);
+                                                setShowDetailModal(true);
+                                                setShowMessageModal(false);
+                                            }}
                                             className="inline-flex items-center px-2 py-1 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         >
                                             <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                                             Xem
                                         </button>
-                                        <button className="inline-flex items-center px-2 py-1 text-xs sm:text-sm font-medium text-blue-700 bg-blue-50 border border-blue-300 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <button
+                                            onClick={() => {
+                                                setSelectedRequest(request);
+                                                setShowMessageModal(true);      // mở chat ngay
+                                                setShowDetailModal(false);      // tắt modal chi tiết nếu đang mở
+                                            }}
+                                            className="inline-flex items-center px-2 py-1 text-xs sm:text-sm font-medium text-blue-700 bg-blue-50 border border-blue-300 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                             <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                                             Trả lời
                                         </button>
@@ -356,7 +376,7 @@ const AdminSupportRequests: React.FC = () => {
             )}
 
             {/* Request Detail Modal */}
-            {selectedRequest && (
+            {selectedRequest  && showDetailModal && !showMessageModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50">
                     <div className="bg-white rounded-lg w-full max-w-md sm:max-w-2xl max-h-[90vh] overflow-y-auto">
                         <div className="p-4 sm:p-6 border-b border-gray-200">
@@ -442,7 +462,13 @@ const AdminSupportRequests: React.FC = () => {
                                         Đánh dấu đã giải quyết
                                     </button>
                                 )}
-                                <button className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-gray-500">
+                                <button
+                                    onClick={() => {
+                                        setShowMessageModal(true);
+                                        setShowDetailModal(false); // đóng chi tiết khi mở chat
+                                    }}
+                                    className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                >
                                     Gửi tin nhắn
                                 </button>
                             </div>
@@ -450,6 +476,23 @@ const AdminSupportRequests: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {selectedRequest && showMessageModal && (
+                <ChatModal
+                    selectedRequest={selectedRequest}
+                    showMessageModal={showMessageModal}
+                    setShowMessageModal={(val) => {
+                        setShowMessageModal(val);
+                        if (!val) setSelectedRequest(null); // đóng thì clear
+                    }}
+                    currentUserRole="admin"
+                    onBackToDetail={() => {
+                        setShowMessageModal(false);
+                        setShowDetailModal(true); // mở lại modal chi tiết
+                    }}
+                />
+            )}
+
         </div>
     );
 };
