@@ -24,6 +24,7 @@ import Button from "../../components/ui/Button";
 import BaseHeader from "../../api/BaseHeader";
 import { Pagination } from "antd";
 import usePagination from "../../hook/usePagination";
+import { toast, ToastContainer } from "react-toastify";
 
 interface Transaction {
   id: string;
@@ -443,8 +444,9 @@ const ManageAdsAccount: React.FC = () => {
       setTransactions(transactionData);
       setFiltered(transactionData); // Cập nhật filtered khi nhận dữ liệu mới
       setTotal(response.data.data.count);
-    } catch (error) {
+    } catch (error:any) {
       console.log(error);
+      toast.error(error.response?.data?.message || "Lỗi khi lấy dữ liệu thống kê");
     }
   };
   const hanleTransactionPoint = async () => {
@@ -483,6 +485,17 @@ const ManageAdsAccount: React.FC = () => {
 
   return (
     <Layout>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       {active === "money" && (
         <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
           <Subheader active={active} setActive={setActive} />
