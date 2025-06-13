@@ -23,6 +23,7 @@ import { createGlobalStyle } from "styled-components";
 import img1 from "../public/homepage.png";
 import metalogo from "../public/metalogo.png";
 import { toast, ToastContainer } from "react-toastify";
+import BaseHeader from "../api/BaseHeader.ts";
 
 type MonthlyTotal = {
   totalRevenue: number;
@@ -128,13 +129,12 @@ const HomePage: React.FC = () => {
       setDateRange({
         targetFrom: targetDayFrom,
         targetTo: targetDayTo,})
-      fetchDataChart();
+      if (role === "admin") fetchDataChart();
     }
   };
   const fetchDataChart = async () => {
     try {
-      const response = await axios.get(
-        `https://api-rent.duynam.store/api/v1/monthlyStatistics?targetDayFrom=${dateRange.targetFrom}&targetDayTo=${dateRange.targetTo}`
+      const response = await BaseHeader(`/monthlyStatistics?targetDayFrom=${dateRange.targetFrom}&targetDayTo=${dateRange.targetTo}`
       );
       setStatsMonthly(response.data)
     } catch (error:any) {
@@ -142,7 +142,7 @@ const HomePage: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchDataChart();
+    if (role === "admin") fetchDataChart();
   },[dateRange.targetFrom, dateRange.targetTo]);
   return (
     <Layout>
