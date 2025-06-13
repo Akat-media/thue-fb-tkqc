@@ -428,7 +428,7 @@ const ManageAdsAccount: React.FC = () => {
       let response;
       if (userParse?.user?.role === "admin") {
         response = await BaseHeader({
-          url: "https://api-rent.duynam.store/api/v1/transaction-all",
+          url: "/transaction-all",
           method: "get",
         });
       } else {
@@ -444,9 +444,11 @@ const ManageAdsAccount: React.FC = () => {
       setTransactions(transactionData);
       setFiltered(transactionData); // Cập nhật filtered khi nhận dữ liệu mới
       setTotal(response.data.data.count);
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error);
-      toast.error(error.response?.data?.message || "Lỗi khi lấy dữ liệu thống kê");
+      toast.error(
+        error.response?.data?.message || "Lỗi khi lấy dữ liệu thống kê"
+      );
     }
   };
   const hanleTransactionPoint = async () => {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import axios from "axios";
-import { BaseUrl } from "../../api/BaseHeader";
+// import axios from "axios";
+import BaseHeader, { BaseUrl } from "../../api/BaseHeader";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AtomicSpinner from "atomic-spinner";
@@ -67,20 +67,30 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     setLoading(true);
 
     try {
-      const registerRes = await axios.post(`${BaseUrl}/user`, {
-        username: name,
-        email: email,
-        phone: phone,
-        password: password,
-        role: "user",
+      const registerRes = await BaseHeader({
+        method: "post",
+        url: "/user",
+        baseURL: BaseUrl,
+        data: {
+          username: name,
+          email: email,
+          phone: phone,
+          password: password,
+          role: "user",
+        },
       });
 
       if (registerRes.status == 200) {
         toast.success("Đăng ký thành công!");
 
-        const loginRes = await axios.post(`${BaseUrl}/login`, {
-          email: email,
-          password: password,
+        const loginRes = await BaseHeader({
+          method: "post",
+          url: "/login",
+          baseURL: BaseUrl,
+          data: {
+            email: email,
+            password: password,
+          },
         });
 
         const { access_token, refresh_token, ...userData } = loginRes.data.data;
@@ -101,7 +111,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     } catch (error: any) {
       console.error("Registration error:", error);
 
-      if (axios.isAxiosError(error) && error.response?.data?.message) {
+      if (error.response?.data?.message) {
         const errorMessage = error.response.data.message;
 
         if (errorMessage === "Email đã tồn tại") {
