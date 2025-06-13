@@ -234,7 +234,7 @@ const SupportDashboard: React.FC = () => {
 
                 {/* Support Requests */}
                 {data.length > 0 ? (
-                    <div className="max-h-[700px] overflow-y-auto space-y-4 pr-2">
+                    <div className="max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-white-400 scrollbar-track-blue-100 space-y-4 pr-2">
                         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                             {data.map((request:SupportRequest) => {
                                 // console.log("request", request)
