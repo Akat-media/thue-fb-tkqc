@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { BaseUrl } from "../../api/BaseHeader.ts";
+import BaseHeader, { BaseUrl } from "../../api/BaseHeader.ts";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -119,10 +119,15 @@ const AccountForm: React.FC = () => {
       return;
     }
     try {
-      const response = await axios.put(
-        `${BaseUrl}/user/${initialUser.id}`,
-        data
-      );
+      const response = await BaseHeader({
+        method: "put",
+        url: `/user/${initialUser.id}`,
+        data: {
+          username: data.username,
+          email: data.email,
+          phone: data.phone,
+        },
+      });
       console.log("data saved: ", response.data);
       toast.success("Cập nhật thông tin thành công!", {
         position: "top-right",

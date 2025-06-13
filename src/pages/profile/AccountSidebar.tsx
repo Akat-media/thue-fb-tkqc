@@ -103,7 +103,7 @@ const AccountSidebar: React.FC = () => {
           <img
             src={preview}
             alt="Avatar"
-            className="w-28 h-28 rounded-full border-4 border-white shadow"
+            className="w-28 h-28 rounded-full border-4 border-white shadow object-cover"
           />
         </div>
         <p className="text-sm text-center text-gray-500 mb-6">

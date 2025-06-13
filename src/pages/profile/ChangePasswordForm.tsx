@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { BaseUrl } from "../../api/BaseHeader.ts";
+import BaseHeader, { BaseUrl } from "../../api/BaseHeader.ts";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
 interface User {
@@ -42,7 +42,7 @@ const ChangePasswordForm: React.FC = () => {
   } = useForm<ChangePasswordData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      oldPassword: initialUser.password || "",
+      oldPassword: "",
       newPassword: "",
       confirmPassword: "",
     },
@@ -62,8 +62,13 @@ const ChangePasswordForm: React.FC = () => {
     }
 
     try {
-      const response = await axios.put(`${BaseUrl}/user/${initialUser.id}`, {
-        password: data.newPassword,
+      const response = await BaseHeader({
+        method: "put",
+        url: `/user/${initialUser.id}`,
+        data: {
+          password: data.newPassword,
+          oldPassword: data.oldPassword,
+        },
       });
       console.log("response: ", response);
       toast.success("Cập nhật mật khẩu thành công!", {
