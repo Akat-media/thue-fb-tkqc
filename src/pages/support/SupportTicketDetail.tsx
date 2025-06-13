@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import {useNavigate,useParams } from "react-router-dom";
 import axios from "axios";
+import BaseHeader from "../../api/BaseHeader";
 
 interface TicketData {
     id: string;
@@ -89,9 +90,17 @@ const SupportTicketDetail: React.FC = () => {
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const fetchData = async () => {
-        const response = await axios.get(`${baseUrl}/support/${id}`);
-        console.log("response", response.data.data);
-        setData(response.data.data);
+        try {
+            const token = localStorage.getItem("token");
+            const response = await BaseHeader({
+                method: "get",
+                url: `/support/${id}`,
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+            });
+            setData(response.data.data);
+        } catch (error) {
+            console.error("Lỗi khi lấy chi tiết yêu cầu hỗ trợ:", error);
+        }
     }
 
     useEffect(() => {

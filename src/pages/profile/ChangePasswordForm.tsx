@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import BaseHeader, { BaseUrl } from "../../api/BaseHeader.ts";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { BaseUrl } from "../../api/BaseHeader.ts";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
 interface User {
@@ -62,8 +61,13 @@ const ChangePasswordForm: React.FC = () => {
     }
 
     try {
-      const response = await axios.put(`${BaseUrl}/user/${initialUser.id}`, {
-        password: data.newPassword,
+      const token = localStorage.getItem("token");
+      const response = await BaseHeader({
+        method: "put",
+        url: `/user/${initialUser.id}`,
+        baseURL: BaseUrl,
+        data: { password: data.newPassword },
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       console.log("response: ", response);
       toast.success("Cập nhật mật khẩu thành công!", {

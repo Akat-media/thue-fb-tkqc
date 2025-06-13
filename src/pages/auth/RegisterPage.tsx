@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, User, Phone, Eye, EyeOff } from "lucide-react";
-// import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
 import { BaseUrl } from "../../api/BaseHeader";
-import axios from "axios";
+import BaseHeader from "../../api/BaseHeader";
 import AtomicSpinner from "atomic-spinner";
 import registerimg from "../../public/sand.jpg";
 
@@ -52,38 +51,44 @@ const RegisterPage: React.FC = () => {
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      // await register(name, email, phone, password);
-      const registerRes = await axios.post(`${BaseUrl}/user`, {
-        username: name,
-        email: email,
-        phone: phone,
-        password: password,
-        role: "user",
+      const registerRes = await BaseHeader({
+        method: "post",
+        url: "/user",
+        baseURL: BaseUrl,
+        data: {
+          username: name,
+          email: email,
+          phone: phone,
+          password: password,
+          role: "user",
+        },
       });
-      if (registerRes.status == 200) {
+      if (registerRes.status === 200) {
         addNotification(
           "Đăng ký thành công",
           "Tài khoản của bạn đã được tạo!",
           "success"
         );
-        await axios
-          .post(`${BaseUrl}/login`, {
+        const loginRes = await BaseHeader({
+          method: "post",
+          url: "/login",
+          baseURL: BaseUrl,
+          data: {
             email: email,
             password: password,
-          })
-          .then((res) => {
-            navigate("/");
-            localStorage.setItem("access_token", res.data.data.access_token);
-            localStorage.setItem("refresh_token", res.data.data.refresh_token);
-            localStorage.setItem("user", JSON.stringify(res.data.data));
-          });
+          },
+        });
+        navigate("/");
+        localStorage.setItem("access_token", loginRes.data.data.access_token);
+        localStorage.setItem("refresh_token", loginRes.data.data.refresh_token);
+        localStorage.setItem("user", JSON.stringify(loginRes.data.data));
       } else {
         addNotification("Đăng ký thất bại", registerRes.data.message, "error");
       }
     } catch (error: any) {
       console.error("Registration error:", error);
 
-      if (axios.isAxiosError(error) && error.response?.data?.message) {
+      if (error.response?.data?.message) {
         const errorMessage = error.response.data.message;
 
         if (errorMessage === "Email đã tồn tại") {
@@ -100,7 +105,7 @@ const RegisterPage: React.FC = () => {
         );
       }
 
-      setIsLoading(false); // đảm bảo tắt loading trong catch
+      setIsLoading(false);
     } finally {
       setIsLoading(false);
     }

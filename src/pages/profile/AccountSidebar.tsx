@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { toast } from "react-toastify";
 import { BaseUrl } from "../../api/BaseHeader";
+import BaseHeader from "../../api/BaseHeader";
 
 const AccountSidebar: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -60,8 +61,16 @@ const AccountSidebar: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.put(`${BaseUrl}/user/${userId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const token = localStorage.getItem("token");
+      const response = await BaseHeader({
+        method: "put",
+        url: `/user/${userId}`,
+        baseURL: BaseUrl,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
 
       if (response.data.success) {
@@ -103,7 +112,7 @@ const AccountSidebar: React.FC = () => {
           <img
             src={preview}
             alt="Avatar"
-            className="w-28 h-28 rounded-full border-4 border-white shadow"
+            className="w-28 h-28 rounded-full border-4 border-white shadow object-cover"
           />
         </div>
         <p className="text-sm text-center text-gray-500 mb-6">

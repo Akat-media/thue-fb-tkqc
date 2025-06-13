@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useNotification } from "../../context/NotificationContext";
-import axios from "axios";
-import { BaseUrl } from "../../api/BaseHeader";
+// import axios from "axios";
+import BaseHeader, { BaseUrl } from "../../api/BaseHeader";
 import AtomicSpinner from "atomic-spinner";
 import { useUserStore } from "../../stores/useUserStore";
 import ForgotPasswordModal from "./ForgotPasswordModal.tsx";
@@ -39,27 +39,32 @@ const LoginPage: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const {setUser} = useUserStore();
+  const { setUser } = useUserStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      const res = await axios.post(`${BaseUrl}/login`,
-          {
-            email: email,
-            password: password,
-          }
-      )
+      const res = await BaseHeader({
+        method: "post",
+        url: "/login",
+        baseURL: BaseUrl,
+        data: {
+          email: email,
+          password: password,
+        },
+      });
       setUser(res.data.data.user);
       navigate("/");
       localStorage.setItem("access_token", res.data.data.access_token);
       localStorage.setItem("refresh_token", res.data.data.refresh_token);
       localStorage.setItem("user", JSON.stringify(res.data.data));
       toast.success("Đăng nhập thành công!");
-    } catch (error:any) {
-      toast.error(error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại");
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -139,20 +144,20 @@ const LoginPage: React.FC = () => {
             </div>
             <div className="flex justify-between items-center text-sm text-gray-600">
               <button
-                  type="button"
-                  onClick={() => setShowForgotPassword(true)}
-                  className="text-blue-600 hover:underline"
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="text-blue-600 hover:underline"
               >
                 Quên Mật Khẩu?
               </button>
               {showForgotPassword && (
-                  <ForgotPasswordModal
-                      isOpen={showForgotPassword}
-                      onClose={() => setShowForgotPassword(false)}
-                      onSwitchToLogin={() => {
-                        setShowForgotPassword(false);
-                      }}
-                  />
+                <ForgotPasswordModal
+                  isOpen={showForgotPassword}
+                  onClose={() => setShowForgotPassword(false)}
+                  onSwitchToLogin={() => {
+                    setShowForgotPassword(false);
+                  }}
+                />
               )}
             </div>
             <button
