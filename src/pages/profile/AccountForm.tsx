@@ -119,13 +119,14 @@ const AccountForm: React.FC = () => {
       return;
     }
     try {
-      const token = localStorage.getItem("token");
       const response = await BaseHeader({
         method: "put",
         url: `/user/${initialUser.id}`,
-        baseURL: BaseUrl,
-        data,
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        data: {
+          username: data.username,
+          email: data.email,
+          phone: data.phone,
+        },
       });
       console.log("data saved: ", response.data);
       toast.success("Cập nhật thông tin thành công!", {

@@ -41,7 +41,7 @@ const ChangePasswordForm: React.FC = () => {
   } = useForm<ChangePasswordData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      oldPassword: initialUser.password || "",
+      oldPassword: "",
       newPassword: "",
       confirmPassword: "",
     },
@@ -61,13 +61,13 @@ const ChangePasswordForm: React.FC = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
       const response = await BaseHeader({
         method: "put",
         url: `/user/${initialUser.id}`,
-        baseURL: BaseUrl,
-        data: { password: data.newPassword },
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        data: {
+          password: data.newPassword,
+          oldPassword: data.oldPassword,
+        },
       });
       console.log("response: ", response);
       toast.success("Cập nhật mật khẩu thành công!", {
