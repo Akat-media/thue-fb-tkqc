@@ -103,7 +103,7 @@ const RentalsPage: React.FC = () => {
 
   useEffect(() => {
     fetchRentals();
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, activeTab]);
 
   useEffect(() => {
     console.log("Active tab changed to:", activeTab);
@@ -162,6 +162,7 @@ const RentalsPage: React.FC = () => {
   const fetchRentals = async () => {
     try {
       setLoading(true);
+      setRentals([]);
       const userString = localStorage.getItem("user");
       const userInfo = userString ? JSON.parse(userString) : null;
       const userId = userInfo?.user_id || userInfo?.user?.id || "";

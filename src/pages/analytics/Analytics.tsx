@@ -4,7 +4,7 @@ import { Bell, Settings, User } from "lucide-react";
 import StatCard from "./StatCard";
 import StatsCharts from "./StatsCharts";
 import ChartDashboard from "./ChartDashboard";
-import axios from "axios";
+import BaseHeader from "../../api/BaseHeader";
 
 const Analytics: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
@@ -12,9 +12,10 @@ const Analytics: React.FC = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get(
-          "https://api-rent.duynam.store/api/v1/statistics"
-        );
+        const response = await BaseHeader({
+          method: "get",
+          url: "/statistics",
+        });
         if (response.data.success) {
           setStats(response.data.data);
         }
