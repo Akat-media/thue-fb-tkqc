@@ -50,7 +50,7 @@ const PricingManagement: React.FC = () => {
     }
 
     if (!editing.amount) {
-      toast.warning("Chiết khấu không được để trống");
+      toast.warning("Giá tiền không được để trống");
       return;
     }
 
@@ -223,6 +223,7 @@ const PricingManagement: React.FC = () => {
                     value={
                       editing.end_date ? editing.end_date.slice(0, 10) : ""
                     }
+                    min={new Date().toISOString().slice(0, 10)} // chỉ cho phép chọn ngày từ hôm nay trở đi
                     onChange={(e) =>
                       setEditing({ ...editing, end_date: e.target.value })
                     }
