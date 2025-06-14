@@ -7,19 +7,17 @@ import {
     Clock,
     AlertCircle,
     Tag,
-    MessageSquare,
-    Send,
     Paperclip,
     ArrowLeft,
     CheckCircle2,
-    XCircle,
     Timer,
     Building2,
     FileText
 } from 'lucide-react';
 import {useNavigate,useParams } from "react-router-dom";
 import axios from "axios";
-import BaseHeader from "../../api/BaseHeader";
+import {useUserStore} from "../../stores/useUserStore.ts";
+import ChatBox from "./ChatBox.tsx";
 
 interface TicketData {
     id: string;
@@ -31,12 +29,15 @@ interface TicketData {
     department: string;
     content: string;
     attachments: string[];
-    status: 'pending' | 'resolved' | 'closed' | 'in_progress';
+    status: 'pending' | 'resolved' | 'in-progress';
     priority: 'high' | 'medium' | 'low';
     category: string;
     created_at: string;
     updated_at: string;
     avatar?: string;
+    senderId: string;
+    message: string;
+    supportRequestId: string;
 }
 
 interface ChatMessage {
@@ -50,63 +51,37 @@ interface ChatMessage {
 
 const SupportTicketDetail: React.FC = () => {
     const [newMessage, setNewMessage] = useState<string>('');
-    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-        {
-            id: 1,
-            sender: 'user',
-            senderName: 'Lê Văn Bảo',
-            message: 'Xin chào, tôi đang gặp vấn đề với tài khoản của mình.',
-            timestamp: '2025-06-11T08:21:00.000Z',
-            avatar: 'LB'
-        },
-        {
-            id: 2,
-            sender: 'admin',
-            senderName: 'Admin Support',
-            message: 'Chào bạn! Tôi đã nhận được yêu cầu hỗ trợ của bạn. Bạn có thể mô tả chi tiết vấn đề đang gặp phải không?',
-            timestamp: '2025-06-11T08:25:00.000Z',
-            avatar: 'AS'
-        },
-        {
-            id: 3,
-            sender: 'user',
-            senderName: 'Lê Văn Bảo',
-            message: 'Tôi không thể đăng nhập vào tài khoản và không nhận được email reset password.',
-            timestamp: '2025-06-11T08:27:00.000Z',
-            avatar: 'LB'
-        },
-        {
-            id: 4,
-            sender: 'admin',
-            senderName: 'Admin Support',
-            message: 'Tôi hiểu vấn đề của bạn. Để hỗ trợ tốt nhất, bạn có thể cung cấp thêm thông tin về thời điểm cuối cùng bạn đăng nhập thành công không?',
-            timestamp: '2025-06-11T08:30:00.000Z',
-            avatar: 'AS'
-        }
-    ]);
     const [data, setData] = useState<TicketData | null>(null);
+    const [dataMessage, setDataMessage] = useState<ChatMessage[]>([]);
     const navigate = useNavigate();
 
+    const { user: currentUser } = useUserStore();
     const { id } = useParams();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const fetchData = async () => {
         try {
-            const token = localStorage.getItem("token");
-            const response = await BaseHeader({
-                method: "get",
-                url: `/support/${id}`,
-                headers: token ? { Authorization: `Bearer ${token}` } : {},
-            });
+            const response = await axios.get(`${baseUrl}/support/${id}`);
             setData(response.data.data);
-        } catch (error) {
-            console.error("Lỗi khi lấy chi tiết yêu cầu hỗ trợ:", error);
+        } catch (err:any) {
+            console.error("Lỗi khi fetch data:", err.message);
+        }
+    }
+    const fetchMess = async () => {
+        try {
+            const response = await axios.get(`${baseUrl}/support/message/${id}`)
+            setDataMessage(response.data.data);
+        } catch (err:any) {
+            console.error("Lỗi khi fetch message:", err.message);
         }
     }
 
     useEffect(() => {
         fetchData();
     },[id])
-    // console.log("data",data.attachments.length)
+
+    useEffect(() => {
+        fetchMess()
+    }, [id]);
 
     if (!data) {
         return (
@@ -120,8 +95,7 @@ const SupportTicketDetail: React.FC = () => {
         switch(status) {
             case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
             case 'resolved': return 'bg-green-100 text-green-800 border-green-300';
-            case 'closed': return 'bg-gray-100 text-gray-800 border-gray-300';
-            case 'in_progress': return 'bg-blue-100 text-blue-800 border-blue-300';
+            case 'in-progress': return 'bg-blue-100 text-blue-800 border-blue-300';
             default: return 'bg-blue-100 text-blue-800 border-blue-300';
         }
     };
@@ -140,8 +114,7 @@ const SupportTicketDetail: React.FC = () => {
         switch(status) {
             case 'pending': return <Timer className="w-4 h-4" />;
             case 'resolved': return <CheckCircle2 className="w-4 h-4" />;
-            case 'closed': return <XCircle className="w-4 h-4" />;
-            case 'in_progress': return <Clock className="w-4 h-4" />;
+            case 'in-progress': return <Clock className="w-4 h-4" />;
             default: return <AlertCircle className="w-4 h-4" />;
         }
     };
@@ -150,8 +123,7 @@ const SupportTicketDetail: React.FC = () => {
         switch(status) {
             case 'pending': return 'Đang chờ';
             case 'resolved': return 'Đã giải quyết';
-            case 'closed': return 'Đã đóng';
-            case 'in_progress': return 'Đang xử lý';
+            case 'in-progress': return 'Đang xử lý';
             default: return status;
         }
     };
@@ -176,29 +148,26 @@ const SupportTicketDetail: React.FC = () => {
         });
     };
 
-    const handleSendMessage = (): void => {
-        if (newMessage.trim()) {
-            const newMsg: ChatMessage = {
-                id: chatMessages.length + 1,
-                sender: 'admin',
-                senderName: 'Admin Support',
-                message: newMessage,
-                timestamp: new Date().toISOString(),
-                avatar: 'AS'
-            };
-            setChatMessages([...chatMessages, newMsg]);
+    const handleSendMessage = async (
+        supportRequestId: string,
+        senderId: string,
+        message: string
+    ): Promise<void>  => {
+        if (!message.trim()) return;
+        try {
+            const response = await axios.post(`${baseUrl}/support/message`, {
+                supportRequestId,
+                senderId,
+                message
+            });
+
+            const newMsg = response.data.data;
+            setDataMessage((prev) => [...prev, newMsg]);
             setNewMessage('');
+        } catch (error) {
+            console.error('Lỗi gửi tin nhắn:', error);
         }
     };
-
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSendMessage();
-        }
-    };
-
-
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -344,73 +313,16 @@ const SupportTicketDetail: React.FC = () => {
                     </div>
 
                     {/* Right Side - Chat */}
-                    <div className="lg:col-span-2">
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 h-[800px] flex flex-col">
-                            <div className="rounded-[10px] bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-4 flex items-center">
-                                <MessageSquare className="w-6 h-6 text-white mr-3" />
-                                <h2 className="text-xl font-semibold text-white">Hội thoại hỗ trợ</h2>
-                                <div className="ml-auto">
-                                  <span className="bg-emerald-500 text-white text-xs px-3 py-1 rounded-full">
-                                    {chatMessages.length} tin nhắn
-                                  </span>
-                                </div>
-                            </div>
+                    <ChatBox
+                        messages={dataMessage}
+                        newMessage={newMessage}
+                        currentUser={currentUser}
+                        supportRequestId={data.id}
+                        setNewMessage={setNewMessage}
+                        handleSendMessage={handleSendMessage}
+                        formatDate={formatDate}
+                    />
 
-                            {/* Chat Messages */}
-                            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                                {chatMessages.map((message) => (
-                                    <div key={message.id} className={`flex ${message.sender === 'admin' ? 'justify-start' : 'justify-end'}`}>
-                                        <div className={`flex max-w-[75%]  min-w-[40%] ${message.sender === 'admin' ? 'flex-row' : 'flex-row-reverse'}`}>
-                                            <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${
-                                                message.sender === 'admin' ? 'bg-emerald-600 mr-3' : 'bg-blue-600 ml-3'
-                                            }`}>
-                                                {message.avatar}
-                                            </div>
-                                            <div className={`flex flex-col ${message.sender === 'admin' ? 'items-start' : 'items-end'}`}>
-                                                <div className={`px-4 py-3 rounded-2xl max-w-full break-words ${
-                                                    message.sender === 'admin'
-                                                        ? 'bg-gray-100 text-gray-900 rounded-bl-md'
-                                                        : 'bg-blue-600 text-white rounded-br-md'
-                                                }`}>
-                                                    <p className="text-sm leading-relaxed">{message.message}</p>
-                                                </div>
-                                                <div className="flex items-center mt-2 space-x-2">
-                                                    <span className="text-xs text-gray-500 font-medium">{message.senderName}</span>
-                                                    <span className="text-xs text-gray-400">•</span>
-                                                    <span className="text-xs text-gray-400">{formatDate(message.timestamp)}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Message Input */}
-                            <div className="border-t border-gray-200 p-4">
-                                <div className="flex items-end space-x-3">
-                                    <div className="flex-1">
-                                    <textarea
-                                        value={newMessage}
-                                        onChange={(e) => setNewMessage(e.target.value)}
-                                        onKeyPress={handleKeyPress}
-                                        placeholder="Nhập tin nhắn của bạn..."
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-sm shadow-sm hover:border-gray-400"
-                                        rows={2}
-                                        style={{ minHeight: '48px' }}
-                                    />
-                                    </div>
-                                    <button
-                                        onClick={handleSendMessage}
-                                        disabled={!newMessage.trim()}
-                                        className="mb-4 px-4 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 shadow-sm min-w-[48px] h-12"
-                                    >
-                                        <Send className="w-4 h-4" />
-                                        <span className="hidden sm:inline">Gửi</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

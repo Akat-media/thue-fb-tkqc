@@ -13,10 +13,10 @@ const AdminSupport = () => {
             AKA Media
           </span>
         </div>
-        <div className="flex items-center gap-3 sm:gap-6">
-          <Settings className="w-5 h-5 text-gray-600 cursor-pointer sm:w-6 sm:h-6" />
-          <User className="w-5 h-5 text-gray-600 cursor-pointer sm:w-6 sm:h-6" />
-        </div>
+        {/*<div className="flex items-center gap-3 sm:gap-6">*/}
+        {/*  <Settings className="w-5 h-5 text-gray-600 cursor-pointer sm:w-6 sm:h-6" />*/}
+        {/*  <User className="w-5 h-5 text-gray-600 cursor-pointer sm:w-6 sm:h-6" />*/}
+        {/*</div>*/}
       </div>
 
       {/* Main Content */}
