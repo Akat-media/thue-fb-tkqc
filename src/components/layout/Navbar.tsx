@@ -502,7 +502,7 @@ const Navbar: React.FC = () => {
             pauseOnHover
             style={{ zIndex: 10001 }}
           />
-          <div className="relative z-10 hidden sm:flex flex-wrap justify-center items-center gap-4 max-w-screen-xl mx-auto px-4 py-6">
+          <div className="relative z-10 hidden sm:flex flex-nowrap justify-center items-center gap-4 max-w-[1800px] mx-auto px-2 py-6">
             {menuItems.map((item, i) => {
               const protectedRoutes = [
                 "/rentals",

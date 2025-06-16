@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Clock,
   AlertTriangle,
@@ -10,22 +10,22 @@ import {
   XOctagonIcon,
   X,
   CreditCard,
-} from "lucide-react";
-import Layout from "../../components/layout/Layout";
-import Button from "../../components/ui/Button";
+} from 'lucide-react';
+import Layout from '../../components/layout/Layout';
+import Button from '../../components/ui/Button';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../components/ui/Card";
-import { Rental } from "../../types";
-import url from "../../assets/bg.svg";
-import BaseHeader from "../../api/BaseHeader";
-import { useOnOutsideClick } from "../../hook/useOutside";
-import usePagination from "../../hook/usePagination";
-import { Pagination } from "antd";
-import { NotiError, NotiSuccess } from "../../components/noti";
+} from '../../components/ui/Card';
+import { Rental } from '../../types';
+import url from '../../assets/bg.svg';
+import BaseHeader from '../../api/BaseHeader';
+import { useOnOutsideClick } from '../../hook/useOutside';
+import usePagination from '../../hook/usePagination';
+import { Pagination } from 'antd';
+import { NotiError, NotiSuccess } from '../../components/noti';
 
 interface AdAccountDetail {
   id: string;
@@ -74,11 +74,11 @@ interface AdsRental {
 }
 
 const RentalsPage: React.FC = () => {
-  const objetUser = localStorage.getItem("user");
-  const userParse = JSON.parse(objetUser || "{}");
+  const objetUser = localStorage.getItem('user');
+  const userParse = JSON.parse(objetUser || '{}');
   const [rentals, setRentals] = useState<(Rental & { adAccount: any })[]>([]);
-  const [activeTab, setActiveTab] = useState<"available" | "active" | "all">(
-    userParse?.user?.role === "admin" ? "active" : "available"
+  const [activeTab, setActiveTab] = useState<'available' | 'active' | 'all'>(
+    userParse?.user?.role === 'admin' ? 'active' : 'available'
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRental, setSelectedRental] = useState<
@@ -106,21 +106,21 @@ const RentalsPage: React.FC = () => {
   }, [currentPage, pageSize, activeTab]);
 
   useEffect(() => {
-    console.log("Active tab changed to:", activeTab);
+    console.log('Active tab changed to:', activeTab);
   }, [activeTab]);
 
   const fetchAdAccountDetail = async (accountId: string) => {
     try {
       setLoadingDetail(true);
       const response = await BaseHeader({
-        method: "get",
-        url: "ad-accounts",
+        method: 'get',
+        url: 'ad-accounts',
         params: {
           account_id: accountId,
         },
       });
 
-      console.log("Ad account detail:", response.data);
+      console.log('Ad account detail:', response.data);
       const adAccountData = Array.isArray(response.data)
         ? response.data[0]
         : response.data.data
@@ -138,13 +138,13 @@ const RentalsPage: React.FC = () => {
             name: adAccountData.name || selectedRental.adAccount.name,
             bmName:
               adAccountData.business?.name || selectedRental.adAccount.bmName,
-            bmType: adAccountData.is_personal === 1 ? "personal" : "business",
+            bmType: adAccountData.is_personal === 1 ? 'personal' : 'business',
             accountType:
               adAccountData.funding_source_details?.display_string?.includes(
-                "VISA"
+                'VISA'
               )
-                ? "visa"
-                : "other",
+                ? 'visa'
+                : 'other',
             remainingBudget: parseInt(adAccountData.balance) || 0,
             currency: adAccountData.currency,
           },
@@ -152,7 +152,7 @@ const RentalsPage: React.FC = () => {
         setSelectedRental(updatedRental);
       }
     } catch (error) {
-      console.error("Error fetching ad account detail:", error);
+      console.error('Error fetching ad account detail:', error);
       setAdAccountDetail(null);
     } finally {
       setLoadingDetail(false);
@@ -162,28 +162,18 @@ const RentalsPage: React.FC = () => {
   const fetchRentals = async () => {
     try {
       setLoading(true);
-      setRentals([]);
-      const userString = localStorage.getItem("user");
-      const userInfo = userString ? JSON.parse(userString) : null;
-      const userId = userInfo?.user_id || userInfo?.user?.id || "";
-      const isAdmin = userInfo?.user?.role === "admin";
+      setRentals([]); // reset dữ liệu cũ
 
-      console.log(
-        "Fetching rentals for user ID:",
-        userId,
-        "Is admin:",
-        isAdmin,
-        "Page:",
-        currentPage,
-        "PageSize:",
-        pageSize
-      );
+      const userString = localStorage.getItem('user');
+      const userInfo = userString ? JSON.parse(userString) : null;
+      const userId = userInfo?.user_id || userInfo?.user?.id || '';
+      const isAdmin = userInfo?.user?.role === 'admin';
 
       let response;
       if (isAdmin) {
         response = await BaseHeader({
-          method: "get",
-          url: "ads-rent-accounts-all",
+          method: 'get',
+          url: 'ads-rent-accounts-all',
           params: {
             page: currentPage,
             limit: pageSize,
@@ -191,8 +181,8 @@ const RentalsPage: React.FC = () => {
         });
       } else {
         response = await BaseHeader({
-          method: "get",
-          url: "ads-rent-accounts",
+          method: 'get',
+          url: 'ads-rent-accounts',
           params: {
             user_id: userId,
             page: currentPage,
@@ -201,134 +191,73 @@ const RentalsPage: React.FC = () => {
         });
       }
 
-      console.log("API response:", response.data);
-
-      // Lưu tổng số tài khoản để hiển thị phân trang
       const total = response.data.total || response.data.meta?.total || 0;
       setTotalAccounts(total);
 
-      if (isAdmin) {
-        const adAccounts = Array.isArray(response.data)
-          ? response.data
-          : response.data.data || [];
+      const rawData = Array.isArray(response.data)
+        ? response.data
+        : response.data.data || [];
 
-        if (adAccounts.length === 0) {
-          console.log("Không tìm thấy tài khoản");
-          setRentals([]);
-          setLoading(false);
-          return;
-        }
-
-        const formattedAccounts = adAccounts.map((account: any) => {
-          const acc = account.accounts || {};
-          console.log("acc", acc);
-          return {
-            id: account.id || `act-${account.ads_account_id}`,
-            userId: account.user_id || "Unknown",
-            adAccountId: account.ads_account_id,
-            userBmId: account.bm_id || "Không tìm thấy BM ID",
-            startDate: new Date(acc.created_time || Date.now()),
-            endDate: new Date(account.updated_at || Date.now()),
-            requestedLimit: parseInt(acc.spend_cap) || 0,
-            totalPrice: 1500000,
-            spentBudget: parseInt(acc.amount_spent) || 0,
-            status: account.status_rented
-              ? mapApiStatus(account.status_rented)
-              : "available",
-            createdAt: new Date(acc.created_time || Date.now()),
-            status_dischard_limit_spend: account.status_dischard_limit_spend,
-            status_dischard_partner: account.status_dischard_partner,
-            status_limit_spend: account.status_limit_spend || 0,
-            status_partner: account.status_partner || 0,
-            bm_origin: account.bm_origin,
-            bot_id: account.bot_id,
-            adAccount: {
-              id: acc.account_id,
-              name: acc.name || `Account ${acc.account_id}`,
-              bmId: acc.business?.id || "",
-              bmName: acc.business?.name || `Business Manager`,
-              bmType: acc.is_personal === 1 ? "personal" : "business",
-              accountType: acc.funding_source_details?.display_string?.includes(
-                "VISA"
-              )
-                ? "visa"
-                : "other",
-              defaultLimit:
-                parseInt(acc.spend_limit) || parseInt(acc.spend_cap) || 5000000,
-              pricePerDay: 200000,
-              remainingBudget: parseInt(acc.balance) || 0,
-              includesAdAccount: true,
-              status: acc.account_status === 1 ? "active" : "available",
-              currency: acc.currency,
-            },
-          };
-        });
-
-        console.log("Formatted accounts for admin:", formattedAccounts);
-        setRentals(formattedAccounts);
-      } else {
-        const adsrentals: AdsRental[] = Array.isArray(response.data)
-          ? response.data
-          : response.data.data || [];
-
-        if (adsrentals.length === 0) {
-          console.log("No rentals found");
-          setRentals([]);
-          setLoading(false);
-          return;
-        }
-
-        const formattedRentals = adsrentals.map((rental) => {
-          const adAccountData = rental.accounts || {};
-          return {
-            id: rental.id,
-            userId: rental.user_id,
-            adAccountId: rental.ads_account_id,
-            userBmId: rental.bm_id,
-            startDate: new Date(rental.created_at),
-            endDate: new Date(rental.updated_at),
-            requestedLimit: adAccountData.spend_limit || 0,
-            totalPrice: 1500000,
-            spentBudget: parseInt(adAccountData.spend_cap) || 0,
-            status: mapApiStatus(rental.status),
-            createdAt: new Date(rental.created_at),
-            status_dischard_limit_spend: rental.status_dischard_limit_spend,
-            status_dischard_partner: rental.status_dischard_partner,
-            status_limit_spend: rental.status_limit_spend || 0,
-            status_partner: rental.status_partner || 0,
-            bot_id: rental.bot_id,
-            bm_origin: rental.bm_origin,
-            adAccount: {
-              id: adAccountData.account_id,
-              name: adAccountData.name || `BM ${rental.bm_id}`,
-              bmId: rental.bm_id,
-              bmName:
-                adAccountData.business?.name ||
-                `Business Manager ${rental.bm_id}`,
-              bmType: adAccountData.is_personal === 1 ? "personal" : "business",
-              accountType:
-                adAccountData.funding_source_details?.display_string?.includes(
-                  "VISA"
-                )
-                  ? "visa"
-                  : "other",
-              defaultLimit: adAccountData.spend_limit || 0,
-              pricePerDay: 200000,
-              remainingBudget:
-                adAccountData.spend_limit -
-                (parseInt(adAccountData.spend_cap) || 0),
-              includesAdAccount: true,
-              status: rental.status,
-              currency: adAccountData.currency || "VND",
-            },
-          };
-        });
-
-        console.log("Formatted rentals for user:", formattedRentals);
-        setRentals(formattedRentals);
+      if (rawData.length === 0) {
+        setRentals([]);
+        return;
       }
+
+      const formatted = rawData.map((item: any) => {
+        const acc = item.accounts || {};
+        return {
+          id: item.id || `act-${item.ads_account_id}`,
+          userId: item.user_id || 'Unknown',
+          adAccountId: item.ads_account_id,
+          userBmId: item.bm_id || 'Không tìm thấy BM ID',
+          startDate: new Date(
+            acc.created_time || item.created_at || Date.now()
+          ),
+          endDate: new Date(item.updated_at || Date.now()),
+          requestedLimit: parseInt(acc.spend_cap) || acc.spend_limit || 0,
+          totalPrice: 1500000,
+          spentBudget: parseInt(acc.amount_spent) || 0,
+          status: mapApiStatus(item.status_rented || item.status),
+          createdAt: new Date(
+            acc.created_time || item.created_at || Date.now()
+          ),
+          status_dischard_limit_spend: item.status_dischard_limit_spend,
+          status_dischard_partner: item.status_dischard_partner,
+          status_limit_spend: item.status_limit_spend || 0,
+          status_partner: item.status_partner || 0,
+          bm_origin: item.bm_origin,
+          bot_id: item.bot_id,
+          adAccount: {
+            id: acc.account_id,
+            name: acc.name || `Account ${acc.account_id}`,
+            bmId: acc.business?.id || '',
+            bmName: acc.business?.name || `Business Manager`,
+            bmType: acc.is_personal === 1 ? 'personal' : 'business',
+            accountType: acc.funding_source_details?.display_string?.includes(
+              'VISA'
+            )
+              ? 'visa'
+              : 'other',
+            defaultLimit:
+              parseInt(acc.spend_limit) || parseInt(acc.spend_cap) || 5000000,
+            pricePerDay: 200000,
+            remainingBudget: parseInt(acc.balance) || 0,
+            includesAdAccount: true,
+            status: acc.account_status === 1 ? 'active' : 'available',
+            currency: acc.currency || 'VND',
+          },
+        };
+      });
+
+      // ✅ Lọc theo tab hiện tại
+      const filteredByTab = formatted.filter((item) => {
+        if (activeTab === 'all') return true;
+        return item.status === activeTab;
+      });
+
+      setRentals(filteredByTab);
     } catch (error) {
-      console.error("Error fetching rentals:", error);
+      console.error('Error fetching rentals:', error);
       setRentals([]);
       setTotalAccounts(0);
     } finally {
@@ -338,36 +267,38 @@ const RentalsPage: React.FC = () => {
 
   const mapApiStatus = (
     status: string
-  ): "available" | "active" | "unavailable" => {
+  ): 'available' | 'active' | 'unavailable' => {
     switch (status) {
-      case "success":
-        return "available";
-      case "pending":
-        return "unavailable";
+      case 'available':
+        return 'available';
+      case 'active':
+        return 'active';
+      case 'process_remove':
+      case 'pending':
       default:
-        return "active";
+        return 'unavailable';
     }
   };
 
-  const filteredRentals = rentals.filter((rental) => {
-    if (activeTab === "all") return true;
-    if (userParse?.user?.role === "admin" && activeTab === "active") {
-      return rental.status === "available"; // Đoạn ni hiển thị tài khoản "available" cho tab "active" với admin
-    }
-    return rental.status === activeTab;
-  });
+  // const filteredRentals = rentals.filter((rental) => {
+  //   if (activeTab === 'all') return true;
+  //   if (userParse?.user?.role === 'admin' && activeTab === 'active') {
+  //     return rental.status === 'available'; // Đoạn ni hiển thị tài khoản "available" cho tab "active" với admin
+  //   }
+  //   return rental.status === activeTab;
+  // });
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+    return new Intl.DateTimeFormat('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
     }).format(date);
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "available":
+      case 'available':
         return (
           <span
             className="
@@ -386,7 +317,7 @@ const RentalsPage: React.FC = () => {
       //       Đang thuê
       //     </span>
       //   );
-      case "unavailable":
+      case 'unavailable':
         return (
           <span
             className=" min-w-[110px] justify-center
@@ -416,20 +347,20 @@ const RentalsPage: React.FC = () => {
     await fetchAdAccountDetail(rental.adAccountId);
   };
   const hanleCancel = async (account: any) => {
-    console.log("account", account);
+    console.log('account', account);
     try {
       const response = await BaseHeader({
-        url: "points-used",
-        method: "delete",
+        url: 'points-used',
+        method: 'delete',
         params: {
-          id: account?.id || "",
-          bm_origin: account?.bm_origin || "",
-          ads_name: account?.adAccount?.name || "",
-          bm_id: account?.userBmId || "",
-          ads_account_id: account?.adAccountId || "",
-          user_id: userParse.user_id || "",
-          amountPoint: account?.adAccount?.defaultLimit || "",
-          bot_id: account?.bot_id || "",
+          id: account?.id || '',
+          bm_origin: account?.bm_origin || '',
+          ads_name: account?.adAccount?.name || '',
+          bm_id: account?.userBmId || '',
+          ads_account_id: account?.adAccountId || '',
+          user_id: userParse.user_id || '',
+          amountPoint: account?.adAccount?.defaultLimit || '',
+          bot_id: account?.bot_id || '',
         },
       });
       if (response.status == 200) {
@@ -439,7 +370,7 @@ const RentalsPage: React.FC = () => {
       }
       console.log(response.data);
     } catch (error) {
-      console.error("Rental error:", error);
+      console.error('Rental error:', error);
     }
   };
   return (
@@ -448,9 +379,9 @@ const RentalsPage: React.FC = () => {
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
-              {userParse?.user?.role === "admin"
-                ? "Quản lý tài khoản"
-                : "Tài khoản đang thuê"}
+              {userParse?.user?.role === 'admin'
+                ? 'Quản lý tài khoản'
+                : 'Tài khoản đang thuê'}
             </h2>
           </div>
         </div>
@@ -463,10 +394,10 @@ const RentalsPage: React.FC = () => {
               className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
               value={activeTab}
               onChange={(e) =>
-                setActiveTab(e.target.value as "available" | "active" | "all")
+                setActiveTab(e.target.value as 'available' | 'active' | 'all')
               }
             >
-              {userParse?.user?.role === "admin" ? (
+              {userParse?.user?.role === 'admin' ? (
                 <>
                   <option value="active">Đang hoạt động</option>
                   <option value="all">Tất cả</option>
@@ -483,25 +414,25 @@ const RentalsPage: React.FC = () => {
           <div className="hidden sm:block">
             <div className="border-b border-gray-200">
               <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-                {userParse?.user?.role === "admin" ? (
+                {userParse?.user?.role === 'admin' ? (
                   <>
                     <button
                       className={`${
-                        activeTab === "active"
-                          ? "border-blue-500 text-blue-600"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                        activeTab === 'active'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                      onClick={() => setActiveTab("active")}
+                      onClick={() => setActiveTab('active')}
                     >
                       Đang hoạt động
                     </button>
                     <button
                       className={`${
-                        activeTab === "all"
-                          ? "border-blue-500 text-blue-600"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                        activeTab === 'all'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                      onClick={() => setActiveTab("all")}
+                      onClick={() => setActiveTab('all')}
                     >
                       Tất cả
                     </button>
@@ -510,31 +441,31 @@ const RentalsPage: React.FC = () => {
                   <>
                     <button
                       className={`${
-                        activeTab === "available"
-                          ? "border-blue-500 text-blue-600"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                        activeTab === 'available'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                      onClick={() => setActiveTab("available")}
+                      onClick={() => setActiveTab('available')}
                     >
                       Đang thuê
                     </button>
                     <button
                       className={`${
-                        activeTab === "active"
-                          ? "border-blue-500 text-blue-600"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                        activeTab === 'active'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                      onClick={() => setActiveTab("active")}
+                      onClick={() => setActiveTab('active')}
                     >
                       Đang hoạt động
                     </button>
                     <button
                       className={`${
-                        activeTab === "all"
-                          ? "border-blue-500 text-blue-600"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                        activeTab === 'all'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                      onClick={() => setActiveTab("all")}
+                      onClick={() => setActiveTab('all')}
                     >
                       Tất cả
                     </button>
@@ -550,9 +481,9 @@ const RentalsPage: React.FC = () => {
             <div className="text-center py-12">
               <p className="text-gray-500">Đang tải dữ liệu...</p>
             </div>
-          ) : filteredRentals.length > 0 ? (
+          ) : rentals.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredRentals.map((rental) => (
+              {rentals.map((rental) => (
                 <Card
                   key={rental.userBmId}
                   className="h-full flex flex-col relative cursor-pointer hover:shadow-lg transition-shadow duration-200"
@@ -597,8 +528,8 @@ const RentalsPage: React.FC = () => {
                             Giới hạn chi:
                           </span>
                           <span className="font-semibold">
-                            {rental.requestedLimit.toLocaleString("vi-VN")}{" "}
-                            {rental.adAccount.currency || "VND"}
+                            {rental.requestedLimit.toLocaleString('vi-VN')}{' '}
+                            {rental.adAccount.currency || 'VND'}
                           </span>
                         </div>
 
@@ -608,8 +539,8 @@ const RentalsPage: React.FC = () => {
                             Đã chi tiêu:
                           </span>
                           <span className="font-semibold">
-                            {rental.spentBudget.toLocaleString("vi-VN")}{" "}
-                            {rental.adAccount.currency || "VND"}
+                            {rental.spentBudget.toLocaleString('vi-VN')}{' '}
+                            {rental.adAccount.currency || 'VND'}
                           </span>
                         </div>
 
@@ -621,13 +552,13 @@ const RentalsPage: React.FC = () => {
                           <span className="font-semibold">
                             {(
                               rental.requestedLimit - rental.spentBudget
-                            ).toLocaleString("vi-VN")}{" "}
-                            {rental.adAccount.currency || "VND"}
+                            ).toLocaleString('vi-VN')}{' '}
+                            {rental.adAccount.currency || 'VND'}
                           </span>
                         </div>
                       </div>
 
-                      {rental.status === "available" && (
+                      {rental.status === 'available' && (
                         <div className="pt-2">
                           <div className="w-full bg-gray-200 rounded-full h-4">
                             <div
@@ -644,7 +575,7 @@ const RentalsPage: React.FC = () => {
                                     : 0
                                 }%`,
                                 background:
-                                  "linear-gradient(90deg, #4ade80, #22d3ee)",
+                                  'linear-gradient(90deg, #4ade80, #22d3ee)',
                               }}
                             ></div>
                           </div>
@@ -664,7 +595,7 @@ const RentalsPage: React.FC = () => {
                           </div>
                         </div>
                       )}
-                      {rental.status === "expired" &&
+                      {rental.status === 'expired' &&
                         rental.spentBudget < rental.requestedLimit && (
                           <div className="bg-green-50 p-3 rounded-md flex items-start">
                             <AlertTriangle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
@@ -676,7 +607,7 @@ const RentalsPage: React.FC = () => {
                                 Bạn có thể yêu cầu hoàn
                                 {(
                                   rental.requestedLimit - rental.spentBudget
-                                ).toLocaleString("vi-VN")}
+                                ).toLocaleString('vi-VN')}
                                 VNĐ chưa sử dụng
                               </p>
                             </div>
@@ -686,7 +617,7 @@ const RentalsPage: React.FC = () => {
                   </CardContent>
                   <div className="px-6 py-4 relative z-10">
                     <div className="flex space-x-3">
-                      {userParse?.user?.role === "admin" ? (
+                      {userParse?.user?.role === 'admin' ? (
                         <>
                           {rental.status_dischard_limit_spend === 1 &&
                           rental.status_dischard_partner === 1 ? (
@@ -717,7 +648,7 @@ const RentalsPage: React.FC = () => {
                         </>
                       ) : (
                         <>
-                          {rental.status === "available" && (
+                          {rental.status === 'available' && (
                             <>
                               <Button
                                 onClick={() => hanleCancel(rental)}
@@ -733,13 +664,13 @@ const RentalsPage: React.FC = () => {
                               </Button>
                             </>
                           )}
-                          {rental.status === "active" &&
+                          {rental.status === 'active' &&
                             rental.spentBudget < rental.requestedLimit && (
                               <Button size="sm" fullWidth>
                                 Yêu cầu hoàn tiền
                               </Button>
                             )}
-                          {rental.status === "active" &&
+                          {rental.status === 'active' &&
                             rental.spentBudget >= rental.requestedLimit && (
                               <>
                                 <Button
@@ -760,7 +691,7 @@ const RentalsPage: React.FC = () => {
                                 </Button>
                               </>
                             )}
-                          {rental.status === "unavailable" && (
+                          {rental.status === 'unavailable' && (
                             <Button
                               className="bg-yellow-500 hover:bg-yellow-400 py-2"
                               size="sm"
@@ -784,15 +715,15 @@ const RentalsPage: React.FC = () => {
           ) : (
             <div className="text-center py-12">
               <p className="text-gray-500">
-                {activeTab === "available"
-                  ? "Bạn không có tài khoản nào đang thuê."
-                  : activeTab === "active"
-                  ? "Bạn không có tài khoản nào đang hoạt động. "
-                  : "Bạn chưa thuê tài khoản nào."}
+                {activeTab === 'available'
+                  ? 'Bạn không có tài khoản nào đang thuê.'
+                  : activeTab === 'active'
+                  ? 'Bạn không có tài khoản nào đang hoạt động. '
+                  : 'Bạn chưa thuê tài khoản nào.'}
               </p>
               <Button
                 className="mt-4"
-                onClick={() => (window.location.href = "/marketplace")}
+                onClick={() => (window.location.href = '/marketplace')}
               >
                 Thuê tài khoản ngay
               </Button>
@@ -845,7 +776,7 @@ const RentalsPage: React.FC = () => {
                           Business Manager:
                         </p>
                         <p className="font-medium">
-                          {adAccountDetail.business?.name || "N/A"}
+                          {adAccountDetail.business?.name || 'N/A'}
                         </p>
                       </div>
                       <div>
@@ -865,7 +796,7 @@ const RentalsPage: React.FC = () => {
                       <div>
                         <p className="text-sm text-gray-500">Số dư:</p>
                         <p className="font-medium">
-                          {parseInt(adAccountDetail.balance).toLocaleString()}{" "}
+                          {parseInt(adAccountDetail.balance).toLocaleString()}{' '}
                           {adAccountDetail.currency}
                         </p>
                       </div>
@@ -874,7 +805,7 @@ const RentalsPage: React.FC = () => {
                         <p className="font-medium">
                           {parseInt(
                             adAccountDetail.amount_spent
-                          ).toLocaleString()}{" "}
+                          ).toLocaleString()}{' '}
                           {adAccountDetail.currency}
                         </p>
                       </div>
@@ -885,7 +816,7 @@ const RentalsPage: React.FC = () => {
                         <p className="font-medium">
                           {adAccountDetail.spend_limit
                             ? adAccountDetail.spend_limit.toLocaleString()
-                            : "Không giới hạn"}{" "}
+                            : 'Không giới hạn'}{' '}
                           {adAccountDetail.currency}
                         </p>
                       </div>
@@ -896,7 +827,7 @@ const RentalsPage: React.FC = () => {
                         <p className="font-medium flex items-center">
                           <CreditCard className="h-4 w-4 mr-1 text-blue-500" />
                           {adAccountDetail.funding_source_details
-                            ?.display_string || "N/A"}
+                            ?.display_string || 'N/A'}
                         </p>
                       </div>
                     </div>
@@ -918,7 +849,7 @@ const RentalsPage: React.FC = () => {
                         <p className="font-medium">
                           {new Date(
                             adAccountDetail.created_time
-                          ).toLocaleDateString("vi-VN")}
+                          ).toLocaleDateString('vi-VN')}
                         </p>
                       </div>
                       <div>
@@ -931,8 +862,8 @@ const RentalsPage: React.FC = () => {
                         <p className="text-sm text-gray-500">Loại tài khoản:</p>
                         <p className="font-medium">
                           {adAccountDetail.is_personal === 1
-                            ? "Cá nhân"
-                            : "Doanh nghiệp"}
+                            ? 'Cá nhân'
+                            : 'Doanh nghiệp'}
                         </p>
                       </div>
                       <div>
@@ -944,7 +875,7 @@ const RentalsPage: React.FC = () => {
                       <div>
                         <p className="text-sm text-gray-500">Giá thuê/ngày:</p>
                         <p className="font-medium">
-                          {selectedRental.adAccount.pricePerDay.toLocaleString()}{" "}
+                          {selectedRental.adAccount.pricePerDay.toLocaleString()}{' '}
                           VND
                         </p>
                       </div>
@@ -994,13 +925,13 @@ const RentalsPage: React.FC = () => {
       </div>
       {successRent && (
         <NotiSuccess
-          onClose={() => setSuccessRent("")}
-          message={"Vui lòng đợi giây lát để hệ thống setup"}
+          onClose={() => setSuccessRent('')}
+          message={'Vui lòng đợi giây lát để hệ thống setup'}
         />
       )}
 
       {errorRent && (
-        <NotiError onClose={() => setErrorRent("")} message={errorRent} />
+        <NotiError onClose={() => setErrorRent('')} message={errorRent} />
       )}
     </Layout>
   );
