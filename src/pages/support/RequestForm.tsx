@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Layout from "../../components/layout/Layout.tsx";
-import { AlertCircle, Send, Upload, X } from "lucide-react";
+import { AlertCircle, Send, Upload, X, ChevronDown } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,7 +49,7 @@ const RequestForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const user = useUserStore((state) => state.user);
-  // console.log("user",user)
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const {
     register,
@@ -356,21 +356,25 @@ const RequestForm: React.FC = () => {
                   >
                     Bộ phận <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    id="department"
-                    {...register("department")}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                      errors.department
-                        ? "border-red-500 bg-red-50"
-                        : "border-gray-300"
-                    }`}
-                  >
-                    {departments.map((dept) => (
-                      <option key={dept.value} value={dept.value}>
-                        {dept.label}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <select
+                        id="department"
+                        {...register("department")}
+                        className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                            errors.department ? "border-red-500 bg-red-50" : "border-gray-300"
+                        }`}
+                    >
+                      {departments.map((dept) => (
+                          <option key={dept.value} value={dept.value}>
+                            {dept.label}
+                          </option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500">
+                      <ChevronDown className="w-4 h-4" />
+                    </div>
+                  </div>
+
                   {errors.department && (
                     <div className="flex items-center mt-2 text-red-600 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
@@ -389,21 +393,25 @@ const RequestForm: React.FC = () => {
                   >
                     Mức độ ưu tiên <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    id="priority"
-                    {...register("priority")}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                      errors.priority
-                        ? "border-red-500 bg-red-50"
-                        : "border-gray-300"
-                    }`}
-                  >
-                    {priorities.map((dept) => (
-                      <option key={dept.value} value={dept.value}>
-                        {dept.label}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <select
+                        id="priority"
+                        {...register("priority")}
+                        className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                            errors.priority ? "border-red-500 bg-red-50" : "border-gray-300"
+                        }`}
+                    >
+                      {priorities.map((item) => (
+                          <option key={item.value} value={item.value}>
+                            {item.label}
+                          </option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500">
+                      <ChevronDown className="w-4 h-4" />
+                    </div>
+                  </div>
+
                   {errors.priority && (
                     <div className="flex items-center mt-2 text-red-600 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
@@ -419,21 +427,25 @@ const RequestForm: React.FC = () => {
                   >
                     Danh mục <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    id="category"
-                    {...register("category")}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                      errors.category
-                        ? "border-red-500 bg-red-50"
-                        : "border-gray-300"
-                    }`}
-                  >
-                    {categories.map((dept) => (
-                      <option key={dept.value} value={dept.value}>
-                        {dept.label}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <select
+                        id="category"
+                        {...register("category")}
+                        className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                            errors.category ? "border-red-500 bg-red-50" : "border-gray-300"
+                        }`}
+                    >
+                      {categories.map((item) => (
+                          <option key={item.value} value={item.value}>
+                            {item.label}
+                          </option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500">
+                      <ChevronDown className="w-4 h-4" />
+                    </div>
+                  </div>
+
                   {errors.category && (
                     <div className="flex items-center mt-2 text-red-600 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
@@ -481,10 +493,52 @@ const RequestForm: React.FC = () => {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Đính kèm tệp
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+
+                <div
+                    className={`border-2 border-dashed p-6 text-center rounded-lg transition-colors ${
+                        isDragOver ? "border-blue-500 bg-blue-50" : "border-gray-300"
+                    }`}
+                    onDragOver={(e) => { //  drop file vào vùng HTML.
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onDragEnter={() => setIsDragOver(true)} // kéo file vào vùng drop
+                    onDragLeave={() => setIsDragOver(false)} //  khi rời khỏi vùng đó.
+                    onDrop={(e) => { // Kích hoạt khi người dùng thả file vào vùng này.
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsDragOver(false);
+
+                      const files = Array.from(e.dataTransfer.files || []);
+                      const maxSize = 5 * 1024 * 1024;
+                      const allowedTypes = [
+                        "image/jpeg",
+                        "image/png",
+                        "image/gif",
+                        "application/pdf",
+                        "text/plain",
+                      ];
+
+                      const validFiles = files.filter((file) => {
+                        if (file.size > maxSize) {
+                          alert(`File ${file.name} quá lớn. Kích thước tối đa là 5MB.`);
+                          return false;
+                        }
+                        if (!allowedTypes.includes(file.type)) {
+                          alert(
+                              `File ${file.name} không được hỗ trợ. Chỉ chấp nhận: JPG, PNG, GIF, PDF, TXT.`
+                          );
+                          return false;
+                        }
+                        return true;
+                      });
+
+                      setAttachments((prev) => [...prev, ...validFiles]);
+                    }}
+                >
                   <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                   <p className="text-sm text-gray-600 mb-2">
-                    Kéo thả file hoặc click để chọn
+                    Kéo thả file vào đây hoặc click để chọn
                   </p>
                   <p className="text-xs text-gray-500 mb-4">
                     Hỗ trợ: JPG, PNG, GIF, PDF, TXT (tối đa 5MB)
