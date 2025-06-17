@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Menu, X, User, CreditCard, LogOut } from "lucide-react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import LoginModal from "../../pages/auth/LoginModal.tsx";
-import RegisterModal from "../../pages/auth/RegisterModal.tsx";
-import { toast, ToastContainer } from "react-toastify";
-import { useUserStore } from "../../stores/useUserStore.ts";
-import socket from "../../socket/index.ts";
+import React, { useState, useEffect } from 'react';
+import { Menu, X, User, CreditCard, LogOut } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import LoginModal from '../../pages/auth/LoginModal.tsx';
+import RegisterModal from '../../pages/auth/RegisterModal.tsx';
+import { toast, ToastContainer } from 'react-toastify';
+import { useUserStore } from '../../stores/useUserStore.ts';
+import socket from '../../socket/index.ts';
 
 const ProfileDropdown: React.FC<{
   user: any;
@@ -17,19 +17,19 @@ const ProfileDropdown: React.FC<{
     <div
       className={`absolute right-0 mt-2 min-w-[200px] max-w-[90vw] rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 z-50 transition-all duration-200 ease-in-out transform ${
         isProfileMenuOpen
-          ? "opacity-100 scale-100 pointer-events-auto"
-          : "opacity-0 scale-95 pointer-events-none"
+          ? 'opacity-100 scale-100 pointer-events-auto'
+          : 'opacity-0 scale-95 pointer-events-none'
       }`}
     >
       <div className="flex justify-between items-center px-4 py-2 border-b">
-        <p className="font-semibold text-base">{user?.username || "User"}</p>
+        <p className="font-semibold text-base">{user?.username || 'User'}</p>
         <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
           <X size={16} />
         </button>
       </div>
       <div className="px-4 py-3 text-sm text-gray-700 border-b space-y-1">
         <p className="text-gray-500 truncate">
-          {user?.email || "email@example.com"}
+          {user?.email || 'email@example.com'}
         </p>
         <p className="font-semibold text-green-600 mt-1">
           {user?.points || 0} điểm
@@ -67,8 +67,8 @@ const AuthDropdown: React.FC<{
     <div
       className={`absolute right-0 mt-2 min-w-[150px] rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 z-50 transition-all duration-200 ease-in-out transform ${
         isAuthMenuOpen
-          ? "opacity-100 scale-100 pointer-events-auto"
-          : "opacity-0 scale-95 pointer-events-none"
+          ? 'opacity-100 scale-100 pointer-events-auto'
+          : 'opacity-0 scale-95 pointer-events-none'
       }`}
     >
       <div className="flex justify-between items-center px-4 py-2 border-b">
@@ -114,9 +114,9 @@ const Navbar: React.FC = () => {
     const handlePopstate = () => {
       fetchUser(); // Cập nhật lại user khi ấn nút back trên browser
     };
-    window.addEventListener("popstate", handlePopstate);
+    window.addEventListener('popstate', handlePopstate);
     return () => {
-      window.removeEventListener("popstate", handlePopstate);
+      window.removeEventListener('popstate', handlePopstate);
     };
   }, [fetchUser]);
 
@@ -125,7 +125,7 @@ const Navbar: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    const stored = localStorage.getItem("user");
+    const stored = localStorage.getItem('user');
     if (stored) {
       const img = JSON.parse(stored)?.user?.images;
       if (img) setAvatar(`${img}?t=${Date.now()}`);
@@ -133,16 +133,16 @@ const Navbar: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
-      socket.emit("joinRoom");
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id);
+      socket.emit('joinRoom');
     });
-    socket.on("payment_success", (data) => {
-      console.log("Payment thành công:", data);
+    socket.on('payment_success', (data) => {
+      console.log('Payment thành công:', data);
       fetchUser();
     });
     return () => {
-      socket.off("payment_success");
+      socket.off('payment_success');
     };
   }, [fetchUser]);
   // console.log("fetchUser", fetchUser)
@@ -150,17 +150,17 @@ const Navbar: React.FC = () => {
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isAuthMenuOpen, setIsAuthMenuOpen] = useState(false);
-  const [avatar, setAvatar] = useState("/avatar.jpg");
+  const [avatar, setAvatar] = useState('/avatar.jpg');
 
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    console.log("Logout clicked");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user");
+    console.log('Logout clicked');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
     setUser(null);
-    navigate("/login");
+    navigate('/login');
   };
 
   const toggleProfileMenu = () => {
@@ -175,52 +175,52 @@ const Navbar: React.FC = () => {
 
   const menuItems = [
     {
-      icon: "🏠",
-      label: "Trang chủ",
-      href: "/dashboard",
-      hoverColor: "bg-gradient-to-r from-blue-400 to-blue-800",
+      icon: '🏠',
+      label: 'Trang chủ',
+      href: '/dashboard',
+      hoverColor: 'bg-gradient-to-r from-blue-400 to-blue-800',
     },
     {
-      icon: "📋",
-      label: "Danh sách tài khoản",
-      href: "/marketplace",
-      hoverColor: "bg-gradient-to-r from-pink-400 to-pink-600",
+      icon: '📋',
+      label: 'Danh sách tài khoản',
+      href: '/marketplace',
+      hoverColor: 'bg-gradient-to-r from-pink-400 to-pink-600',
     },
     {
-      icon: "💹",
-      label: "Bảng giá",
-      href: "/princing",
-      hoverColor: "bg-gradient-to-r from-orange-300 to-yellow-600",
+      icon: '💹',
+      label: 'Bảng giá',
+      href: '/princing',
+      hoverColor: 'bg-gradient-to-r from-orange-300 to-yellow-600',
     },
     {
-      icon: "💳",
-      label: "Tài khoản đang thuê",
-      href: "/rentals",
-      hoverColor: "bg-gradient-to-r from-green-400 to-green-600",
+      icon: '💳',
+      label: 'Tài khoản đang thuê',
+      href: '/rentals',
+      hoverColor: 'bg-gradient-to-r from-green-400 to-green-600',
     },
     {
-      icon: "💰",
-      label: "Nạp tiền",
-      href: "/payments",
-      hoverColor: "bg-gradient-to-r from-yellow-400 to-yellow-600",
+      icon: '💰',
+      label: 'Nạp tiền',
+      href: '/payments',
+      hoverColor: 'bg-gradient-to-r from-yellow-400 to-yellow-600',
     },
     {
-      icon: "📜",
-      label: "Lịch sử giao dịch",
-      href: "/admintransaction",
-      hoverColor: "bg-gradient-to-r from-red-400 to-red-600",
+      icon: '📜',
+      label: 'Lịch sử giao dịch',
+      href: '/admintransaction',
+      hoverColor: 'bg-gradient-to-r from-red-400 to-red-600',
     },
     {
-      icon: "🎧",
-      label: "Hỗ trợ",
-      href: "/support",
-      hoverColor: "bg-gradient-to-r from-purple-400 to-purple-600",
+      icon: '🎧',
+      label: 'Hỗ trợ',
+      href: '/support',
+      hoverColor: 'bg-gradient-to-r from-purple-400 to-purple-600',
     },
     {
-      icon: "⚙️",
-      label: "Chính sách",
-      href: "/policy",
-      hoverColor: "bg-gradient-to-r from-orange-400 to-orange-600",
+      icon: '⚙️',
+      label: 'Chính sách',
+      href: '/policy',
+      hoverColor: 'bg-gradient-to-r from-orange-400 to-orange-600',
     },
   ];
 
@@ -231,16 +231,16 @@ const Navbar: React.FC = () => {
     setShowLoginModal(false);
     setIsProfileMenuOpen(false);
     fetchUser();
-    toast.success("Đăng nhập thành công!", {
-      position: "top-right",
+    toast.success('Đăng nhập thành công!', {
+      position: 'top-right',
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
     });
-    if (location.pathname === "/login") {
-      navigate("/");
+    if (location.pathname === '/login') {
+      navigate('/');
     }
     window.location.reload();
   };
@@ -248,16 +248,16 @@ const Navbar: React.FC = () => {
   const handleRegisterSuccess = () => {
     setShowRegisterModal(false);
     fetchUser();
-    toast.success("Đăng ký thành công! Bạn đã được đăng nhập tự động.", {
-      position: "top-right",
+    toast.success('Đăng ký thành công! Bạn đã được đăng nhập tự động.', {
+      position: 'top-right',
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
     });
-    if (location.pathname === "/register") {
-      navigate("/");
+    if (location.pathname === '/register') {
+      navigate('/');
     }
     window.location.reload();
   };
@@ -272,10 +272,10 @@ const Navbar: React.FC = () => {
     setShowLoginModal(true);
   };
 
-  const userStorage = localStorage.getItem("user");
-  const role = userStorage != null ? JSON.parse(userStorage)?.user.role : "";
-  const hiddenPaths = ["/login", "/register"];
-  if (hiddenPaths.includes(location.pathname) || role === "admin") {
+  const userStorage = localStorage.getItem('user');
+  const role = userStorage != null ? JSON.parse(userStorage)?.user.role : '';
+  const hiddenPaths = ['/login', '/register'];
+  if (hiddenPaths.includes(location.pathname) || role === 'admin') {
     return null;
   }
 
@@ -316,25 +316,33 @@ const Navbar: React.FC = () => {
                   />
                 )}
                 <div
-                  className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 ${
-                    isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+                  className={`fixed top-0 left-0 h-full w-64 bg-gradient-to-br from-yellow-100 via-indigo-200 to-green-200 shadow-lg z-50 transform transition-transform duration-300 ${
+                    isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
                   }`}
                 >
                   <div className="p-4 border-b font-semibold text-blue-700">
                     Menu
                   </div>
                   <nav className="flex flex-col p-4 space-y-3">
-                    {menuItems.map((item, index) => (
-                      <Link
-                        key={index}
-                        to={item.href}
-                        className="text-gray-800 hover:text-blue-600 transition-colors"
-                        onClick={() => setIsSidebarOpen(false)}
-                      >
-                        <span className="mr-2">{item.icon}</span>
-                        {item.label}
-                      </Link>
-                    ))}
+                    {menuItems.map((item, index) => {
+                      const isActive = location.pathname === item.href;
+
+                      return (
+                        <Link
+                          key={index}
+                          to={item.href}
+                          onClick={() => setIsSidebarOpen(false)}
+                          className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            isActive
+                              ? 'bg-white text-blue-700 font-semibold'
+                              : 'text-gray-800 hover:text-blue-600'
+                          }`}
+                        >
+                          <span className="mr-2">{item.icon}</span>
+                          {item.label}
+                        </Link>
+                      );
+                    })}
                   </nav>
                 </div>
               </div>
@@ -351,15 +359,15 @@ const Navbar: React.FC = () => {
                   <span className="mx-4 font-[13px]">
                     {user ? (
                       <>
-                        Chào mừng{" "}
+                        Chào mừng{' '}
                         <span className="font-bold text-blue-600">
                           {user.username}
-                        </span>{" "}
+                        </span>{' '}
                         đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và
                         đáng tin cậy trên các nền tảng số
                       </>
                     ) : (
-                      "Chào mừng bạn đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và đáng tin cậy trên các nền tảng số"
+                      'Chào mừng bạn đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và đáng tin cậy trên các nền tảng số'
                     )}
                   </span>
                 </div>
@@ -502,73 +510,69 @@ const Navbar: React.FC = () => {
             pauseOnHover
             style={{ zIndex: 10001 }}
           />
-          <div className="relative z-10 hidden sm:flex flex-nowrap justify-center items-center gap-4 max-w-[1800px] mx-auto px-2 py-6">
-            {menuItems.map((item, i) => {
-              const protectedRoutes = [
-                "/rentals",
-                "/payments",
-                "/admintransaction",
-                "/support",
-              ];
-              const isProtected = protectedRoutes.includes(item.href);
-              const isActive = location.pathname === item.href;
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+            <div className="flex justify-center whitespace-nowrap gap-4 max-w-[1800px] mx-auto px-2 py-6">
+              {menuItems.map((item, i) => {
+                const protectedRoutes = [
+                  '/rentals',
+                  '/payments',
+                  '/admintransaction',
+                  '/support',
+                ];
+                const isProtected = protectedRoutes.includes(item.href);
+                const isActive = location.pathname === item.href;
 
-              const handleClick = (e: React.MouseEvent) => {
-                if (!user && isProtected) {
-                  e.preventDefault(); // ngăn chuyển trang
-                  // toast.error("Bạn cần đăng nhập để truy cập mục này");
-                  setShowLoginModal(true);
-                }
-              };
+                const handleClick = (e: React.MouseEvent) => {
+                  if (!user && isProtected) {
+                    e.preventDefault();
+                    setShowLoginModal(true);
+                  }
+                };
 
-              return (
-                <Link
-                  key={i}
-                  to={item.href}
-                  onClick={handleClick}
-                  className={`
-                          group relative
-                          flex items-center gap-2 text-white font-medium text-sm
-                          px-5 py-2.5 rounded-full border
-                          transition-opacity transition-transform transition-shadow duration-300 ease-in-out
-                          hover:scale-105 hover:-translate-y-1 active:scale-100
-                          shadow-md bg-white/10 border-white/20 hover:shadow-xl
-                          will-change-transform will-change-opacity will-change-shadow
-                          ${
-                            isActive ? "scale-105 -translate-y-1 shadow-xl" : ""
-                          }
-                        `}
-                >
-                  <div
-                    className={`absolute inset-0 rounded-full ${
-                      isActive
-                        ? "opacity-100"
-                        : "opacity-0 group-hover:opacity-100"
-                    } transition-opacity duration-300 ${
-                      item.hoverColor
-                    } z-[-1]`}
-                  />
-                  <span className="text-base drop-shadow">{item.icon}</span>
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-            {showLoginModal && (
-              <LoginModal
-                isOpen={showLoginModal}
-                onClose={() => setShowLoginModal(false)}
-                onLoginSuccess={handleLoginSuccess}
-                onSwitchToRegister={switchToRegister}
-              />
-            )}
-            {showRegisterModal && (
-              <RegisterModal
-                isOpen={showRegisterModal}
-                onClose={() => setShowRegisterModal(false)}
-                onRegisterSuccess={handleRegisterSuccess}
-                onSwitchToLogin={switchToLogin}
-              />
-            )}
+                return (
+                  <Link
+                    key={i}
+                    to={item.href}
+                    onClick={handleClick}
+                    className={`group relative flex items-center gap-2 text-white font-medium text-sm
+                      px-5 py-2.5 rounded-full border
+                      transition duration-300 ease-in-out
+                      hover:scale-105 hover:-translate-y-1 active:scale-100
+                      shadow-md bg-white/10 border-white/20 hover:shadow-xl
+                      ${isActive ? 'scale-105 -translate-y-1 shadow-xl' : ''}`}
+                  >
+                    <div
+                      className={`absolute inset-0 rounded-full ${
+                        isActive
+                          ? 'opacity-100'
+                          : 'opacity-0 group-hover:opacity-100'
+                      } transition-opacity duration-300 ${
+                        item.hoverColor
+                      } z-[-1]`}
+                    />
+                    <span className="text-base drop-shadow">{item.icon}</span>
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+              {/* Modals */}
+              {showLoginModal && (
+                <LoginModal
+                  isOpen={showLoginModal}
+                  onClose={() => setShowLoginModal(false)}
+                  onLoginSuccess={handleLoginSuccess}
+                  onSwitchToRegister={switchToRegister}
+                />
+              )}
+              {showRegisterModal && (
+                <RegisterModal
+                  isOpen={showRegisterModal}
+                  onClose={() => setShowRegisterModal(false)}
+                  onRegisterSuccess={handleRegisterSuccess}
+                  onSwitchToLogin={switchToLogin}
+                />
+              )}
+            </div>
           </div>
         </nav>
       </div>

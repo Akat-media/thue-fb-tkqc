@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   DollarSign,
   Shield,
@@ -8,22 +8,22 @@ import {
   Settings,
   User,
   ChevronRight,
-} from "lucide-react";
-import Layout from "../components/layout/Layout";
-import Button from "../components/ui/Button";
-import { Card, CardContent } from "../components/ui/Card";
-import StatCard from "./analytics/StatCard.tsx";
-import StatsCharts from "./analytics/StatsCharts.tsx";
-import ChartDashboard from "./analytics/ChartDashboard.tsx";
-import Counter from "../components/ui/Counter";
-import axios from "axios";
-import { DatePicker } from "antd";
-import dayjs from "dayjs";
-import { createGlobalStyle } from "styled-components";
-import img1 from "../public/homepage.png";
-import metalogo from "../public/metalogo.png";
-import { toast, ToastContainer } from "react-toastify";
-import BaseHeader from "../api/BaseHeader.ts";
+} from 'lucide-react';
+import Layout from '../components/layout/Layout';
+import Button from '../components/ui/Button';
+import { Card, CardContent } from '../components/ui/Card';
+import StatCard from './analytics/StatCard.tsx';
+import StatsCharts from './analytics/StatsCharts.tsx';
+import ChartDashboard from './analytics/ChartDashboard.tsx';
+import Counter from '../components/ui/Counter';
+import axios from 'axios';
+import { DatePicker } from 'antd';
+import dayjs from 'dayjs';
+import { createGlobalStyle } from 'styled-components';
+import img1 from '../public/homepage.png';
+import metalogo from '../public/metalogo.png';
+import { toast, ToastContainer } from 'react-toastify';
+import BaseHeader from '../api/BaseHeader.ts';
 
 type MonthlyTotal = {
   totalRevenue: number;
@@ -60,10 +60,10 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const HomePage: React.FC = () => {
-  const user = localStorage.getItem("user");
-  const role = typeof user === "string" ? JSON.parse(user)?.user.role : "";
+  const user = localStorage.getItem('user');
+  const role = typeof user === 'string' ? JSON.parse(user)?.user.role : '';
   const { RangePicker } = DatePicker;
-  const dateFormat = "YYYY/MM/DD";
+  const dateFormat = 'YYYY/MM/DD';
   const sliderRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [stats, setStats] = useState<any>(null);
@@ -83,61 +83,61 @@ const HomePage: React.FC = () => {
   });
   const [dateRange, setDateRange] = useState({
     targetFrom: dayjs()
-      .subtract(5, "month")
-      .startOf("month")
-      .format("YYYY/MM/DD"),
-    targetTo: dayjs().startOf("month").format("YYYY/MM/DD"),
+      .subtract(5, 'month')
+      .startOf('month')
+      .format('YYYY/MM/DD'),
+    targetTo: dayjs().startOf('month').format('YYYY/MM/DD'),
   });
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem('token');
         const response = await BaseHeader({
-          method: "get",
-          url: "/statistics",
+          method: 'get',
+          url: '/statistics',
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         if (response.data.success) {
           setStats(response.data.data);
         }
       } catch (err) {
-        console.error("Error fetching stats:", err);
+        console.error('Error fetching stats:', err);
       }
     };
 
-    if (role === "admin") fetchStats();
+    if (role === 'admin') fetchStats();
   }, [role]);
 
   const newsArticles = [
     {
       id: 1,
-      title: "Thuê tài khoản quảng cáo Facebook",
-      date: "25/04/2025",
+      title: 'Thuê tài khoản quảng cáo Facebook',
+      date: '25/04/2025',
       excerpt:
-        "Giải pháp thuê tài khoản quảng cáo Facebook an toàn, hiệu quả cho doanh nghiệp.",
-      url: "https://akamedia.vn/thue-tai-khoan-quang-cao-facebook",
+        'Giải pháp thuê tài khoản quảng cáo Facebook an toàn, hiệu quả cho doanh nghiệp.',
+      url: 'https://akamedia.vn/thue-tai-khoan-quang-cao-facebook',
       image:
-        "https://akamedia.vn/assets/images/news-and-events/content/thue-tai-khoan-quang-cao-facebook.png",
+        'https://akamedia.vn/assets/images/news-and-events/content/thue-tai-khoan-quang-cao-facebook.png',
     },
     {
       id: 2,
-      title: "Tài Khoản Quảng Cáo Facebook: Hướng Dẫn Chi Tiết Cho Người Mới",
-      date: "06/05/2025",
+      title: 'Tài Khoản Quảng Cáo Facebook: Hướng Dẫn Chi Tiết Cho Người Mới',
+      date: '06/05/2025',
       excerpt:
-        "Trong thời đại số hóa ngày nay, việc quảng bá sản phẩm và dịch vụ trên các nền tảng mạng xã hội trở nên quan trọng hơn bao giờ hết. Facebook có hơn 2,9 tỷ người dùng hoạt động hàng tháng.",
-      url: "https://akamedia.vn/tai-khoan-quang-cao-facebook",
+        'Trong thời đại số hóa ngày nay, việc quảng bá sản phẩm và dịch vụ trên các nền tảng mạng xã hội trở nên quan trọng hơn bao giờ hết. Facebook có hơn 2,9 tỷ người dùng hoạt động hàng tháng.',
+      url: 'https://akamedia.vn/tai-khoan-quang-cao-facebook',
       image:
-        "https://akamedia.vn/assets/images/news-and-events/content/T%C3%A0i%20kho%E1%BA%A3n%20qu%E1%BA%A3ng%20c%C3%A1o%20Facebook.png",
+        'https://akamedia.vn/assets/images/news-and-events/content/T%C3%A0i%20kho%E1%BA%A3n%20qu%E1%BA%A3ng%20c%C3%A1o%20Facebook.png',
     },
     {
       id: 3,
-      title: "Chạy quảng cáo Facebook giá rẻ",
-      date: "15/05/2025",
+      title: 'Chạy quảng cáo Facebook giá rẻ',
+      date: '15/05/2025',
       excerpt:
-        "Chiến lược tối ưu ngân sách khi chạy quảng cáo Facebook với chi phí thấp nhất.",
-      url: "https://akamedia.vn/chay-quang-cao-facebook-gia-re",
+        'Chiến lược tối ưu ngân sách khi chạy quảng cáo Facebook với chi phí thấp nhất.',
+      url: 'https://akamedia.vn/chay-quang-cao-facebook-gia-re',
       image:
-        "https://akamedia.vn/assets/images/news-and-events/content/chay-quang-cao-facebook-gia-re.png",
+        'https://akamedia.vn/assets/images/news-and-events/content/chay-quang-cao-facebook-gia-re.png',
     },
   ];
   const totalSlides = 1;
@@ -152,7 +152,7 @@ const HomePage: React.FC = () => {
         targetFrom: targetDayFrom,
         targetTo: targetDayTo,
       });
-      if (role === "admin") fetchDataChart();
+      if (role === 'admin') fetchDataChart();
     }
   };
   const fetchDataChart = async () => {
@@ -163,12 +163,12 @@ const HomePage: React.FC = () => {
       setStatsMonthly(response.data);
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Lỗi khi lấy dữ liệu thống kê"
+        error.response?.data?.message || 'Lỗi khi lấy dữ liệu thống kê'
       );
     }
   };
   useEffect(() => {
-    if (role === "admin") fetchDataChart();
+    if (role === 'admin') fetchDataChart();
   }, [dateRange.targetFrom, dateRange.targetTo]);
   return (
     <Layout>
@@ -183,7 +183,7 @@ const HomePage: React.FC = () => {
         draggable
         pauseOnHover
       />
-      {role !== "admin" && (
+      {role !== 'admin' && (
         <>
           <div className="bg-gradient-to-r from-[#1e3a8a] to-[#3b82f6] text-white relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
@@ -325,7 +325,7 @@ const HomePage: React.FC = () => {
                     <div>
                       <Link to="/marketplace">
                         <Button className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 flex items-center">
-                          Tìm hiểu thêm{" "}
+                          Tìm hiểu thêm{' '}
                           <ChevronRight className="ml-1 h-4 w-4" />
                         </Button>
                       </Link>
@@ -411,7 +411,7 @@ const HomePage: React.FC = () => {
                                   rel="noopener noreferrer"
                                   className="text-blue-600 hover:text-blue-800 flex items-center text-sm font-medium mt-auto"
                                 >
-                                  Đọc thêm{" "}
+                                  Đọc thêm{' '}
                                   <ChevronRight className="ml-1 h-4 w-4" />
                                 </a>
                               </CardContent>
@@ -458,12 +458,12 @@ const HomePage: React.FC = () => {
                 <div className="bg-blue-50 p-6 rounded-xl hover:shadow-md transition-shadow">
                   <Counter end={9} prefix="+ " suffix=" năm kinh nghiệm" />
                   <div className="text-xl font-medium text-blue-900 mb-2">
-                    Đồng hành cùng{" "}
+                    Đồng hành cùng{' '}
                     <Counter
                       end={1000}
                       suffix=" +"
                       className="inline text-blue-600 font-bold"
-                    />{" "}
+                    />{' '}
                     thương hiệu lớn, nhỏ
                   </div>
                   <div className="text-gray-600">
@@ -531,9 +531,9 @@ const HomePage: React.FC = () => {
         </>
       )}
 
-      {role === "admin" && (
+      {role === 'admin' && (
         <>
-          <div className="flex flex-col mb-7 md:flex-row flex-1 max-w-screen-3xl mx-auto box-border px-4 sm:px-10 items-start md:items-center justify-between gap-2">
+          <div className="flex flex-col mb-7 md:flex-row flex-1 max-w-screen-3xl mx-auto box-border px-4 sm:px-10 items-start md:items-center justify-between gap-2 mt-4">
             <GlobalStyle />
             <RangePicker
               defaultValue={[
@@ -547,11 +547,11 @@ const HomePage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-yellow-500" />
                 <span className="font-medium text-red-600 font-sans">
-                  {new Date().toLocaleDateString("vi-VN", {
-                    weekday: "long",
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
+                  {new Date().toLocaleDateString('vi-VN', {
+                    weekday: 'long',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
                   })}
                 </span>
               </div>
@@ -563,7 +563,7 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="flex flex-1 flex-col">
-            <div className="w-full max-w-screen-3xl mx-auto box-border px-0 sm:px-10 pt-[var(--layout-dashboard-content-pt)] pb-[var(--layout-dashboard-content-pb)] flex flex-col flex-[1_1_auto]">
+            <div className="w-full max-w-screen-3xl mx-auto box-border px-0 sm:px-10 pt-[var(--layout-dashboard-content-pt)] pb-[var(--layout-dashboard-content-pb)] flex flex-col flex-[1_1_auto] px-4 sm:px-4">
               <div className="mb-10 text-xl text-blue-600 font-bold leading-6 font-sans">
                 Hi, Welcome back 👋
               </div>
@@ -574,9 +574,9 @@ const HomePage: React.FC = () => {
                   value={
                     statsMonthly
                       ? `${statsMonthly.totals.totalRevenue?.toLocaleString(
-                          "vi-VN"
+                          'vi-VN'
                         )} VND`
-                      : "Loading..."
+                      : 'Loading...'
                   }
                   icon="/ic-glass-bag.svg"
                   trend={statsMonthly ? statsMonthly.totals.growRevenue : 0}
@@ -587,9 +587,9 @@ const HomePage: React.FC = () => {
                   value={
                     statsMonthly
                       ? statsMonthly.totals.totalAdsAccounts?.toLocaleString(
-                          "vi-VN"
+                          'vi-VN'
                         )
-                      : "Loading..."
+                      : 'Loading...'
                   }
                   icon="/ic-glass-users.svg"
                   trend={statsMonthly ? statsMonthly.totals.growAdsAccount : 0}
@@ -599,8 +599,8 @@ const HomePage: React.FC = () => {
                   title="Số lượng người dùng đăng ký"
                   value={
                     statsMonthly
-                      ? statsMonthly.totals.totalUsers?.toLocaleString("vi-VN")
-                      : "Loading..."
+                      ? statsMonthly.totals.totalUsers?.toLocaleString('vi-VN')
+                      : 'Loading...'
                   }
                   icon="/ic-glass-buy.svg"
                   trend={statsMonthly ? statsMonthly.totals.growUser : 0}
@@ -611,9 +611,9 @@ const HomePage: React.FC = () => {
                   value={
                     statsMonthly
                       ? statsMonthly.totals.totalTransaction?.toLocaleString(
-                          "vi-VN"
+                          'vi-VN'
                         )
-                      : "Loading..."
+                      : 'Loading...'
                   }
                   icon="/ic-glass-message.svg"
                   trend={statsMonthly ? statsMonthly.totals.growTransaction : 0}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Search,
   Filter,
@@ -8,21 +8,21 @@ import {
   RefreshCcw,
   X,
   Plus,
-} from "lucide-react";
-import Layout from "../../components/layout/Layout";
-import { Card, CardContent } from "../../components/ui/Card";
-import AdAccountCard from "./AdAccountCard";
-import RentModal from "./RentModal";
-import CreateBMModal from "./CreateBMModal";
-import { AdAccount } from "../../types";
-import { useAdAccountStore } from "./adAccountStore";
-import BaseHeader from "../../api/BaseHeader";
-import url from "../../assets/bg.svg";
-import { useOnOutsideClick } from "../../hook/useOutside";
-import { toast, ToastContainer } from "react-toastify";
-import BMCard from "./BMCard";
-import { NotiError, NotiSuccess } from "../../components/noti";
-import LoginModal from "../auth/LoginModal";
+} from 'lucide-react';
+import Layout from '../../components/layout/Layout';
+import { Card, CardContent } from '../../components/ui/Card';
+import AdAccountCard from './AdAccountCard';
+import RentModal from './RentModal';
+import CreateBMModal from './CreateBMModal';
+import { AdAccount } from '../../types';
+import { useAdAccountStore } from './adAccountStore';
+import BaseHeader from '../../api/BaseHeader';
+import url from '../../assets/bg.svg';
+import { useOnOutsideClick } from '../../hook/useOutside';
+import { toast, ToastContainer } from 'react-toastify';
+import BMCard from './BMCard';
+import { NotiError, NotiSuccess } from '../../components/noti';
+import LoginModal from '../auth/LoginModal';
 
 interface BM {
   id: string;
@@ -34,9 +34,9 @@ interface BM {
 }
 
 const MarketplacePage: React.FC = () => {
-  const userString = localStorage.getItem("user");
+  const userString = localStorage.getItem('user');
   const userInfo = userString ? JSON.parse(userString) : null;
-  const isAdmin = userInfo?.user?.role === "admin";
+  const isAdmin = userInfo?.user?.role === 'admin';
 
   const {
     searchTerm,
@@ -56,11 +56,11 @@ const MarketplacePage: React.FC = () => {
   const [isCreateBMModalOpen, setIsCreateBMModalOpen] = useState(false);
   const [selectedBM, setSelectedBM] = useState<any>(null);
   const [isBMDetailModalOpen, setIsBMDetailModalOpen] = useState(false);
-  const [selectedBMId, setSelectedBMId] = useState<string>("all");
+  const [selectedBMId, setSelectedBMId] = useState<string>('all');
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [successRent, setSuccessRent] = useState<any>(null);
   const [errorRent, setErrorRent] = useState<any>(null);
-  const [selectedSyncBMId, setSelectedSyncBMId] = useState<string>("");
+  const [selectedSyncBMId, setSelectedSyncBMId] = useState<string>('');
   const [isSyncing, setIsSyncing] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [bmToDelete, setBmToDelete] = useState<BM | null>(null);
@@ -69,8 +69,8 @@ const MarketplacePage: React.FC = () => {
   const handleCallAPi = async () => {
     try {
       const response = await BaseHeader({
-        method: "get",
-        url: "ad-accounts",
+        method: 'get',
+        url: 'ad-accounts',
         params: {},
       });
       console.log(response.data.data);
@@ -83,14 +83,14 @@ const MarketplacePage: React.FC = () => {
   const fetchBMList = async () => {
     try {
       const response = await BaseHeader({
-        method: "get",
-        url: "facebook-bm",
+        method: 'get',
+        url: 'facebook-bm',
         params: {},
       });
-      console.log("BM List:", response.data.data);
+      console.log('BM List:', response.data.data);
       setBmList(response.data.data);
     } catch (error) {
-      console.log("Error fetching BM list:", error);
+      console.log('Error fetching BM list:', error);
     }
   };
 
@@ -100,7 +100,7 @@ const MarketplacePage: React.FC = () => {
   }, []);
 
   const handleRentClick = (account: any) => {
-    const userString = localStorage.getItem("user");
+    const userString = localStorage.getItem('user');
     const userInfo = userString ? JSON.parse(userString) : null;
 
     if (!userInfo) {
@@ -114,11 +114,11 @@ const MarketplacePage: React.FC = () => {
 
   const handleBMClick = (bm: any) => {
     if (isAdmin) {
-      console.log("BM clicked:", bm);
+      console.log('BM clicked:', bm);
       setSelectedBM(bm);
       setIsBMDetailModalOpen(true);
     } else {
-      toast.info("Bạn cần có quyền admin để xem chi tiết tài khoản BM");
+      toast.info('Bạn cần có quyền admin để xem chi tiết tài khoản BM');
     }
   };
 
@@ -133,7 +133,7 @@ const MarketplacePage: React.FC = () => {
   const handleBMFilterChange = (bmId: string) => {
     setSelectedBMId(bmId);
 
-    if (bmId === "all") {
+    if (bmId === 'all') {
       handleCallAPi();
     } else {
       const filteredByBM = filteredAccounts.filter(
@@ -150,21 +150,21 @@ const MarketplacePage: React.FC = () => {
     try {
       setIsSyncing(true);
       const response = await BaseHeader({
-        url: "/async-ad-accounts",
-        method: "post",
+        url: '/async-ad-accounts',
+        method: 'post',
         data: {
           bm_id: selectedSyncBMId,
         },
       });
       if (response.status == 200) {
-        toast.success("Đồng bộ tài khoản thành công");
+        toast.success('Đồng bộ tài khoản thành công');
         await handleCallAPi();
         setIsSyncModalOpen(false);
       }
     } catch (error: any) {
       console.log(error);
       const apiMessage =
-        "Có lỗi trong quá trình đồng bộ. Vui lòng thử lại sau.";
+        'Có lỗi trong quá trình đồng bộ. Vui lòng thử lại sau.';
       toast.error(apiMessage);
     } finally {
       setIsSyncing(false);
@@ -179,7 +179,7 @@ const MarketplacePage: React.FC = () => {
     const term = e.target.value;
     setSearchTerm(term);
 
-    if (term === "") {
+    if (term === '') {
       handleCallAPi();
     } else {
       const results = filteredAccounts.filter(
@@ -196,7 +196,7 @@ const MarketplacePage: React.FC = () => {
       setBmToDelete(bm);
       setIsDeleteModalOpen(true);
     } else {
-      toast.info("Bạn cần có quyền admin để xoá tài khoản BM");
+      toast.info('Bạn cần có quyền admin để xoá tài khoản BM');
     }
   };
 
@@ -205,18 +205,18 @@ const MarketplacePage: React.FC = () => {
 
     try {
       await BaseHeader({
-        method: "delete",
+        method: 'delete',
         url: `facebook-bm`,
         params: {
           id: bmToDelete.id,
         },
       });
-      toast.success("Xóa tài khoản BM thành công");
+      toast.success('Xóa tài khoản BM thành công');
       fetchBMList();
       setIsDeleteModalOpen(false);
     } catch (error) {
-      console.error("Error deleting BM:", error);
-      toast.error("Không thể xóa tài khoản BM. Vui lòng thử lại sau.");
+      console.error('Error deleting BM:', error);
+      toast.error('Không thể xóa tài khoản BM. Vui lòng thử lại sau.');
     }
   };
 
@@ -247,29 +247,30 @@ const MarketplacePage: React.FC = () => {
         </div>
 
         <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative">
+          <div className="w-full lg:w-1/2 flex items-center gap-2">
+            <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
                 type="text"
                 placeholder="Tìm kiếm BM, tài khoản..."
-                className="min-w-[380px] block pl-10 pr-3 py-[10px] rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
+                className="w-full h-[42px] block pl-10 pr-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
                 value={searchTerm}
                 onChange={handleSearch}
               />
             </div>
+
             <button
               type="button"
-              className="inline-flex items-center px-4 py-[10px] border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="h-[42px] px-3 sm:px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center"
               onClick={toggleFilters}
             >
-              <Filter className="h-5 w-5 mr-2 text-gray-400" />
-              Bộ lọc
+              <Filter className="h-5 w-5 text-gray-400" />
+              <span className="ml-2 hidden sm:inline">Bộ lọc</span>
               <ChevronDown
-                className={`ml-2 h-4 w-4 transition-transform ${
-                  isFiltersOpen ? "rotate-180" : ""
+                className={`ml-1 h-4 w-4 transition-transform ${
+                  isFiltersOpen ? 'rotate-180' : ''
                 }`}
               />
             </button>
@@ -398,13 +399,13 @@ const MarketplacePage: React.FC = () => {
 
         {successRent && (
           <NotiSuccess
-            onClose={() => setSuccessRent("")}
-            message={"Vui lòng đợi giây lát để hệ thống setup"}
+            onClose={() => setSuccessRent('')}
+            message={'Vui lòng đợi giây lát để hệ thống setup'}
           />
         )}
 
         {errorRent && (
-          <NotiError onClose={() => setErrorRent("")} message={errorRent} />
+          <NotiError onClose={() => setErrorRent('')} message={errorRent} />
         )}
         <CreateBMModal
           isOpen={isCreateBMModalOpen}
@@ -456,7 +457,7 @@ const MarketplacePage: React.FC = () => {
                 {Object.entries(selectedBM).map(
                   ([key, value]: [string, any]) => {
                     if (
-                      ["bm_name", "bm_id", "system_user_token"].includes(key)
+                      ['bm_name', 'bm_id', 'system_user_token'].includes(key)
                     ) {
                       return null;
                     }
@@ -464,7 +465,7 @@ const MarketplacePage: React.FC = () => {
                       <div key={key} className="flex items-start">
                         <span className="font-medium w-1/3">{key}:</span>
                         <span className="break-all">
-                          {typeof value === "number"
+                          {typeof value === 'number'
                             ? value.toLocaleString()
                             : String(value)}
                         </span>
@@ -534,10 +535,10 @@ const MarketplacePage: React.FC = () => {
                     disabled={!selectedSyncBMId || isSyncing}
                     className={`px-4 py-2 rounded-lg text-white ${
                       !selectedSyncBMId
-                        ? "bg-gray-400 cursor-not-allowed"
+                        ? 'bg-gray-400 cursor-not-allowed'
                         : isSyncing
-                        ? "bg-blue-500 cursor-not-allowed"
-                        : "bg-blue-600 hover:bg-blue-700"
+                        ? 'bg-blue-500 cursor-not-allowed'
+                        : 'bg-blue-600 hover:bg-blue-700'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -591,7 +592,7 @@ const MarketplacePage: React.FC = () => {
               </button>
               <h2 className="text-xl font-semibold mb-4">Xác nhận xóa</h2>
               <p className="mb-6">
-                Bạn có chắc chắn muốn xóa BM{" "}
+                Bạn có chắc chắn muốn xóa BM{' '}
                 <span className="text-blue-600">{bmToDelete.bm_name}</span> này
                 không?
               </p>
