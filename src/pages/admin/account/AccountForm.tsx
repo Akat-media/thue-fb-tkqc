@@ -5,7 +5,6 @@ import {
   ArrowUp,
   ArrowDown,
   User,
-  BadgeInfo,
   DollarSign,
   Briefcase,
   Phone,
@@ -62,7 +61,7 @@ const AccountForm: React.FC = () => {
     key: keyof User;
     direction: "asc" | "desc";
   } | null>(null);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  // const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [highlightedRows, setHighlightedRows] = useState<string[]>([]);
   const [openSortKey, setOpenSortKey] = useState<keyof User | null>(null);
   const { innerBorderRef } = useOnOutsideClick(() => setShowModal(false));
@@ -98,21 +97,8 @@ const AccountForm: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, [currentPage, pageSize]);
-  // console.log("totalItems",totalItems)
-  // console.log("data",data)
 
   const user = localStorage.getItem("user");
-
-  // const toggleCheckbox = (id: string) => {
-  //     setSelectedIds((prev) => {
-  //         const updated = prev.includes(id)
-  //             ? prev.filter((item) => item !== id)
-  //             : [...prev, id];
-  //         setHighlightedRows(updated);
-  //         return updated;
-  //     });
-  // };
-
   const debounceSearch = useMemo(() => {
     return debounce((value: string) => {
       fetchData(value);
@@ -144,7 +130,7 @@ const AccountForm: React.FC = () => {
     return sortableItems;
   }, [data, sortConfig]);
 
-  const currentItems = data;
+  const currentItems = sortedData;
   const totalPages = Math.ceil(totalItems / pageSize);
 
   const handlePageChange = (page: number) => {
@@ -211,7 +197,7 @@ const AccountForm: React.FC = () => {
     );
   };
 
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  // const baseUrl = import.meta.env.VITE_BASE_URL;
   const fetchData = async (searchQuery = "") => {
     try {
       const parsedUser = JSON.parse(user || "{}");
@@ -267,17 +253,6 @@ const AccountForm: React.FC = () => {
     };
   }, []);
 
-  // const handleSelectAll = () => {
-  //     if (selectedIds.length === sortedData.length) {
-  //         setSelectedIds([]);
-  //         setHighlightedRows([]);
-  //     } else {
-  //         const allIds = sortedData.map((user: User) => user.id);
-  //         setSelectedIds(allIds);
-  //         setHighlightedRows(allIds);
-  //     }
-  // };
-
   const userobj = useUserStore((state) => state.user);
   const handleEdit = (user: User) => {
     setValue("id", user.id);
@@ -297,7 +272,7 @@ const AccountForm: React.FC = () => {
         baseURL: BaseUrl,
       });
       setData((prev) => prev.filter((user) => user.id !== deleteTargetId));
-      setSelectedIds((prev) => prev.filter((id) => id !== deleteTargetId));
+      // setSelectedIds((prev) => prev.filter((id) => id !== deleteTargetId));
       setHighlightedRows((prev) => prev.filter((id) => id !== deleteTargetId));
       setShowDeleteModal(false);
       setDeleteTargetId(null);
@@ -390,16 +365,6 @@ const AccountForm: React.FC = () => {
           <table className="w-full table-auto border border-gray-300 border-collapse bg-white text-sm text-gray-800">
             <thead className="bg-[#f5f5ff] text-sm text-center font-semibold uppercase text-[#2b3245] sticky top-0 z-10">
               <tr>
-                {/*<th className="px-4 py-3 text-center border border-gray-200 whitespace-nowrap">*/}
-                {/*    <div className="flex items-center justify-center">*/}
-                {/*        <input*/}
-                {/*            type="checkbox"*/}
-                {/*            className="w-4 h-4"*/}
-                {/*            checked={selectedIds.length === sortedData.length && sortedData.length > 0}*/}
-                {/*            onChange={handleSelectAll}*/}
-                {/*        />*/}
-                {/*    </div>*/}
-                {/*</th>*/}
                 <th className="px-4 py-3 text-center border border-gray-200 whitespace-nowrap">
                   <div className="flex items-center justify-center gap-2">
                     <Contact className="w-4 h-4 text-gray-500" />
@@ -588,10 +553,6 @@ const AccountForm: React.FC = () => {
             </tbody>
           </table>
         </div>
-
-        {/*{() => {*/}
-        {/*    return (<>test</>)*/}
-        {/*}}*/}
 
         {/* Mobile form */}
         <div className="block sm:hidden space-y-4 mb-6">

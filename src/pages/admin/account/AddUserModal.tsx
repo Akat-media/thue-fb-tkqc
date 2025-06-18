@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { useForm, Controller } from "react-hook-form";
 // import axios from 'axios';
 import BaseHeader, { BaseUrl } from "../../../api/BaseHeader";
 import { toast } from "react-toastify";
+import { Eye, EyeOff } from "lucide-react";
 
 interface AddUserModalProps {
   onClose: () => void;
@@ -33,8 +34,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
     },
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const modalRef = useRef<HTMLDivElement>(null);
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  // const baseUrl = import.meta.env.VITE_BASE_URL;
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -114,7 +117,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
 
         {/* Form content */}
         <div className="p-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" autoComplete="off">
             {/* Username */}
             <div className="group">
               <label className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-blue-600 transition-colors">
@@ -135,6 +138,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                     <input
                       {...field}
                       type="text"
+                      autoComplete="off"
                       className={`w-full p-3 pl-10 border-2 rounded-xl transition-all duration-200 outline-none bg-gray-50/50 hover:bg-white ${
                         errors.username
                           ? "border-red-400"
@@ -359,7 +363,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                   render={({ field }) => (
                     <input
                       {...field}
-                      type="password"
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="new-password"
                       className={`w-full p-3 pl-10 border-2 rounded-xl transition-all duration-200 outline-none bg-gray-50/50 hover:bg-white ${
                         errors.password
                           ? "border-red-400"
@@ -383,6 +388,19 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                     />
                   </svg>
+                </div>
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center">
+                  <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                    ) : (
+                        <Eye className="h-5 w-5" />
+                    )}
+                  </button>
                 </div>
               </div>
               {errors.password && (
