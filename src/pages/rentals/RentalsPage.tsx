@@ -26,6 +26,7 @@ import { useOnOutsideClick } from '../../hook/useOutside';
 import usePagination from '../../hook/usePagination';
 import { Pagination } from 'antd';
 import { NotiError, NotiSuccess } from '../../components/noti';
+import { ToastContainer, toast } from 'react-toastify';
 
 interface AdAccountDetail {
   id: string;
@@ -249,11 +250,13 @@ const RentalsPage: React.FC = () => {
         };
       });
 
-      // ✅ Lọc theo tab hiện tại
-      const filteredByTab = formatted.filter((item) => {
-        if (activeTab === 'all') return true;
-        return item.status === activeTab;
-      });
+      // Lọc lại theo tab hiện tại
+      const filteredByTab = formatted.filter(
+        (item: Rental & { adAccount: any }) => {
+          if (activeTab === 'all') return true;
+          return item.status === activeTab;
+        }
+      );
 
       setRentals(filteredByTab);
     } catch (error) {
@@ -346,6 +349,7 @@ const RentalsPage: React.FC = () => {
     setShowModal(true);
     await fetchAdAccountDetail(rental.adAccountId);
   };
+
   const hanleCancel = async (account: any) => {
     console.log('account', account);
     try {
@@ -363,16 +367,25 @@ const RentalsPage: React.FC = () => {
           bot_id: account?.bot_id || '',
         },
       });
-      if (response.status == 200) {
-        setSuccessRent(response.data.message);
+
+      const { success, message } = response.data;
+
+      if (success) {
+        toast.success(message || 'Vô hiệu hóa thành công!');
       } else {
-        setErrorRent(response.data.message);
+        toast.error(message || 'Vô hiệu hóa thất bại!');
       }
+
       console.log(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Rental error:', error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        'Lỗi kết nối hệ thống. Vui lòng thử lại!';
+      toast.error(errorMessage);
     }
   };
+
   return (
     <Layout>
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
