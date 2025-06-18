@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   CreditCard,
   Copy,
@@ -6,78 +6,78 @@ import {
   Check,
   X,
   AlertCircle,
-} from "lucide-react";
-import Layout from "../../components/layout/Layout";
-import Button from "../../components/ui/Button";
+} from 'lucide-react';
+import Layout from '../../components/layout/Layout';
+import Button from '../../components/ui/Button';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../components/ui/Card";
-import { useAuth } from "../../context/AuthContext";
-import { useNotification } from "../../context/NotificationContext";
-import { Transaction } from "../../types";
-import BaseHeader from "../../api/BaseHeader";
-import socket from "../../socket";
-import { useUserStore } from "../../stores/useUserStore";
+} from '../../components/ui/Card';
+import { useAuth } from '../../context/AuthContext';
+import { useNotification } from '../../context/NotificationContext';
+import { Transaction } from '../../types';
+import BaseHeader from '../../api/BaseHeader';
+import socket from '../../socket';
+import { useUserStore } from '../../stores/useUserStore';
 
 const mockTransactions: Transaction[] = [
   {
-    id: "1",
-    userId: "1",
+    id: '1',
+    userId: '1',
     amount: 1000000,
-    type: "deposit",
-    status: "completed",
-    description: "Nạp tiền qua Web2m - Chuyển khoản ngân hàng",
-    transactionCode: "DEPOSIT-123456",
+    type: 'deposit',
+    status: 'completed',
+    description: 'Nạp tiền qua Web2m - Chuyển khoản ngân hàng',
+    transactionCode: 'DEPOSIT-123456',
     createdAt: new Date(2023, 5, 15, 10, 30),
   },
   {
-    id: "2",
-    userId: "1",
+    id: '2',
+    userId: '1',
     amount: 500000,
-    type: "payment",
-    status: "completed",
-    description: "Thanh toán thuê BM Agency - Visa",
+    type: 'payment',
+    status: 'completed',
+    description: 'Thanh toán thuê BM Agency - Visa',
     createdAt: new Date(2023, 5, 16, 14, 45),
   },
   {
-    id: "3",
-    userId: "1",
+    id: '3',
+    userId: '1',
     amount: 200000,
-    type: "deposit",
-    status: "completed",
-    description: "Nạp tiền qua Web2m - Ví điện tử",
+    type: 'deposit',
+    status: 'completed',
+    description: 'Nạp tiền qua Web2m - Ví điện tử',
     createdAt: new Date(2023, 5, 18, 9, 15),
   },
   {
-    id: "4",
-    userId: "1",
+    id: '4',
+    userId: '1',
     amount: 300000,
-    type: "payment",
-    status: "completed",
-    description: "Thanh toán gói dịch vụ AI - 1 tháng",
+    type: 'payment',
+    status: 'completed',
+    description: 'Thanh toán gói dịch vụ AI - 1 tháng',
     createdAt: new Date(2023, 5, 20, 16, 30),
   },
   {
-    id: "5",
-    userId: "1",
+    id: '5',
+    userId: '1',
     amount: 100000,
-    type: "payment",
-    status: "completed",
-    description: "Thanh toán thuê Tài Khoản Quảng Cáo - Limit thấp",
+    type: 'payment',
+    status: 'completed',
+    description: 'Thanh toán thuê Tài Khoản Quảng Cáo - Limit thấp',
     createdAt: new Date(2023, 5, 16, 14, 45),
   },
 ];
 
 const PaymentPage: React.FC = () => {
-  const objetUser = localStorage.getItem("user");
-  const userParse = JSON.parse(objetUser || "{}");
-  const [activeTab, setActiveTab] = useState("deposit");
+  const objetUser = localStorage.getItem('user');
+  const userParse = JSON.parse(objetUser || '{}');
+  const [activeTab, setActiveTab] = useState('deposit');
   const [transactions] = useState<Transaction[]>(mockTransactions);
   const [selectedAmount, setSelectedAmount] = useState(500000);
-  const [customAmount, setCustomAmount] = useState<string>("500000");
+  const [customAmount, setCustomAmount] = useState<string>('500000');
   const [isLoading, setIsLoading] = useState(false);
   // const { user } = useAuth();
   const userStore = useUserStore((state) => state.user);
@@ -89,7 +89,7 @@ const PaymentPage: React.FC = () => {
   const [qrImageUrl, setQrImageUrl] = useState<string | null>(null);
   const [isConfirming, setIsConfirming] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<
-    "loading" | "success" | "failed" | null
+    'loading' | 'success' | 'failed' | null
   >(null);
   const { user, fetchUser } = useUserStore();
 
@@ -100,11 +100,11 @@ const PaymentPage: React.FC = () => {
   const hanleCalTransaction = async (number: any) => {
     try {
       const res = await BaseHeader({
-        url: "transaction",
-        method: "post",
+        url: 'transaction',
+        method: 'post',
         data: {
           amountVND: number,
-          user_id: userParse.user_id || "",
+          user_id: userParse.user_id || '',
         },
       });
       return res.data.data.short_code;
@@ -112,24 +112,24 @@ const PaymentPage: React.FC = () => {
       console.log(error);
     }
   };
-  const storedUserData = localStorage.getItem("user");
+  const storedUserData = localStorage.getItem('user');
   const shortCode = storedUserData
-    ? JSON.parse(storedUserData)?.user?.short_code || "NAP0000"
-    : "NAP0000";
+    ? JSON.parse(storedUserData)?.user?.short_code || 'NAP0000'
+    : 'NAP0000';
 
   const handleCopyClick = (text: string) => {
     navigator.clipboard.writeText(text);
     addNotification(
-      "Đã sao chép",
-      "Thông tin đã được sao chép vào clipboard",
-      "success"
+      'Đã sao chép',
+      'Thông tin đã được sao chép vào clipboard',
+      'success'
     );
   };
 
   const handleDeposit = async () => {
     const amount = customAmount ? parseInt(customAmount) : selectedAmount;
     if (isNaN(amount) || amount <= 0) {
-      addNotification("Lỗi", "Vui lòng nhập số tiền hợp lệ", "error");
+      addNotification('Lỗi', 'Vui lòng nhập số tiền hợp lệ', 'error');
       return;
     }
     const shortCode = await hanleCalTransaction(amount);
@@ -137,9 +137,9 @@ const PaymentPage: React.FC = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       addNotification(
-        "Tạo lệnh nạp tiền thành công",
-        "Vui lòng chuyển khoản theo thông tin đã cung cấp",
-        "success"
+        'Tạo lệnh nạp tiền thành công',
+        'Vui lòng chuyển khoản theo thông tin đã cung cấp',
+        'success'
       );
       setIsShowingQR(true);
       const qrUrl = `https://apiqr.web2m.com/api/generate/ACB/20478471/duy%20nam?amount=${amount}&memo=${shortCode}&is_mask=1&bg=1`;
@@ -154,11 +154,11 @@ const PaymentPage: React.FC = () => {
       }
     } catch (error) {
       setIsLoading(false);
-      console.error("Deposit error:", error);
+      console.error('Deposit error:', error);
       addNotification(
-        "Có lỗi xảy ra",
-        "Không thể tạo lệnh nạp tiền. Vui lòng thử lại sau",
-        "error"
+        'Có lỗi xảy ra',
+        'Không thể tạo lệnh nạp tiền. Vui lòng thử lại sau',
+        'error'
       );
     } finally {
       setIsLoading(false);
@@ -166,24 +166,24 @@ const PaymentPage: React.FC = () => {
   };
 
   const handleConfirmTransfer = () => {
-    setPaymentStatus("loading");
+    setPaymentStatus('loading');
     setTimeout(() => {
-      setPaymentStatus("success");
+      setPaymentStatus('success');
       setTimeout(() => {
         setPaymentStatus(null);
         setShowQRCode(false);
-        setCustomAmount("");
+        setCustomAmount('');
       }, 2000);
     }, 3000);
   };
 
   const formatTransactionDate = (date: Date) => {
-    return new Intl.DateTimeFormat("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return new Intl.DateTimeFormat('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     }).format(date);
   };
 
@@ -194,11 +194,11 @@ const PaymentPage: React.FC = () => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          setPaymentStatus("failed");
+          setPaymentStatus('failed');
           setTimeout(() => {
             setPaymentStatus(null);
             setShowQRCode(false);
-            setCustomAmount("");
+            setCustomAmount('');
           }, 3000);
 
           return 0;
@@ -211,27 +211,27 @@ const PaymentPage: React.FC = () => {
   }, [showQRCode]);
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
-      socket.emit("joinRoom");
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id);
+      socket.emit('joinRoom');
     });
 
-    socket.on("payment_success", (data) => {
-      console.log("Payment success event received:", data);
+    socket.on('payment_success', (data) => {
+      console.log('Payment success event received:', data);
       fetchUser();
 
-      setPaymentStatus("success");
+      setPaymentStatus('success');
 
       setTimeout(() => {
         setPaymentStatus(null);
         setShowQRCode(false);
-        setCustomAmount("");
+        setCustomAmount('');
       }, 5000);
     });
 
     return () => {
-      socket.off("connect");
-      socket.off("payment_success");
+      socket.off('connect');
+      socket.off('payment_success');
     };
   }, [fetchUser]);
 
@@ -245,9 +245,9 @@ const PaymentPage: React.FC = () => {
             </h2>
             {user && (
               <p className="mt-1 text-base text-gray-500">
-                Số dư hiện tại:{" "}
+                Số dư hiện tại:{' '}
                 <span className="font-medium text-green-700">
-                  {user.points?.toLocaleString("vi-VN") || 0} điểm
+                  {user.points?.toLocaleString('vi-VN') || 0} điểm
                 </span>
               </p>
             )}
@@ -273,11 +273,11 @@ const PaymentPage: React.FC = () => {
               <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                 <button
                   className={`${
-                    activeTab === "deposit"
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    activeTab === 'deposit'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                  onClick={() => setActiveTab("deposit")}
+                  onClick={() => setActiveTab('deposit')}
                 >
                   <CreditCard className="h-5 w-5 mr-2 inline-block" />
                   Nạp tiền
@@ -309,7 +309,7 @@ const PaymentPage: React.FC = () => {
         </div>
 
         <div className="mt-6">
-          {activeTab === "deposit" && (
+          {activeTab === 'deposit' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="h-full">
                 <CardHeader>
@@ -332,17 +332,17 @@ const PaymentPage: React.FC = () => {
                               customAmount &&
                               (parseInt(customAmount) <= 50000 ||
                                 parseInt(customAmount) % 1000 !== 0)
-                                ? "border-red-500"
-                                : "border border-gray-300"
+                                ? 'border-red-500'
+                                : 'border border-gray-300'
                             }`}
                             placeholder="Nhập số tiền"
                             value={
                               customAmount
-                                ? parseInt(customAmount).toLocaleString("vi-VN")
-                                : ""
+                                ? parseInt(customAmount).toLocaleString('vi-VN')
+                                : ''
                             }
                             onChange={(e) => {
-                              const raw = e.target.value.replace(/[^0-9]/g, "");
+                              const raw = e.target.value.replace(/[^0-9]/g, '');
                               setCustomAmount(raw);
                               setSelectedAmount(parseInt(raw) || 0);
                               setShowQRCode(false);
@@ -380,23 +380,25 @@ const PaymentPage: React.FC = () => {
                             type="button"
                             className={`${
                               selectedAmount === amount
-                                ? "bg-blue-50 border-blue-500 text-blue-600"
-                                : "bg-white border-gray-300 text-gray-700"
+                                ? 'bg-blue-50 border-blue-500 text-blue-600'
+                                : 'bg-white border-gray-300 text-gray-700'
                             } border rounded-md py-2 px-1 md:px-3 text-sm font-medium 
                             ${
                               parseInt(customAmount) === amount
-                                ? "ring-2 ring-blue-500 ring-opacity-50"
-                                : ""
+                                ? 'ring-2 ring-blue-500 ring-opacity-50'
+                                : ''
                             }
                             hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
-                            transition-all duration-200 whitespace-nowrap`}
+                            transition-all duration-200 whitespace-nowrap
+                            max-w-[230px] truncate overflow-hidden`}
+                            style={{ minWidth: 0 }}
                             onClick={() => {
                               setSelectedAmount(amount);
                               setCustomAmount(String(amount));
                               setShowQRCode(false);
                             }}
                           >
-                            {amount.toLocaleString("vi-VN")}đ
+                            {amount.toLocaleString('vi-VN')}đ
                           </button>
                         ))}
                       </div>
@@ -416,10 +418,12 @@ const PaymentPage: React.FC = () => {
                           </h3>
                           <div className="text-sm text-blue-700 space-y-2 grid grid-cols-[1fr,auto] gap-x-2">
                             <span className="self-center">Ngân hàng:</span>
-                            <div className="flex justify-end items-center">
-                              <span className="font-medium">ACB Bank</span>
+                            <div className="flex justify-end items-center min-w-0">
+                              <span className="font-medium truncate max-w-[100px] overflow-hidden inline-block align-middle">
+                                ACB Bank
+                              </span>
                               <button
-                                onClick={() => handleCopyClick("ACB Bank")}
+                                onClick={() => handleCopyClick('ACB Bank')}
                                 className="ml-2 text-blue-500 hover:text-blue-700"
                               >
                                 <Copy className="h-4 w-4" />
@@ -427,10 +431,12 @@ const PaymentPage: React.FC = () => {
                             </div>
 
                             <span className="self-center">Số tài khoản:</span>
-                            <div className="flex justify-end items-center">
-                              <span className="font-medium">20478471</span>
+                            <div className="flex justify-end items-center min-w-0">
+                              <span className="font-medium truncate max-w-[100px] overflow-hidden inline-block align-middle">
+                                20478471
+                              </span>
                               <button
-                                onClick={() => handleCopyClick("20478471")}
+                                onClick={() => handleCopyClick('20478471')}
                                 className="ml-2 text-blue-500 hover:text-blue-700"
                               >
                                 <Copy className="h-4 w-4" />
@@ -438,13 +444,13 @@ const PaymentPage: React.FC = () => {
                             </div>
 
                             <span className="self-center">Chủ tài khoản:</span>
-                            <div className="flex justify-end items-center">
-                              <span className="font-medium">
+                            <div className="flex justify-end items-center min-w-0">
+                              <span className="font-medium truncate max-w-[160px] overflow-hidden inline-block align-middle">
                                 CÔNG TY TNHH AKADS
                               </span>
                               <button
                                 onClick={() =>
-                                  handleCopyClick("CÔNG TY TNHH AKADS")
+                                  handleCopyClick('CÔNG TY TNHH AKADS')
                                 }
                                 className="ml-2 text-blue-500 hover:text-blue-700"
                               >
@@ -453,8 +459,10 @@ const PaymentPage: React.FC = () => {
                             </div>
 
                             <span className="self-center">Nội dung CK:</span>
-                            <div className="flex justify-end items-center">
-                              <span className="font-medium">{shortCode}</span>
+                            <div className="flex justify-end items-center min-w-0">
+                              <span className="font-medium truncate max-w-[100px] overflow-hidden inline-block align-middle">
+                                {shortCode}
+                              </span>
                               <button
                                 onClick={() => handleCopyClick(shortCode)}
                                 className="ml-2 text-blue-500 hover:text-blue-700"
@@ -464,12 +472,12 @@ const PaymentPage: React.FC = () => {
                             </div>
 
                             <span className="self-center">Số tiền:</span>
-                            <div className="flex justify-end items-center">
-                              <span className="font-medium">
+                            <div className="flex justify-end items-center min-w-0">
+                              <span className="font-medium truncate max-w-[100px] overflow-hidden inline-block align-middle">
                                 {(customAmount
                                   ? parseInt(customAmount)
                                   : selectedAmount
-                                ).toLocaleString("vi-VN")}{" "}
+                                ).toLocaleString('vi-VN')}{' '}
                                 VNĐ
                               </span>
                               <button
@@ -507,15 +515,15 @@ const PaymentPage: React.FC = () => {
                           !customAmount ||
                           parseInt(customAmount) < 50000 ||
                           parseInt(customAmount) % 1000 !== 0
-                            ? "bg-gray-300 cursor-not-allowed"
-                            : ""
+                            ? 'bg-gray-300 cursor-not-allowed'
+                            : ''
                         }
                         title={
                           !customAmount ||
                           parseInt(customAmount) < 50000 ||
                           parseInt(customAmount) % 1000 !== 0
-                            ? "Số tiền phải từ 50.000 VNĐ trở lên"
-                            : ""
+                            ? 'Số tiền phải từ 50.000 VNĐ trở lên'
+                            : ''
                         }
                       >
                         Tạo lệnh nạp tiền
@@ -532,7 +540,7 @@ const PaymentPage: React.FC = () => {
               <Card className="h-full">
                 <CardHeader>
                   <CardTitle>
-                    {showQRCode ? "Mã QR" : "Hướng dẫn nạp tiền"}
+                    {showQRCode ? 'Mã QR' : 'Hướng dẫn nạp tiền'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex items-center justify-center">
@@ -562,7 +570,7 @@ const PaymentPage: React.FC = () => {
                         <div className="space-y-1">
                           <p className="text-sm text-red-500 font-semibold">
                             Mã QR sẽ hết hạn sau: {Math.floor(countdown / 60)}:
-                            {(countdown % 60).toString().padStart(2, "0")}
+                            {(countdown % 60).toString().padStart(2, '0')}
                           </p>
                         </div>
                       </div>
@@ -644,7 +652,7 @@ const PaymentPage: React.FC = () => {
             </div>
           )}
 
-          {activeTab === "history" && (
+          {activeTab === 'history' && (
             <div>
               <Card>
                 <CardHeader>
@@ -674,7 +682,7 @@ const PaymentPage: React.FC = () => {
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {transactions
-                          .filter((t) => t.type === "deposit")
+                          .filter((t) => t.type === 'deposit')
                           .map((transaction) => (
                             <tr
                               key={transaction.id}
@@ -693,30 +701,30 @@ const PaymentPage: React.FC = () => {
                               </td>
                               <td className="px-6 py-4 text-sm">
                                 <span className="text-green-600 font-medium">
-                                  +{transaction.amount.toLocaleString("vi-VN")}{" "}
+                                  +{transaction.amount.toLocaleString('vi-VN')}{' '}
                                   VNĐ
                                 </span>
                               </td>
                               <td className="px-6 py-4 text-sm">
                                 <span
                                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                    transaction.status === "completed"
-                                      ? "bg-green-100 text-green-800"
-                                      : transaction.status === "pending"
-                                      ? "bg-yellow-100 text-yellow-800"
-                                      : "bg-red-100 text-red-800"
+                                    transaction.status === 'completed'
+                                      ? 'bg-green-100 text-green-800'
+                                      : transaction.status === 'pending'
+                                      ? 'bg-yellow-100 text-yellow-800'
+                                      : 'bg-red-100 text-red-800'
                                   }`}
                                 >
-                                  {transaction.status === "completed"
-                                    ? "Hoàn thành"
-                                    : transaction.status === "pending"
-                                    ? "Đang xử lý"
-                                    : "Thất bại"}
+                                  {transaction.status === 'completed'
+                                    ? 'Hoàn thành'
+                                    : transaction.status === 'pending'
+                                    ? 'Đang xử lý'
+                                    : 'Thất bại'}
                                 </span>
                               </td>
                             </tr>
                           ))}
-                        {transactions.filter((t) => t.type === "deposit")
+                        {transactions.filter((t) => t.type === 'deposit')
                           .length === 0 && (
                           <tr>
                             <td
@@ -735,7 +743,7 @@ const PaymentPage: React.FC = () => {
             </div>
           )}
 
-          {activeTab === "platform" && (
+          {activeTab === 'platform' && (
             <div>
               <Card>
                 <CardHeader>
@@ -762,7 +770,7 @@ const PaymentPage: React.FC = () => {
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {transactions
-                          .filter((t) => t.type === "payment")
+                          .filter((t) => t.type === 'payment')
                           .map((t) => (
                             <tr key={t.id} className="hover:bg-gray-50">
                               <td className="px-6 py-4 text-sm text-gray-500">
@@ -773,30 +781,30 @@ const PaymentPage: React.FC = () => {
                               </td>
                               <td className="px-6 py-4 text-sm">
                                 <span className="text-red-600 font-medium">
-                                  -{t.amount.toLocaleString("vi-VN")} VNĐ
+                                  -{t.amount.toLocaleString('vi-VN')} VNĐ
                                 </span>
                               </td>
                               <td className="px-6 py-4 text-sm">
                                 <span
                                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                    t.status === "completed"
-                                      ? "bg-green-100 text-green-800"
-                                      : t.status === "pending"
-                                      ? "bg-yellow-100 text-yellow-800"
-                                      : "bg-red-100 text-red-800"
+                                    t.status === 'completed'
+                                      ? 'bg-green-100 text-green-800'
+                                      : t.status === 'pending'
+                                      ? 'bg-yellow-100 text-yellow-800'
+                                      : 'bg-red-100 text-red-800'
                                   }`}
                                 >
-                                  {t.status === "completed"
-                                    ? "Hoàn thành"
-                                    : t.status === "pending"
-                                    ? "Đang xử lý"
-                                    : "Thất bại"}
+                                  {t.status === 'completed'
+                                    ? 'Hoàn thành'
+                                    : t.status === 'pending'
+                                    ? 'Đang xử lý'
+                                    : 'Thất bại'}
                                 </span>
                               </td>
                             </tr>
                           ))}
                         {transactions.filter((t) =>
-                          t.description.toLowerCase().includes("dịch vụ ai")
+                          t.description.toLowerCase().includes('dịch vụ ai')
                         ).length === 0 && (
                           <tr>
                             <td
@@ -819,14 +827,14 @@ const PaymentPage: React.FC = () => {
       {paymentStatus && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-lg text-center max-w-sm w-full">
-            {paymentStatus === "loading" ? (
+            {paymentStatus === 'loading' ? (
               <>
                 <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-blue-500 mx-auto mb-4"></div>
                 <p className="text-gray-700 text-sm">
                   Vui lòng chờ một chút để hệ thống xác nhận thanh toán...
                 </p>
               </>
-            ) : paymentStatus === "success" ? (
+            ) : paymentStatus === 'success' ? (
               <>
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Check className="h-8 w-8 text-green-500" />

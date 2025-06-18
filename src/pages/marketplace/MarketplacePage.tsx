@@ -51,8 +51,11 @@ const MarketplacePage: React.FC = () => {
     null
   );
   const [isRentModalOpen, setIsRentModalOpen] = useState(false);
-  const [filteredAccounts, setFilteredAccounts] = useState<any>([]);
+  const [allAccounts, setAllAccounts] = useState<any[]>([]);
+  const [filteredAccounts, setFilteredAccounts] = useState<any[]>([]);
   const [bmList, setBmList] = useState<BM[]>([]);
+  const [allBmList, setAllBmList] = useState<BM[]>([]);
+  const [filteredBmList, setFilteredBmList] = useState<BM[]>([]);
   const [isCreateBMModalOpen, setIsCreateBMModalOpen] = useState(false);
   const [selectedBM, setSelectedBM] = useState<any>(null);
   const [isBMDetailModalOpen, setIsBMDetailModalOpen] = useState(false);
@@ -73,7 +76,7 @@ const MarketplacePage: React.FC = () => {
         url: 'ad-accounts',
         params: {},
       });
-      console.log(response.data.data);
+      setAllAccounts(response.data.data);
       setFilteredAccounts(response.data.data);
     } catch (error) {
       console.log(error);
@@ -87,8 +90,9 @@ const MarketplacePage: React.FC = () => {
         url: 'facebook-bm',
         params: {},
       });
-      console.log('BM List:', response.data.data);
+      setAllBmList(response.data.data);
       setBmList(response.data.data);
+      setFilteredBmList(response.data.data);
     } catch (error) {
       console.log('Error fetching BM list:', error);
     }
@@ -130,18 +134,68 @@ const MarketplacePage: React.FC = () => {
     setIsBMDetailModalOpen(false);
   });
 
+  const filterData = (
+    data: any[],
+    bmId: string,
+    accountType: string,
+    term: string,
+    isBM = false
+  ) => {
+    let filtered = data;
+    if (!isBM && bmId !== 'all') {
+      filtered = filtered.filter((acc) => acc.facebook_bm_id === bmId);
+    }
+    if (!isBM && accountType !== 'all') {
+      filtered = filtered.filter((acc) => acc.account_type === accountType);
+    }
+    if (term) {
+      filtered = filtered.filter((item) => {
+        if (isBM) {
+          return (
+            (item.bm_name &&
+              item.bm_name.toLowerCase().includes(term.toLowerCase())) ||
+            (item.bm_id &&
+              item.bm_id.toLowerCase().includes(term.toLowerCase()))
+          );
+        } else {
+          return (
+            (item.name &&
+              item.name.toLowerCase().includes(term.toLowerCase())) ||
+            (item.id && item.id.toLowerCase().includes(term.toLowerCase()))
+          );
+        }
+      });
+    }
+    return filtered;
+  };
+
+  useEffect(() => {
+    setFilteredAccounts(
+      filterData(
+        allAccounts,
+        selectedBMId,
+        selectedAccountType,
+        searchTerm,
+        false
+      )
+    );
+    setFilteredBmList(
+      filterData(allBmList, selectedBMId, selectedAccountType, searchTerm, true)
+    );
+  }, [allAccounts, allBmList, selectedBMId, selectedAccountType, searchTerm]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
   const handleBMFilterChange = (bmId: string) => {
     setSelectedBMId(bmId);
-
-    if (bmId === 'all') {
-      handleCallAPi();
-    } else {
-      const filteredByBM = filteredAccounts.filter(
-        (account: any) => account.facebook_bm_id === bmId
-      );
-      setFilteredAccounts(filteredByBM);
-    }
   };
+
+  const handleAccountTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedAccountType(e.target.value);
+  };
+
   const handleSync = () => {
     setIsSyncModalOpen(true);
   };
@@ -156,16 +210,16 @@ const MarketplacePage: React.FC = () => {
           bm_id: selectedSyncBMId,
         },
       });
-      if (response.status == 200) {
+      if (response.status === 200) {
         toast.success('Đồng bộ tài khoản thành công');
         await handleCallAPi();
         setIsSyncModalOpen(false);
+      } else {
+        toast.error('Đồng bộ thất bại. Vui lòng thử lại.');
       }
     } catch (error: any) {
       console.log(error);
-      const apiMessage =
-        'Có lỗi trong quá trình đồng bộ. Vui lòng thử lại sau.';
-      toast.error(apiMessage);
+      toast.error('Có lỗi trong quá trình đồng bộ. Vui lòng thử lại sau.');
     } finally {
       setIsSyncing(false);
     }
@@ -174,22 +228,6 @@ const MarketplacePage: React.FC = () => {
   const { innerBorderRef: syncModalRef } = useOnOutsideClick(() => {
     setIsSyncModalOpen(false);
   });
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-
-    if (term === '') {
-      handleCallAPi();
-    } else {
-      const results = filteredAccounts.filter(
-        (account: any) =>
-          account.name &&
-          account.name.toLowerCase().includes(term.toLowerCase())
-      );
-      setFilteredAccounts(results);
-    }
-  };
 
   const handleDeleteBM = (bm: BM) => {
     if (isAdmin) {
@@ -342,7 +380,7 @@ const MarketplacePage: React.FC = () => {
                     id="accountType"
                     className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                     value={selectedAccountType}
-                    onChange={(e) => setSelectedAccountType(e.target.value)}
+                    onChange={handleAccountTypeChange}
                   >
                     <option value="all">Tất cả</option>
                     <option value="visa">Visa</option>
@@ -356,13 +394,13 @@ const MarketplacePage: React.FC = () => {
         )}
 
         {/* BM List Section */}
-        {isAdmin && bmList.length > 0 && (
+        {isAdmin && filteredBmList.length > 0 && (
           <div className="mt-8">
             <h3 className="text-xl font-medium text-gray-900 mb-4">
               Danh sách BM
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {bmList.map((bm: any) => (
+              {filteredBmList.map((bm: any) => (
                 <BMCard
                   key={bm.id}
                   bm={bm}
