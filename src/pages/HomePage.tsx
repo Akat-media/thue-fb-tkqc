@@ -145,7 +145,6 @@ const HomePage: React.FC = () => {
     dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null,
     dateStrings: [string, string]
   ) => {
-    console.log('cooo vaooo',dateStrings)
     if (dateStrings.length === 2) {
       const targetDayFrom = dateStrings[0];
       const targetDayTo = dateStrings[1];
