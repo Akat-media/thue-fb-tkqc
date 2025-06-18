@@ -23,6 +23,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import BMCard from './BMCard';
 import { NotiError, NotiSuccess } from '../../components/noti';
 import LoginModal from '../auth/LoginModal';
+import PaymentCardModal from '../payment/PaymentCardModal';
 
 interface BM {
   id: string;
@@ -68,6 +69,7 @@ const MarketplacePage: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [bmToDelete, setBmToDelete] = useState<BM | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
 
   const handleCallAPi = async () => {
     try {
@@ -113,6 +115,12 @@ const MarketplacePage: React.FC = () => {
     }
 
     setSelectedAccount(account);
+    setIsCardModalOpen(true);
+  };
+
+  //luu thong tin the
+  const handleCardSave = (cardData: any) => {
+    setIsCardModalOpen(false);
     setIsRentModalOpen(true);
   };
 
@@ -686,6 +694,11 @@ const MarketplacePage: React.FC = () => {
             }}
           />
         )}
+        <PaymentCardModal
+          isOpen={isCardModalOpen}
+          onClose={() => setIsCardModalOpen(false)}
+          onSave={handleCardSave}
+        />
       </div>
     </Layout>
   );
