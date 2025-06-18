@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useNotification } from "../../context/NotificationContext";
-// import axios from "axios";
+import axios from "axios";
 import BaseHeader, { BaseUrl } from "../../api/BaseHeader";
 import AtomicSpinner from "atomic-spinner";
 import { useUserStore } from "../../stores/useUserStore";
@@ -46,15 +46,11 @@ const LoginPage: React.FC = () => {
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      const res = await BaseHeader({
-        method: "post",
-        url: "/login",
-        baseURL: BaseUrl,
-        data: {
-          email: email,
-          password: password,
-        },
-      });
+      const res = await axios.post(
+        '/login',
+        {email,password,},
+        {baseURL: BaseUrl,}
+      );      
       setUser(res.data.data.user);
       navigate("/");
       localStorage.setItem("access_token", res.data.data.access_token);

@@ -50,6 +50,7 @@ const RegisterPage: React.FC = () => {
     e.preventDefault();
     if (!validateForm()) return;
     setIsLoading(true);
+  
     try {
       const registerRes = await BaseHeader({
         method: "post",
@@ -66,31 +67,35 @@ const RegisterPage: React.FC = () => {
       if (registerRes.status === 200) {
         addNotification(
           "Đăng ký thành công",
-          "Tài khoản của bạn đã được tạo!",
+          "Tài khoản của bạn đã được tạo. Vui lòng kiểm tra email để xác minh.",
           "success"
         );
-        const loginRes = await BaseHeader({
-          method: "post",
-          url: "/login",
-          baseURL: BaseUrl,
-          data: {
-            email: email,
-            password: password,
-          },
-        });
-        navigate("/");
-        localStorage.setItem("access_token", loginRes.data.data.access_token);
-        localStorage.setItem("refresh_token", loginRes.data.data.refresh_token);
-        localStorage.setItem("user", JSON.stringify(loginRes.data.data));
+        // const loginRes = await BaseHeader({
+        //   method: "post",
+        //   url: "/login",
+        //   baseURL: BaseUrl,
+        //   data: {
+        //     email: email,
+        //     password: password,
+        //   },
+        // });
+        // navigate("/");
+        // localStorage.setItem("access_token", loginRes.data.data.access_token);
+        // localStorage.setItem("refresh_token", loginRes.data.data.refresh_token);
+        // localStorage.setItem("user", JSON.stringify(loginRes.data.data));
+        const userInfo = {name,email, phone}
+        sessionStorage.setItem('userInfo', JSON.stringify(userInfo))
+        console.log('11111111', registerRes)
+        navigate("/sendEmail-notice");
       } else {
         addNotification("Đăng ký thất bại", registerRes.data.message, "error");
       }
     } catch (error: any) {
       console.error("Registration error:", error);
-
+  
       if (error.response?.data?.message) {
         const errorMessage = error.response.data.message;
-
+  
         if (errorMessage === "Email đã tồn tại") {
           setErrors({ email: "Email đã tồn tại. Vui lòng nhập email khác." });
           setEmail("");
@@ -110,6 +115,7 @@ const RegisterPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="h-screen w-screen flex">
