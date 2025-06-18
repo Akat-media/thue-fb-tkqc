@@ -19,7 +19,9 @@ export type FieldFormProps = {
     | "switch"
     | "checkbox"
     | "date"
-    | "rangeDate";
+    | "rangeDate"
+    | 'hidden';
+  inputType?: string;
   name: string;
   label: string;
   required?: boolean;
@@ -32,11 +34,12 @@ export type FieldFormProps = {
   disabled?: boolean;
   format?: string; // cho date
   picker?: RangePickerProps["picker"];
-  [key: string]: any; // thêm các thuộc tính khác như maxLength, onChange,...
+  [key: string]: any; // thêm các thuộc tính khác như maxLength, onChange, inputType,...
 };
 
 const FieldForm: React.FC<FieldFormProps> = ({
   type = "input",
+  inputType = 'text',
   name,
   label,
   required = false,
@@ -51,27 +54,34 @@ const FieldForm: React.FC<FieldFormProps> = ({
   picker,
   ...rest
 }) => {
-    const baseRules = required
-      ? [
-          {
-            required: true,
-            message: `Vui lòng nhập ${label
-              .charAt(0)
-              .toLowerCase()}${label.slice(1)}`,
-          },
-          ...rules,
-        ]
-      : rules;
-
+  const baseRules = required
+    ? [
+        {
+          required: true,
+          message: `Vui lòng nhập ${label.charAt(0).toLowerCase()}${label.slice(
+            1
+          )}`,
+        },
+        ...rules,
+      ]
+    : rules;
+  // Trường hợp hidden
+  if (type === 'hidden') {
+    return (
+      <Form.Item name={name} hidden>
+        <Input type="hidden" {...rest} />
+      </Form.Item>
+    );
+  }
   let inputElement: React.ReactNode;
 
   switch (type) {
-    case "textarea":
+    case 'textarea':
       inputElement = (
         <TextArea placeholder={placeholder} disabled={disabled} {...rest} />
       );
       break;
-    case "select":
+    case 'select':
       inputElement = (
         <Select
           placeholder={placeholder}
@@ -88,10 +98,10 @@ const FieldForm: React.FC<FieldFormProps> = ({
         </Select>
       );
       break;
-    case "switch":
+    case 'switch':
       inputElement = <Switch disabled={disabled} {...rest} />;
       break;
-    case "checkbox":
+    case 'checkbox':
       if (options.length > 0) {
         inputElement = (
           <Checkbox.Group
@@ -111,7 +121,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
         );
       }
       break;
-    case "date":
+    case 'date':
       inputElement = (
         <DatePicker
           placeholder={placeholder}
@@ -121,11 +131,11 @@ const FieldForm: React.FC<FieldFormProps> = ({
         />
       );
       break;
-    case "rangeDate":
+    case 'rangeDate':
       inputElement = (
         <RangePicker
           format={format}
-          placeholder={["Từ ngày", "Đến ngày"]}
+          placeholder={['Từ ngày', 'Đến ngày']}
           picker={picker}
           disabled={disabled}
           {...rest}
@@ -134,7 +144,12 @@ const FieldForm: React.FC<FieldFormProps> = ({
       break;
     default:
       inputElement = (
-        <Input placeholder={placeholder}  disabled={disabled} {...rest} />
+        <Input
+          type={inputType || 'text'}
+          placeholder={placeholder}
+          disabled={disabled}
+          {...rest}
+        />
       );
   }
 

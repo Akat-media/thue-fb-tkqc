@@ -29,7 +29,7 @@ import SupportTicketDetail from "./pages/support/SupportTicketDetail.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PricingPage from "./pages/Princing.tsx";
-import PricingManagement from "./pages/admin/PricingManagement.tsx";
+import PricingManagement from "./pages/admin/manager/budget/PricingManagement.tsx";
 
 function App() {
   return (
