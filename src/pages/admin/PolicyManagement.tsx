@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import Layout from "../../components/layout/Layout";
-import { Plus, Edit, Trash2, Save } from "lucide-react";
-import Button from "../../components/ui/Button";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import BaseHeader from "../../api/BaseHeader";
+import React, { useState, useEffect } from 'react';
+import Layout from '../../components/layout/Layout';
+import { Plus, Edit, Trash2, Save } from 'lucide-react';
+import Button from '../../components/ui/Button';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import BaseHeader from '../../api/BaseHeader';
 
 interface PolicySection {
   id?: string;
@@ -18,6 +18,10 @@ const PolicyManagement: React.FC = () => {
   const [editingPolicy, setEditingPolicy] = useState<PolicySection | null>(
     null
   );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [policyToDelete, setPolicyToDelete] = useState<PolicySection | null>(
+    null
+  );
 
   useEffect(() => {
     fetchPolicies();
@@ -27,13 +31,13 @@ const PolicyManagement: React.FC = () => {
     try {
       setLoading(true);
       const response = await BaseHeader({
-        method: "get",
-        url: "policies",
+        method: 'get',
+        url: 'policies',
       });
       setPolicies(response.data.data || []);
     } catch (error) {
-      console.error("Error fetching policies:", error);
-      toast.error("Không thể tải chính sách. Vui lòng thử lại sau.");
+      console.error('Error fetching policies:', error);
+      toast.error('Không thể tải chính sách. Vui lòng thử lại sau.');
     } finally {
       setLoading(false);
     }
@@ -41,8 +45,8 @@ const PolicyManagement: React.FC = () => {
 
   const handleAddPolicy = () => {
     setEditingPolicy({
-      title: "Chính sách mới",
-      message: "Nội dung mới",
+      title: 'Chính sách mới',
+      message: 'Nội dung mới',
     });
   };
 
@@ -51,25 +55,23 @@ const PolicyManagement: React.FC = () => {
   };
 
   const handleDeletePolicy = async (policyId: string) => {
-    if (!confirm("Bạn có chắc chắn muốn xóa chính sách này?")) return;
-
     try {
       const response = await BaseHeader({
-        method: "delete",
+        method: 'delete',
         url: `policies/${policyId}`,
       });
 
       if (response.data.success) {
-        toast.success("Xóa chính sách thành công");
+        toast.success('Xóa chính sách thành công');
         fetchPolicies();
       } else {
-        toast.error(response.data.message || "Không thể xóa chính sách");
+        toast.error(response.data.message || 'Không thể xóa chính sách');
       }
     } catch (error: any) {
-      console.error("Error deleting policy:", error);
+      console.error('Error deleting policy:', error);
       const errorMessage =
         error.response?.data?.message ||
-        "Không thể xóa chính sách. Vui lòng thử lại sau.";
+        'Không thể xóa chính sách. Vui lòng thử lại sau.';
       toast.error(errorMessage);
     }
   };
@@ -77,12 +79,12 @@ const PolicyManagement: React.FC = () => {
   const handleSavePolicy = async () => {
     if (!editingPolicy) return;
     if (!editingPolicy.title.trim()) {
-      toast.warning("Tiêu đề không được để trống");
+      toast.warning('Tiêu đề không được để trống');
       return;
     }
 
     if (!editingPolicy.message.trim()) {
-      toast.warning("Nội dung không được để trống");
+      toast.warning('Nội dung không được để trống');
       return;
     }
 
@@ -91,37 +93,37 @@ const PolicyManagement: React.FC = () => {
 
       if (editingPolicy.id) {
         response = await BaseHeader({
-          method: "put",
+          method: 'put',
           url: `policies/${editingPolicy.id}`,
           data: editingPolicy,
         });
 
         if (response.data.success) {
-          toast.success("Cập nhật chính sách thành công");
+          toast.success('Cập nhật chính sách thành công');
         } else {
-          toast.error(response.data.message || "Không thể cập nhật chính sách");
+          toast.error(response.data.message || 'Không thể cập nhật chính sách');
         }
       } else {
         response = await BaseHeader({
-          method: "post",
-          url: "/policies",
+          method: 'post',
+          url: '/policies',
           data: editingPolicy,
         });
 
         if (response.data.success) {
-          toast.success("Thêm mới chính sách thành công");
+          toast.success('Thêm mới chính sách thành công');
         } else {
-          toast.error(response.data.message || "Không thể thêm chính sách");
+          toast.error(response.data.message || 'Không thể thêm chính sách');
         }
       }
 
       setEditingPolicy(null);
       fetchPolicies();
     } catch (error: any) {
-      console.error("Error saving policy:", error);
+      console.error('Error saving policy:', error);
       const errorMessage =
         error.response?.data?.message ||
-        "Không thể lưu chính sách. Vui lòng thử lại sau.";
+        'Không thể lưu chính sách. Vui lòng thử lại sau.';
       toast.error(errorMessage);
     }
   };
@@ -161,8 +163,8 @@ const PolicyManagement: React.FC = () => {
                 <div className="bg-white p-6 rounded-lg shadow-md mb-8">
                   <h3 className="text-lg text-blue-900 font-semibold mb-4">
                     {editingPolicy.id
-                      ? "Chỉnh sửa chính sách"
-                      : "Thêm chính sách mới"}
+                      ? 'Chỉnh sửa chính sách'
+                      : 'Thêm chính sách mới'}
                   </h3>
 
                   <div className="mb-4">
@@ -244,9 +246,10 @@ const PolicyManagement: React.FC = () => {
                             <Edit className="w-5 h-5" />
                           </button>
                           <button
-                            onClick={() =>
-                              policy.id && handleDeletePolicy(policy.id)
-                            }
+                            onClick={() => {
+                              setPolicyToDelete(policy);
+                              setShowDeleteModal(true);
+                            }}
                             className="p-1 text-red-500 hover:text-red-700 transition-colors"
                             title="Xóa"
                           >
@@ -267,6 +270,41 @@ const PolicyManagement: React.FC = () => {
           )}
         </main>
       </div>
+      {showDeleteModal && policyToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <h4 className="text-lg font-semibold mb-2 text-red-600">
+              Xác nhận xóa
+            </h4>
+            <p className="mb-4">
+              Bạn có chắc chắn muốn xóa <b>{policyToDelete.title}</b>?
+            </p>
+            <div className="flex justify-end space-x-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setPolicyToDelete(null);
+                }}
+              >
+                Hủy
+              </Button>
+              <Button
+                variant="danger"
+                onClick={async () => {
+                  if (policyToDelete?.id) {
+                    await handleDeletePolicy(policyToDelete.id);
+                  }
+                  setShowDeleteModal(false);
+                  setPolicyToDelete(null);
+                }}
+              >
+                Xóa
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };

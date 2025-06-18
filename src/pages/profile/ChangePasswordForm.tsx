@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import BaseHeader, { BaseUrl } from "../../api/BaseHeader.ts";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { FiEye, FiEyeOff } from "react-icons/fi";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import BaseHeader, { BaseUrl } from '../../api/BaseHeader.ts';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 interface User {
   id?: string;
@@ -14,25 +14,25 @@ interface User {
 
 const schema = z
   .object({
-    oldPassword: z.string().min(1, "Mật khẩu cũ không được để trống"),
-    newPassword: z.string().min(6, "Mật khẩu mới phải có ít nhất 6 ký tự"),
+    oldPassword: z.string().min(1, 'Mật khẩu cũ không được để trống'),
+    newPassword: z.string().min(6, 'Mật khẩu mới phải có ít nhất 6 ký tự'),
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Mật khẩu xác nhận không khớp",
-    path: ["confirmPassword"],
+    message: 'Mật khẩu xác nhận không khớp',
+    path: ['confirmPassword'],
   })
   .refine((data) => data.oldPassword !== data.newPassword, {
-    message: "Mật khẩu mới không được trùng với mật khẩu cũ",
-    path: ["newPassword"],
+    message: 'Mật khẩu mới không được trùng với mật khẩu cũ',
+    path: ['newPassword'],
   });
 
 type ChangePasswordData = z.infer<typeof schema>;
 
 const ChangePasswordForm: React.FC = () => {
-  const user = localStorage.getItem("user");
+  const user = localStorage.getItem('user');
   const initialUser: User =
-    typeof user === "string" ? JSON.parse(user).user : {};
+    typeof user === 'string' ? JSON.parse(user).user : {};
 
   const {
     register,
@@ -41,9 +41,9 @@ const ChangePasswordForm: React.FC = () => {
   } = useForm<ChangePasswordData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
     },
   });
 
@@ -53,8 +53,8 @@ const ChangePasswordForm: React.FC = () => {
 
   const onSubmit = async (data: ChangePasswordData) => {
     if (!initialUser.id) {
-      toast.error("Không tìm thấy ID người dùng trong localStorage!", {
-        position: "top-right",
+      toast.error('Không tìm thấy ID người dùng trong localStorage!', {
+        position: 'top-right',
         autoClose: 3000,
       });
       return;
@@ -62,26 +62,41 @@ const ChangePasswordForm: React.FC = () => {
 
     try {
       const response = await BaseHeader({
-        method: "put",
+        method: 'put',
         url: `/user/${initialUser.id}`,
         data: {
           password: data.newPassword,
           oldPassword: data.oldPassword,
         },
       });
-      console.log("response: ", response);
-      toast.success("Cập nhật mật khẩu thành công!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ user: { ...initialUser, password: data.newPassword } })
-      );
-    } catch (error) {
-      console.error("Lỗi khi cập nhật mật khẩu:", error);
-      toast.error("Có lỗi xảy ra khi cập nhật mật khẩu!", {
-        position: "top-right",
+      if (response?.data?.success) {
+        toast.success('Cập nhật mật khẩu thành công!', {
+          position: 'top-right',
+          autoClose: 3000,
+        });
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            user: { ...initialUser, password: data.newPassword },
+          })
+        );
+      } else {
+        let apiMsg = response?.data?.message;
+        if (apiMsg === 'Refresh token không được để trống') {
+          apiMsg = 'Nhập sai mật khẩu hiện tại';
+        }
+        toast.error(apiMsg || 'Có lỗi xảy ra khi cập nhật mật khẩu!', {
+          position: 'top-right',
+          autoClose: 3000,
+        });
+      }
+    } catch (error: any) {
+      let apiMessage = error?.response?.data?.message;
+      if (apiMessage === 'Refresh token không được để trống') {
+        apiMessage = 'Nhập sai mật khẩu hiện tại';
+      }
+      toast.error(apiMessage || 'Có lỗi xảy ra khi cập nhật mật khẩu!', {
+        position: 'top-right',
         autoClose: 3000,
       });
     }
@@ -101,9 +116,9 @@ const ChangePasswordForm: React.FC = () => {
           </label>
           <div className="relative">
             <input
-              type={showOld ? "text" : "password"}
+              type={showOld ? 'text' : 'password'}
               placeholder="Mật khẩu cũ"
-              {...register("oldPassword")}
+              {...register('oldPassword')}
               className="w-full h-12 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -128,9 +143,9 @@ const ChangePasswordForm: React.FC = () => {
           </label>
           <div className="relative">
             <input
-              type={showNew ? "text" : "password"}
+              type={showNew ? 'text' : 'password'}
               placeholder="Mật khẩu mới"
-              {...register("newPassword")}
+              {...register('newPassword')}
               className="w-full h-12 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -155,9 +170,9 @@ const ChangePasswordForm: React.FC = () => {
           </label>
           <div className="relative">
             <input
-              type={showConfirm ? "text" : "password"}
+              type={showConfirm ? 'text' : 'password'}
               placeholder="Xác nhận mật khẩu mới"
-              {...register("confirmPassword")}
+              {...register('confirmPassword')}
               className="w-full h-12 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button

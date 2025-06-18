@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { X } from "lucide-react";
-import { toast } from "react-toastify";
-import BaseHeader from "../../api/BaseHeader";
-import AtomicSpinner from "atomic-spinner";
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { X } from 'lucide-react';
+import { toast } from 'react-toastify';
+import BaseHeader from '../../api/BaseHeader';
+import AtomicSpinner from 'atomic-spinner';
 
 interface CreateBMModalProps {
   isOpen: boolean;
@@ -15,12 +15,12 @@ interface CreateBMModalProps {
 
 // Define validation schema with Zod
 const bmSchema = z.object({
-  bm_name: z.string().min(1, "Tên BM không được để trống"),
+  bm_name: z.string().min(1, 'Tên BM không được để trống'),
   bm_id: z
     .string()
-    .min(1, "BM ID không được để trống")
-    .regex(/^\d+$/, "BM ID phải là số"),
-  system_user_token: z.string().min(1, "System User Token không được để trống"),
+    .min(1, 'BM ID không được để trống')
+    .regex(/^\d+$/, 'BM ID phải là số'),
+  system_user_token: z.string().min(1, 'System User Token không được để trống'),
 });
 
 type BMFormData = z.infer<typeof bmSchema>;
@@ -40,11 +40,21 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
   } = useForm<BMFormData>({
     resolver: zodResolver(bmSchema),
     defaultValues: {
-      bm_name: "",
-      bm_id: "",
-      system_user_token: "",
+      bm_name: '',
+      bm_id: '',
+      system_user_token: '',
     },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      reset({
+        bm_name: '',
+        bm_id: '',
+        system_user_token: '',
+      });
+    }
+  }, [isOpen, reset]);
 
   if (!isOpen) return null;
 
@@ -52,8 +62,8 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
     setIsLoading(true);
     try {
       const response = await BaseHeader({
-        url: "facebook-bm",
-        method: "post",
+        url: 'facebook-bm',
+        method: 'post',
         data: {
           bm_name: data.bm_name,
           bm_id: data.bm_id,
@@ -61,7 +71,7 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
         },
       });
 
-      toast.success("Tạo tài khoản BM thành công!");
+      toast.success('Tạo tài khoản BM thành công!');
       if (onSuccess) {
         onSuccess();
       }
@@ -71,8 +81,8 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
       //   window.location.reload();
       // }, 3000);
     } catch (error) {
-      console.error("Error creating BM account:", error);
-      toast.error("Có lỗi xảy ra khi tạo tài khoản BM");
+      console.error('Error creating BM account:', error);
+      toast.error('Có lỗi xảy ra khi tạo tài khoản BM');
     } finally {
       setIsLoading(false);
     }
@@ -101,9 +111,9 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
               </label>
               <input
                 type="text"
-                {...register("bm_name")}
+                {...register('bm_name')}
                 className={`w-full px-3 py-2 border ${
-                  errors.bm_name ? "border-red-500" : "border-gray-300"
+                  errors.bm_name ? 'border-red-500' : 'border-gray-300'
                 } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 placeholder="Nhập tên BM"
                 disabled={isLoading}
@@ -121,9 +131,9 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
               </label>
               <input
                 type="text"
-                {...register("bm_id")}
+                {...register('bm_id')}
                 className={`w-full px-3 py-2 border ${
-                  errors.bm_id ? "border-red-500" : "border-gray-300"
+                  errors.bm_id ? 'border-red-500' : 'border-gray-300'
                 } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 placeholder="Nhập BM ID"
                 disabled={isLoading}
@@ -140,12 +150,12 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
                 System User Token
               </label>
               <textarea
-                {...register("system_user_token")}
+                {...register('system_user_token')}
                 rows={5}
                 className={`w-full px-3 py-2 border ${
                   errors.system_user_token
-                    ? "border-red-500"
-                    : "border-gray-300"
+                    ? 'border-red-500'
+                    : 'border-gray-300'
                 } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 placeholder="Nhập System User Token (JSON)"
                 disabled={isLoading}
@@ -170,10 +180,10 @@ const CreateBMModal: React.FC<CreateBMModalProps> = ({
                 type="submit"
                 disabled={isLoading}
                 className={`px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ${
-                  isLoading ? "opacity-70 cursor-not-allowed" : ""
+                  isLoading ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
               >
-                {isLoading ? "Đang xử lý..." : "Tạo tài khoản BM"}
+                {isLoading ? 'Đang xử lý...' : 'Tạo tài khoản BM'}
               </button>
             </div>
           </form>
