@@ -292,7 +292,10 @@ const MarketplacePage: React.FC = () => {
               <button
                 type="button"
                 className="group inline-flex items-center px-3 py-[10px] border border-green-600 rounded-xl shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 overflow-hidden"
-                onClick={() => setIsCreateBMModalOpen(true)}
+                onClick={() => {
+                  setSelectedBM(null);
+                  setIsCreateBMModalOpen(true);
+                }}
               >
                 <Plus className="h-5 w-5 mr-1 flex-shrink-0" />
                 <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 max-w-0 group-hover:max-w-xs transition-all duration-300">
@@ -420,12 +423,12 @@ const MarketplacePage: React.FC = () => {
               className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative max-h-[80vh] overflow-y-auto"
             >
               <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                className="absolute top-3 right-3 text-gray-500 hover:text-black text-4xl"
                 onClick={() => setIsBMDetailModalOpen(false)}
               >
                 ×
               </button>
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-xl text-blue-900 font-semibold mb-4">
                 Chi Tiết Tài Khoản BM:
               </h2>
               <div className="space-y-3">
@@ -461,14 +464,30 @@ const MarketplacePage: React.FC = () => {
                     ) {
                       return null;
                     }
+                    let displayValue = value;
+                    if (
+                      (key === 'created_at' || key === 'updated_at') &&
+                      typeof value === 'string'
+                    ) {
+                      try {
+                        const date = new Date(value);
+                        displayValue = date.toLocaleString('vi-VN', {
+                          timeZone: 'Asia/Ho_Chi_Minh',
+                          hour12: false,
+                        });
+                      } catch {
+                        displayValue = value;
+                      }
+                    } else if (typeof value === 'number') {
+                      displayValue = value.toLocaleString();
+                    } else {
+                      displayValue = String(value);
+                    }
+
                     return (
                       <div key={key} className="flex items-start">
                         <span className="font-medium w-1/3">{key}:</span>
-                        <span className="break-all">
-                          {typeof value === 'number'
-                            ? value.toLocaleString()
-                            : String(value)}
-                        </span>
+                        <span className="break-all">{displayValue}</span>
                       </div>
                     );
                   }
@@ -585,12 +604,14 @@ const MarketplacePage: React.FC = () => {
               className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[500px] relative"
             >
               <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                className="absolute top-2 right-3 text-gray-500 hover:text-black text-3xl"
                 onClick={() => setIsDeleteModalOpen(false)}
               >
                 ×
               </button>
-              <h2 className="text-xl font-semibold mb-4">Xác nhận xóa</h2>
+              <h2 className="text-xl text-blue-900 font-semibold mb-4">
+                Xác nhận xóa
+              </h2>
               <p className="mb-6">
                 Bạn có chắc chắn muốn xóa BM{' '}
                 <span className="text-blue-600">{bmToDelete.bm_name}</span> này

@@ -355,11 +355,11 @@ const Sidebar: React.FC<{
                   alt="Avatar"
                   className="h-8 w-8 rounded-full object-cover border shrink-0"
                 />
-                <div className="flex flex-col text-left">
-                  <span className="text-sm font-medium text-gray-900">
+                <div className="flex flex-col text-left max-w-[120px]">
+                  <span className="text-sm font-medium text-gray-900 truncate">
                     {userobj?.username}
                   </span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 truncate">
                     {userobj?.email}
                   </span>
                 </div>
@@ -370,8 +370,8 @@ const Sidebar: React.FC<{
             {openProfileMenu && (
               <div className="absolute left-0 bottom-12 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                 <div className="px-4 py-3 text-sm text-gray-700 border-b">
-                  <p className="font-semibold text-base">{userobj?.username}</p>
-                  <p className="text-gray-500">{userobj?.email}</p>
+                  <p className="font-semibold text-base truncate">{userobj?.username}</p>
+                  <p className="text-gray-500 truncate">{userobj?.email}</p>
                   <p className="font-semibold text-green-600 mt-1">
                     {userobj?.points?.toLocaleString("vi-VN")} point
                   </p>
