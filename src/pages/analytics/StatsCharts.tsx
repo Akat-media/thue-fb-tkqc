@@ -98,7 +98,7 @@ export default function StatsCharts({data}: DataChart) {
       {/* Website Visits */}
       <div className="bg-white rounded-xl shadow p-6 col-span-1 lg:col-span-3">
         <h2 className="text-lg text-blue-800 font-semibold mb-1">
-          Chi phí quảng cáo
+          Thống kê hoạt động
         </h2>
         {/*<p className="text-sm text-gray-500 mb-4">(+43%) than last year</p>*/}
         <div className="w-full h-[400px]">
