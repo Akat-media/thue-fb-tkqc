@@ -152,13 +152,13 @@ const HomePage: React.FC = () => {
         targetFrom: targetDayFrom,
         targetTo: targetDayTo,
       });
-      if (role === 'admin') fetchDataChart();
+      if (role === 'admin') fetchDataChart(targetDayFrom,targetDayTo);
     }
   };
-  const fetchDataChart = async () => {
+  const fetchDataChart = async (targetDayFrom:string,targetDayTo:string) => {
     try {
       const response = await BaseHeader(
-        `/monthlyStatistics?targetDayFrom=${dateRange.targetFrom}&targetDayTo=${dateRange.targetTo}`
+        `/monthlyStatistics?targetDayFrom=${targetDayFrom}&targetDayTo=${targetDayTo}`
       );
       setStatsMonthly(response.data);
     } catch (error: any) {
@@ -168,8 +168,8 @@ const HomePage: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (role === 'admin') fetchDataChart();
-  }, [dateRange.targetFrom, dateRange.targetTo]);
+    if (role === 'admin') fetchDataChart(dateRange.targetFrom, dateRange.targetTo);
+  }, []);
   return (
     <Layout>
       <ToastContainer
