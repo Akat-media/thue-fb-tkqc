@@ -88,10 +88,10 @@ export default function PricingPage() {
                 <DollarOutlined className="text-2xl mr-1 text-indigo-900 group-hover:text-white transition-colors duration-300" />
                 <div className="flex items-baseline">
                   <span className="text-3xl font-bold leading-none text-gray-900 group-hover:text-white transition-colors duration-300">
-                    {plan.amount}
-                  </span>
-                  <span className="ml-1 text-lg text-gray-600 group-hover:text-blue-200 transition-colors duration-300">
+                    {plan.amount}  
+                    <span className="ml-1 text-lg text-gray-600 group-hover:text-blue-200 transition-colors duration-300">
                     / Tháng
+                  </span>
                   </span>
                 </div>
               </div>
