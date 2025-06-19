@@ -111,7 +111,7 @@ const engagementOptions: ChartOptions<"radar"> = {
     ],
   };
   return (
-    <div className="flex flex-col w-full gap-6 px-4 sm:px-6 lg:px-0">
+    <div className="flex flex-col w-full gap-6 sm:px-6 lg:px-0">
       {/* Doanh thu biểu đồ */}
       <div className="w-full max-w-full bg-white p-4 sm:p-6 rounded-xl shadow">
         <h2
