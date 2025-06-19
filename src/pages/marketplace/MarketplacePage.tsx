@@ -70,6 +70,8 @@ const MarketplacePage: React.FC = () => {
   const [bmToDelete, setBmToDelete] = useState<BM | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+  const [accountsWithCard, setAccountsWithCard] = useState<any[]>([]);
+  const [accountsWithoutCard, setAccountsWithoutCard] = useState<any[]>([]);
 
   const handleCallAPi = async () => {
     try {
@@ -78,8 +80,16 @@ const MarketplacePage: React.FC = () => {
         url: 'ad-accounts',
         params: {},
       });
-      setAllAccounts(response.data.data);
-      setFilteredAccounts(response.data.data);
+
+      const all = response.data.data;
+      setAllAccounts(all);
+      setFilteredAccounts(all);
+      setAccountsWithCard(
+        all.filter((acc: any) => acc.is_visa_account === true)
+      );
+      setAccountsWithoutCard(
+        all.filter((acc: any) => acc.is_visa_account === false)
+      );
     } catch (error) {
       console.log(error);
     }
@@ -115,7 +125,11 @@ const MarketplacePage: React.FC = () => {
     }
 
     setSelectedAccount(account);
-    setIsCardModalOpen(true);
+    if (account.is_visa_account === false) {
+      setIsRentModalOpen(true);
+    } else {
+      setIsCardModalOpen(true);
+    }
   };
 
   //luu thong tin the
@@ -421,19 +435,30 @@ const MarketplacePage: React.FC = () => {
         )}
 
         {/* Ad Accounts Section */}
-        <div className="mt-8">
-          <h3 className="text-xl font-medium text-gray-900 mb-4">
-            Danh sách tài khoản quảng cáo
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAccounts.map((account: any) => (
-              <AdAccountCard
-                key={account.id}
-                account={account}
-                onRentClick={() => handleRentClick(account)}
-              />
-            ))}
-          </div>
+        <h3 className="text-xl font-medium text-blue-900 mb-4 mt-2">
+          Tài khoản quảng cáo đã gắn thẻ
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {accountsWithCard.map((account: any) => (
+            <AdAccountCard
+              key={account.id}
+              account={account}
+              onRentClick={() => handleRentClick(account)}
+            />
+          ))}
+        </div>
+
+        <h3 className="text-xl font-medium text-blue-900 my-4">
+          Tài khoản quảng cáo chưa gắn thẻ
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {accountsWithoutCard.map((account: any) => (
+            <AdAccountCard
+              key={account.id}
+              account={account}
+              onRentClick={() => handleRentClick(account)}
+            />
+          ))}
         </div>
 
         {selectedAccount && (
@@ -443,6 +468,7 @@ const MarketplacePage: React.FC = () => {
             account={selectedAccount}
             setSuccessRent={setSuccessRent}
             setErrorRent={setErrorRent}
+            skipCardStep={selectedAccount?.is_visa_account === true}
           />
         )}
 

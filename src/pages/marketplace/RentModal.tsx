@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { X, AlertCircle } from "lucide-react";
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
+import React, { useState, useEffect } from 'react';
+import { X, AlertCircle } from 'lucide-react';
+import Button from '../../components/ui/Button';
+import Input from '../../components/ui/Input';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../components/ui/Card";
-import { useAuth } from "../../context/AuthContext";
-import { useNotification } from "../../context/NotificationContext";
-import BaseHeader from "../../api/BaseHeader";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { useUserStore } from "../../stores/useUserStore";
+} from '../../components/ui/Card';
+import { useAuth } from '../../context/AuthContext';
+import { useNotification } from '../../context/NotificationContext';
+import BaseHeader from '../../api/BaseHeader';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useUserStore } from '../../stores/useUserStore';
+import FieldForm from '../../components/form/FieldForm';
+import { useOnOutsideClick } from '../../hook/useOutside';
+import dayjs from 'dayjs';
 
 interface RentModalProps {
   isOpen: boolean;
@@ -22,22 +25,36 @@ interface RentModalProps {
   account: any;
   setSuccessRent: React.Dispatch<React.SetStateAction<any>>;
   setErrorRent: React.Dispatch<React.SetStateAction<any>>;
+  skipCardStep?: boolean;
 }
 
 const RentModal: React.FC<RentModalProps> = (props) => {
-  const { isOpen, onClose, account, setSuccessRent, setErrorRent } = props;
-  const objetUser = localStorage.getItem("user");
-  const userParse = JSON.parse(objetUser || "{}");
-  const [userBmId, setUserBmId] = useState("");
+  const {
+    isOpen,
+    onClose,
+    account,
+    setSuccessRent,
+    setErrorRent,
+    skipCardStep,
+  } = props;
+  const objetUser = localStorage.getItem('user');
+  const userParse = JSON.parse(objetUser || '{}');
+  const [userBmId, setUserBmId] = useState('');
   const [requestedLimit, setRequestedLimit] = useState<number | null>(50000);
   const [errors, setErrors] = useState<{ bmId?: string; limit?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [cookies, setCookies] = useState<any[]>([]);
-  const [selectedCookieId, setSelectedCookieId] = useState<any>("");
+  const [selectedCookieId, setSelectedCookieId] = useState<any>('');
   const [isLoadingCookies, setIsLoadingCookies] = useState(false);
+  const [rentalRange, setRentalRange] = useState<[Date, Date] | null>(null);
+  const [rentalRangeError, setRentalRangeError] = useState<string | null>(null);
 
   const { user } = useUserStore();
   const { addNotification } = useNotification();
+
+  const { innerBorderRef } = useOnOutsideClick(() => {
+    if (isOpen) onClose();
+  });
 
   const calculateTotalPrice = () => {
     if (requestedLimit === null || isNaN(requestedLimit)) return 0;
@@ -45,6 +62,20 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   };
 
   const handleSubmit = async () => {
+    if (!rentalRange || !rentalRange[0] || !rentalRange[1]) {
+      setRentalRangeError('Vui lòng chọn thời gian thuê.');
+      return;
+    }
+
+    const [start, end] = rentalRange;
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const days = Math.round((end.getTime() - start.getTime()) / msPerDay) + 1;
+
+    if (days < 3 || days > 60) {
+      setRentalRangeError('Thời gian thuê phải từ 3 đến 60 ngày.');
+      return;
+    }
+
     if (
       requestedLimit === null ||
       isNaN(requestedLimit) ||
@@ -52,42 +83,40 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     ) {
       setErrors((prev) => ({
         ...prev,
-        limit: "Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ",
+        limit: 'Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ',
       }));
       return;
     }
     try {
       setIsLoading(true);
+
+      const payload = {
+        bm_origin: account?.owner || '',
+        ads_name: account?.name || '',
+        bm_id: userBmId || '',
+        ads_account_id: account?.account_id || '',
+        user_id: userParse.user_id || '',
+        amountPoint: calculateTotalPrice(),
+        bot_id: selectedCookieId || null,
+      };
+
       const response = await BaseHeader({
-        url: "points-used",
-        method: "post",
-        data: {
-          bm_origin: account?.owner || "",
-          ads_name: account?.name || "",
-          bm_id: userBmId || "",
-          ads_account_id: account?.account_id || "",
-          user_id: userParse.user_id || "",
-          amountPoint: calculateTotalPrice(),
-          bot_id: selectedCookieId || null,
-        },
+        url: 'points-used',
+        method: 'post',
+        data: payload,
       });
-      if (response.status == 200 && response.data.success) {
-        onClose();
+
+      if (response.status === 200 && response.data.success) {
         setSuccessRent(response.data.message);
-        toast.success(response.data.message || "Thuê tài khoản thành công!");
+        onClose();
+        toast.success(response.data.message || 'Thuê tài khoản thành công!');
       } else {
-        toast.error(
-          response.data.message || "Không thể hoàn tất yêu cầu thuê tài khoản."
-        );
+        toast.error(response.data.message || 'Không thể thuê tài khoản.');
         setErrorRent(response.data.message);
       }
-      console.log(response.data);
     } catch (error: any) {
-      console.error("Rental error:", error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Không thể hoàn tất yêu cầu thuê tài khoản. Vui lòng thử lại sau"
-      );
+      toast.error(error?.response?.data?.message || 'Lỗi khi thuê tài khoản.');
+      setErrorRent(error?.response?.data?.message);
     } finally {
       setIsLoading(false);
     }
@@ -103,20 +132,20 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     try {
       setIsLoadingCookies(true);
       const response = await BaseHeader({
-        method: "get",
-        url: "cookies",
+        method: 'get',
+        url: 'cookies',
         params: {},
       });
       setCookies(response.data.data || []);
       setSelectedCookieId(response.data.data?.[0].id);
     } catch (error) {
-      console.error("Error fetching cookies:", error);
+      console.error('Error fetching cookies:', error);
     } finally {
       setIsLoadingCookies(false);
     }
   };
 
-  const isValidBmId = /^[0-9]+$/.test(userBmId) && userBmId.trim() !== "";
+  const isValidBmId = /^[0-9]+$/.test(userBmId) && userBmId.trim() !== '';
   const isValidLimit =
     requestedLimit !== null &&
     Number.isInteger(requestedLimit) &&
@@ -150,7 +179,10 @@ const RentModal: React.FC<RentModalProps> = (props) => {
           &#8203;
         </span>
 
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div
+          ref={innerBorderRef}
+          className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+        >
           <Card className="border-0 shadow-none">
             <CardHeader className="relative">
               <button
@@ -207,13 +239,13 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     onChange={(e) => setUserBmId(e.target.value)}
                     error={
                       !isValidBmId
-                        ? "BM ID phải là chuỗi ID và không được để trống"
-                        : ""
+                        ? 'BM ID phải là chuỗi ID và không được để trống'
+                        : ''
                     }
                     helperText={
                       !isValidBmId
-                        ? "BM ID phải là số nguyên dương và không được để trống"
-                        : "BM ID để chúng tôi cấp quyền truy cập"
+                        ? 'BM ID phải là số nguyên dương và không được để trống'
+                        : 'BM ID để chúng tôi cấp quyền truy cập'
                     }
                     className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                   />
@@ -241,10 +273,10 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     min={account.defaultLimit / 2}
                     max={account.defaultLimit * 2}
                     step={50000}
-                    value={requestedLimit === null ? "" : requestedLimit}
+                    value={requestedLimit === null ? '' : requestedLimit}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (value === "") {
+                      if (value === '') {
                         setRequestedLimit(null);
                         setErrors((prev) => ({ ...prev, limit: undefined }));
                         return;
@@ -263,7 +295,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                       ) {
                         setErrors((prev) => ({
                           ...prev,
-                          limit: "Số tiền phải lớn hơn 10.000 VNĐ",
+                          limit: 'Số tiền phải lớn hơn 10.000 VNĐ',
                         }));
                       } else {
                         setErrors((prev) => ({ ...prev, limit: undefined }));
@@ -271,24 +303,78 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     }}
                     error={
                       !isValidLimit
-                        ? "Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ"
-                        : ""
+                        ? 'Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ'
+                        : ''
                     }
                     helperText={
                       !isValidLimit
-                        ? "Số tiền phải lớn hơn 10.000 VNĐ"
+                        ? 'Số tiền phải lớn hơn 10.000 VNĐ'
                         : undefined
                     }
                     fullWidth
                     className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                   />
                   <div className="text-sm text-gray-500 mt-1 pl-2">
-                    Hạn mức:{" "}
+                    Hạn mức:{' '}
                     {requestedLimit !== null && !isNaN(requestedLimit)
-                      ? requestedLimit.toLocaleString("vi-VN")
-                      : "—"}{" "}
+                      ? requestedLimit.toLocaleString('vi-VN')
+                      : '—'}{' '}
                     VNĐ
                   </div>
+                </div>
+                <div className="w-full">
+                  <FieldForm
+                    className="w-full sm:w-[400px]"
+                    type="rangeDate"
+                    name="rentalRange"
+                    label="Thời gian thuê (3-60 ngày)"
+                    format="YYYY-MM-DD"
+                    value={rentalRange as any}
+                    onChange={(value: any) => {
+                      const [start, end] = value;
+
+                      if (!start || !end) {
+                        setRentalRange(null);
+                        setRentalRangeError('Vui lòng chọn thời gian thuê.');
+                        return;
+                      }
+
+                      const startDate = start.toDate(); // chuyển từ dayjs -> Date
+                      const endDate = end.toDate();
+
+                      const msPerDay = 1000 * 60 * 60 * 24;
+                      const days =
+                        Math.round(
+                          (endDate.getTime() - startDate.getTime()) / msPerDay
+                        ) + 1;
+
+                      if (days < 3 || days > 60) {
+                        setRentalRangeError(
+                          'Thời gian thuê phải từ 3 đến 60 ngày.'
+                        );
+                        setRentalRange(null);
+                        return;
+                      }
+
+                      setRentalRange([startDate, endDate]);
+                      setRentalRangeError(null);
+                    }}
+                    disabledDate={(current: any) => {
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const maxEnd = new Date(today);
+                      maxEnd.setDate(maxEnd.getDate() + 59); // giới hạn 60 ngày kể từ hôm nay
+
+                      return (
+                        current.toDate() < today || current.toDate() > maxEnd
+                      );
+                    }}
+                  />
+                  {rentalRangeError && (
+                    <div className="text-red-500 text-sm mt-1">
+                      {rentalRangeError}
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -361,7 +447,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     <div className="flex justify-between text-sm font-medium">
                       <span className="text-gray-900">Tổng thanh toán</span>
                       <span className="text-blue-600">
-                        {calculateTotalPrice().toLocaleString("vi-VN")} VNĐ
+                        {calculateTotalPrice().toLocaleString('vi-VN')} VNĐ
                       </span>
                     </div>
                   </div>
@@ -374,13 +460,13 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   <span
                     className={`font-medium ${
                       (user.points ?? 0) < calculateTotalPrice()
-                        ? "text-red-600"
-                        : "text-green-600"
+                        ? 'text-red-600'
+                        : 'text-green-600'
                     }`}
                   >
                     {user.points != null
-                      ? user.points.toLocaleString("vi-VN") + " VNĐ"
-                      : "Đang tải..."}
+                      ? user.points.toLocaleString('vi-VN') + ' VNĐ'
+                      : 'Đang tải...'}
                   </span>
                   {(user.points ?? 0) < calculateTotalPrice() && (
                     <div className="mt-2 text-sm text-red-600">
@@ -422,8 +508,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   !isValidBmId ||
                   !isValidLimit ||
                   (user && (user.points ?? 0) < calculateTotalPrice())
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : ""
+                    ? 'bg-gray-300 cursor-not-allowed'
+                    : ''
                 }
               >
                 Xác nhận thuê

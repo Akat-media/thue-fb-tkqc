@@ -12,8 +12,8 @@ export interface Transaction {
   id: string;
   userId: string;
   amount: number;
-  type: "deposit" | "withdrawal" | "payment" | "refund";
-  status: "pending" | "completed" | "failed" | "cancelled";
+  type: 'deposit' | 'withdrawal' | 'payment' | 'refund';
+  status: 'pending' | 'completed' | 'failed' | 'cancelled';
   description: string;
   transactionCode?: string;
   createdAt: Date;
@@ -32,6 +32,7 @@ export interface AdAccount {
   bmName?: string;
   bmType?: string;
   adAccountType?: string;
+  is_visa_account?: boolean;
 }
 
 export interface Rental {
@@ -45,12 +46,12 @@ export interface Rental {
   totalPrice: number;
   spentBudget: number;
   status:
-    | "rented"
-    | "available"
-    | "expired"
-    | "cancelled"
-    | "unavailable"
-    | "active";
+    | 'rented'
+    | 'available'
+    | 'expired'
+    | 'cancelled'
+    | 'unavailable'
+    | 'active';
   createdAt: Date;
   status_dischard_limit_spend: number | null;
   status_dischard_partner: number | null;
@@ -58,7 +59,7 @@ export interface Rental {
   status_partner?: number;
 }
 
-export type NotificationType = "success" | "info" | "warning" | "error";
+export type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
 export interface Notification {
   id: string;
