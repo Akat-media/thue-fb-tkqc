@@ -26,6 +26,7 @@ interface RentModalProps {
   setSuccessRent: React.Dispatch<React.SetStateAction<any>>;
   setErrorRent: React.Dispatch<React.SetStateAction<any>>;
   skipCardStep?: boolean;
+  openCardModal?: () => void;
 }
 
 const RentModal: React.FC<RentModalProps> = (props) => {
@@ -36,6 +37,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     setSuccessRent,
     setErrorRent,
     skipCardStep,
+    openCardModal,
   } = props;
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
@@ -48,6 +50,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const [isLoadingCookies, setIsLoadingCookies] = useState(false);
   const [rentalRange, setRentalRange] = useState<[Date, Date] | null>(null);
   const [rentalRangeError, setRentalRangeError] = useState<string | null>(null);
+  const isVisaAccount = account?.is_visa_account;
 
   const { user } = useUserStore();
   const { addNotification } = useNotification();
@@ -87,6 +90,12 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       }));
       return;
     }
+    if (!isVisaAccount) {
+      onClose();
+      openCardModal?.();
+      return;
+    }
+
     try {
       setIsLoading(true);
 

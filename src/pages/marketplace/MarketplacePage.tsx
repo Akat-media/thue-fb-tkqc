@@ -435,8 +435,8 @@ const MarketplacePage: React.FC = () => {
         )}
 
         {/* Ad Accounts Section */}
-        <h3 className="text-xl font-medium text-blue-900 mb-4 mt-2">
-          Tài khoản quảng cáo đã gắn thẻ
+        <h3 className="text-2xl font-medium text-green-600 mb-4 mt-2">
+          Tài khoản quảng cáo đã gắn thẻ 👇
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {accountsWithCard.map((account: any) => (
@@ -448,8 +448,8 @@ const MarketplacePage: React.FC = () => {
           ))}
         </div>
 
-        <h3 className="text-xl font-medium text-blue-900 my-4">
-          Tài khoản quảng cáo chưa gắn thẻ
+        <h3 className="text-2xl font-medium text-red-500 my-4">
+          Tài khoản quảng cáo chưa gắn thẻ 👇
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {accountsWithoutCard.map((account: any) => (
@@ -468,6 +468,7 @@ const MarketplacePage: React.FC = () => {
             account={selectedAccount}
             setSuccessRent={setSuccessRent}
             setErrorRent={setErrorRent}
+            openCardModal={() => setIsCardModalOpen(true)}
             skipCardStep={selectedAccount?.is_visa_account === true}
           />
         )}
