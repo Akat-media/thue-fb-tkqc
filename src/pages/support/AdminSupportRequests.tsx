@@ -6,6 +6,7 @@ import Pagination from "../admin/account/Pagination.tsx";
 import usePagination from "../../hook/usePagination.tsx";
 import ChatBox from './ChatBox';
 import {useUserStore} from "../../stores/useUserStore.ts";
+import {toast} from "react-toastify";
 
 interface SupportRequest {
     id: string;
@@ -24,6 +25,7 @@ interface SupportRequest {
     content: string;
     created_at: string;
     updated_at: string;
+    department: string;
 }
 
 interface ChatMessage {
@@ -48,6 +50,7 @@ const AdminSupportRequests: React.FC = () => {
 
     const [newMessage, setNewMessage] = useState<string>('');
     const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [isTitleExpanded, setIsTitleExpanded] = useState(false);
 
     const { user: currentUser } = useUserStore();
 
@@ -171,6 +174,26 @@ const AdminSupportRequests: React.FC = () => {
         });
     };
 
+    const getStatusText = (status: string): string => {
+        switch(status) {
+            case 'pending': return 'Đang chờ';
+            case 'resolved': return 'Đã giải quyết';
+            case 'in-progress': return 'Đang xử lý';
+            default: return status;
+        }
+    };
+    function formatDateToVN(isoString:any) {
+        const date = new Date(isoString);
+        const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+        const hours = vnDate.getUTCHours().toString().padStart(2, '0');
+        const minutes = vnDate.getUTCMinutes().toString().padStart(2, '0');
+        const day = vnDate.getUTCDate();
+        const month = vnDate.getUTCMonth() + 1; // Tháng bắt đầu từ 0
+        const year = vnDate.getUTCFullYear();
+
+        return `${hours}:${minutes} ${day}/${month}/${year}`;
+    }
+
     const updateRequestStatus = async (requestId: string, newStatus: SupportRequest['status']) => {
         try {
             const response = await axios.patch(`${baseUrl}/support/status/${requestId}`, {
@@ -178,7 +201,18 @@ const AdminSupportRequests: React.FC = () => {
             });
             setSelectedRequest(prev => prev ? { ...prev, status: newStatus, updated_at: new Date().toISOString() } : prev);
             fetchData(currentPage, searchQuery, statusFilter, priorityFilter, pageSize);
-            console.log("Trạng thái đã được cập nhật:", response.data);
+            const result = response.data.data;
+            console.log("RESULT",result)
+            await axios.post(`${baseUrl}/support/mail/user`, {
+                title: result.title,
+                updated_at: formatDateToVN(result.updated_at),
+                status: getStatusText(result.status),
+                email: result.email,
+                name: result.fullName,
+                phone: result.phone,
+            })
+            toast.success("Email đã được gửi!");
+            console.log("Trạng thái đã được cập nhật:", response.data.data);
         } catch (error) {
             console.error("Lỗi khi cập nhật trạng thái:", error);
         }
@@ -387,13 +421,23 @@ const AdminSupportRequests: React.FC = () => {
                         </div>
                         <div className="mt-3 flex space-x-2">
                             <button
-                                onClick={() => setSelectedRequest(request)}
+                                onClick={() => {
+                                    setSelectedRequest(request);
+                                    setShowDetailModal(true);
+                                    setShowMessageModal(false);
+                                }}
                                 className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                                 <Eye className="w-3 h-3 mr-1" />
                                 Xem
                             </button>
-                            <button className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-300 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button
+                                onClick={() => {
+                                    setSelectedRequest(request);
+                                    setShowMessageModal(true);
+                                    setShowDetailModal(false);
+                                }}
+                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-300 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <MessageSquare className="w-3 h-3 mr-1" />
                                 Trả lời
                             </button>
@@ -469,7 +513,26 @@ const AdminSupportRequests: React.FC = () => {
                         </div>
 
                         <div className="p-4 sm:p-6">
-                            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4 truncate">{selectedRequest.title}</h3>
+                            {/*<h3 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4 truncate">{selectedRequest.title}</h3>*/}
+                            <div className="flex flex-row justify-between items-center mb-3 sm:mb-4">
+                                <h3
+                                    className="text-base sm:text-lg font-medium text-gray-900"
+                                >
+                                    {isTitleExpanded
+                                        ? selectedRequest.title
+                                        : selectedRequest.title.length > 50
+                                            ? `${selectedRequest.title.slice(0, 50)}...`
+                                            : selectedRequest.title}
+                                </h3>
+                                {selectedRequest.title.length > 60 && (
+                                    <span
+                                        onClick={() => setIsTitleExpanded(prev => !prev)}
+                                        className="text-xs text-gray-600 hover:underline hover:text-blue-500 cursor-pointer"
+                                    >
+                                        {isTitleExpanded ? 'Thu gọn' : 'Xem thêm'}
+                                    </span>
+                                )}
+                            </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
                                 <div>
@@ -488,6 +551,10 @@ const AdminSupportRequests: React.FC = () => {
                                 <div>
                                     <label className="text-xs sm:text-sm font-medium text-gray-700">Cập nhật cuối</label>
                                     <p className="text-sm text-gray-900">{formatDate(selectedRequest.updated_at)}</p>
+                                </div>
+                                <div>
+                                    <label className="text-xs sm:text-sm font-medium text-gray-700">Bộ phận</label>
+                                    <p className="text-sm text-gray-900">{selectedRequest.department}</p>
                                 </div>
                             </div>
 
@@ -537,9 +604,10 @@ const AdminSupportRequests: React.FC = () => {
                 </div>
             )}
 
+            {/*chatbox chung*/}
             {selectedRequest && showMessageModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50">
-                    <div className="bg-white rounded-lg w-full max-w-md sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <div className="w-full max-w-md sm:max-w-2xl max-h-[calc(100vh-40px)]">
                         <ChatBox
                             messages={messages}
                             newMessage={newMessage}

@@ -21,6 +21,7 @@ interface ChatBoxProps {
     isAdminView?: boolean;
     onClose?: () => void;
     onBack?: () => void;
+    fullHeight?: boolean;
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({
@@ -33,7 +34,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({
      formatDate,
      isAdminView,
      onClose,
-     onBack
+     onBack,
+     fullHeight,
 }) => {
     const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -46,13 +48,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
     return (
         <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 h-[800px] flex flex-col">
+            <div
+                className={`bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col 
+                     ${fullHeight ? 'h-[800px]' : 'max-h-[calc(100vh-40px)] overflow-hidden'}`}
+            >
                 <div className="rounded-[10px] bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-4 flex items-center">
                     <MessageSquare className="w-6 h-6 text-white mr-3" />
                     <h2 className="text-xl font-semibold text-white">Hội thoại hỗ trợ</h2>
-
-
-
                     <div className="ml-auto">
                         <span className="bg-emerald-500 text-white text-xs px-3 py-1 rounded-full">
                           {messages.length} tin nhắn

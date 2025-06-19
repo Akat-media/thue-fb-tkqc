@@ -199,7 +199,7 @@ const SupportTicketDetail: React.FC = () => {
                 </div>
 
                 {/* Main Content */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-[24px]">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-[24px] items-start">
                     {/* Left Sidebar - Ticket Info */}
                     <div className="lg:col-span-1 space-y-6">
                         {/* Thông tin người dùng */}
@@ -321,6 +321,7 @@ const SupportTicketDetail: React.FC = () => {
                         setNewMessage={setNewMessage}
                         handleSendMessage={handleSendMessage}
                         formatDate={formatDate}
+                        fullHeight={true}
                     />
 
                 </div>
