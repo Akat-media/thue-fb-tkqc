@@ -199,7 +199,7 @@ const CreateBotPage: React.FC = () => {
                 <input
                   type="email"
                   id="email"
-                  {...register("email")}
+                  {...register('email')}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="example@gmail.com"
                 />
@@ -210,75 +210,76 @@ const CreateBotPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="flex-grow">
-                <label
-                  htmlFor="storage_state"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Storage State (JSON)
-                </label>
-                <textarea
-                  id="storage_state"
-                  {...register("storage_state")}
-                  rows={10}
-                  className={`mt-1 block w-full h-full min-h-[200px] px-3 py-2 border ${
-                    errors.storage_state
-                      ? "border-red-300 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                  } rounded-md shadow-sm focus:outline-none`}
-                  placeholder='{"cookies":[...],"origins":[]}'
-                />
-                {errors.storage_state && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.storage_state.message}
-                  </p>
-                )}
-                <p className="mt-1 text-xs text-gray-500">
-                  Storage state phải có định dạng: {"{"}"cookies": [...],
-                  "origins": []{"}"}
-                </p>
-              </div>
-
-              <div className="h-1"></div>
-
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  disabled={isLoading || !isDirty || !isValid}
-                  className={`px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ${
-                    isLoading || !isDirty || !isValid
-                      ? "opacity-70 cursor-not-allowed"
-                      : ""
-                  }`}
-                >
-                  {isLoading ? (
-                    <span className="flex items-center">
-                      <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Đang xử lý...
-                    </span>
-                  ) : (
-                    "Tạo mới"
+              <div className="flex flex-col h-full justify-between">
+                <div className="h-full">
+                  <label
+                    htmlFor="storage_state"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Storage State (JSON)
+                  </label>
+                  <textarea
+                    id="storage_state"
+                    {...register('storage_state')}
+                    rows={7}
+                    className={`mt-1 block w-full h-[83%] min-h-[300px] px-3 py-2 border ${
+                      errors.storage_state
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                        : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                    } rounded-md shadow-sm focus:outline-none`}
+                    placeholder='{"cookies":[...],"origins":[]}'
+                  />
+                  {errors.storage_state && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.storage_state.message}
+                    </p>
                   )}
-                </button>
+                </div>
+                <div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Storage state phải có định dạng: {'{'}"cookies": [...],
+                    "origins": []{'}'}
+                  </p>
+                  <div className="mt-2 flex justify-end">
+                    <button
+                      type="submit"
+                      // disabled={isLoading || !isDirty || !isValid}
+                      className={`px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ${
+                        isLoading || !isDirty || !isValid
+                          ? 'opacity-70 cursor-not-allowed'
+                          : ''
+                      }`}
+                    >
+                      {isLoading ? (
+                        <span className="flex items-center">
+                          <svg
+                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Đang xử lý...
+                        </span>
+                      ) : (
+                    "Tạo mới"
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
             </form>
           </div>
@@ -359,7 +360,7 @@ const CreateBotPage: React.FC = () => {
                           {bot.email}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(bot.created_at).toLocaleDateString("vi-VN")}
+                          {new Date(bot.created_at).toLocaleDateString('vi-VN')}
                         </td>
                       </tr>
                     ))}
@@ -377,9 +378,9 @@ const CreateBotPage: React.FC = () => {
         </div>
       )}
 
-      {errorMessage && (
-        <NotiError onClose={() => setErrorMessage("")} message={errorMessage} />
-      )}
+      {/* {errorMessage && (
+        <NotiError onClose={() => setErrorMessage('')} message={errorMessage} />
+      )} */}
 
       {deleteBot && (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-40">
@@ -405,7 +406,7 @@ const CreateBotPage: React.FC = () => {
                 onClick={handleDeleteBot}
                 disabled={isDeleting}
               >
-                {isDeleting ? "Đang xóa..." : "Xác nhận"}
+                {isDeleting ? 'Đang xóa...' : 'Xác nhận'}
               </button>
             </div>
           </div>

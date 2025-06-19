@@ -568,7 +568,15 @@ const HomePage: React.FC = () => {
                 Hi, Welcome back 👋
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full mx-auto">
+              <div
+                className="
+                  grid grid-cols-1 
+                  max-[630px]:grid-cols-1
+                  min-[1000px]:grid-cols-2 
+                  max-[1179px]:grid-cols-2 
+                  min-[1179px]:grid-cols-4 
+                  gap-6 w-full mx-auto"
+              >
                 <StatCard
                   title="Doanh thu"
                   value={
@@ -621,11 +629,11 @@ const HomePage: React.FC = () => {
                 />
               </div>
 
-              <div className="bg-gray-50">
+              <div>
                 <StatsCharts data={statsMonthly} />
               </div>
 
-              <div className=" bg-gray-50">
+              <div>
                 <ChartDashboard data={statsMonthly} />
               </div>
             </div>
