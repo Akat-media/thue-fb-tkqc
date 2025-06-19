@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import background from "../public/sand.jpg";
-import Footer from "../components/layout/Footer";
-import BaseHeader from "../api/BaseHeader";
-
+import React, { useEffect, useState } from 'react';
+import BaseHeader from '../api/BaseHeader';
+import { CheckCircleOutlined, DollarOutlined } from '@ant-design/icons';
+import Layout from '../components/layout/Layout';
 interface BudgetItem {
   id?: string;
   name: string;
@@ -20,7 +19,7 @@ export default function PricingPage() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const res = await BaseHeader({ method: "get", url: "/budget" });
+        const res = await BaseHeader({ method: 'get', url: '/budget' });
         setData(res.data.data || []);
       } catch {
         setData([]);
@@ -28,60 +27,99 @@ export default function PricingPage() {
     };
     fetch();
   }, []);
-
   return (
-    <div className="min-h-screen flex flex-col bg-[#141414] relative overflow-hidden">
-      <img
-        src={background}
-        alt="Background"
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-[#2a1b1123] opacity-80" />
-      <div className="relative z-10 max-w-6xl mx-auto mt-20 mb-12 px-6">
-        <h1 className="text-white text-center text-4xl font-semibold mb-6">
-          Bảng Giá Thuê Tài Khoản Quảng Cáo
-        </h1>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {data.map((item) => {
-            // Lấy ra percentage và name
-            const percentage = item.percentage;
-            const name = item.name;
-
-            return (
-              <div
-                key={item.id}
-                className="bg-[#232323]/50 backdrop-blur-md border border-white/20 rounded-2xl px-8 py-10 text-center shadow-lg flex flex-col items-center min-h-[340px] mt-5"
-              >
-                <h2 className="text-white text-xl font-semibold mb-1">
-                  {name} <span className="font-normal">/ Tháng</span>
+    <Layout>
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className=" backdrop-blur-sm border-b border-white/20 z-50">
+        <div className="max-w-7xl mx-auto pb-6 ">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
+                  Bảng giá thuê tài khoản quảng cáo
                 </h2>
-                <div className="flex items-end justify-center mb-2">
-                  <span className="text-4xl text-white font-bold">
-                    {percentage}%
+                <p className="mt-1 text-base text-gray-500">
+                  <span>
+                    Tối ưu chi phí – đơn giản hóa quy trình thuê tài khoản.
                   </span>
-                  <span className="text-base text-white/80 font-normal ml-2">
-                    / Tài khoản
-                  </span>
-                </div>
-                <ul className="text-white/90 text-sm mb-8 mt-4 space-y-1">
-                  {item.description.map((line, idx) => (
-                    <li
-                      key={idx}
-                      className="flex flex-row items-center gap-2 min-h-[28px] leading-6"
-                    >
-                      <span className="block w-2 h-2 bg-white rounded-full flex-shrink-0" />
-                      <span className="flex-1">{line}</span>
-                    </li>
-                  ))}
-                </ul>
+                </p>
               </div>
-            );
-          })}
+            </div>
+          </div>
         </div>
       </div>
-      <div className="mt-auto relative z-10">
-        <Footer />
+      <div className="mx-auto max-w-7xl grid gap-6 lg:grid-cols-4 md:grid-cols-2">
+        {data.map((plan) => (
+          <div
+            key={plan.name}
+            className="group relative overflow-hidden rounded-xl shadow bg-white hover:bg-indigo-900 transition-all duration-300 hover:shadow-xl hover:scale-105 hover:text-white cursor-pointer"
+          >
+            <svg
+              className="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+              preserveAspectRatio="none"
+              viewBox="0 0 100 100"
+            >
+              <defs>
+                <pattern
+                  id={`lines-${plan.name}`}
+                  width="4"
+                  height="4"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path d="M 0 4 L 4 0" stroke="white" strokeWidth="0.3" />
+                </pattern>
+              </defs>
+              <rect
+                width="100"
+                height="100"
+                fill={`url(#lines-${plan.name})`}
+              />
+            </svg>
+
+            <div className="relative z-10 p-8">
+              <h3 className="text-2xl font-bold text-gray-900 group-hover:text-white transition-colors duration-300">
+                {plan.name}
+              </h3>
+              <p className="text-sm mb-6 text-gray-500 group-hover:text-blue-200 transition-colors duration-300">
+                Chỉ từ
+              </p>
+              {/* Pricing */}
+              <div className="flex items-center mb-2">
+                <DollarOutlined className="text-2xl mr-1 text-indigo-900 group-hover:text-white transition-colors duration-300" />
+                <div className="flex items-baseline">
+                  <span className="text-3xl font-bold leading-none text-gray-900 group-hover:text-white transition-colors duration-300">
+                    {plan.amount}  
+                    <span className="ml-1 text-lg text-gray-600 group-hover:text-blue-200 transition-colors duration-300">
+                    / Tháng
+                  </span>
+                  </span>
+                </div>
+              </div>
+              <p className="text-text-xl mb-6 text-gray-600 group-hover:text-blue-200 transition-colors duration-300">
+                {plan.percentage}% <span className="text-sm"> / Tài khoản</span>
+              </p>
+              <button className="w-full h-12 rounded-lg text-base font-medium mb-8 transition-all duration-300 bg-indigo-900 hover:bg-indigo-800 text-white group-hover:bg-green-500 group-hover:hover:bg-green-600">
+                Thuê ngay
+              </button>
+              {/* Features */}
+              <ul className="space-y-4">
+                {plan.description.map((feature, index) => (
+                  <li
+                    key={`${plan.name}-${index}`}
+                    className="flex items-start"
+                  >
+                    <CheckCircleOutlined className="mr-3 text-lg text-green-500 group-hover:text-green-400 transition-colors duration-300" />
+                    <span className="text-sm text-gray-700 group-hover:text-blue-100 transition-colors duration-300">
+                      {feature}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
+    </Layout>
   );
 }
