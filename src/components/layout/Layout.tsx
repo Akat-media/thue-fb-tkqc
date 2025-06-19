@@ -16,7 +16,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const role = typeof user === "string" ? JSON.parse(user)?.user.role : "";
 
   return role === "admin" ? (
-    <div className="flex w-full">
+    <div className="flex h-screen overflow-hidden w-full">
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <main
         className={`transition-all duration-300 ${

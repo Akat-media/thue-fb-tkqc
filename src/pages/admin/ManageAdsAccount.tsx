@@ -13,11 +13,11 @@ import {
   Pen,
   ALargeSmall,
   HandCoins,
-  RefreshCcw,
   SquarePen,
   MoreVertical,
   ArrowUp,
   ArrowDown,
+  User,
 } from "lucide-react";
 import Subheader from "../../components/ui/Subheader";
 import Button from "../../components/ui/Button";
@@ -25,6 +25,7 @@ import BaseHeader from "../../api/BaseHeader";
 import { Pagination } from "antd";
 import usePagination from "../../hook/usePagination";
 import { toast, ToastContainer } from "react-toastify";
+import debounce from "lodash.debounce";
 
 interface Transaction {
   id: string;
@@ -54,7 +55,7 @@ const ManageAdsAccount: React.FC = () => {
     null
   );
   const [showModal, setShowModal] = useState(false);
-  const [typeFilter, setTypeFilter] = useState("all");
+  // const [typeFilter, setTypeFilter] = useState("all");
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Transaction;
     direction: "asc" | "desc";
@@ -67,6 +68,7 @@ const ManageAdsAccount: React.FC = () => {
   const [active, setActive] = useState("money");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [transactionPoints, setTransactionPoints] = useState<Transaction[]>([]);
+  const [query, setQuery] = useState("");
 
   const toggleCheckbox = (id: string) => {
     setSelectedIds((prev) => {
@@ -82,40 +84,20 @@ const ManageAdsAccount: React.FC = () => {
     setShowModal(false);
   });
 
-  const handleFilter = () => {
-    const result = transactions.filter((item) => {
-      const matchSearch =
-        (item.short_code &&
-          item.short_code.toLowerCase().includes(search.toLowerCase())) ||
-        (item.description &&
-          item.description.toLowerCase().includes(search.toLowerCase()));
+  const debounceSearch = useMemo(() => {
+    return debounce((value: string) => {
+      if ( active === "money") {
+        hanleTransactionMoney(value)
+      } else {
+        hanleTransactionPoint(value)
+      }
+    }, 800);
+  }, []);
 
-      const matchStatus =
-        statusFilter === "all" || item.status === statusFilter;
-
-      return matchSearch && matchStatus;
-    });
-
-    setFiltered(result);
-  };
-  const handleSearchLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value.toLowerCase();
-    setSearch(term);
-
-    const result = transactions.filter((item) => {
-      const matchSearch =
-        (item.id && item.id.toString().toLowerCase().includes(term)) ||
-        (item.short_code && item.short_code.toLowerCase().includes(term)) ||
-        (item.user_id && item.user_id.toLowerCase().includes(term)) ||
-        (item.description && item.description.toLowerCase().includes(term));
-
-      const matchStatus =
-        statusFilter === "all" || item.status === statusFilter;
-
-      return matchSearch && matchStatus;
-    });
-
-    setFiltered(result);
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+    setCurrentPage(1);
+    debounceSearch(e.target.value);
   };
 
   const sortedData = useMemo(() => {
@@ -145,18 +127,18 @@ const ManageAdsAccount: React.FC = () => {
     return sortableItems;
   }, [filtered, sortConfig]);
 
-  const handleReset = () => {
-    setSearch("");
-    setStatusFilter("all");
-    setFiltered(transactions);
-  };
-  const handleSync = async () => {
-    if (active === "money") {
-      await hanleTransactionMoney();
-    } else if (active === "points") {
-      await hanleTransactionPoint();
-    }
-  };
+  // const handleReset = () => {
+  //   setSearch("");
+  //   setStatusFilter("all");
+  //   setFiltered(transactions);
+  // };
+  // const handleSync = async () => {
+  //   if (active === "money") {
+  //     await hanleTransactionMoney();
+  //   } else if (active === "points") {
+  //     await hanleTransactionPoint();
+  //   }
+  // };
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -262,6 +244,13 @@ const ManageAdsAccount: React.FC = () => {
       label: "ID",
       icon: <BadgeInfo className="w-4 h-4 text-gray-500" />,
       sortKey: "id",
+      minWidth: "80px",
+    },
+    {
+      key: "username",
+      label: "Tên người dùng",
+      icon: <User className="w-4 h-4 text-gray-500" />,
+      sortKey: "username",
       minWidth: "80px",
     },
     {
@@ -423,13 +412,18 @@ const ManageAdsAccount: React.FC = () => {
     setCurrentPage: setCurrentPagePoint,
     setPageSize: setPageSizePoint,
   } = usePagination(1, 10);
-  const hanleTransactionMoney = async () => {
+  const hanleTransactionMoney = async (searchQuery = "") => {
     try {
       let response;
       if (userParse?.user?.role === "admin") {
         response = await BaseHeader({
           url: "/transaction-all",
           method: "get",
+          params: {
+            page: currentPage,
+            pageSize: pageSize,
+            ...(searchQuery && { query: searchQuery.trim() }),
+          }
         });
       } else {
         response = await BaseHeader({
@@ -437,10 +431,14 @@ const ManageAdsAccount: React.FC = () => {
           method: "get",
           params: {
             user_id: userParse?.user_id,
+            page: currentPage,
+            pageSize: pageSize,
+            ...(searchQuery && { query: searchQuery.trim() }),
           },
         });
       }
       const transactionData = response.data.data.data;
+      // console.log("transactionData", transactionData);
       setTransactions(transactionData);
       setFiltered(transactionData); // Cập nhật filtered khi nhận dữ liệu mới
       setTotal(response.data.data.count);
@@ -451,13 +449,16 @@ const ManageAdsAccount: React.FC = () => {
       );
     }
   };
-  const hanleTransactionPoint = async () => {
+  const hanleTransactionPoint = async (searchQuery = "") => {
     try {
       const response = await BaseHeader({
         url: "/points-used",
         method: "get",
         params: {
           user_id: userParse?.user_id,
+          page: currentPage,
+          pageSize: pageSize,
+          ...(searchQuery && { query: searchQuery.trim() }),
         },
       });
       const pointsData = response.data.data.data;
@@ -475,7 +476,7 @@ const ManageAdsAccount: React.FC = () => {
     if (active === "points") {
       hanleTransactionPoint();
     }
-  }, [active]);
+  }, [active, currentPage, pageSize]);
 
   useEffect(() => {
     if (active === "money") {
@@ -511,18 +512,11 @@ const ManageAdsAccount: React.FC = () => {
             <div className="relative w-full md:min-w-[430px] max-w-fit flex gap-2">
               <input
                 type="text"
-                placeholder="Tìm kiếm theo ID, Tài Khoản"
+                placeholder="Tìm kiếm theo Số Tiền, Điểm"
                 className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
-                value={search}
-                onChange={handleSearchLabel}
+                value={query}
+                onChange={handleSearch}
               />
-              <Button
-                className="min-w-[100px] bg-white-500 text-fuchsia-800 hover:bg-fuchsia-800 hover:text-white"
-                variant="outline"
-                size="sm"
-              >
-                Tìm kiếm
-              </Button>
             </div>
             {/* {userParse?.user?.role === "admin" && (
               <div className="flex items-center gap-1">
@@ -630,6 +624,17 @@ const ManageAdsAccount: React.FC = () => {
                         }}
                       >
                         {item?.id}
+                      </td>
+                      <td
+                          className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                              activeCell === `${item.id}-username` ? "bg-green-100" : ""
+                          }`}
+                          onClick={() => {
+                            setActiveCell(`${item.id}-username`);
+                            setActiveRow(null);
+                          }}
+                      >
+                        {item?.user.username}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
@@ -791,7 +796,7 @@ const ManageAdsAccount: React.FC = () => {
             )}
           </div>
           {Boolean(total) && (
-            <div className="mt-4">
+            <div className="mt-4 mb-4">
               <Pagination
                 total={total}
                 onChange={handleChange}
@@ -803,7 +808,7 @@ const ManageAdsAccount: React.FC = () => {
         </div>
       )}
       {active === "points" && (
-        <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-4">
           <Subheader active={active} setActive={setActive} />
           <div className="flex items-end justify-between mb-4">
             <h1 className="text-1xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate mt-1">
@@ -817,8 +822,8 @@ const ManageAdsAccount: React.FC = () => {
                 type="text"
                 placeholder="Tìm kiếm theo ID, Tài Khoản"
                 className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
-                value={search}
-                onChange={handleSearchLabel}
+                value={query}
+                onChange={handleSearch}
               />
               <Button
                 className="min-w-[100px] bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-800 hover:text-white"
@@ -1048,12 +1053,14 @@ const ManageAdsAccount: React.FC = () => {
             )}
           </div>
           {Boolean(totalPoints) && (
-            <div className="mt-4">
+            <div className="mt-4 mb-4">
               <Pagination
                 total={totalPoints}
                 onChange={handleChangePoint}
-                current={currentPagePoint}
-                pageSize={pageSizePoint}
+                // current={currentPagePoint}
+                // pageSize={pageSizePoint}
+                current={currentPage}
+                pageSize={pageSize}
               />
             </div>
           )}
