@@ -546,29 +546,33 @@ const RentalsPage: React.FC = () => {
                           </span>
                         </div>
 
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="flex items-center gap-1 text-gray-500">
-                            <CreditCard className="w-4 h-4 text-red-400" />
-                            Đã chi tiêu:
-                          </span>
-                          <span className="font-semibold">
-                            {rental.spentBudget.toLocaleString('vi-VN')}{' '}
-                            {rental.adAccount.currency || 'VND'}
-                          </span>
-                        </div>
+                        {rental.adAccount.is_sefl_used_visa && (
+                          <>
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="flex items-center gap-1 text-gray-500">
+                                <CreditCard className="w-4 h-4 text-red-400" />
+                                Đã chi tiêu:
+                              </span>
+                              <span className="font-semibold">
+                                {rental.spentBudget.toLocaleString('vi-VN')}{' '}
+                                {rental.adAccount.currency || 'VND'}
+                              </span>
+                            </div>
 
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="flex items-center gap-1 text-gray-500">
-                            <Wallet className="w-4 h-4 text-purple-400" />
-                            Còn lại:
-                          </span>
-                          <span className="font-semibold">
-                            {(
-                              rental.requestedLimit - rental.spentBudget
-                            ).toLocaleString('vi-VN')}{' '}
-                            {rental.adAccount.currency || 'VND'}
-                          </span>
-                        </div>
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="flex items-center gap-1 text-gray-500">
+                                <Wallet className="w-4 h-4 text-purple-400" />
+                                Còn lại:
+                              </span>
+                              <span className="font-semibold">
+                                {(
+                                  rental.requestedLimit - rental.spentBudget
+                                ).toLocaleString('vi-VN')}{' '}
+                                {rental.adAccount.currency || 'VND'}
+                              </span>
+                            </div>
+                          </>
+                        )}
                       </div>
 
                       {rental.status === 'available' && (

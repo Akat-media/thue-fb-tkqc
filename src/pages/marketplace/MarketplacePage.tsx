@@ -418,7 +418,7 @@ const MarketplacePage: React.FC = () => {
         {/* BM List Section */}
         {isAdmin && filteredBmList.length > 0 && (
           <div className="mt-8">
-            <h3 className="text-xl font-medium text-gray-900 mb-4">
+            <h3 className="text-2xl font-bold text-blue-900 mb-4">
               Danh sách BM
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -435,8 +435,8 @@ const MarketplacePage: React.FC = () => {
         )}
 
         {/* Ad Accounts Section */}
-        <h3 className="text-2xl font-medium text-green-600 mb-4 mt-2">
-          Tài khoản quảng cáo đã gắn thẻ 👇
+        <h3 className="text-2xl font-bold text-gray-500 mb-4 mt-6">
+          TKQC đã gắn thẻ
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {accountsWithCard.map((account: any) => (
@@ -448,8 +448,8 @@ const MarketplacePage: React.FC = () => {
           ))}
         </div>
 
-        <h3 className="text-2xl font-medium text-red-500 my-4">
-          Tài khoản quảng cáo chưa gắn thẻ 👇
+        <h3 className="text-2xl font-bold text-red-500 my-4 mt-6">
+          TKQC chưa gắn thẻ
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {accountsWithoutCard.map((account: any) => (
