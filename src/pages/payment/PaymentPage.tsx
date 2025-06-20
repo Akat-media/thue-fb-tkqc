@@ -473,7 +473,7 @@ const PaymentPage: React.FC = () => {
 
                             <span className="self-center">Số tiền:</span>
                             <div className="flex justify-end items-center min-w-0">
-                              <span className="font-medium truncate max-w-[100px] overflow-hidden inline-block align-middle">
+                              <span className="font-medium truncate max-w-[160px] overflow-hidden inline-block align-middle">
                                 {(customAmount
                                   ? parseInt(customAmount)
                                   : selectedAmount

@@ -70,6 +70,14 @@ const MarketplacePage: React.FC = () => {
   const [bmToDelete, setBmToDelete] = useState<BM | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+  const [accountsWithCard, setAccountsWithCard] = useState<any[]>([]);
+  const [accountsWithoutCard, setAccountsWithoutCard] = useState<any[]>([]);
+  const [tabWithCard, setTabWithCard] = useState<'available' | 'unavailable'>(
+    'available'
+  );
+  const [tabWithoutCard, setTabWithoutCard] = useState<
+    'available' | 'unavailable'
+  >('available');
 
   const handleCallAPi = async () => {
     try {
@@ -78,8 +86,16 @@ const MarketplacePage: React.FC = () => {
         url: 'ad-accounts',
         params: {},
       });
-      setAllAccounts(response.data.data);
-      setFilteredAccounts(response.data.data);
+
+      const all = response.data.data;
+      setAllAccounts(all);
+      setFilteredAccounts(all);
+      setAccountsWithCard(
+        all.filter((acc: any) => acc.is_visa_account === true)
+      );
+      setAccountsWithoutCard(
+        all.filter((acc: any) => acc.is_visa_account === false)
+      );
     } catch (error) {
       console.log(error);
     }
@@ -115,7 +131,11 @@ const MarketplacePage: React.FC = () => {
     }
 
     setSelectedAccount(account);
-    setIsCardModalOpen(true);
+    if (account.is_visa_account === false) {
+      setIsRentModalOpen(true);
+    } else {
+      setIsCardModalOpen(true);
+    }
   };
 
   //luu thong tin the
@@ -272,7 +292,7 @@ const MarketplacePage: React.FC = () => {
 
   return (
     <Layout>
-      {/* <ToastContainer
+      <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -282,7 +302,7 @@ const MarketplacePage: React.FC = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-      /> */}
+      />
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
@@ -404,7 +424,7 @@ const MarketplacePage: React.FC = () => {
         {/* BM List Section */}
         {isAdmin && filteredBmList.length > 0 && (
           <div className="mt-8">
-            <h3 className="text-xl font-medium text-gray-900 mb-4">
+            <h3 className="text-2xl font-bold text-blue-900 mb-4">
               Danh sách BM
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -421,19 +441,84 @@ const MarketplacePage: React.FC = () => {
         )}
 
         {/* Ad Accounts Section */}
-        <div className="mt-8">
-          <h3 className="text-xl font-medium text-gray-900 mb-4">
-            Danh sách tài khoản quảng cáo
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAccounts.map((account: any) => (
+        <h3 className="text-2xl font-bold text-gray-500 mb-4 mt-6">
+          TKQC đã gắn thẻ
+        </h3>
+        <div className="border-b border-gray-200 mb-4">
+          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+            <button
+              className={`${
+                tabWithCard === 'available'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              onClick={() => setTabWithCard('available')}
+            >
+              Đang có sẵn
+            </button>
+            <button
+              className={`${
+                tabWithCard === 'unavailable'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              onClick={() => setTabWithCard('unavailable')}
+            >
+              Đã cho thuê
+            </button>
+          </nav>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {accountsWithCard
+            .filter((acc) => acc.status_rented === tabWithCard)
+            .map((account: any) => (
               <AdAccountCard
                 key={account.id}
                 account={account}
                 onRentClick={() => handleRentClick(account)}
               />
             ))}
-          </div>
+        </div>
+
+        <h3 className="text-2xl font-bold text-red-500 my-4 mt-6">
+          TKQC chưa gắn thẻ
+        </h3>
+        <div className="border-b border-gray-200 mb-4">
+          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+            <button
+              className={`${
+                tabWithoutCard === 'available'
+                  ? 'border-red-500 text-red-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              onClick={() => setTabWithoutCard('available')}
+            >
+              Đang có sẵn
+            </button>
+            <button
+              className={`${
+                tabWithoutCard === 'unavailable'
+                  ? 'border-red-500 text-red-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              onClick={() => setTabWithoutCard('unavailable')}
+            >
+              Đã cho thuê
+            </button>
+          </nav>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {accountsWithoutCard
+            .filter((acc) => acc.status_rented === tabWithoutCard)
+            .map((account: any) => (
+              <AdAccountCard
+                key={account.id}
+                account={account}
+                onRentClick={() => handleRentClick(account)}
+              />
+            ))}
         </div>
 
         {selectedAccount && (
@@ -443,6 +528,8 @@ const MarketplacePage: React.FC = () => {
             account={selectedAccount}
             setSuccessRent={setSuccessRent}
             setErrorRent={setErrorRent}
+            openCardModal={() => setIsCardModalOpen(true)}
+            skipCardStep={selectedAccount?.is_visa_account === true}
           />
         )}
 

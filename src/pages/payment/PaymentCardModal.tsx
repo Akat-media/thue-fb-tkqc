@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { useEffect } from 'react';
 
 interface Props {
   isOpen: boolean;
@@ -17,12 +18,31 @@ const PaymentCardModal: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  useEffect(() => {
+    if (!isOpen) {
+      setCardName('');
+      setCardNumber('');
+      setExpiry('');
+      setCvv('');
+      setSaveCard(false);
+      setAgreeTerms(false);
+      setErrors({});
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!cardName.trim()) newErrors.cardName = 'Vui lòng nhập tên trên thẻ.';
+    if (!cardName.trim()) {
+      newErrors.cardName = 'Vui lòng nhập tên trên thẻ.';
+    } else if (!/^[A-Za-zÀ-ỹ]+(\s[A-Za-zÀ-ỹ]+)*$/.test(cardName.trim())) {
+      newErrors.cardName =
+        'Tên chỉ được chứa chữ cái và khoảng trắng giữa các từ.';
+    } else if (cardName.trim().length > 40) {
+      newErrors.cardName = 'Tên trên thẻ không được dài quá 40 ký tự.';
+    }
     if (!cardNumber.trim()) {
       newErrors.cardNumber = 'Vui lòng nhập số thẻ.';
     } else if (!/^\d{16}$/.test(cardNumber.replace(/\s/g, ''))) {
@@ -30,8 +50,17 @@ const PaymentCardModal: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
     }
     if (!expiry.trim()) {
       newErrors.expiry = 'Vui lòng nhập ngày hết hạn.';
-    } else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry)) {
-      newErrors.expiry = 'Định dạng MM/YY (ví dụ: 12/25).';
+    } else {
+      const expiryRegex = /^(0[1-9]|1[0-2])\/(\d{2})$/;
+      const match = expiry.match(expiryRegex);
+      if (!match) {
+        newErrors.expiry = 'Vui lòng nhập đúng định dạng MM/YY (ví dụ: 12/25).';
+      } else {
+        const [_, mm, yy] = match;
+        if (isNaN(parseInt(mm)) || isNaN(parseInt(yy))) {
+          newErrors.expiry = 'MM và YY phải là số hợp lệ.';
+        }
+      }
     }
     if (!cvv.trim()) {
       newErrors.cvv = 'Vui lòng nhập CVV.';
@@ -72,9 +101,9 @@ const PaymentCardModal: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
             <input
               type="text"
               value={cardName}
-              onChange={(e) => setCardName(e.target.value)}
+              onChange={(e) => setCardName(e.target.value.toUpperCase())}
               className="w-full border border-gray-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="Nguyen Van Anh"
+              placeholder="NGUYEN VAN ANH"
             />
             {errors.cardName && (
               <div className="text-red-500 text-xs mt-1">{errors.cardName}</div>
@@ -154,15 +183,6 @@ const PaymentCardModal: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
           <div className="flex items-center space-x-2">
             <input
               type="checkbox"
-              checked={saveCard}
-              onChange={(e) => setSaveCard(e.target.checked)}
-            />
-            <label className="text-base text-gray-700">Lưu thông tin thẻ</label>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
               checked={agreeTerms}
               onChange={(e) => setAgreeTerms(e.target.checked)}
             />
@@ -174,15 +194,9 @@ const PaymentCardModal: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
           {errors.agreeTerms && (
             <div className="text-red-500 text-xs mt-1">{errors.agreeTerms}</div>
           )}
-
           <button
             onClick={handleSubmit}
-            className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl mt-2 ${
-              Object.keys(errors).length > 0
-                ? 'opacity-50 cursor-not-allowed'
-                : ''
-            }`}
-            disabled={Object.keys(errors).length > 0}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl mt-2"
           >
             Lưu
           </button>
