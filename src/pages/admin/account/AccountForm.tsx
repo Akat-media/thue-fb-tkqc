@@ -426,7 +426,7 @@ const AccountForm: React.FC = () => {
                   <div className="flex items-center justify-center gap-1">
                     <TrendingUp className="w-4 h-4 text-gray-500" />
                     <SortableHeader
-                      label="Phần trăm"
+                      label="Phí dịch vụ"
                       sortKey="percentage"
                       openSortKey={openSortKey}
                       setOpenSortKey={setOpenSortKey}
@@ -501,7 +501,7 @@ const AccountForm: React.FC = () => {
                       <ToggleStatus />
                     </td>
                     <td className="text-center px-2 py-2 border border-gray-100">
-                      {user.points}
+                      {user.points.toLocaleString()}
                     </td>
                     <td className="text-center px-2 py-2 border border-gray-100">
                       {formatPercentage(user.percentage)} %
@@ -926,74 +926,6 @@ const AccountForm: React.FC = () => {
                         {errors.phone.message}
                       </p>
                     )}
-                  </div>
-                  <div className="gap-4">
-                    <div className="group">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-blue-600 transition-colors">
-                        Vai trò
-                      </label>
-                      <div className="relative">
-                        <Controller
-                          name="role"
-                          control={control}
-                          rules={{
-                            required: "Vai trò là bắt buộc",
-                            validate: (value) =>
-                              ["admin", "user"].includes(value)
-                                ? true
-                                : "Vai trò không hợp lệ",
-                          }}
-                          render={({ field }) => (
-                            <select
-                              {...field}
-                              className={`w-full p-3 pl-10 pr-8 border-2 rounded-xl transition-all duration-200 outline-none appearance-none cursor-pointer ${
-                                errors.role
-                                  ? "border-red-400"
-                                  : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
-                              } bg-gray-50/50 hover:bg-white`}
-                            >
-                              <option value="admin">Admin</option>
-                              <option value="user">User</option>
-                            </select>
-                          )}
-                        />
-                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                          <svg
-                            className="w-5 h-5 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 6V9a2 2 0 00-2-2H10a2 2 0 00-2 2v3.093"
-                            />
-                          </svg>
-                        </div>
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                          <svg
-                            className="w-4 h-4 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 9l-7 7-7-7"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      {errors.role && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {errors.role.message}
-                        </p>
-                      )}
-                    </div>
                   </div>
                   <div className="flex gap-3 pt-6 border-t border-gray-100">
                     <button

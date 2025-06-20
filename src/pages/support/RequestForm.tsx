@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import Layout from "../../components/layout/Layout.tsx";
-import { AlertCircle, Send, Upload, X, ChevronDown } from "lucide-react";
+import {AlertCircle, Send, Upload, X, ChevronDown, ArrowLeft} from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import BaseHeader from "../../api/BaseHeader";
 import { useUserStore } from "../../stores/useUserStore.ts";
-import axios from "axios";
+// import axios from "axios";
 import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 // interface FormData {
 //     fullName: string;
@@ -52,6 +53,7 @@ const RequestForm: React.FC = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const user = useUserStore((state) => state.user);
   const [isDragOver, setIsDragOver] = useState(false);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -150,31 +152,41 @@ const RequestForm: React.FC = () => {
 
       const baseUrl = import.meta.env.VITE_BASE_URL;
       const token = localStorage.getItem("token");
-      await BaseHeader({
-        method: "post",
-        url: "/support",
-        baseURL: baseUrl,
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
 
-      await axios.post(`${baseUrl}/support/mail/admin`,{
-        email: data.email,
-        priority: data.priority,
-        category: data.category,
-        content: data.content,
-        title: data.title,
-      });
+      const [supportResponse, mailResponse] = await Promise.all([
+        BaseHeader({
+          method: "post",
+          url: "/support",
+          baseURL: baseUrl,
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        }),
+        BaseHeader({
+          method: "post",
+          url: "/support/mail-admin",
+          data: {
+            email: data.email,
+            priority: data.priority,
+            category: data.category,
+            content: data.content,
+            title: data.title,
+          },
+        }),
+      ]);
 
-      toast.success("Email đã được gửi!");
+      if (supportResponse.status === 200 && mailResponse.status === 200 && supportResponse.data.data !== null) {
+        toast.success("Yêu cầu hỗ trợ và email đã được gửi thành công!");
+        setSubmitSuccess(true);
+        setAttachments([]);
+        reset();
+        setTimeout(() => setSubmitSuccess(false), 5000);
+      } else {
+        throw new Error("Một hoặc cả hai yêu cầu không thành công.");
+      }
 
-      setSubmitSuccess(true);
-      setAttachments([]);
-      reset();
-      setTimeout(() => setSubmitSuccess(false), 5000);
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("Đã có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.");
@@ -232,6 +244,13 @@ const RequestForm: React.FC = () => {
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+          <button
+              onClick={()=>navigate("/support")}
+              className="flex items-center text-gray-600 hover:text-gray-800 mb-4 transition-colors px-6">
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Quay lại danh sách
+          </button>
+
           <div className="backdrop-blur-sm border-b border-white/20 z-50">
             <div className="max-w-7xl mx-auto px-6">
               <div className="flex items-center justify-between">
