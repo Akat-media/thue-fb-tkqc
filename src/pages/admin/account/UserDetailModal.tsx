@@ -69,17 +69,17 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, onClose }) => {
     }, [onClose]);
 
     const InfoItem = ({
-                          icon: Icon,
-                          label,
-                          value,
-                          highlight = false,
-                      }: {
+      icon: Icon,
+      label,
+      value,
+      highlight = false,
+    }: {
         icon: any;
         label: string;
         value: string | number;
         highlight?: boolean;
     }) => (
-        <div className={`flex items-start gap-4 p-4 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:shadow-sm ${highlight ? 'bg-blue-50 border border-blue-200' : 'bg-white border border-gray-100'}`}>
+        <div className={`flex items-start gap-4 p-4 rounded-xl transition-all duration-200  ${highlight ? 'bg-blue-50 border border-blue-200' : 'bg-white border border-gray-100'}`}>
             <div className={`p-3 rounded-xl ${highlight ? 'bg-blue-500 text-white shadow-lg' : 'bg-gray-100 text-gray-600'}`}>
                 <Icon size={20} />
             </div>
@@ -125,7 +125,7 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, onClose }) => {
                             Thông tin cơ bản
                         </h3>
                         <div className="bg-gradient-to-br from-blue-400 to-purple-50 p-4  rounded-2xl border border-blue-100 space-y-4 flex-1">
-                            <InfoItem icon={User} label="Tên người dùng" value={user.username} highlight />
+                            <InfoItem icon={User} label="Tên người dùng" value={user.username} />
                             <InfoItem icon={Mail} label="Email" value={user.email} />
                             <InfoItem icon={Phone} label="Số điện thoại" value={user.phone} />
                             <InfoItem icon={Shield} label="Vai trò" value={user.role} />
@@ -156,10 +156,10 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, onClose }) => {
                                     <div className="p-2.5 bg-green-500 rounded-xl shadow-lg">
                                         <TrendingUp className="w-5 h-5 text-white" />
                                     </div>
-                                    <span className="text-sm font-medium text-green-700 uppercase tracking-wide">Tỷ lệ hoàn thành</span>
+                                    <span className="text-sm font-medium text-green-700 uppercase tracking-wide">Phí dịch vụ</span>
                                 </div>
                                 <p className="text-2xl md:text-3xl font-bold text-green-900">{formatPercentage(user.percentage)}%</p>
-                                <p className="text-sm text-green-600 mt-1">Hiệu suất tổng thể</p>
+                                <p className="text-sm text-green-600 mt-1">Chi phí sử dụng dịch vụ</p>
                             </div>
 
                             <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 md:p-6 rounded-2xl border border-purple-200 shadow-sm">

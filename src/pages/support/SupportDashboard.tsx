@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import debounce from "lodash.debounce";
 import { useUserStore } from "../../stores/useUserStore.ts";
+import BaseHeader from "../../api/BaseHeader.ts";
 
 interface SupportRequest {
     id: string;
@@ -34,6 +35,8 @@ const SupportDashboard: React.FC = () => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const navigate = useNavigate();
@@ -132,11 +135,18 @@ const SupportDashboard: React.FC = () => {
         setOpenMenuId(openMenuId === id ? null : id);
     };
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async () => {
+        if (!deleteTargetId) return;
         try {
-            await axios.delete(`${baseUrl}/support/${id}`);
-            setData(prev => prev.filter(item => item.id !== id));
+            await BaseHeader({
+                method: "delete",
+                url: `support/${deleteTargetId}`,
+            })
+            // await axios.delete(`${baseUrl}/support/${deleteTargetId}`);
+            setData(prev => prev.filter(item => item.id !== deleteTargetId));
             setOpenMenuId(null);
+            setShowDeleteModal(false);
+            setDeleteTargetId(null);
         } catch (err: any) {
             console.error("Error deleting request:", err.message);
         }
@@ -271,7 +281,10 @@ const SupportDashboard: React.FC = () => {
                                             {openMenuId === request.id && (
                                                 <div className="dropdown-menu absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                                                     <button
-                                                        onClick={() => handleDelete(request.id)}
+                                                        onClick={() => {
+                                                            setShowDeleteModal(true)
+                                                            setDeleteTargetId(request.id)
+                                                        }}
                                                         className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
@@ -280,6 +293,7 @@ const SupportDashboard: React.FC = () => {
                                                 </div>
 
                                             )}
+
                                         </div>
 
                                         {/* Content */}
@@ -329,6 +343,31 @@ const SupportDashboard: React.FC = () => {
                                     </div>
                                 );
                             })}
+                            {showDeleteModal && (
+                                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                                    <div className="bg-white rounded-lg shadow-lg p-6 w-[90%] max-w-md relative">
+                                        <h2 className="text-xl font-semibold mb-4">Xác nhận xóa</h2>
+                                        <p>Bạn có chắc muốn xóa người dùng này không?</p>
+                                        <div className="mt-6 flex justify-end gap-4">
+                                            <button
+                                                onClick={() => {
+                                                    setShowDeleteModal(false);
+                                                    setDeleteTargetId(null);
+                                                }}
+                                                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-800 font-medium"
+                                            >
+                                                Hủy
+                                            </button>
+                                            <button
+                                                onClick={()=>handleDelete()}
+                                                className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-medium"
+                                            >
+                                                Xóa
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 ) : (

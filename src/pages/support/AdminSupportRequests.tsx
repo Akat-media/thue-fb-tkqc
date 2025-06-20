@@ -6,7 +6,8 @@ import Pagination from "../admin/account/Pagination.tsx";
 import usePagination from "../../hook/usePagination.tsx";
 import ChatBox from './ChatBox';
 import {useUserStore} from "../../stores/useUserStore.ts";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
+import BaseHeader from "../../api/BaseHeader.ts";
 
 interface SupportRequest {
     id: string;
@@ -202,17 +203,23 @@ const AdminSupportRequests: React.FC = () => {
             setSelectedRequest(prev => prev ? { ...prev, status: newStatus, updated_at: new Date().toISOString() } : prev);
             fetchData(currentPage, searchQuery, statusFilter, priorityFilter, pageSize);
             const result = response.data.data;
-            console.log("RESULT",result)
-            await axios.post(`${baseUrl}/support/mail/user`, {
-                title: result.title,
-                updated_at: formatDateToVN(result.updated_at),
-                status: getStatusText(result.status),
-                email: result.email,
-                name: result.fullName,
-                phone: result.phone,
+            const sendMailUser = await BaseHeader({
+                method: "post",
+                url: "/support/mail-user",
+                data: {
+                    title: result.title,
+                    updated_at: formatDateToVN(result.updated_at),
+                    status: getStatusText(result.status),
+                    email: result.email,
+                    name: result.fullName,
+                    phone: result.phone,
+                },
             })
-            toast.success("Email đã được gửi!");
-            console.log("Trạng thái đã được cập nhật:", response.data.data);
+            if(sendMailUser.status === 200) {
+                toast.success("Email đã được gửi cho người dùng");
+            }  else {
+                throw new Error("Gửi email không thành công");
+            }
         } catch (error) {
             console.error("Lỗi khi cập nhật trạng thái:", error);
         }
@@ -240,6 +247,7 @@ const AdminSupportRequests: React.FC = () => {
     return (
         <div className="min-w-0">
             {/* Filters and Search */}
+            <ToastContainer />
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                     <div className="relative">
