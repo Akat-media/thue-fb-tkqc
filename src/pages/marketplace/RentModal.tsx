@@ -27,6 +27,8 @@ interface RentModalProps {
   setErrorRent: React.Dispatch<React.SetStateAction<any>>;
   skipCardStep?: boolean;
   openCardModal?: () => void;
+  setRentMeta?: (meta: any) => void;
+  rentMeta?: any;
 }
 
 const RentModal: React.FC<RentModalProps> = (props) => {
@@ -38,6 +40,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     setErrorRent,
     skipCardStep,
     openCardModal,
+    setRentMeta,
+    rentMeta,
   } = props;
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
@@ -91,6 +95,16 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       return;
     }
     if (!isVisaAccount) {
+      setRentMeta?.({
+        bm_origin: account?.owner || '',
+        ads_name: account?.name || '',
+        bm_id: userBmId || '',
+        ads_account_id: account?.account_id || '',
+        amountPoint: calculateTotalPrice(),
+        bot_id: selectedCookieId || '',
+        rentalRange,
+      });
+
       onClose();
       openCardModal?.();
       return;
@@ -134,6 +148,22 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   useEffect(() => {
     if (isOpen) {
       fetchCookies();
+
+      if (
+        typeof rentMeta === 'object' &&
+        rentMeta?.rentalRange &&
+        Array.isArray(rentMeta.rentalRange) &&
+        rentMeta.rentalRange.length === 2
+      ) {
+        const [startRaw, endRaw] = rentMeta.rentalRange;
+        const start = dayjs(startRaw);
+        const end = dayjs(endRaw);
+
+        if (start.isValid() && end.isValid()) {
+          setRentalRange([start.toDate(), end.toDate()]);
+          setRentalRangeError(null);
+        }
+      }
     }
   }, [isOpen]);
 
@@ -160,6 +190,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     Number.isInteger(requestedLimit) &&
     requestedLimit > 10000;
   const isValid = isValidBmId && isValidLimit;
+  const isValidRentalRange = rentalRange !== null && rentalRangeError === null;
 
   if (!isOpen) return null;
   return (
@@ -396,9 +427,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   <select
                     id="cookieSelect"
                     value={selectedCookieId}
-                    onChange={(e) => setSelectedCookieId(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-100 rounded focus:outline-none focus:border-[#0167F8]"
-                    disabled={isLoadingCookies}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-100 rounded bg-gray-100 text-gray-500 cursor-not-allowed"
                   >
                     {cookies.map((cookie, index) => (
                       <option key={cookie.id} value={cookie.id}>
@@ -510,12 +540,14 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     isLoading ||
                     !isValidBmId ||
                     !isValidLimit ||
+                    !isValidRentalRange ||
                     (user && (user.points ?? 0) < calculateTotalPrice())
                   )
                 }
                 className={
                   !isValidBmId ||
                   !isValidLimit ||
+                  !isValidRentalRange ||
                   (user && (user.points ?? 0) < calculateTotalPrice())
                     ? 'bg-gray-300 cursor-not-allowed'
                     : ''
