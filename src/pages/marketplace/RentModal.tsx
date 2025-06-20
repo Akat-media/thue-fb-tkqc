@@ -28,6 +28,7 @@ interface RentModalProps {
   skipCardStep?: boolean;
   openCardModal?: () => void;
   setRentMeta?: (meta: any) => void;
+  rentMeta?: any;
 }
 
 const RentModal: React.FC<RentModalProps> = (props) => {
@@ -40,6 +41,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     skipCardStep,
     openCardModal,
     setRentMeta,
+    rentMeta,
   } = props;
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
@@ -100,6 +102,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         ads_account_id: account?.account_id || '',
         amountPoint: calculateTotalPrice(),
         bot_id: selectedCookieId || '',
+        rentalRange,
       });
 
       onClose();
@@ -145,6 +148,22 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   useEffect(() => {
     if (isOpen) {
       fetchCookies();
+
+      if (
+        typeof rentMeta === 'object' &&
+        rentMeta?.rentalRange &&
+        Array.isArray(rentMeta.rentalRange) &&
+        rentMeta.rentalRange.length === 2
+      ) {
+        const [startRaw, endRaw] = rentMeta.rentalRange;
+        const start = dayjs(startRaw);
+        const end = dayjs(endRaw);
+
+        if (start.isValid() && end.isValid()) {
+          setRentalRange([start.toDate(), end.toDate()]);
+          setRentalRangeError(null);
+        }
+      }
     }
   }, [isOpen]);
 
@@ -171,6 +190,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     Number.isInteger(requestedLimit) &&
     requestedLimit > 10000;
   const isValid = isValidBmId && isValidLimit;
+  const isValidRentalRange = rentalRange !== null && rentalRangeError === null;
 
   if (!isOpen) return null;
   return (
@@ -520,12 +540,14 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     isLoading ||
                     !isValidBmId ||
                     !isValidLimit ||
+                    !isValidRentalRange ||
                     (user && (user.points ?? 0) < calculateTotalPrice())
                   )
                 }
                 className={
                   !isValidBmId ||
                   !isValidLimit ||
+                  !isValidRentalRange ||
                   (user && (user.points ?? 0) < calculateTotalPrice())
                     ? 'bg-gray-300 cursor-not-allowed'
                     : ''

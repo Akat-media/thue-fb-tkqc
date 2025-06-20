@@ -38,6 +38,9 @@ const MarketplacePage: React.FC = () => {
   const userString = localStorage.getItem('user');
   const userInfo = userString ? JSON.parse(userString) : null;
   const isAdmin = userInfo?.user?.role === 'admin';
+  const [savedRentalRange, setSavedRentalRange] = useState<[Date, Date] | null>(
+    null
+  );
 
   const {
     searchTerm,
@@ -163,7 +166,7 @@ const MarketplacePage: React.FC = () => {
     try {
       const response = await BaseHeader({
         method: 'post',
-        url: 'visa-add-cardd',
+        url: 'visa-add-card',
         data: payload,
       });
 
@@ -569,6 +572,7 @@ const MarketplacePage: React.FC = () => {
             openCardModal={() => setIsCardModalOpen(true)}
             skipCardStep={selectedAccount?.is_visa_account === true}
             setRentMeta={setRentMeta}
+            rentMeta={rentMeta}
           />
         )}
 
@@ -824,6 +828,10 @@ const MarketplacePage: React.FC = () => {
           isOpen={isCardModalOpen}
           onClose={() => setIsCardModalOpen(false)}
           onSave={handleCardSave}
+          onBackToRentModal={() => {
+            setIsCardModalOpen(false);
+            setIsRentModalOpen(true);
+          }}
         />
       </div>
     </Layout>

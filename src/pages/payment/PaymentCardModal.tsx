@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, ArrowLeft } from 'lucide-react';
 import { useEffect } from 'react';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   onSave: (cardData: any) => void;
+  onBackToRentModal?: () => void;
 }
 
-const PaymentCardModal: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
+const PaymentCardModal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  onSave,
+  onBackToRentModal,
+}) => {
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [expiry, setExpiry] = useState('');
@@ -82,16 +88,18 @@ const PaymentCardModal: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white w-full max-w-xl rounded-2xl p-8 relative shadow-2xl">
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-black"
-        >
-          <X size={20} />
-        </button>
+        <div className="flex items-center justify-between mb-6 relative">
+          <h2 className="text-xl sm:text-2xl font-semibold text-blue-950 text-center flex-grow">
+            Thêm thẻ thanh toán
+          </h2>
 
-        <h2 className="text-2xl font-semibold text-center mb-6 text-blue-950">
-          Thêm thẻ thanh toán
-        </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-black absolute right-0"
+          >
+            <X size={20} />
+          </button>
+        </div>
 
         <div className="space-y-6">
           <div>
