@@ -6,6 +6,7 @@ import BaseHeader, { BaseUrl } from '../../api/BaseHeader.ts';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { useUserStore } from '../../stores/useUserStore';
 
 interface User {
   id?: string;
@@ -33,6 +34,7 @@ const ChangePasswordForm: React.FC = () => {
   const user = localStorage.getItem('user');
   const initialUser: User =
     typeof user === 'string' ? JSON.parse(user).user : {};
+  const { fetchUser } = useUserStore();
 
   const {
     register,
@@ -69,17 +71,19 @@ const ChangePasswordForm: React.FC = () => {
           oldPassword: data.oldPassword,
         },
       });
+
       if (response?.data?.success) {
         toast.success('Cập nhật mật khẩu thành công!', {
           position: 'top-right',
           autoClose: 3000,
         });
-        localStorage.setItem(
-          'user',
-          JSON.stringify({
-            user: { ...initialUser, password: data.newPassword },
-          })
-        );
+        const stored = localStorage.getItem('user');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          parsed.user.password = data.newPassword;
+          localStorage.setItem('user', JSON.stringify(parsed));
+        }
+        await fetchUser();
       } else {
         let apiMsg = response?.data?.message;
         if (apiMsg === 'Refresh token không được để trống') {
