@@ -6,6 +6,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import BaseHeader from "../../api/BaseHeader";
 import { useUserStore } from "../../stores/useUserStore.ts";
+import axios from "axios";
+import {toast} from "react-toastify";
 
 // interface FormData {
 //     fullName: string;
@@ -158,6 +160,16 @@ const RequestForm: React.FC = () => {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       });
+
+      await axios.post(`${baseUrl}/support/mail/admin`,{
+        email: data.email,
+        priority: data.priority,
+        category: data.category,
+        content: data.content,
+        title: data.title,
+      });
+
+      toast.success("Email đã được gửi!");
 
       setSubmitSuccess(true);
       setAttachments([]);

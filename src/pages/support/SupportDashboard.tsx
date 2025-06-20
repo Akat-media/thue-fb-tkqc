@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useMemo} from "react";
+import React, {useEffect, useState, useMemo, useCallback} from "react";
 import {
     Search, Plus, Filter, MoreVertical, Clock, ArrowRight, TrendingUp, CheckCircle2,
     X, Eye, MessageSquare, Trash2,
@@ -6,6 +6,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import debounce from "lodash.debounce";
+import { useUserStore } from "../../stores/useUserStore.ts";
 
 interface SupportRequest {
     id: string;
@@ -36,16 +37,19 @@ const SupportDashboard: React.FC = () => {
 
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const navigate = useNavigate();
+    const {user} = useUserStore()
+    const id = user?.id;
 
-    const fetchData = async (
+    const fetchData =  useCallback(async (
         targetPage = 1,
         isLoadMore = false,
         search = "",
         status = "all"
     ) => {
+        if (!id) return;
         setLoading(true);
         try {
-            const response = await axios.get(`${baseUrl}/support`, {
+            const response = await axios.get(`${baseUrl}/support/user/${id}`, {
                 params: {
                     page: targetPage,
                     limit: 6,
@@ -73,18 +77,20 @@ const SupportDashboard: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id, baseUrl]);
 
     const debouncedFetchData = useMemo(() =>
         debounce((query: string, status: string) => {
             fetchData(1, false, query, status);
             setPage(1);
             setHasMore(true);
-        }, 800), []);
+        }, 800), [fetchData]);
 
     useEffect(() => {
-        debouncedFetchData(searchQuery, statusFilter);
-    }, [searchQuery, statusFilter]);
+        if (id) {
+            debouncedFetchData(searchQuery, statusFilter);
+        }
+    }, [id, searchQuery, statusFilter]);
 
     useEffect(() => {
         return () => {
