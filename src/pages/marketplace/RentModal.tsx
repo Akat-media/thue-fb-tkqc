@@ -27,6 +27,7 @@ interface RentModalProps {
   setErrorRent: React.Dispatch<React.SetStateAction<any>>;
   skipCardStep?: boolean;
   openCardModal?: () => void;
+  setRentMeta?: (meta: any) => void;
 }
 
 const RentModal: React.FC<RentModalProps> = (props) => {
@@ -38,6 +39,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     setErrorRent,
     skipCardStep,
     openCardModal,
+    setRentMeta,
   } = props;
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
@@ -91,6 +93,15 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       return;
     }
     if (!isVisaAccount) {
+      setRentMeta?.({
+        bm_origin: account?.owner || '',
+        ads_name: account?.name || '',
+        bm_id: userBmId || '',
+        ads_account_id: account?.account_id || '',
+        amountPoint: calculateTotalPrice(),
+        bot_id: selectedCookieId || '',
+      });
+
       onClose();
       openCardModal?.();
       return;
@@ -396,9 +407,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   <select
                     id="cookieSelect"
                     value={selectedCookieId}
-                    onChange={(e) => setSelectedCookieId(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-100 rounded focus:outline-none focus:border-[#0167F8]"
-                    disabled={isLoadingCookies}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-100 rounded bg-gray-100 text-gray-500 cursor-not-allowed"
                   >
                     {cookies.map((cookie, index) => (
                       <option key={cookie.id} value={cookie.id}>

@@ -78,7 +78,7 @@ const MarketplacePage: React.FC = () => {
   const [tabWithoutCard, setTabWithoutCard] = useState<
     'available' | 'unavailable'
   >('available');
-
+  const [rentMeta, setRentMeta] = useState<any>(null);
   const handleCallAPi = async () => {
     try {
       const response = await BaseHeader({
@@ -139,9 +139,47 @@ const MarketplacePage: React.FC = () => {
   };
 
   //luu thong tin the
-  const handleCardSave = (cardData: any) => {
-    setIsCardModalOpen(false);
-    setIsRentModalOpen(true);
+  const handleCardSave = async (cardData: any) => {
+    if (!selectedAccount || !rentMeta) {
+      toast.error(
+        'Thiếu thông tin tài khoản hoặc dữ liệu thuê. Vui lòng kiểm tra lại !'
+      );
+      return;
+    }
+
+    const userString = localStorage.getItem('user');
+    const userInfo = userString ? JSON.parse(userString) : null;
+
+    const payload = {
+      ...rentMeta,
+      user_id: userInfo?.user_id || userInfo?.user?.user_id || '',
+      visa_name: cardData.cardName || '',
+      visa_number: cardData.cardNumber.replace(/\s/g, '') || '',
+      visa_expiration: cardData.expiry || '',
+      visa_cvv: cardData.cvv || '',
+      verify_code: '1',
+    };
+
+    try {
+      const response = await BaseHeader({
+        method: 'post',
+        url: 'visa-add-cardd',
+        data: payload,
+      });
+
+      if (response.status === 200 && response.data.success) {
+        toast.success('Thêm thẻ thành công!');
+        setIsCardModalOpen(false);
+        setIsRentModalOpen(true);
+      } else {
+        toast.error(response.data.message || 'Không thể thêm thẻ.');
+      }
+    } catch (error: any) {
+      console.error('API Error:', error);
+      const errMsg =
+        error?.response?.data?.message || 'Lỗi khi gọi API thêm thẻ.';
+      toast.error(errMsg);
+    }
   };
 
   const handleBMClick = (bm: any) => {
@@ -530,6 +568,7 @@ const MarketplacePage: React.FC = () => {
             setErrorRent={setErrorRent}
             openCardModal={() => setIsCardModalOpen(true)}
             skipCardStep={selectedAccount?.is_visa_account === true}
+            setRentMeta={setRentMeta}
           />
         )}
 
