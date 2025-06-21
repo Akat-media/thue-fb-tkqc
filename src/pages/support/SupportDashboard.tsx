@@ -347,7 +347,7 @@ const SupportDashboard: React.FC = () => {
                                 <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                                     <div className="bg-white rounded-lg shadow-lg p-6 w-[90%] max-w-md relative">
                                         <h2 className="text-xl font-semibold mb-4">Xác nhận xóa</h2>
-                                        <p>Bạn có chắc muốn xóa người dùng này không?</p>
+                                        <p>Bạn có chắc muốn xóa yêu cầu này không?</p>
                                         <div className="mt-6 flex justify-end gap-4">
                                             <button
                                                 onClick={() => {

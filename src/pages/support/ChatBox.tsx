@@ -88,33 +88,34 @@ const ChatBox: React.FC<ChatBoxProps> = ({
                     ) : (
                             messages.map((message: any) => {
                                 const avaUrl = message.sender.role === 'user' ? '/avatar.jpg' : '/call2.png';
+                                let position;
+                                let secondPosition;
+                                let thirdPosition;
+                                let firstStyle;
+                                let secondStyle;
+                                if ((message.sender.role === 'user' && isAdminView) || (message.sender.role === 'admin' && !isAdminView)){
+                                    position = "justify-start";
+                                    secondPosition = "flex-row";
+                                    thirdPosition = "items-start";
+                                    firstStyle = "bg-emerald-600 mr-3";
+                                    secondStyle = "bg-gray-100 text-gray-900 rounded-bl-md";
+                                } else if ((message.sender.role === 'admin' && isAdminView) || (message.sender.role === 'user' && !isAdminView)){
+                                    position = "justify-end";
+                                    secondPosition = "flex-row-reverse";
+                                    thirdPosition = "items-end";
+                                    firstStyle = "bg-blue-600 ml-3";
+                                    secondStyle = "bg-blue-600 text-white rounded-br-md";
+                                }
                                     return (
-                                        <div
-                                            key={message.id}
-                                            className={`flex ${message.sender.role === 'admin' ? 'justify-start' : 'justify-end'}`}
-                                        >
-                                            <div
-                                                className={`flex max-w-[75%] min-w-[40%] ${
-                                                    message.sender.role === 'admin' ? 'flex-row' : 'flex-row-reverse'
-                                                }`}
-                                            >
-                                                <div
-                                                    className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${
-                                                        message.sender.role === 'admin' ? 'bg-emerald-600 mr-3' : 'bg-blue-600 ml-3'
-                                                    }`}
-                                                >
+                                        <div key={message.id} className={`flex ${position}`}>
+                                            <div className={`flex max-w-[75%] min-w-[40%] ${secondPosition}`}>
+                                                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${firstStyle}`}>
                                                     <div className="w-12 h-12 rounded-full overflow-hidden">
                                                         <img src={avaUrl} alt="akamedia" className="w-full h-full object-cover rounded-full" />
                                                     </div>
                                                 </div>
-                                                <div className={`flex flex-col ${message.sender.role === 'admin' ? 'items-start' : 'items-end'}`}>
-                                                    <div
-                                                        className={`px-4 py-3 rounded-2xl max-w-full break-words ${
-                                                            message.sender.role === 'admin'
-                                                                ? 'bg-gray-100 text-gray-900 rounded-bl-md'
-                                                                : 'bg-blue-600 text-white rounded-br-md'
-                                                        }`}
-                                                    >
+                                                <div className={`flex flex-col ${thirdPosition}`}>
+                                                    <div className={`px-4 py-3 rounded-2xl max-w-full break-words ${secondStyle}`}>
                                                         <p className="text-sm leading-relaxed">{message.message}</p>
                                                     </div>
                                                     <div className="flex items-center mt-2 space-x-2">
