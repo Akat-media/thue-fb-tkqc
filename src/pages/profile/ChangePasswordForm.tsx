@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import BaseHeader, { BaseUrl } from '../../api/BaseHeader.ts';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { useUserStore } from '../../stores/useUserStore';
@@ -111,7 +111,6 @@ const ChangePasswordForm: React.FC = () => {
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md max-w-xl mx-auto">
-      <ToastContainer />
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Old Password */}
         <div className="mb-6">

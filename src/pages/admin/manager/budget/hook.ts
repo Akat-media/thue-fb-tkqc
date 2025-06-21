@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import BaseHeader from '../../../../api/BaseHeader';
-import { toast, ToastContainer } from 'react-toastify';
-import dayjs from 'dayjs'
+import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
@@ -16,8 +16,8 @@ interface BudgetItem {
   percentage: number;
 }
 type UseManagerBudgetProps = {
-    form: any
-}
+  form: any;
+};
 const useManagerBudget = ({ form }: UseManagerBudgetProps) => {
   const [budgets, setBudgets] = useState<BudgetItem[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);

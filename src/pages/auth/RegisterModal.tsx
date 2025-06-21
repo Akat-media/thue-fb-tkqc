@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 // import axios from "axios";
-import BaseHeader, { BaseUrl } from "../../api/BaseHeader";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import AtomicSpinner from "atomic-spinner";
-import { Mail, User, Phone, Eye, EyeOff } from "lucide-react";
-import { useUserStore } from "../../stores/useUserStore.ts";
-import { useNavigate } from "react-router-dom";
-import registermodal from "../../public/sand.jpg";
+import BaseHeader, { BaseUrl } from '../../api/BaseHeader';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import AtomicSpinner from 'atomic-spinner';
+import { Mail, User, Phone, Eye, EyeOff } from 'lucide-react';
+import { useUserStore } from '../../stores/useUserStore.ts';
+import { useNavigate } from 'react-router-dom';
+import registermodal from '../../public/sand.jpg';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -23,11 +23,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
   onRegisterSuccess,
   onSwitchToLogin,
 }) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<{
@@ -45,18 +45,18 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
   const validateForm = (): boolean => {
     const newErrors: typeof errors = {};
-    if (!name) newErrors.name = "Họ tên là bắt buộc";
-    if (!email) newErrors.email = "Email là bắt buộc";
+    if (!name) newErrors.name = 'Họ tên là bắt buộc';
+    if (!email) newErrors.email = 'Email là bắt buộc';
     else if (!/\S+@\S+\.\S+/.test(email))
-      newErrors.email = "Email không hợp lệ";
-    if (!phone) newErrors.phone = "Số điện thoại là bắt buộc";
+      newErrors.email = 'Email không hợp lệ';
+    if (!phone) newErrors.phone = 'Số điện thoại là bắt buộc';
     else if (!/^[0-9]{10}$/.test(phone))
-      newErrors.phone = "Số điện thoại phải có 10 chữ số";
-    if (!password) newErrors.password = "Mật khẩu là bắt buộc";
+      newErrors.phone = 'Số điện thoại phải có 10 chữ số';
+    if (!password) newErrors.password = 'Mật khẩu là bắt buộc';
     else if (password.length < 6)
-      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+      newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
     if (password !== confirmPassword)
-      newErrors.confirmPassword = "Mật khẩu xác nhận không khớp";
+      newErrors.confirmPassword = 'Mật khẩu xác nhận không khớp';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -68,24 +68,24 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
     try {
       const registerRes = await BaseHeader({
-        method: "post",
-        url: "/user",
+        method: 'post',
+        url: '/user',
         baseURL: BaseUrl,
         data: {
           username: name,
           email: email,
           phone: phone,
           password: password,
-          role: "user",
+          role: 'user',
         },
       });
 
       if (registerRes.status == 200) {
-        toast.success("Đăng ký thành công!");
+        toast.success('Đăng ký thành công!');
 
         const loginRes = await BaseHeader({
-          method: "post",
-          url: "/login",
+          method: 'post',
+          url: '/login',
           baseURL: BaseUrl,
           data: {
             email: email,
@@ -94,11 +94,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
         });
 
         const { access_token, refresh_token, ...userData } = loginRes.data.data;
-        localStorage.setItem("access_token", access_token);
-        localStorage.setItem("refresh_token", refresh_token);
-        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem('access_token', access_token);
+        localStorage.setItem('refresh_token', refresh_token);
+        localStorage.setItem('user', JSON.stringify(userData));
         setUser(loginRes.data.data);
-        navigate("/");
+        navigate('/');
 
         onClose();
 
@@ -106,22 +106,22 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           onRegisterSuccess();
         }
       } else {
-        toast.error(registerRes.data.message || "Đăng ký thất bại");
+        toast.error(registerRes.data.message || 'Đăng ký thất bại');
       }
     } catch (error: any) {
-      console.error("Registration error:", error);
+      console.error('Registration error:', error);
 
       if (error.response?.data?.message) {
         const errorMessage = error.response.data.message;
 
-        if (errorMessage === "Email đã tồn tại") {
-          setErrors({ email: "Email đã tồn tại. Vui lòng nhập email khác." });
-          setEmail("");
+        if (errorMessage === 'Email đã tồn tại') {
+          setErrors({ email: 'Email đã tồn tại. Vui lòng nhập email khác.' });
+          setEmail('');
         } else {
-          toast.error(errorMessage || "Đăng ký thất bại");
+          toast.error(errorMessage || 'Đăng ký thất bại');
         }
       } else {
-        toast.error("Có lỗi xảy ra trong quá trình đăng ký");
+        toast.error('Có lỗi xảy ra trong quá trình đăng ký');
       }
     } finally {
       setLoading(false);
@@ -130,18 +130,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[10000] flex items-center justify-center backdrop-blur-sm bg-black/30 px-4">
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        style={{ zIndex: 10001 }}
-      />
       <div className="bg-white w-full max-w-5xl rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden relative">
         <button
           onClick={onClose}
@@ -245,7 +233,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               </label>
               <div className="relative mt-1">
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -284,7 +272,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               </label>
               <div className="relative mt-1">
                 <input
-                  type={showConfirmPassword ? "text" : "password"}
+                  type={showConfirmPassword ? 'text' : 'password'}
                   id="confirmPassword"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -321,7 +309,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               type="submit"
               disabled={loading}
               className={`w-full ${
-                loading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600"
+                loading ? 'bg-blue-400' : 'bg-blue-500 hover:bg-blue-600'
               } text-white font-semibold py-2 rounded-lg transition flex justify-center items-center`}
             >
               {loading ? (
@@ -345,12 +333,12 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   />
                 </svg>
               ) : (
-                "Đăng ký"
+                'Đăng ký'
               )}
             </button>
 
             <div className="text-center text-sm mt-2">
-              Đã có tài khoản?{" "}
+              Đã có tài khoản?{' '}
               <span
                 onClick={() => {
                   if (onSwitchToLogin) {

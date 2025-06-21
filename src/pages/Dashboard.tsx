@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   MessageCircleHeart,
   MonitorDotIcon,
@@ -9,8 +9,7 @@ import {
   Eye,
   Facebook,
   Zap,
-} from "lucide-react";
-import Layout from "../components/layout/Layout";
+} from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -20,9 +19,9 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-} from "recharts";
-import { useAuth } from "../context/AuthContext";
-import { Navigate } from "react-router-dom";
+} from 'recharts';
+import { useAuth } from '../context/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 interface StatCard {
   icon: React.ElementType;
@@ -33,7 +32,7 @@ interface StatCard {
     value: string;
     positive: boolean;
   };
-  color: "blue" | "green" | "purple" | "orange" | "red" | "yellow";
+  color: 'blue' | 'green' | 'purple' | 'orange' | 'red' | 'yellow';
 }
 
 interface ConnectedAccount {
@@ -59,12 +58,12 @@ function StatCard({
   color,
 }: StatCard) {
   const colorClasses = {
-    blue: "from-blue-50 to-blue-100 text-blue-600",
-    green: "from-green-50 to-green-100 text-green-600",
-    purple: "from-purple-50 to-purple-100 text-purple-600",
-    orange: "from-orange-50 to-orange-100 text-orange-600",
-    red: "from-red-50 to-red-100 text-red-600",
-    yellow: "from-yellow-50 to-yellow-100 text-yellow-600",
+    blue: 'from-blue-50 to-blue-100 text-blue-600',
+    green: 'from-green-50 to-green-100 text-green-600',
+    purple: 'from-purple-50 to-purple-100 text-purple-600',
+    orange: 'from-orange-50 to-orange-100 text-orange-600',
+    red: 'from-red-50 to-red-100 text-red-600',
+    yellow: 'from-yellow-50 to-yellow-100 text-yellow-600',
   };
 
   return (
@@ -86,7 +85,7 @@ function StatCard({
         {trend && (
           <div
             className={`flex items-center gap-1 text-sm ${
-              trend.positive ? "text-green-600" : "text-red-600"
+              trend.positive ? 'text-green-600' : 'text-red-600'
             }`}
           >
             {trend.positive ? (
@@ -106,42 +105,42 @@ function StatCard({
 function AdPerformanceChart() {
   const data = [
     {
-      name: "Thứ 2",
+      name: 'Thứ 2',
       cost: 32000000,
       reach: 180000,
       conversion_value: 86900000,
     },
     {
-      name: "Thứ 3",
+      name: 'Thứ 3',
       cost: 42000000,
       reach: 220000,
       conversion_value: 96820000,
     },
     {
-      name: "Thứ 4",
+      name: 'Thứ 4',
       cost: 28000000,
       reach: 160000,
       conversion_value: 66900000,
     },
     {
-      name: "Thứ 5",
+      name: 'Thứ 5',
       cost: 36000000,
       reach: 190000,
       conversion_value: 76900000,
     },
     {
-      name: "Thứ 6",
+      name: 'Thứ 6',
       cost: 40000000,
       reach: 230000,
       conversion_value: 81200000,
     },
     {
-      name: "Thứ 7",
+      name: 'Thứ 7',
       cost: 30000000,
       reach: 170000,
       conversion_value: 116900000,
     },
-    { name: "CN", cost: 25000000, reach: 140000, conversion_value: 106900000 },
+    { name: 'CN', cost: 25000000, reach: 140000, conversion_value: 106900000 },
   ];
   return (
     <div className="bg-white border border-gray-100 p-4 sm:p-6 rounded-2xl shadow-sm">
@@ -153,8 +152,8 @@ function AdPerformanceChart() {
           className="text-sm border rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 w-44 h-10 appearance-none bg-white bg-no-repeat bg-right pr-8"
           style={{
             backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>')`,
-            backgroundPosition: "calc(100% - 0.5rem) center",
-            backgroundSize: "1rem",
+            backgroundPosition: 'calc(100% - 0.5rem) center',
+            backgroundSize: '1rem',
           }}
         >
           <option>7 ngày qua</option>
@@ -207,7 +206,7 @@ function AdPerformanceChart() {
               dataKey="cost"
               stroke="#3b82f6"
               strokeWidth={2.5}
-              dot={{ fill: "#3b82f6", strokeWidth: 2, r: 4 }}
+              dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
               activeDot={{ r: 6 }}
               fillOpacity={1}
               fill="url(#colorCost)"
@@ -219,7 +218,7 @@ function AdPerformanceChart() {
               stroke="#10b981"
               strokeDasharray="5 5"
               strokeWidth={2}
-              dot={{ fill: "#10b981", strokeWidth: 2, r: 3 }}
+              dot={{ fill: '#10b981', strokeWidth: 2, r: 3 }}
               activeDot={{ r: 5 }}
               fill="url(#colorReach)"
             />
@@ -229,7 +228,7 @@ function AdPerformanceChart() {
               dataKey="conversion_value"
               stroke="#f59e0b"
               strokeWidth={2.5}
-              dot={{ fill: "#f59e0b", strokeWidth: 2, r: 4 }}
+              dot={{ fill: '#f59e0b', strokeWidth: 2, r: 4 }}
               activeDot={{ r: 6 }}
               fillOpacity={1}
               fill="url(#colorConversionvalue)"
@@ -296,40 +295,40 @@ function Dashboard() {
   const stats: StatCard[] = [
     {
       icon: DollarSign,
-      title: "Doanh thu",
-      value: "2,89 Tỷ ₫",
-      description: "Tổng doanh thu tháng này",
-      trend: { value: "+12.5%", positive: true },
-      color: "green",
+      title: 'Doanh thu',
+      value: '2,89 Tỷ ₫',
+      description: 'Tổng doanh thu tháng này',
+      trend: { value: '+12.5%', positive: true },
+      color: 'green',
     },
     {
       icon: Target,
-      title: "Chi phí quảng cáo",
-      value: "289,5M ₫",
-      description: "Chi phí quảng cáo tháng này",
-      trend: { value: "+8.1%", positive: false },
-      color: "blue",
+      title: 'Chi phí quảng cáo',
+      value: '289,5M ₫',
+      description: 'Chi phí quảng cáo tháng này',
+      trend: { value: '+8.1%', positive: false },
+      color: 'blue',
     },
     {
       icon: Eye,
-      title: "Tiếp cận",
-      value: "2,4M",
-      description: "Số người tiếp cận",
-      trend: { value: "+15.3%", positive: true },
-      color: "purple",
+      title: 'Tiếp cận',
+      value: '2,4M',
+      description: 'Số người tiếp cận',
+      trend: { value: '+15.3%', positive: true },
+      color: 'purple',
     },
     {
       icon: MessageCircleHeart,
-      title: "Tương tác",
-      value: "89,2K",
-      description: "Tổng lượt tương tác",
-      trend: { value: "+5.7%", positive: true },
-      color: "orange",
+      title: 'Tương tác',
+      value: '89,2K',
+      description: 'Tổng lượt tương tác',
+      trend: { value: '+5.7%', positive: true },
+      color: 'orange',
     },
   ];
 
   return (
-    <Layout>
+    <>
       <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full">
         <div className="mb-6 sm:mb-8">
           <h2 className="text-2xl font-semibold	 leading-7 text-gray-900 sm:text-3xl sm:truncate">
@@ -358,21 +357,21 @@ function Dashboard() {
             <div className="space-y-4">
               {[
                 {
-                  name: "Summer Sale 2025",
+                  name: 'Summer Sale 2025',
                   spend: 105450000,
-                  reach: "458K",
+                  reach: '458K',
                   ctr: 2.8,
                 },
                 {
-                  name: "New Collection Launch",
+                  name: 'New Collection Launch',
                   spend: 89250000,
-                  reach: "356K",
+                  reach: '356K',
                   ctr: 3.2,
                 },
                 {
-                  name: "Holiday Special",
+                  name: 'Holiday Special',
                   spend: 68450000,
-                  reach: "289K",
+                  reach: '289K',
                   ctr: 2.5,
                 },
               ].map((campaign, index) => (
@@ -441,7 +440,7 @@ function Dashboard() {
               </div>
             </div> */}
       </div>
-    </Layout>
+    </>
   );
 }
 

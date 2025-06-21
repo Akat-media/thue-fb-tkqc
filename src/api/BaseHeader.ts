@@ -63,13 +63,13 @@ BaseHeader.interceptors.response.use(
         return BaseHeader(originalRequest);
       } catch (refreshError) {
         console.error('Không thể làm mới token:', refreshError);
-        // window.location.href = '/login';
-        // localStorage.clear();
+        window.location.href = '/login';
+        localStorage.clear();
         return Promise.reject(refreshError);
       }
-    } else if (error.response?.status !== 401) {
-      // window.location.href = '/login';
-      // localStorage.clear();
+    } else if (error.response?.status == 405) {
+      window.location.href = '/login';
+      localStorage.clear();
     }
 
     return Promise.reject(error);

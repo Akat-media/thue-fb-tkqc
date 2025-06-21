@@ -31,7 +31,7 @@ import usePagination from '../../../hook/usePagination.tsx';
 import { useForm, Controller } from 'react-hook-form';
 import UserDetailModal from './UserDetailModal.tsx';
 import AddUserModal from './AddUserModal.tsx';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useUserStore } from '../../../stores/useUserStore.ts';
 import ToggleStatus from './ToggleStatus.tsx';
 
@@ -348,7 +348,6 @@ const AccountForm: React.FC = () => {
 
   return (
     <div className="min-w-0">
-      <ToastContainer position="top-right" autoClose={3000} />
       <div className="pl-1 p-4 mt-3 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="relative w-full md:w-[350px]">
           <input

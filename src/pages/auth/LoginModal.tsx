@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 // import axios from "axios";
-import BaseHeader, { BaseUrl } from "../../api/BaseHeader";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import BaseHeader, { BaseUrl } from '../../api/BaseHeader';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // import AtomicSpinner from "atomic-spinner";
-import { Mail, Eye, EyeOff } from "lucide-react";
+import { Mail, Eye, EyeOff } from 'lucide-react';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -20,8 +20,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
   onLoginSuccess,
   onSwitchToRegister,
 }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {}
@@ -36,8 +36,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
     setLoading(true);
 
     const newErrors: { email?: string; password?: string } = {};
-    if (!email.trim()) newErrors.email = "Vui lòng nhập email";
-    if (!password.trim()) newErrors.password = "Vui lòng nhập mật khẩu";
+    if (!email.trim()) newErrors.email = 'Vui lòng nhập email';
+    if (!password.trim()) newErrors.password = 'Vui lòng nhập mật khẩu';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -47,18 +47,18 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
     try {
       const res = await BaseHeader({
-        method: "post",
-        url: "/login",
+        method: 'post',
+        url: '/login',
         baseURL: BaseUrl,
         data: { email, password },
       });
 
       const { access_token, refresh_token, ...userData } = res.data.data;
-      localStorage.setItem("access_token", access_token);
-      localStorage.setItem("refresh_token", refresh_token);
-      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem('access_token', access_token);
+      localStorage.setItem('refresh_token', refresh_token);
+      localStorage.setItem('user', JSON.stringify(userData));
 
-      toast.success("Đăng nhập thành công!");
+      toast.success('Đăng nhập thành công!');
       onClose();
 
       if (onLoginSuccess) {
@@ -66,7 +66,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
       }
     } catch (err: any) {
       toast.error(
-        err.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
+        err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại'
       );
     } finally {
       setLoading(false);
@@ -79,7 +79,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
     setLoading(true);
 
     const newErrors: { email?: string } = {};
-    if (!email.trim()) newErrors.email = "Vui lòng nhập email";
+    if (!email.trim()) newErrors.email = 'Vui lòng nhập email';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -89,17 +89,17 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
     try {
       await BaseHeader({
-        method: "post",
-        url: "/forgot-password",
+        method: 'post',
+        url: '/forgot-password',
         baseURL: BaseUrl,
         data: { email },
       });
-      toast.success("Email đặt lại mật khẩu đã được gửi!");
+      toast.success('Email đặt lại mật khẩu đã được gửi!');
       setIsForgotPassword(false); // Quay lại form đăng nhập
-      setEmail(""); // Xóa email sau khi gửi
+      setEmail(''); // Xóa email sau khi gửi
     } catch (err: any) {
       toast.error(
-        err.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
+        err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại'
       );
     } finally {
       setLoading(false);
@@ -108,25 +108,13 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[10000] flex items-center justify-center backdrop-blur-sm bg-black/30 px-4">
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        style={{ zIndex: 10001 }}
-      />
       <div className="bg-white w-full max-w-5xl rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden relative">
         <button
           // onClick={onClose}
           onClick={() => {
             setIsForgotPassword(false); // Reset về form đăng nhập khi đóng
-            setEmail("");
-            setPassword("");
+            setEmail('');
+            setPassword('');
             setErrors({});
             onClose();
           }}
@@ -145,12 +133,12 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-2">
-            {isForgotPassword ? "Quên mật khẩu" : "Đăng nhập"}
+            {isForgotPassword ? 'Quên mật khẩu' : 'Đăng nhập'}
           </h2>
           <p className="text-sm text-gray-500 mb-6">
             {isForgotPassword
-              ? "Nhập email để nhận liên kết đặt lại mật khẩu"
-              : "Chào mừng bạn quay lại với AKA Media"}
+              ? 'Nhập email để nhận liên kết đặt lại mật khẩu'
+              : 'Chào mừng bạn quay lại với AKA Media'}
           </p>
 
           {/*<form onSubmit={handleSubmit} className="space-y-4">*/}
@@ -193,7 +181,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                 </label>
                 <div className="relative mt-1">
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -222,7 +210,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
             <div className="text-right text-sm text-blue-600 hover:underline cursor-pointer">
               <span onClick={() => setIsForgotPassword(!isForgotPassword)}>
-                {isForgotPassword ? "Quay lại đăng nhập" : "Quên mật khẩu?"}
+                {isForgotPassword ? 'Quay lại đăng nhập' : 'Quên mật khẩu?'}
               </span>
             </div>
 
@@ -230,7 +218,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
               type="submit"
               disabled={loading}
               className={`w-full ${
-                loading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600"
+                loading ? 'bg-blue-400' : 'bg-blue-500 hover:bg-blue-600'
               } text-white font-semibold py-2 rounded-lg transition flex justify-center items-center`}
             >
               {loading ? (
@@ -254,22 +242,22 @@ const LoginModal: React.FC<LoginModalProps> = ({
                   />
                 </svg>
               ) : isForgotPassword ? (
-                "Gửi yêu cầu"
+                'Gửi yêu cầu'
               ) : (
-                "Đăng nhập"
+                'Đăng nhập'
               )}
             </button>
 
             {!isForgotPassword && (
               <div className="text-center text-sm mt-2">
-                Bạn chưa có tài khoản?{" "}
+                Bạn chưa có tài khoản?{' '}
                 <span
                   onClick={() => {
                     if (onSwitchToRegister) {
                       onSwitchToRegister();
                     } else {
                       onClose();
-                      window.location.href = "/register";
+                      window.location.href = '/register';
                     }
                   }}
                   className="text-blue-600 hover:underline cursor-pointer"

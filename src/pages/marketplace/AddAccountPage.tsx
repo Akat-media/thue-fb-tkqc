@@ -1,42 +1,41 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
-import { z } from "zod";
-import Layout from "../../components/layout/Layout";
-import { AdAccount } from "../../types";
-import { useAdAccountStore } from "./adAccountStore";
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
+import { AdAccount } from '../../types';
+import { useAdAccountStore } from './adAccountStore';
 
 const formSchema = z.object({
   adAccountType: z
     .string()
-    .min(1, { message: "Vui lòng chọn loại tài khoản quảng cáo" })
-    .refine((val) => ["facebook", "google", "tiktok"].includes(val), {
+    .min(1, { message: 'Vui lòng chọn loại tài khoản quảng cáo' })
+    .refine((val) => ['facebook', 'google', 'tiktok'].includes(val), {
       message:
-        "Loại tài khoản quảng cáo không hợp lệ, vui lòng chọn Facebook, Google hoặc TikTok",
+        'Loại tài khoản quảng cáo không hợp lệ, vui lòng chọn Facebook, Google hoặc TikTok',
     }),
-  name: z.string().min(1, { message: "Vui lòng nhập tên tài khoản" }),
+  name: z.string().min(1, { message: 'Vui lòng nhập tên tài khoản' }),
   accountType: z
     .string()
-    .min(1, { message: "Vui lòng chọn loại tài khoản" })
+    .min(1, { message: 'Vui lòng chọn loại tài khoản' })
     .refine(
       (val) =>
-        ["personal", "business", "visa", "high_limit", "low_limit"].includes(
+        ['personal', 'business', 'visa', 'high_limit', 'low_limit'].includes(
           val
         ),
       {
         message:
-          "Loại tài khoản không hợp lệ, vui lòng chọn Cá nhân, Doanh nghiệp, Visa, Limit cao hoặc Limit thấp",
+          'Loại tài khoản không hợp lệ, vui lòng chọn Cá nhân, Doanh nghiệp, Visa, Limit cao hoặc Limit thấp',
       }
     ),
   defaultLimit: z
-    .number({ invalid_type_error: "Vui lòng nhập limit hợp lệ (số không âm)" })
-    .min(0, { message: "Limit phải là số không âm" }),
+    .number({ invalid_type_error: 'Vui lòng nhập limit hợp lệ (số không âm)' })
+    .min(0, { message: 'Limit phải là số không âm' }),
   pricePerDay: z
     .number({
-      invalid_type_error: "Vui lòng nhập giá thuê hợp lệ (số không âm)",
+      invalid_type_error: 'Vui lòng nhập giá thuê hợp lệ (số không âm)',
     })
-    .min(0, { message: "Giá thuê phải là số không âm" }),
+    .min(0, { message: 'Giá thuê phải là số không âm' }),
   notes: z.string().optional(),
 });
 
@@ -54,12 +53,12 @@ const AddAccountPage: React.FC = () => {
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      adAccountType: "",
-      name: "",
-      accountType: "",
+      adAccountType: '',
+      name: '',
+      accountType: '',
       defaultLimit: 0,
       pricePerDay: 0,
-      notes: "",
+      notes: '',
     },
   });
 
@@ -72,23 +71,23 @@ const AddAccountPage: React.FC = () => {
       accountType: data.accountType,
       defaultLimit: data.defaultLimit,
       pricePerDay: data.pricePerDay,
-      status: "available",
-      notes: data.notes || "Không có ghi chú",
+      status: 'available',
+      notes: data.notes || 'Không có ghi chú',
       adAccountType: data.adAccountType,
     };
 
-    console.log("new acc", newAccount);
+    console.log('new acc', newAccount);
     addAccount(newAccount);
     reset();
-    navigate("/marketplace");
+    navigate('/marketplace');
   };
 
   const handleCancel = () => {
-    navigate("/marketplace");
+    navigate('/marketplace');
   };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h2 className="text-2xl font-semibold	 text-gray-900 mb-6">
@@ -104,9 +103,9 @@ const AddAccountPage: React.FC = () => {
                 Loại tài khoản quảng cáo
               </label>
               <select
-                {...register("adAccountType")}
+                {...register('adAccountType')}
                 className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
-                  errors.adAccountType ? "border-red-500" : ""
+                  errors.adAccountType ? 'border-red-500' : ''
                 }`}
               >
                 <option value="">Chọn loại tài khoản quảng cáo</option>
@@ -126,9 +125,9 @@ const AddAccountPage: React.FC = () => {
               </label>
               <input
                 type="text"
-                {...register("name")}
+                {...register('name')}
                 className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
-                  errors.name ? "border-red-500" : ""
+                  errors.name ? 'border-red-500' : ''
                 }`}
               />
               {errors.name && (
@@ -142,9 +141,9 @@ const AddAccountPage: React.FC = () => {
                 Loại tài khoản
               </label>
               <select
-                {...register("accountType")}
+                {...register('accountType')}
                 className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
-                  errors.accountType ? "border-red-500" : ""
+                  errors.accountType ? 'border-red-500' : ''
                 }`}
               >
                 <option value="">Chọn loại tài khoản</option>
@@ -166,9 +165,9 @@ const AddAccountPage: React.FC = () => {
               </label>
               <input
                 type="number"
-                {...register("defaultLimit", { valueAsNumber: true })}
+                {...register('defaultLimit', { valueAsNumber: true })}
                 className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
-                  errors.defaultLimit ? "border-red-500" : ""
+                  errors.defaultLimit ? 'border-red-500' : ''
                 }`}
                 min="0"
                 step="0.01"
@@ -185,9 +184,9 @@ const AddAccountPage: React.FC = () => {
               </label>
               <input
                 type="number"
-                {...register("pricePerDay", { valueAsNumber: true })}
+                {...register('pricePerDay', { valueAsNumber: true })}
                 className={`mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
-                  errors.pricePerDay ? "border-red-500" : ""
+                  errors.pricePerDay ? 'border-red-500' : ''
                 }`}
                 min="0"
                 step="0.01"
@@ -203,7 +202,7 @@ const AddAccountPage: React.FC = () => {
                 Ghi chú
               </label>
               <textarea
-                {...register("notes")}
+                {...register('notes')}
                 className="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
               />
             </div>
@@ -225,7 +224,7 @@ const AddAccountPage: React.FC = () => {
           </form>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

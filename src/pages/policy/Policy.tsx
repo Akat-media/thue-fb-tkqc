@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import Layout from "../../components/layout/Layout.tsx";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import BaseHeader from "../../api/BaseHeader";
+import React, { useEffect, useState } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import BaseHeader from '../../api/BaseHeader';
 
 interface PolicySection {
   id: string;
@@ -26,34 +25,34 @@ const Policy: React.FC = () => {
     try {
       setLoading(true);
       const response = await BaseHeader({
-        method: "get",
-        url: "policies",
+        method: 'get',
+        url: 'policies',
       });
       setPolicies(response.data.data || []);
     } catch (error) {
-      console.error("Error fetching policies:", error);
+      console.error('Error fetching policies:', error);
       setPolicies([
         {
-          id: "1",
-          title: "Điều Khoản Sử Dụng",
+          id: '1',
+          title: 'Điều Khoản Sử Dụng',
           message:
-            "Người dùng phải từ 18 tuổi trở lên để sử dụng dịch vụ của AKA MEDIA.\nMọi hành vi vi phạm pháp luật hoặc gây hại đến hệ thống sẽ bị cấm và có thể dẫn đến khóa tài khoản.\nAKA MEDIA có quyền thay đổi điều khoản mà không cần thông báo trước.\nNgười dùng chịu trách nhiệm bảo mật thông tin tài khoản của mình.",
+            'Người dùng phải từ 18 tuổi trở lên để sử dụng dịch vụ của AKA MEDIA.\nMọi hành vi vi phạm pháp luật hoặc gây hại đến hệ thống sẽ bị cấm và có thể dẫn đến khóa tài khoản.\nAKA MEDIA có quyền thay đổi điều khoản mà không cần thông báo trước.\nNgười dùng chịu trách nhiệm bảo mật thông tin tài khoản của mình.',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
         {
-          id: "2",
-          title: "Chính Sách Bảo Mật",
+          id: '2',
+          title: 'Chính Sách Bảo Mật',
           message:
-            "Chúng tôi thu thập thông tin cá nhân (tên, email, số điện thoại) để cung cấp dịch vụ và cải thiện trải nghiệm người dùng.\nThông tin của bạn sẽ không được chia sẻ với bên thứ ba mà không có sự đồng ý, trừ khi có yêu cầu từ cơ quan pháp luật.\nChúng tôi sử dụng công nghệ mã hóa để bảo vệ dữ liệu người dùng.\nNgười dùng có quyền yêu cầu xóa dữ liệu cá nhân của mình bằng cách liên hệ qua support@akamedia.com.",
+            'Chúng tôi thu thập thông tin cá nhân (tên, email, số điện thoại) để cung cấp dịch vụ và cải thiện trải nghiệm người dùng.\nThông tin của bạn sẽ không được chia sẻ với bên thứ ba mà không có sự đồng ý, trừ khi có yêu cầu từ cơ quan pháp luật.\nChúng tôi sử dụng công nghệ mã hóa để bảo vệ dữ liệu người dùng.\nNgười dùng có quyền yêu cầu xóa dữ liệu cá nhân của mình bằng cách liên hệ qua support@akamedia.com.',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
         {
-          id: "3",
-          title: "Chính Sách Thanh Toán",
+          id: '3',
+          title: 'Chính Sách Thanh Toán',
           message:
-            "Mọi giao dịch thanh toán phải được thực hiện qua các phương thức được AKA MEDIA hỗ trợ.\nKhông hoàn tiền cho các giao dịch đã hoàn tất, trừ khi có lỗi từ phía hệ thống.\nThời gian xử lý giao dịch có thể mất từ 1-3 ngày làm việc.\nNgười dùng cần cung cấp thông tin chính xác để tránh sai sót trong quá trình thanh toán.",
+            'Mọi giao dịch thanh toán phải được thực hiện qua các phương thức được AKA MEDIA hỗ trợ.\nKhông hoàn tiền cho các giao dịch đã hoàn tất, trừ khi có lỗi từ phía hệ thống.\nThời gian xử lý giao dịch có thể mất từ 1-3 ngày làm việc.\nNgười dùng cần cung cấp thông tin chính xác để tránh sai sót trong quá trình thanh toán.',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
@@ -71,7 +70,7 @@ const Policy: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div className="min-h-screen bg-gradient-to-br from-blue-100 via-sky-200 to-cyan-100">
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
@@ -105,8 +104,8 @@ const Policy: React.FC = () => {
                 <div
                   className={`overflow-hidden transition-all duration-1000 ease-in-out ${
                     openSections[index]
-                      ? "max-h-96 opacity-100"
-                      : "max-h-0 opacity-0"
+                      ? 'max-h-96 opacity-100'
+                      : 'max-h-0 opacity-0'
                   }`}
                 >
                   <div className="px-6 py-4 bg-white">
@@ -120,7 +119,7 @@ const Policy: React.FC = () => {
           </div>
         </main>
       </div>
-    </Layout>
+    </>
   );
 };
 

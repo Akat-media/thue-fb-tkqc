@@ -9,7 +9,6 @@ import {
   X,
   Plus,
 } from 'lucide-react';
-import Layout from '../../components/layout/Layout';
 import { Card, CardContent } from '../../components/ui/Card';
 import AdAccountCard from './AdAccountCard';
 import RentModal from './RentModal';
@@ -19,7 +18,7 @@ import { useAdAccountStore } from './adAccountStore';
 import BaseHeader from '../../api/BaseHeader';
 import url from '../../assets/bg.svg';
 import { useOnOutsideClick } from '../../hook/useOutside';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import BMCard from './BMCard';
 import { NotiError, NotiSuccess } from '../../components/noti';
 import LoginModal from '../auth/LoginModal';
@@ -333,18 +332,7 @@ const MarketplacePage: React.FC = () => {
   });
 
   return (
-    <Layout>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+    <>
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
@@ -835,7 +823,7 @@ const MarketplacePage: React.FC = () => {
           }}
         />
       </div>
-    </Layout>
+    </>
   );
 };
 
