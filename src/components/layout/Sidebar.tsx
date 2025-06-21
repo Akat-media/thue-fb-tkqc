@@ -51,7 +51,11 @@ const Sidebar: React.FC<{
   const links = [
     { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
     { label: 'Danh sách BM', icon: Briefcase, path: '/marketplace' },
-    { label: 'Danh sách tài khoản', icon: ShoppingCart, path: '/rentals' },
+    {
+      label: 'Danh sách tài khoản',
+      icon: ShoppingCart,
+      path: '/admin/rentals',
+    },
     { label: 'Nạp tiền', icon: CircleDollarSign, path: '/payments' },
     { label: 'Quản lý bot', icon: Bot, path: '/create-bot' },
     // { label: "QR Here", icon: QrCode, path: "/deposit" },

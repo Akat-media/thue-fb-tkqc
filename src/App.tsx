@@ -26,11 +26,11 @@ import PolicyManagement from './pages/admin/PolicyManagement';
 import ListSupport from './pages/support/ListSupport.tsx';
 import RequestForm from './pages/support/RequestForm.tsx';
 import SupportTicketDetail from './pages/support/SupportTicketDetail.tsx';
-import 'react-toastify/dist/ReactToastify.css';
 import PricingPage from './pages/Princing.tsx';
 import PricingManagement from './pages/admin/manager/budget/PricingManagement.tsx';
 import Layout from './components/layout/Layout.tsx';
 import { useUserStore } from './stores/useUserStore.ts';
+import RentalsManagement from './pages/admin/RentalsManagement';
 
 function App() {
   const userobj = useUserStore((state) => state.user);
@@ -70,7 +70,7 @@ function App() {
                 <Route path="/admin/support" element={<AdminSupport />} />
                 <Route path="/admin/policy" element={<PolicyManagement />} />
                 <Route path="/admin/princing" element={<PricingManagement />} />
-
+                <Route path="/admin/rentals" element={<RentalsManagement />} />
                 <Route
                   path="/admin/notifications"
                   element={<NotificationOverlay />}
