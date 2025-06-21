@@ -231,14 +231,7 @@ const Navbar: React.FC = () => {
     setShowLoginModal(false);
     setIsProfileMenuOpen(false);
     fetchUser();
-    toast.success('Đăng nhập thành công!', {
-      position: 'top-right',
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
+    toast.success('Đăng nhập thành công!');
     if (location.pathname === '/login') {
       navigate('/');
     }
@@ -248,14 +241,7 @@ const Navbar: React.FC = () => {
   const handleRegisterSuccess = () => {
     setShowRegisterModal(false);
     fetchUser();
-    toast.success('Đăng ký thành công! Bạn đã được đăng nhập tự động.', {
-      position: 'top-right',
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
+    toast.success('Đăng ký thành công! Bạn đã được đăng nhập tự động.');
     if (location.pathname === '/register') {
       navigate('/');
     }
