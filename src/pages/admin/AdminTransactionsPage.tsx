@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect } from "react";
-import Layout from "../../components/layout/Layout";
-import { useOnOutsideClick } from "../../hook/useOutside";
-import { format } from "date-fns";
-import { vi } from "date-fns/locale";
+import React, { useState, useMemo, useEffect } from 'react';
+import Layout from '../../components/layout/Layout';
+import { useOnOutsideClick } from '../../hook/useOutside';
+import { format } from 'date-fns';
+import { vi } from 'date-fns/locale';
 import {
   BadgeInfo,
   BadgeCheck,
@@ -19,14 +19,14 @@ import {
   ArrowUp,
   ArrowDown,
   User,
-} from "lucide-react";
-import Subheader from "../../components/ui/Subheader";
-import Button from "../../components/ui/Button";
-import BaseHeader from "../../api/BaseHeader";
-import { Pagination } from "antd";
-import usePagination from "../../hook/usePagination";
-import { toast, ToastContainer } from "react-toastify";
-import debounce from "lodash.debounce";
+} from 'lucide-react';
+import Subheader from '../../components/ui/Subheader';
+import Button from '../../components/ui/Button';
+import BaseHeader from '../../api/BaseHeader';
+import { Pagination } from 'antd';
+import usePagination from '../../hook/usePagination';
+import { toast, ToastContainer } from 'react-toastify';
+import debounce from 'lodash.debounce';
 
 interface Transaction {
   id: string;
@@ -45,10 +45,10 @@ interface Transaction {
 }
 
 const AdminTransactionsPage: React.FC = () => {
-  const user = localStorage.getItem("user");
-  const userParse = JSON.parse(user || "{}");
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const user = localStorage.getItem('user');
+  const userParse = JSON.parse(user || '{}');
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [filtered, setFiltered] = useState<Transaction[]>([]);
   const [activeCell, setActiveCell] = useState<string | null>(null);
   const [activeRow, setActiveRow] = useState<string | null>(null);
@@ -56,20 +56,20 @@ const AdminTransactionsPage: React.FC = () => {
     null
   );
   const [showModal, setShowModal] = useState(false);
-  const [typeFilter, setTypeFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState('all');
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Transaction;
-    direction: "asc" | "desc";
+    direction: 'asc' | 'desc';
   } | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [highlightedRows, setHighlightedRows] = useState<string[]>([]);
   const [openSortKey, setOpenSortKey] = useState<keyof Transaction | null>(
     null
   );
-  const [active, setActive] = useState("money");
+  const [active, setActive] = useState('money');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [transactionPoints, setTransactionPoints] = useState<Transaction[]>([]);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
 
   const toggleCheckbox = (id: string) => {
     setSelectedIds((prev) => {
@@ -87,10 +87,10 @@ const AdminTransactionsPage: React.FC = () => {
 
   const debounceSearch = useMemo(() => {
     return debounce((value: string) => {
-      if ( active === "money") {
-        hanleTransactionMoney(value)
+      if (active === 'money') {
+        hanleTransactionMoney(value);
       } else {
-        hanleTransactionPoint(value)
+        hanleTransactionPoint(value);
       }
     }, 800);
   }, []);
@@ -108,19 +108,19 @@ const AdminTransactionsPage: React.FC = () => {
         const aValue = a[sortConfig.key];
         const bValue = b[sortConfig.key];
 
-        if (typeof aValue === "number" && typeof bValue === "number") {
-          return sortConfig.direction === "asc"
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          return sortConfig.direction === 'asc'
             ? aValue - bValue
             : bValue - aValue;
         }
 
         if (aValue == null && bValue != null)
-          return sortConfig.direction === "asc" ? -1 : 1;
+          return sortConfig.direction === 'asc' ? -1 : 1;
         if (aValue != null && bValue == null)
-          return sortConfig.direction === "asc" ? 1 : -1;
+          return sortConfig.direction === 'asc' ? 1 : -1;
         if (aValue == null && bValue == null) return 0;
 
-        return sortConfig.direction === "asc"
+        return sortConfig.direction === 'asc'
           ? String(aValue).localeCompare(String(bValue))
           : String(bValue).localeCompare(String(aValue));
       });
@@ -129,21 +129,21 @@ const AdminTransactionsPage: React.FC = () => {
   }, [filtered, sortConfig]);
 
   const handleReset = () => {
-    setSearch("");
-    setStatusFilter("all");
+    setSearch('');
+    setStatusFilter('all');
     setFiltered(transactions);
   };
   const handleSync = async () => {
-    if (active === "money") {
+    if (active === 'money') {
       await hanleTransactionMoney();
-    } else if (active === "points") {
+    } else if (active === 'points') {
       await hanleTransactionPoint();
     }
   };
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      const table = document.querySelector("table");
+      const table = document.querySelector('table');
       if (table && !table.contains(e.target as Node)) {
         setActiveCell(null);
         setActiveRow(null);
@@ -151,9 +151,9 @@ const AdminTransactionsPage: React.FC = () => {
       }
     };
 
-    document.addEventListener("click", handleClick);
+    document.addEventListener('click', handleClick);
     return () => {
-      document.removeEventListener("click", handleClick);
+      document.removeEventListener('click', handleClick);
     };
   }, []);
 
@@ -170,7 +170,7 @@ const AdminTransactionsPage: React.FC = () => {
   }) => {
     const isOpen = openSortKey === sortKey;
 
-    const toggleSort = (direction: "asc" | "desc") => {
+    const toggleSort = (direction: 'asc' | 'desc') => {
       setSortConfig({ key: sortKey, direction });
       setOpenSortKey(null);
     };
@@ -190,13 +190,13 @@ const AdminTransactionsPage: React.FC = () => {
         {isOpen && (
           <div className="absolute right-0 top-6 w-32 bg-white border rounded shadow z-10">
             <div
-              onClick={() => toggleSort("asc")}
+              onClick={() => toggleSort('asc')}
               className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
             >
               <ArrowUp className="w-4 h-4 mr-2" /> ASC
             </div>
             <div
-              onClick={() => toggleSort("desc")}
+              onClick={() => toggleSort('desc')}
               className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
             >
               <ArrowDown className="w-4 h-4 mr-2" /> DESC
@@ -208,7 +208,7 @@ const AdminTransactionsPage: React.FC = () => {
   };
   const headers = [
     {
-      key: "checkbox",
+      key: 'checkbox',
       render: () => (
         <th className="px-2 py-3 text-center min-w-[50px] border border-gray-200">
           <label className="relative inline-flex items-center justify-center cursor-pointer w-4 h-4">
@@ -233,7 +233,7 @@ const AdminTransactionsPage: React.FC = () => {
       ),
     },
     {
-      key: "edit",
+      key: 'edit',
       render: () => (
         <th className="px-4 py-3 text-center min-w-[50px] border border-gray-200">
           <SquarePen className="w-4 h-4 text-gray-500" />
@@ -241,86 +241,86 @@ const AdminTransactionsPage: React.FC = () => {
       ),
     },
     {
-      key: "id",
-      label: "ID",
+      key: 'id',
+      label: 'ID',
       icon: <BadgeInfo className="w-4 h-4 text-gray-500" />,
-      sortKey: "id",
-      minWidth: "80px",
+      sortKey: 'id',
+      minWidth: '80px',
     },
     {
-      key: "username",
-      label: "Tên người dùng",
+      key: 'username',
+      label: 'Tên người dùng',
       icon: <User className="w-4 h-4 text-gray-500" />,
-      sortKey: "id",
-      minWidth: "80px",
+      sortKey: 'id',
+      minWidth: '80px',
     },
     {
-      key: "amountVND",
-      label: "Số tiền đã nạp",
+      key: 'amountVND',
+      label: 'Số tiền đã nạp',
       icon: <CircleDollarSign className="w-4 h-4 text-gray-500" />,
-      sortKey: "amountVND",
-      minWidth: "160px",
+      sortKey: 'amountVND',
+      minWidth: '160px',
     },
     {
-      key: "points",
-      label: "Điểm",
+      key: 'points',
+      label: 'Điểm',
       icon: <BadgeCheck className="w-4 h-4 text-gray-500" />,
-      sortKey: "points",
-      minWidth: "160px",
+      sortKey: 'points',
+      minWidth: '160px',
     },
     {
-      key: "bank",
-      label: "Ngân hàng",
+      key: 'bank',
+      label: 'Ngân hàng',
       icon: <Scale className="w-4 h-4 text-gray-500" />,
-      sortKey: "bank",
-      minWidth: "120px",
+      sortKey: 'bank',
+      minWidth: '120px',
     },
     {
-      key: "status",
-      label: "Trạng thái",
+      key: 'status',
+      label: 'Trạng thái',
       icon: <Briefcase className="w-4 h-4 text-gray-500" />,
-      sortKey: "status",
-      minWidth: "120px",
+      sortKey: 'status',
+      minWidth: '120px',
     },
     {
-      key: "createdAt",
-      label: "Ngày tạo",
+      key: 'createdAt',
+      label: 'Ngày tạo',
       icon: <AlarmClockPlus className="w-4 h-4 text-gray-500" />,
-      sortKey: "createdAt",
-      minWidth: "150px",
+      sortKey: 'createdAt',
+      minWidth: '150px',
     },
     {
-      key: "type",
-      label: "Loại",
+      key: 'type',
+      label: 'Loại',
       icon: <AlarmClockPlus className="w-4 h-4 text-gray-500" />,
-      sortKey: "type",
-      minWidth: "100px",
+      sortKey: 'type',
+      minWidth: '100px',
     },
     {
-      key: "short_code",
-      label: "Short Code",
+      key: 'short_code',
+      label: 'Short Code',
       icon: <HandCoins className="w-4 h-4 text-gray-500" />,
-      sortKey: "short_code",
-      minWidth: "140px",
+      sortKey: 'short_code',
+      minWidth: '140px',
     },
     {
-      key: "transactionID",
-      label: "TransactionID",
+      key: 'transactionID',
+      label: 'TransactionID',
       icon: <Pen className="w-4 h-4 text-gray-500" />,
-      sortKey: "transactionID",
-      minWidth: "140px",
+      sortKey: 'transactionID',
+      minWidth: '140px',
     },
     {
-      key: "description",
-      label: "Mô tả",
+      key: 'description',
+      label: 'Mô tả',
       icon: <ALargeSmall className="w-4 h-4 text-gray-500" />,
-      sortKey: "description",
-      minWidth: "240px",
+      sortKey: 'description',
+      minWidth: '240px',
     },
   ];
   const headersPoints = [
     {
-      key: "checkbox",
+      key: 'checkbox',
       render: () => (
         <th className="px-2 py-3 text-center min-w-[50px] border border-gray-200">
           <label className="relative inline-flex items-center justify-center cursor-pointer w-4 h-4">
@@ -345,7 +345,7 @@ const AdminTransactionsPage: React.FC = () => {
       ),
     },
     {
-      key: "edit",
+      key: 'edit',
       render: () => (
         <th className="px-4 py-3 text-center min-w-[50px] border border-gray-200">
           <SquarePen className="w-4 h-4 text-gray-500" />
@@ -353,53 +353,53 @@ const AdminTransactionsPage: React.FC = () => {
       ),
     },
     {
-      key: "id",
-      label: "ID",
+      key: 'id',
+      label: 'ID',
       icon: <BadgeInfo className="w-4 h-4 text-gray-500" />,
-      sortKey: "id",
-      minWidth: "80px",
+      sortKey: 'id',
+      minWidth: '80px',
     },
     {
-      key: "points_used",
-      label: "Số điểm đã đổi",
+      key: 'points_used',
+      label: 'Số điểm đã đổi',
       icon: <CircleDollarSign className="w-4 h-4 text-gray-500" />,
-      sortKey: "points_used",
-      minWidth: "160px",
+      sortKey: 'points_used',
+      minWidth: '160px',
     },
     {
-      key: "service_type",
-      label: "Loại dịch vụ",
+      key: 'service_type',
+      label: 'Loại dịch vụ',
       icon: <BadgeCheck className="w-4 h-4 text-gray-500" />,
-      sortKey: "service_type",
-      minWidth: "160px",
+      sortKey: 'service_type',
+      minWidth: '160px',
     },
     {
-      key: "target_account",
-      label: "Tài khoản facebook",
+      key: 'target_account',
+      label: 'Tài khoản facebook',
       icon: <Scale className="w-4 h-4 text-gray-500" />,
-      sortKey: "target_account",
-      minWidth: "120px",
+      sortKey: 'target_account',
+      minWidth: '120px',
     },
     {
-      key: "status",
-      label: "Trạng thái",
+      key: 'status',
+      label: 'Trạng thái',
       icon: <Briefcase className="w-4 h-4 text-gray-500" />,
-      sortKey: "status",
-      minWidth: "120px",
+      sortKey: 'status',
+      minWidth: '120px',
     },
     {
-      key: "created_at",
-      label: "Ngày tạo",
+      key: 'created_at',
+      label: 'Ngày tạo',
       icon: <AlarmClockPlus className="w-4 h-4 text-gray-500" />,
-      sortKey: "created_at",
-      minWidth: "150px",
+      sortKey: 'created_at',
+      minWidth: '150px',
     },
     {
-      key: "description",
-      label: "Mô tả",
+      key: 'description',
+      label: 'Mô tả',
       icon: <ALargeSmall className="w-4 h-4 text-gray-500" />,
-      sortKey: "description",
-      minWidth: "240px",
+      sortKey: 'description',
+      minWidth: '240px',
     },
   ];
   const [total, setTotal] = useState<any>(0);
@@ -413,23 +413,23 @@ const AdminTransactionsPage: React.FC = () => {
     setCurrentPage: setCurrentPagePoint,
     setPageSize: setPageSizePoint,
   } = usePagination(1, 10);
-  const hanleTransactionMoney = async (searchQuery = "") => {
+  const hanleTransactionMoney = async (searchQuery = '') => {
     try {
       let response;
-      if (userParse?.user?.role === "admin") {
+      if (userParse?.user?.role === 'admin') {
         response = await BaseHeader({
-          url: "/transaction-all",
-          method: "get",
+          url: '/transaction-all',
+          method: 'get',
           params: {
             page: currentPage,
             pageSize: pageSize,
             ...(searchQuery && { query: searchQuery.trim() }),
-          }
+          },
         });
       } else {
         response = await BaseHeader({
-          url: "/transaction",
-          method: "get",
+          url: '/transaction',
+          method: 'get',
           params: {
             user_id: userParse?.user_id,
             page: currentPage,
@@ -446,15 +446,15 @@ const AdminTransactionsPage: React.FC = () => {
     } catch (error: any) {
       console.log(error);
       toast.error(
-        error.response?.data?.message || "Lỗi khi lấy dữ liệu thống kê"
+        error.response?.data?.message || 'Lỗi khi lấy dữ liệu thống kê'
       );
     }
   };
-  const hanleTransactionPoint = async (searchQuery = "") => {
+  const hanleTransactionPoint = async (searchQuery = '') => {
     try {
       const response = await BaseHeader({
-        url: "/points-used",
-        method: "get",
+        url: '/points-used',
+        method: 'get',
         params: {
           user_id: userParse?.user_id,
           page: currentPage,
@@ -471,18 +471,18 @@ const AdminTransactionsPage: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (active === "money") {
+    if (active === 'money') {
       hanleTransactionMoney();
     }
-    if (active === "points") {
+    if (active === 'points') {
       hanleTransactionPoint();
     }
   }, [active, currentPage, pageSize]);
 
   useEffect(() => {
-    if (active === "money") {
+    if (active === 'money') {
       setFiltered(transactions);
-    } else if (active === "points") {
+    } else if (active === 'points') {
       setFiltered(transactionPoints);
     }
   }, [transactions, transactionPoints, active]);
@@ -500,7 +500,7 @@ const AdminTransactionsPage: React.FC = () => {
         draggable
         pauseOnHover
       />
-      {active === "money" && (
+      {active === 'money' && (
         <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-4">
           <Subheader active={active} setActive={setActive} />
           <div className="flex items-end justify-between mb-4">
@@ -519,7 +519,7 @@ const AdminTransactionsPage: React.FC = () => {
                 onChange={handleSearch}
               />
             </div>
-            {userParse?.user?.role === "admin" && (
+            {userParse?.user?.role === 'admin' && (
               <div className="flex items-center gap-1">
                 <button
                   onClick={handleSync}
@@ -575,17 +575,17 @@ const AdminTransactionsPage: React.FC = () => {
                       key={item.id}
                       className={`${
                         highlightedRows.includes(item.id)
-                          ? "bg-[#dcfce7] relative"
+                          ? 'bg-[#dcfce7] relative'
                           : activeRow === item.id
-                          ? "bg-green-100"
-                          : "hover:bg-gray-50"
+                          ? 'bg-green-100'
+                          : 'hover:bg-gray-50'
                       }`}
                       style={
                         highlightedRows.includes(item.id)
                           ? {
-                              outline: "1px solid #47b46c",
-                              outlineOffset: "0px",
-                              position: "relative",
+                              outline: '1px solid #47b46c',
+                              outlineOffset: '0px',
+                              position: 'relative',
                               zIndex: 5,
                             }
                           : {}
@@ -618,7 +618,7 @@ const AdminTransactionsPage: React.FC = () => {
 
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
-                          activeCell === `${item.id}-id` ? "bg-green-100" : ""
+                          activeCell === `${item.id}-id` ? 'bg-green-100' : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-id`);
@@ -629,52 +629,54 @@ const AdminTransactionsPage: React.FC = () => {
                       </td>
 
                       <td
-                          className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
-                              activeCell === `${item.id}-username` ? "bg-green-100" : ""
-                          }`}
-                          onClick={() => {
-                            setActiveCell(`${item.id}-username`);
-                            setActiveRow(null);
-                          }}
+                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                          activeCell === `${item.id}-username`
+                            ? 'bg-green-100'
+                            : ''
+                        }`}
+                        onClick={() => {
+                          setActiveCell(`${item.id}-username`);
+                          setActiveRow(null);
+                        }}
                       >
-                        {item?.user.username}
+                        {item?.user?.username}
                       </td>
 
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item?.id}-accountName`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-accountName`);
                           setActiveRow(null);
                         }}
                       >
-                        {typeof item?.amountVND === "number"
+                        {typeof item?.amountVND === 'number'
                           ? item.amountVND.toLocaleString()
                           : item?.amountVND}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-status`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-status`);
                           setActiveRow(null);
                         }}
                       >
-                        {typeof item?.points === "number"
+                        {typeof item?.points === 'number'
                           ? item.points.toLocaleString()
                           : item?.points}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-amount`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-amount`);
@@ -686,8 +688,8 @@ const AdminTransactionsPage: React.FC = () => {
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-total`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-total`);
@@ -699,8 +701,8 @@ const AdminTransactionsPage: React.FC = () => {
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-business`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-business`);
@@ -710,18 +712,18 @@ const AdminTransactionsPage: React.FC = () => {
                         {item?.createdAt
                           ? format(
                               new Date(item?.createdAt),
-                              "dd/MM/yyyy HH:mm:ss",
+                              'dd/MM/yyyy HH:mm:ss',
                               {
                                 locale: vi,
                               }
                             )
-                          : ""}
+                          : ''}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-currency`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-currency`);
@@ -733,8 +735,8 @@ const AdminTransactionsPage: React.FC = () => {
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-createdAt`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-createdAt`);
@@ -745,7 +747,7 @@ const AdminTransactionsPage: React.FC = () => {
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
-                          activeCell === `${item.id}-note` ? "bg-green-100" : ""
+                          activeCell === `${item.id}-note` ? 'bg-green-100' : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-note`);
@@ -756,7 +758,7 @@ const AdminTransactionsPage: React.FC = () => {
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
-                          activeCell === `${item.id}-name` ? "bg-green-100" : ""
+                          activeCell === `${item.id}-name` ? 'bg-green-100' : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-name`);
@@ -788,8 +790,8 @@ const AdminTransactionsPage: React.FC = () => {
                   <ul className="space-y-2 text-sm">
                     {Object.entries(selectedAccount).map(([key, value]) => (
                       <li key={key}>
-                        <strong>{key}:</strong>{" "}
-                        {typeof value === "number"
+                        <strong>{key}:</strong>{' '}
+                        {typeof value === 'number'
                           ? value.toLocaleString()
                           : value}
                       </li>
@@ -811,7 +813,7 @@ const AdminTransactionsPage: React.FC = () => {
           )}
         </div>
       )}
-      {active === "points" && (
+      {active === 'points' && (
         <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-4">
           <Subheader active={active} setActive={setActive} />
           <div className="flex items-end justify-between mb-4">
@@ -837,7 +839,7 @@ const AdminTransactionsPage: React.FC = () => {
                 Tìm kiếm
               </Button>
             </div>
-            {userParse?.user?.role === "admin" && (
+            {userParse?.user?.role === 'admin' && (
               <div className="flex items-center gap-1">
                 <button
                   onClick={handleSync}
@@ -892,10 +894,10 @@ const AdminTransactionsPage: React.FC = () => {
                       key={item.id}
                       className={`${
                         highlightedRows.includes(item.id)
-                          ? "bg-[#dcfce7] ring-2 ring-[#47b46c]"
+                          ? 'bg-[#dcfce7] ring-2 ring-[#47b46c]'
                           : activeRow === item.id
-                          ? "bg-green-100"
-                          : "hover:bg-gray-50"
+                          ? 'bg-green-100'
+                          : 'hover:bg-gray-50'
                       }`}
                     >
                       <td className="px-4 py-3 text-center border border-gray-100">
@@ -925,7 +927,7 @@ const AdminTransactionsPage: React.FC = () => {
 
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
-                          activeCell === `${item.id}-id` ? "bg-green-100" : ""
+                          activeCell === `${item.id}-id` ? 'bg-green-100' : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-id`);
@@ -937,23 +939,23 @@ const AdminTransactionsPage: React.FC = () => {
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-accountName`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-accountName`);
                           setActiveRow(null);
                         }}
                       >
-                        {typeof item?.points_used === "number"
+                        {typeof item?.points_used === 'number'
                           ? item.points_used.toLocaleString()
                           : item?.points_used}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-status`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-status`);
@@ -965,8 +967,8 @@ const AdminTransactionsPage: React.FC = () => {
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-amount`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-amount`);
@@ -978,8 +980,8 @@ const AdminTransactionsPage: React.FC = () => {
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-total`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-total`);
@@ -991,8 +993,8 @@ const AdminTransactionsPage: React.FC = () => {
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-business`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-business`);
@@ -1002,18 +1004,18 @@ const AdminTransactionsPage: React.FC = () => {
                         {item?.created_at
                           ? format(
                               new Date(item?.created_at),
-                              "dd/MM/yyyy HH:mm:ss",
+                              'dd/MM/yyyy HH:mm:ss',
                               {
                                 locale: vi,
                               }
                             )
-                          : ""}
+                          : ''}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-currency`
-                            ? "bg-green-100"
-                            : ""
+                            ? 'bg-green-100'
+                            : ''
                         }`}
                         onClick={() => {
                           setActiveCell(`${item.id}-currency`);
@@ -1045,8 +1047,8 @@ const AdminTransactionsPage: React.FC = () => {
                   <ul className="space-y-2 text-sm">
                     {Object.entries(selectedAccount).map(([key, value]) => (
                       <li key={key}>
-                        <strong>{key}:</strong>{" "}
-                        {typeof value === "number"
+                        <strong>{key}:</strong>{' '}
+                        {typeof value === 'number'
                           ? value.toLocaleString()
                           : value}
                       </li>

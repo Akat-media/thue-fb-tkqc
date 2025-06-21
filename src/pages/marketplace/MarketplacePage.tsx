@@ -162,6 +162,7 @@ const MarketplacePage: React.FC = () => {
       visa_cvv: cardData.cvv || '',
       verify_code: '1',
     };
+    console.log(payload);
 
     try {
       const response = await BaseHeader({
