@@ -203,13 +203,13 @@ const Sidebar: React.FC<{
               />
             )}
           </button>
-
+           {/* Thêm max-height nếu thêm item */}
           <div
             className={clsx(
               'transition-all duration-1000 ease-in-out overflow-hidden transform origin-top',
               openAdsSubmenu && isSidebarOpen
-                ? 'max-h-40 opacity-100 scale-y-100 mt-1'
-                : 'max-h-0 opacity-0 scale-y-95'
+                ? "max-h-50 opacity-100 scale-y-100 mt-1"
+                : "max-h-0 opacity-0 scale-y-95"
             )}
           >
             <div className="ml-10 space-y-1">
@@ -277,6 +277,19 @@ const Sidebar: React.FC<{
                   <TrendingUp className="w-4 h-4" />
                 </div>
                 <span className="text-gray-600">Quản lý ngân sách</span>
+              </Link>
+              <Link
+                to="/admin/voucher"
+                className={clsx(
+                  "flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700",
+                  location.pathname === "/admin/voucher" &&
+                    "bg-white font-semibold"
+                )}
+              >
+                <div className="w-8 flex justify-center">
+                  <TrendingUp className="w-4 h-4" />
+                </div>
+                <span className="text-gray-600">Quản lý voucher</span>
               </Link>
             </div>
           </div>

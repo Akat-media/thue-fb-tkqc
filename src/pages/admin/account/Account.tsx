@@ -22,7 +22,7 @@ const Account = () => {
       <div className="flex flex-1 flex-col min-w-0">
         <div className="w-full box-border px-4 sm:px-6 md:px-10 pb-6 sm:pb-8 flex flex-col flex-1">
           <div className="text-xl sm:text-xl font-bold leading-6 font-sans text-blue-900">
-            Danh sách tài khoản
+            Danh sách tài khoản 111
             {/* <p className="mt-1 sm:mt-2 text-xl sm:text-sm text-gray-500 font-sans font-medium">
               AKA Media - giải pháp số toàn diện
             </p> */}
