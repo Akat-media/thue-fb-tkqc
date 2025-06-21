@@ -22,18 +22,22 @@ import {
   TrendingUp,
   Calendar,
   X,
-} from 'lucide-react';
-import Pagination from './Pagination.tsx';
+  Gift,
+  TicketPercent,
+} from "lucide-react";
+import Pagination from "./Pagination.tsx";
 // import axios from "axios";
-import BaseHeader, { BaseUrl } from '../../../api/BaseHeader';
-import debounce from 'lodash.debounce';
-import usePagination from '../../../hook/usePagination.tsx';
-import { useForm, Controller } from 'react-hook-form';
-import UserDetailModal from './UserDetailModal.tsx';
-import AddUserModal from './AddUserModal.tsx';
-import { toast } from 'react-toastify';
-import { useUserStore } from '../../../stores/useUserStore.ts';
-import ToggleStatus from './ToggleStatus.tsx';
+import BaseHeader, { BaseUrl } from "../../../api/BaseHeader";
+import debounce from "lodash.debounce";
+import usePagination from "../../../hook/usePagination.tsx";
+import { useForm, Controller } from "react-hook-form";
+import UserDetailModal from "./UserDetailModal.tsx";
+import AddUserModal from "./AddUserModal.tsx";
+import { toast, ToastContainer } from "react-toastify";
+import { useUserStore } from "../../../stores/useUserStore.ts";
+import ToggleStatus from "./ToggleStatus.tsx";
+import { Checkbox, Modal, Table } from "antd";
+import { Voucher } from "../manager/voucher/VoucherManager.tsx";
 
 // Define the User interface
 interface User {
@@ -54,6 +58,13 @@ interface User {
   created_at: string;
   active: boolean;
 }
+interface VoucherWithMeta extends Voucher {
+  is_checked: boolean;
+  is_expired: boolean;
+  is_exceeded: boolean;
+  _count: { userVouchers: number };
+}
+
 
 const AccountForm: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -73,10 +84,14 @@ const AccountForm: React.FC = () => {
     6
   );
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showVoucherModal, setShowVoucherModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
+  const [voucherList, setVoucherList] = useState<VoucherWithMeta[]>([]);
+  const [rowUserId, setRowUserId] = useState<string>()
+
 
   // Initialize react-hook-form
   const {
@@ -263,6 +278,10 @@ const AccountForm: React.FC = () => {
     setValue('role', user.role || 'user');
     setShowEditModal(true);
   };
+  const handleVoucher = (user:User) => {
+    fetchDataVoucher(user.id)
+    setShowVoucherModal(true)
+  }
 
   const handleDelete = async () => {
     if (!deleteTargetId) return;
@@ -343,9 +362,79 @@ const AccountForm: React.FC = () => {
       toast.error('Có lỗi xảy ra khi thay đổi trạng thái người dùng');
     }
   };
-  const [toggleStates, setToggleStates] = useState<Record<string, boolean>>({});
-  console.log('toggleStates:', toggleStates);
 
+  const fetchDataVoucher = async (id: string) => {
+    try {
+      const respone = await BaseHeader({
+        method: 'get',
+        url: `/all-vouchers/${id}`,
+        baseURL: BaseUrl,
+      });
+      console.log('kakakak', data)
+      setVoucherList(respone.data);
+    } catch (err: any) {
+      toast.error('Có lỗi xảy ra. Vui lòng thử lại');
+    }
+  };
+  // console.log('voucherList111',voucherList)
+  const handleSubmitVoucher = async() => {
+    console.log("vaaaaaaaa", rowUserId, voucherList)
+    const payload = {
+      user_id: rowUserId,
+      voucher_states: voucherList.map((v) => ({
+        voucher_id: v.id,
+        is_checked: v.is_checked,
+      })),
+    };
+    try {
+      const respone = await BaseHeader({
+        method: 'patch',
+        url: `/assign-voucher`,
+        baseURL: BaseUrl,
+        data:payload
+      });
+      setShowVoucherModal(false)
+      console.log('respone11111', respone)
+    } catch (err: any) {
+      toast.error('Có lỗi xảy ra. Vui lòng thử lại');
+    }
+  }
+  const columns = [
+    { title: 'Tên', dataIndex: 'name' },
+    { title: 'Mã', dataIndex: 'code' },
+    { title: 'Giảm giá', dataIndex: 'discount' },
+    { title: 'Loại', dataIndex: 'type' },
+    {
+      title: 'HSD',
+      dataIndex: 'expires_at',
+      render: (text: any) => new Date(text).toLocaleDateString(),
+    },
+    {
+      title: 'Hết hạn',
+      dataIndex: 'is_expired',
+      render: (expired: boolean) =>
+        expired ? <span className="text-red-500 font-medium">✓</span> : '',
+    },
+    {
+      title: 'Hết số lượng',
+      dataIndex: 'is_exceeded',
+      render: (exceeded: boolean) =>
+        exceeded ? <span className="text-orange-500 font-medium">✓</span> : '',
+    },
+    {
+      title: 'Đã sử dụng',
+      dataIndex: ['_count', 'userVouchers'],
+    },
+    // {
+    //   title: 'Tổng số lượng',
+    //   dataIndex: 'max_usage',
+    // },
+    {
+      title: 'Còn lại',
+      render: (record: VoucherWithMeta) =>
+        record.max_usage - record._count.userVouchers,
+    },
+  ];
   return (
     <div className="min-w-0">
       <div className="pl-1 p-4 mt-3 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -541,6 +630,22 @@ const AccountForm: React.FC = () => {
                     </td>
                     <td className="text-center px-2 py-2 border border-gray-100">
                       <div className="flex justify-center items-center gap-2">
+                        {/* voucher */}
+                        <button
+                          className={`p-1 rounded transition ${
+                            isDisabled
+                              ? 'text-gray-300 cursor-not-allowed'
+                              : 'hover:bg-blue-100 text-[#13823d] hover:text-blue-700'
+                          }`}
+                          title="Chỉnh sửa"
+                          onClick={() => {
+                          handleVoucher(user)  
+                          setRowUserId(user.id)  
+                          }}
+                          disabled={isDisabled}
+                        >
+                          <TicketPercent className="w-5 h-5" />
+                        </button>
                         {/* Nút sửa */}
                         <button
                           className={`p-1 rounded transition ${
@@ -765,7 +870,94 @@ const AccountForm: React.FC = () => {
             onClose={() => setShowModal(false)}
           />
         )}
-
+        {/* modal Voucher */}
+        {showVoucherModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+            <div
+              ref={innerBorderRef}
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl relative overflow-hidden transform transition-all duration-300 animate-in slide-in-from-bottom-4"
+            >
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 relative">
+                <button
+                  className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all duration-200 hover:rotate-90"
+                  onClick={() => {
+                    setShowVoucherModal(false);
+                    reset();
+                  }}
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+                <h2 className="text-xl font-bold text-white pr-10">
+                  Quản lý voucher người dùng
+                </h2>
+              </div>
+              <div className="p-6">
+                <div className="space-y-6">
+                  <Table
+                    dataSource={voucherList}
+                    rowKey="id"
+                    pagination={false}
+                    bordered
+                    rowSelection={{
+                      type: 'checkbox',
+                      getCheckboxProps: (record) => ({
+                        disabled: record.is_expired || record.is_exceeded, // Disable nếu is_expired hoặc is_exceeded = true
+                      }),
+                      selectedRowKeys: voucherList
+                        .filter((v) => v.is_checked)
+                        .map((v) => v.id),
+                      onChange: (selectedRowKeys) => {
+                        setVoucherList((prev) =>
+                          prev.map((v) => ({
+                            ...v,
+                            is_checked: selectedRowKeys.includes(v.id),
+                          }))
+                        );
+                      },
+                    }}
+                    columns={columns}
+                  />
+                  <div className="flex gap-3 pt-6 border-t border-gray-100">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowVoucherModal(false);
+                        reset();
+                      }}
+                      className="flex-1 px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all duration-200 hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      Hủy
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={Object.keys(errors).length > 0}
+                      className={`flex-1 px-6 py-3 text-sm font-semibold text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] ${
+                        Object.keys(errors).length > 0
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+                      }`}
+                      onClick={handleSubmitVoucher}
+                    >
+                      Lưu thay đổi
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {/* Edit modal */}
         {showEditModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
