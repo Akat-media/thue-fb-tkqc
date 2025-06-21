@@ -36,7 +36,7 @@ import AddUserModal from "./AddUserModal.tsx";
 import { toast, ToastContainer } from "react-toastify";
 import { useUserStore } from "../../../stores/useUserStore.ts";
 import ToggleStatus from "./ToggleStatus.tsx";
-import { Checkbox, Modal, Table } from "antd";
+import { Checkbox, InputNumber, Modal, Table } from "antd";
 import { Voucher } from "../manager/voucher/VoucherManager.tsx";
 
 // Define the User interface
@@ -62,6 +62,10 @@ interface VoucherWithMeta extends Voucher {
   is_checked: boolean;
   is_expired: boolean;
   is_exceeded: boolean;
+  quantity: number;
+  initial_quantity: number;
+  total_assigned: number;
+  initial_total_assigned: number;
   _count: { userVouchers: number };
 }
 
@@ -370,20 +374,26 @@ const AccountForm: React.FC = () => {
         url: `/all-vouchers/${id}`,
         baseURL: BaseUrl,
       });
-      console.log('kakakak', data)
-      setVoucherList(respone.data);
+      const vouchersWithInitialState = respone.data.map(
+        (v: VoucherWithMeta) => ({
+          ...v,
+          initial_quantity: v.quantity,
+          initial_total_assigned: v.total_assigned,
+        }),
+      );
+      setVoucherList(vouchersWithInitialState);
     } catch (err: any) {
       toast.error('Có lỗi xảy ra. Vui lòng thử lại');
     }
   };
   // console.log('voucherList111',voucherList)
-  const handleSubmitVoucher = async() => {
-    console.log("vaaaaaaaa", rowUserId, voucherList)
+  const handleSubmitVoucher = async () => {
     const payload = {
       user_id: rowUserId,
       voucher_states: voucherList.map((v) => ({
         voucher_id: v.id,
         is_checked: v.is_checked,
+        quantity: v.quantity,
       })),
     };
     try {
@@ -391,48 +401,89 @@ const AccountForm: React.FC = () => {
         method: 'patch',
         url: `/assign-voucher`,
         baseURL: BaseUrl,
-        data:payload
+        data: payload,
       });
-      setShowVoucherModal(false)
-      console.log('respone11111', respone)
+      setShowVoucherModal(false);
+      toast.success('Cập nhật voucher cho người dùng thành công')
     } catch (err: any) {
-      toast.error('Có lỗi xảy ra. Vui lòng thử lại');
+      toast.error(err?.response?.data?.error ||'Có lỗi xảy ra. Vui lòng thử lại');
     }
-  }
+  };
   const columns = [
-    { title: 'Tên', dataIndex: 'name' },
-    { title: 'Mã', dataIndex: 'code' },
-    { title: 'Giảm giá', dataIndex: 'discount' },
-    { title: 'Loại', dataIndex: 'type' },
+    { title: 'Tên', dataIndex: 'name', width: 150 },
+    { title: 'Mã', dataIndex: 'code', width: 100 },
+    {
+      title: 'Số lượng',
+      dataIndex: 'quantity',
+      width: 120,
+      render: (text: number, record: VoucherWithMeta) => (
+        <InputNumber
+          min={0}
+          max={
+            record.max_usage
+              ? record.max_usage -
+                (record.total_assigned - (record.is_checked ? record.quantity : 0))
+              : undefined
+          }
+          value={record.quantity}
+          onChange={(value) => {
+            const newVoucherList = voucherList.map((v) => {
+              if (v.id === record.id) {
+                const newQuantity = value || 0;
+                const quantityChange = newQuantity - v.initial_quantity;
+                return {
+                  ...v,
+                  quantity: newQuantity,
+                  is_checked: newQuantity > 0,
+                  total_assigned: v.initial_total_assigned + quantityChange,
+                };
+              }
+              return v;
+            });
+            setVoucherList(newVoucherList);
+          }}
+          disabled={!record.is_checked}
+        />
+      ),
+    },
+    { title: 'Giảm giá', dataIndex: 'discount', width: 100 },
+    { title: 'Loại', dataIndex: 'type', width: 100 },
     {
       title: 'HSD',
       dataIndex: 'expires_at',
-      render: (text: any) => new Date(text).toLocaleDateString(),
+      render: (text: any) =>
+        text ? new Date(text).toLocaleDateString() : 'Không có',
+      width: 120,
     },
     {
       title: 'Hết hạn',
       dataIndex: 'is_expired',
       render: (expired: boolean) =>
         expired ? <span className="text-red-500 font-medium">✓</span> : '',
+      width: 80,
     },
     {
-      title: 'Hết số lượng',
+      title: 'Hết SL',
       dataIndex: 'is_exceeded',
       render: (exceeded: boolean) =>
         exceeded ? <span className="text-orange-500 font-medium">✓</span> : '',
-    },
-    {
-      title: 'Đã sử dụng',
-      dataIndex: ['_count', 'userVouchers'],
+      width: 80,
     },
     // {
-    //   title: 'Tổng số lượng',
+    //   title: 'Đã gán',
+    //   dataIndex: 'total_assigned',
+    //   width: 80,
+    // },
+    // {
+    //   title: 'Tổng',
     //   dataIndex: 'max_usage',
+    //   width: 80,
     // },
     {
       title: 'Còn lại',
+      width: 80,
       render: (record: VoucherWithMeta) =>
-        record.max_usage - record._count.userVouchers,
+        record.max_usage ? record.max_usage - record.total_assigned : '∞',
     },
   ];
   return (
@@ -920,10 +971,30 @@ const AccountForm: React.FC = () => {
                         .map((v) => v.id),
                       onChange: (selectedRowKeys) => {
                         setVoucherList((prev) =>
-                          prev.map((v) => ({
-                            ...v,
-                            is_checked: selectedRowKeys.includes(v.id),
-                          }))
+                          prev.map((v) => {
+                            const wasChecked = v.is_checked;
+                            const isChecked = selectedRowKeys.includes(v.id);
+                            
+                            let newQuantity = v.quantity;
+
+                            if (isChecked && !wasChecked) {
+                              if (newQuantity === 0) {
+                                newQuantity = 1;
+                              }
+                            } else if (!isChecked && wasChecked) {
+                              newQuantity = 0;
+                            }
+
+                            const quantityChange = newQuantity - v.initial_quantity;
+                            const newTotalAssigned = v.initial_total_assigned + quantityChange;
+
+                            return {
+                              ...v,
+                              is_checked: isChecked,
+                              quantity: newQuantity,
+                              total_assigned: newTotalAssigned
+                            };
+                          }),
                         );
                       },
                     }}
