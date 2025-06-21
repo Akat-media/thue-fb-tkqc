@@ -233,6 +233,31 @@ const RentalsManagement: React.FC = () => {
                           VND
                         </span>
                       </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="flex items-center gap-1 text-gray-500">
+                          <Wallet className="w-4 h-4 text-blue-400" /> Đã chi
+                          tiêu:
+                        </span>
+                        <span className="font-semibold">
+                          {parseInt(
+                            rental.accounts?.spend_limit || 0
+                          ).toLocaleString('vi-VN')}{' '}
+                          VND
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="flex items-center gap-1 text-gray-500">
+                          <CreditCard className="w-4 h-4 text-rose-400" /> Còn
+                          lại:
+                        </span>
+                        <span className="font-semibold">
+                          {(
+                            parseInt(rental.accounts?.spend_cap || 0) -
+                            parseInt(rental.accounts?.spend_limit || 0)
+                          ).toLocaleString('vi-VN')}{' '}
+                          VND
+                        </span>
+                      </div>
                     </div>
                   </CardContent>
                   <div className="px-6 py-4 relative z-10">
