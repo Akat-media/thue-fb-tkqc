@@ -136,6 +136,20 @@ const RequestForm: React.FC = () => {
     setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
+  function formatDateToVN(isoString: any) {
+    const date = new Date(isoString);
+    const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+    const hours = vnDate.getUTCHours().toString().padStart(2, '0');
+    const minutes = vnDate.getUTCMinutes().toString().padStart(2, '0');
+    const day = vnDate.getUTCDate();
+    const month = vnDate.getUTCMonth() + 1; // Tháng bắt đầu từ 0
+    const year = vnDate.getUTCFullYear();
+    return `${hours}:${minutes} ${day}/${month}/${year}`;
+  }
+  const now = new Date().toISOString();
+  const formattedNow = formatDateToVN(now);
+
+
   const onSubmit: SubmitHandler<SupportRequestFormData> = async (data) => {
     setIsSubmitting(true);
     try {
@@ -179,6 +193,7 @@ const RequestForm: React.FC = () => {
             category: data.category,
             content: data.content,
             title: data.title,
+            created_at: formattedNow,
           },
         }),
       ]);
