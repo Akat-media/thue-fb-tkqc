@@ -1,26 +1,16 @@
-import React from "react";
-import Layout from "../../../../components/layout/Layout";
-import { Plus, Edit, Trash2 } from "lucide-react";
-import {ToastContainer } from "react-toastify";
-import { Button, Form, Modal } from "antd";
-import FieldForm from "../../../../components/form/FieldForm";
-import dayjs, { Dayjs } from "dayjs";
-import useManagerBudget from "./hook";
+import React from 'react';
+import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Button, Form, Modal } from 'antd';
+import FieldForm from '../../../../components/form/FieldForm';
+import dayjs, { Dayjs } from 'dayjs';
+import useManagerBudget from './hook';
 
 const PricingManagement: React.FC = () => {
   const [form] = Form.useForm();
-  const {budgets, isOpenModal, setIsOpenModal, handleSave, handleDelete} = useManagerBudget({form})
+  const { budgets, isOpenModal, setIsOpenModal, handleSave, handleDelete } =
+    useManagerBudget({ form });
   return (
-    <Layout>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="light"
-      />
+    <>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
         <main className="w-full mx-auto px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
@@ -205,7 +195,7 @@ const PricingManagement: React.FC = () => {
           </Modal>
         </main>
       </div>
-    </Layout>
+    </>
   );
 };
 

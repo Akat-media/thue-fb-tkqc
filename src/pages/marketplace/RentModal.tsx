@@ -12,7 +12,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
 import BaseHeader from '../../api/BaseHeader';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useUserStore } from '../../stores/useUserStore';
 import FieldForm from '../../components/form/FieldForm';
@@ -195,18 +195,6 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        style={{ zIndex: 99999 }}
-      />
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -559,7 +547,6 @@ const RentModal: React.FC<RentModalProps> = (props) => {
           </Card>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

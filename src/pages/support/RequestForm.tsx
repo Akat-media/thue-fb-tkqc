@@ -1,14 +1,20 @@
-import React, { useState } from "react";
-import Layout from "../../components/layout/Layout.tsx";
-import {AlertCircle, Send, Upload, X, ChevronDown, ArrowLeft} from "lucide-react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import BaseHeader from "../../api/BaseHeader";
-import { useUserStore } from "../../stores/useUserStore.ts";
+import React, { useState } from 'react';
+import {
+  AlertCircle,
+  Send,
+  Upload,
+  X,
+  ChevronDown,
+  ArrowLeft,
+} from 'lucide-react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import BaseHeader from '../../api/BaseHeader';
+import { useUserStore } from '../../stores/useUserStore.ts';
 // import axios from "axios";
-import {toast} from "react-toastify";
-import {useNavigate} from "react-router-dom";
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 // interface FormData {
 //     fullName: string;
@@ -20,25 +26,25 @@ import {useNavigate} from "react-router-dom";
 // }
 
 const supportRequestSchema = z.object({
-  fullName: z.string().min(1, "Vui lòng nhập họ và tên"),
-  email: z.string().email("Email không hợp lệ"),
-  phone: z.string().regex(/^[0-9]{10,11}$/, "Số điện thoại không hợp lệ"),
-  title: z.string().min(1, "Vui lòng nhập tiêu đề"),
+  fullName: z.string().min(1, 'Vui lòng nhập họ và tên'),
+  email: z.string().email('Email không hợp lệ'),
+  phone: z.string().regex(/^[0-9]{10,11}$/, 'Số điện thoại không hợp lệ'),
+  title: z.string().min(1, 'Vui lòng nhập tiêu đề'),
   department: z
     .string()
-    .refine((val) => ["tech", "sales", "hr"].includes(val), {
-      message: "Vui lòng chọn bộ phận",
+    .refine((val) => ['tech', 'sales', 'hr'].includes(val), {
+      message: 'Vui lòng chọn bộ phận',
     }),
-  content: z.string().min(10, "Nội dung phải có ít nhất 10 ký tự"),
+  content: z.string().min(10, 'Nội dung phải có ít nhất 10 ký tự'),
   priority: z
     .string()
-    .refine((val) => ["low", "medium", "high", "urgent"].includes(val), {
-      message: "Vui lòng chọn mức độ ưu tiên hợp lệ",
+    .refine((val) => ['low', 'medium', 'high', 'urgent'].includes(val), {
+      message: 'Vui lòng chọn mức độ ưu tiên hợp lệ',
     }),
   category: z
     .string()
-    .refine((val) => ["account", "pay", "recover", "other"].includes(val), {
-      message: "Vui lòng chọn danh mục hợp lệ",
+    .refine((val) => ['account', 'pay', 'recover', 'other'].includes(val), {
+      message: 'Vui lòng chọn danh mục hợp lệ',
     }),
   status: z.string().optional(),
   user_id: z.string().uuid().optional(),
@@ -63,50 +69,50 @@ const RequestForm: React.FC = () => {
   } = useForm<SupportRequestFormData>({
     resolver: zodResolver(supportRequestSchema),
     defaultValues: {
-      fullName: "",
-      email: "",
-      phone: "",
-      title: "",
-      department: "",
-      content: "",
-      priority: "",
-      category: "",
-      status: "new",
+      fullName: '',
+      email: '',
+      phone: '',
+      title: '',
+      department: '',
+      content: '',
+      priority: '',
+      category: '',
+      status: 'new',
     },
   });
 
   const departments = [
-    { value: "", label: "Chọn bộ phận" },
-    { value: "tech", label: "Hỗ trợ kỹ thuật" },
-    { value: "sales", label: "Kinh doanh" },
-    { value: "hr", label: "Hành chính nhân sự" },
+    { value: '', label: 'Chọn bộ phận' },
+    { value: 'tech', label: 'Hỗ trợ kỹ thuật' },
+    { value: 'sales', label: 'Kinh doanh' },
+    { value: 'hr', label: 'Hành chính nhân sự' },
   ];
 
   const priorities = [
-    { value: "", label: "Chọn mức độ" },
-    { value: "low", label: "Thấp" },
-    { value: "medium", label: "Trung bình" },
-    { value: "high", label: "Cao" },
-    { value: "urgent", label: "Khẩn cấp" },
+    { value: '', label: 'Chọn mức độ' },
+    { value: 'low', label: 'Thấp' },
+    { value: 'medium', label: 'Trung bình' },
+    { value: 'high', label: 'Cao' },
+    { value: 'urgent', label: 'Khẩn cấp' },
   ];
 
   const categories = [
-    { value: "", label: "Chọn danh mục" },
-    { value: "account", label: "Tài khoản" },
-    { value: "pay", label: "Thanh toán" },
-    { value: "recover", label: "Hoàn tiền" },
-    { value: "other", label: "Khác" },
+    { value: '', label: 'Chọn danh mục' },
+    { value: 'account', label: 'Tài khoản' },
+    { value: 'pay', label: 'Thanh toán' },
+    { value: 'recover', label: 'Hoàn tiền' },
+    { value: 'other', label: 'Khác' },
   ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const maxSize = 5 * 1024 * 1024; // 5MB
     const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "application/pdf",
-      "text/plain",
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'application/pdf',
+      'text/plain',
     ];
 
     const validFiles = files.filter((file) => {
@@ -134,39 +140,39 @@ const RequestForm: React.FC = () => {
     setIsSubmitting(true);
     try {
       const formData = new FormData();
-      formData.append("fullName", data.fullName);
-      formData.append("email", data.email);
-      formData.append("phone", data.phone);
-      formData.append("title", data.title);
-      formData.append("department", data.department);
-      formData.append("content", data.content);
-      attachments?.forEach((file) => formData.append("attachments", file));
-      formData.append("priority", data.priority);
-      formData.append("category", data.category);
+      formData.append('fullName', data.fullName);
+      formData.append('email', data.email);
+      formData.append('phone', data.phone);
+      formData.append('title', data.title);
+      formData.append('department', data.department);
+      formData.append('content', data.content);
+      attachments?.forEach((file) => formData.append('attachments', file));
+      formData.append('priority', data.priority);
+      formData.append('category', data.category);
 
       const userId = user?.id;
       if (userId) {
-        formData.append("user_id", userId);
+        formData.append('user_id', userId);
       }
-      console.log("Payload gửi đi:", Object.fromEntries(formData.entries()));
+      console.log('Payload gửi đi:', Object.fromEntries(formData.entries()));
 
       const baseUrl = import.meta.env.VITE_BASE_URL;
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
 
       const [supportResponse, mailResponse] = await Promise.all([
         BaseHeader({
-          method: "post",
-          url: "/support",
+          method: 'post',
+          url: '/support',
           baseURL: baseUrl,
           data: formData,
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
         }),
         BaseHeader({
-          method: "post",
-          url: "/support/mail-admin",
+          method: 'post',
+          url: '/support/mail-admin',
           data: {
             email: data.email,
             priority: data.priority,
@@ -177,30 +183,33 @@ const RequestForm: React.FC = () => {
         }),
       ]);
 
-      if (supportResponse.status === 200 && mailResponse.status === 200 && supportResponse.data.data !== null) {
-        toast.success("Yêu cầu hỗ trợ và email đã được gửi thành công!");
+      if (
+        supportResponse.status === 200 &&
+        mailResponse.status === 200 &&
+        supportResponse.data.data !== null
+      ) {
+        toast.success('Yêu cầu hỗ trợ và email đã được gửi thành công!');
         setSubmitSuccess(true);
         setAttachments([]);
         reset();
         setTimeout(() => setSubmitSuccess(false), 5000);
       } else {
-        throw new Error("Một hoặc cả hai yêu cầu không thành công.");
+        throw new Error('Một hoặc cả hai yêu cầu không thành công.');
       }
-
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Đã có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.");
+      console.error('Error submitting form:', error);
+      alert('Đã có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return "0 Bytes";
+    if (bytes === 0) return '0 Bytes';
     const k = 1024;
-    const sizes = ["Bytes", "KB", "MB"];
+    const sizes = ['Bytes', 'KB', 'MB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   if (submitSuccess) {
@@ -241,12 +250,13 @@ const RequestForm: React.FC = () => {
   }
 
   return (
-    <Layout>
+    <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
           <button
-              onClick={()=>navigate("/support")}
-              className="flex items-center text-gray-600 hover:text-gray-800 mb-4 transition-colors px-6">
+            onClick={() => navigate('/support')}
+            className="flex items-center text-gray-600 hover:text-gray-800 mb-4 transition-colors px-6"
+          >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Quay lại danh sách
           </button>
@@ -281,11 +291,11 @@ const RequestForm: React.FC = () => {
                 <input
                   type="text"
                   id="fullName"
-                  {...register("fullName")}
+                  {...register('fullName')}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                     errors.fullName
-                      ? "border-red-500 bg-red-50"
-                      : "border-gray-300"
+                      ? 'border-red-500 bg-red-50'
+                      : 'border-gray-300'
                   }`}
                   placeholder="Nhập họ và tên của bạn"
                 />
@@ -309,11 +319,11 @@ const RequestForm: React.FC = () => {
                   <input
                     type="email"
                     id="email"
-                    {...register("email")}
+                    {...register('email')}
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                       errors.email
-                        ? "border-red-500 bg-red-50"
-                        : "border-gray-300"
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-300'
                     }`}
                     placeholder="your@email.com"
                   />
@@ -335,11 +345,11 @@ const RequestForm: React.FC = () => {
                   <input
                     type="tel"
                     id="phone"
-                    {...register("phone")}
+                    {...register('phone')}
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                       errors.phone
-                        ? "border-red-500 bg-red-50"
-                        : "border-gray-300"
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-300'
                     }`}
                     placeholder="0123456789"
                   />
@@ -364,11 +374,11 @@ const RequestForm: React.FC = () => {
                   <input
                     type="text"
                     id="title"
-                    {...register("title")}
+                    {...register('title')}
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                       errors.title
-                        ? "border-red-500 bg-red-50"
-                        : "border-gray-300"
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-300'
                     }`}
                     placeholder="Tóm tắt vấn đề của bạn"
                   />
@@ -389,16 +399,18 @@ const RequestForm: React.FC = () => {
                   </label>
                   <div className="relative">
                     <select
-                        id="department"
-                        {...register("department")}
-                        className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                            errors.department ? "border-red-500 bg-red-50" : "border-gray-300"
-                        }`}
+                      id="department"
+                      {...register('department')}
+                      className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        errors.department
+                          ? 'border-red-500 bg-red-50'
+                          : 'border-gray-300'
+                      }`}
                     >
                       {departments.map((dept) => (
-                          <option key={dept.value} value={dept.value}>
-                            {dept.label}
-                          </option>
+                        <option key={dept.value} value={dept.value}>
+                          {dept.label}
+                        </option>
                       ))}
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500">
@@ -426,16 +438,18 @@ const RequestForm: React.FC = () => {
                   </label>
                   <div className="relative">
                     <select
-                        id="priority"
-                        {...register("priority")}
-                        className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                            errors.priority ? "border-red-500 bg-red-50" : "border-gray-300"
-                        }`}
+                      id="priority"
+                      {...register('priority')}
+                      className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        errors.priority
+                          ? 'border-red-500 bg-red-50'
+                          : 'border-gray-300'
+                      }`}
                     >
                       {priorities.map((item) => (
-                          <option key={item.value} value={item.value}>
-                            {item.label}
-                          </option>
+                        <option key={item.value} value={item.value}>
+                          {item.label}
+                        </option>
                       ))}
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500">
@@ -460,16 +474,18 @@ const RequestForm: React.FC = () => {
                   </label>
                   <div className="relative">
                     <select
-                        id="category"
-                        {...register("category")}
-                        className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                            errors.category ? "border-red-500 bg-red-50" : "border-gray-300"
-                        }`}
+                      id="category"
+                      {...register('category')}
+                      className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        errors.category
+                          ? 'border-red-500 bg-red-50'
+                          : 'border-gray-300'
+                      }`}
                     >
                       {categories.map((item) => (
-                          <option key={item.value} value={item.value}>
-                            {item.label}
-                          </option>
+                        <option key={item.value} value={item.value}>
+                          {item.label}
+                        </option>
                       ))}
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500">
@@ -497,11 +513,11 @@ const RequestForm: React.FC = () => {
                 <textarea
                   id="content"
                   rows={5}
-                  {...register("content")}
+                  {...register('content')}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none ${
                     errors.content
-                      ? "border-red-500 bg-red-50"
-                      : "border-gray-300"
+                      ? 'border-red-500 bg-red-50'
+                      : 'border-gray-300'
                   }`}
                   placeholder="Mô tả chi tiết vấn đề bạn đang gặp phải..."
                 />
@@ -526,46 +542,52 @@ const RequestForm: React.FC = () => {
                 </label>
 
                 <div
-                    className={`border-2 border-dashed p-6 text-center rounded-lg transition-colors ${
-                        isDragOver ? "border-blue-500 bg-blue-50" : "border-gray-300"
-                    }`}
-                    onDragOver={(e) => { //  drop file vào vùng HTML.
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                    onDragEnter={() => setIsDragOver(true)} // kéo file vào vùng drop
-                    onDragLeave={() => setIsDragOver(false)} //  khi rời khỏi vùng đó.
-                    onDrop={(e) => { // Kích hoạt khi người dùng thả file vào vùng này.
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsDragOver(false);
+                  className={`border-2 border-dashed p-6 text-center rounded-lg transition-colors ${
+                    isDragOver
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-300'
+                  }`}
+                  onDragOver={(e) => {
+                    //  drop file vào vùng HTML.
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onDragEnter={() => setIsDragOver(true)} // kéo file vào vùng drop
+                  onDragLeave={() => setIsDragOver(false)} //  khi rời khỏi vùng đó.
+                  onDrop={(e) => {
+                    // Kích hoạt khi người dùng thả file vào vùng này.
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsDragOver(false);
 
-                      const files = Array.from(e.dataTransfer.files || []);
-                      const maxSize = 5 * 1024 * 1024;
-                      const allowedTypes = [
-                        "image/jpeg",
-                        "image/png",
-                        "image/gif",
-                        "application/pdf",
-                        "text/plain",
-                      ];
+                    const files = Array.from(e.dataTransfer.files || []);
+                    const maxSize = 5 * 1024 * 1024;
+                    const allowedTypes = [
+                      'image/jpeg',
+                      'image/png',
+                      'image/gif',
+                      'application/pdf',
+                      'text/plain',
+                    ];
 
-                      const validFiles = files.filter((file) => {
-                        if (file.size > maxSize) {
-                          alert(`File ${file.name} quá lớn. Kích thước tối đa là 5MB.`);
-                          return false;
-                        }
-                        if (!allowedTypes.includes(file.type)) {
-                          alert(
-                              `File ${file.name} không được hỗ trợ. Chỉ chấp nhận: JPG, PNG, GIF, PDF, TXT.`
-                          );
-                          return false;
-                        }
-                        return true;
-                      });
+                    const validFiles = files.filter((file) => {
+                      if (file.size > maxSize) {
+                        alert(
+                          `File ${file.name} quá lớn. Kích thước tối đa là 5MB.`
+                        );
+                        return false;
+                      }
+                      if (!allowedTypes.includes(file.type)) {
+                        alert(
+                          `File ${file.name} không được hỗ trợ. Chỉ chấp nhận: JPG, PNG, GIF, PDF, TXT.`
+                        );
+                        return false;
+                      }
+                      return true;
+                    });
 
-                      setAttachments((prev) => [...prev, ...validFiles]);
-                    }}
+                    setAttachments((prev) => [...prev, ...validFiles]);
+                  }}
                 >
                   <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                   <p className="text-sm text-gray-600 mb-2">
@@ -668,7 +690,7 @@ const RequestForm: React.FC = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import Layout from '../../components/layout/Layout';
 import { useOnOutsideClick } from '../../hook/useOutside';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
@@ -25,7 +24,7 @@ import Button from '../../components/ui/Button';
 import BaseHeader from '../../api/BaseHeader';
 import { Pagination } from 'antd';
 import usePagination from '../../hook/usePagination';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import debounce from 'lodash.debounce';
 
 interface Transaction {
@@ -488,18 +487,7 @@ const AdminTransactionsPage: React.FC = () => {
   }, [transactions, transactionPoints, active]);
 
   return (
-    <Layout>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+    <>
       {active === 'money' && (
         <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-4">
           <Subheader active={active} setActive={setActive} />
@@ -1072,7 +1060,7 @@ const AdminTransactionsPage: React.FC = () => {
           )}
         </div>
       )}
-    </Layout>
+    </>
   );
 };
 

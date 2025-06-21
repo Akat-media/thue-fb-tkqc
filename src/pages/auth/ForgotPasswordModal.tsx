@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 // import axios from "axios";
-import BaseHeader, { BaseUrl } from "../../api/BaseHeader";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Mail } from "lucide-react";
+import BaseHeader, { BaseUrl } from '../../api/BaseHeader';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Mail } from 'lucide-react';
 
 interface ForgotPasswordModalProps {
   isOpen: boolean;
@@ -17,7 +17,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
   onClose,
   onSwitchToLogin,
 }) => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<{ email?: string }>({});
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +29,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
     setLoading(true);
 
     const newErrors: { email?: string } = {};
-    if (!email.trim()) newErrors.email = "Vui lòng nhập email";
+    if (!email.trim()) newErrors.email = 'Vui lòng nhập email';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -39,19 +39,19 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
 
     try {
       await BaseHeader({
-        method: "post",
-        url: "/forgot-password",
+        method: 'post',
+        url: '/forgot-password',
         baseURL: BaseUrl,
         data: { email },
       });
-      toast.success("Email đặt lại mật khẩu đã được gửi!");
-      setEmail(""); // Xóa email sau khi gửi
+      toast.success('Email đặt lại mật khẩu đã được gửi!');
+      setEmail(''); // Xóa email sau khi gửi
       if (onSwitchToLogin) {
         onSwitchToLogin(); // Quay lại form đăng nhập
       }
     } catch (err: any) {
       toast.error(
-        err.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
+        err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại'
       );
     } finally {
       setLoading(false);
@@ -60,22 +60,10 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[10000] flex items-center justify-center backdrop-blur-sm bg-black/30 px-4">
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        style={{ zIndex: 10001 }}
-      />
       <div className="bg-white w-full max-w-5xl rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden relative">
         <button
           onClick={() => {
-            setEmail("");
+            setEmail('');
             setErrors({});
             onClose();
           }}
@@ -132,7 +120,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
               type="submit"
               disabled={loading}
               className={`w-full ${
-                loading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600"
+                loading ? 'bg-blue-400' : 'bg-blue-500 hover:bg-blue-600'
               } text-white font-semibold py-2 rounded-lg transition flex justify-center items-center`}
             >
               {loading ? (
@@ -156,7 +144,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                   />
                 </svg>
               ) : (
-                "Gửi yêu cầu"
+                'Gửi yêu cầu'
               )}
             </button>
           </form>

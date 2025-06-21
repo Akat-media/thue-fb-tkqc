@@ -1,24 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Layout from "../../components/layout/Layout";
-import { toast, ToastContainer } from "react-toastify";
-import BaseHeader from "../../api/BaseHeader";
-import AtomicSpinner from "atomic-spinner";
-import { NotiError } from "../../components/noti";
-import { Eraser } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'react-toastify';
+import BaseHeader from '../../api/BaseHeader';
+import AtomicSpinner from 'atomic-spinner';
+import { NotiError } from '../../components/noti';
+import { Eraser } from 'lucide-react';
 
 const storageStateSchema = z.object({
-  cookies: z.array(z.any()).min(1, "Cookies không được để trống"),
+  cookies: z.array(z.any()).min(1, 'Cookies không được để trống'),
   origins: z.array(z.any()).default([]),
 });
 
 const botSchema = z.object({
-  email: z.string().email({ message: "Email không hợp lệ" }),
+  email: z.string().email({ message: 'Email không hợp lệ' }),
   storage_state: z
     .string()
-    .min(1, { message: "Vui lòng nhập thông tin storage state" })
+    .min(1, { message: 'Vui lòng nhập thông tin storage state' })
     .refine(
       (val) => {
         try {
@@ -29,7 +28,7 @@ const botSchema = z.object({
         }
       },
       {
-        message: "Storage state phải là JSON hợp lệ",
+        message: 'Storage state phải là JSON hợp lệ',
       }
     )
     .refine(
@@ -38,8 +37,8 @@ const botSchema = z.object({
           const parsed = JSON.parse(val);
           return (
             parsed &&
-            typeof parsed === "object" &&
-            "cookies" in parsed &&
+            typeof parsed === 'object' &&
+            'cookies' in parsed &&
             Array.isArray(parsed.cookies)
           );
         } catch (e) {
@@ -47,7 +46,7 @@ const botSchema = z.object({
         }
       },
       {
-        message: "Storage state phải có trường cookies là một mảng",
+        message: 'Storage state phải có trường cookies là một mảng',
       }
     )
     .refine(
@@ -61,7 +60,7 @@ const botSchema = z.object({
       },
       {
         message:
-          "Storage state phải là JSON hợp lệ với định dạng {cookies: [...], origins: []}",
+          'Storage state phải là JSON hợp lệ với định dạng {cookies: [...], origins: []}',
       }
     ),
 });
@@ -79,7 +78,7 @@ const CreateBotPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [bots, setBots] = useState<Bot[]>([]);
   const [isLoadingBots, setIsLoadingBots] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [deleteBot, setDeleteBot] = useState<Bot | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -91,10 +90,10 @@ const CreateBotPage: React.FC = () => {
   } = useForm<BotFormData>({
     resolver: zodResolver(botSchema),
     defaultValues: {
-      email: "",
-      storage_state: "",
+      email: '',
+      storage_state: '',
     },
-    mode: "onChange",
+    mode: 'onChange',
   });
 
   useEffect(() => {
@@ -105,14 +104,14 @@ const CreateBotPage: React.FC = () => {
     setIsLoadingBots(true);
     try {
       const response = await BaseHeader({
-        url: "cookies",
-        method: "get",
+        url: 'cookies',
+        method: 'get',
       });
       setBots(response.data.data || []);
     } catch (error) {
-      console.error("Error fetching bots:", error);
-      toast.error("Không thể tải danh sách bot");
-      setErrorMessage("Không thể tải danh sách bot. Vui lòng thử lại sau.");
+      console.error('Error fetching bots:', error);
+      toast.error('Không thể tải danh sách bot');
+      setErrorMessage('Không thể tải danh sách bot. Vui lòng thử lại sau.');
     } finally {
       setIsLoadingBots(false);
     }
@@ -120,29 +119,29 @@ const CreateBotPage: React.FC = () => {
 
   const onSubmit = async (data: BotFormData) => {
     setIsLoading(true);
-    setErrorMessage("");
+    setErrorMessage('');
     try {
       let parsedStorageState = JSON.parse(data.storage_state);
-      if (!parsedStorageState.hasOwnProperty("origins")) {
+      if (!parsedStorageState.hasOwnProperty('origins')) {
         parsedStorageState.origins = [];
       }
 
       const response = await BaseHeader({
-        url: "cookies",
-        method: "post",
+        url: 'cookies',
+        method: 'post',
         data: {
           email: data.email,
           storage_state: parsedStorageState,
         },
       });
 
-      toast.success("Tạo mới thành công!");
+      toast.success('Tạo mới thành công!');
       reset();
       fetchBots();
     } catch (error) {
-      console.error("Error creating bot:", error);
-      toast.error("Có lỗi xảy ra khi tạo mới");
-      setErrorMessage("Có lỗi xảy ra khi tạo mới bot. Vui lòng thử lại sau.");
+      console.error('Error creating bot:', error);
+      toast.error('Có lỗi xảy ra khi tạo mới');
+      setErrorMessage('Có lỗi xảy ra khi tạo mới bot. Vui lòng thử lại sau.');
     } finally {
       setIsLoading(false);
     }
@@ -151,27 +150,26 @@ const CreateBotPage: React.FC = () => {
   const handleDeleteBot = async () => {
     if (!deleteBot) return;
     setIsDeleting(true);
-    setErrorMessage("");
+    setErrorMessage('');
     try {
       await BaseHeader({
         url: `cookies/${deleteBot.id}`,
-        method: "delete",
+        method: 'delete',
       });
-      toast.success("Xóa bot thành công!");
+      toast.success('Xóa bot thành công!');
       setDeleteBot(null);
       fetchBots();
     } catch (error) {
-      toast.error("Có lỗi xảy ra khi xóa bot");
-      setErrorMessage("Có lỗi xảy ra khi xóa bot. Vui lòng thử lại sau.");
+      toast.error('Có lỗi xảy ra khi xóa bot');
+      setErrorMessage('Có lỗi xảy ra khi xóa bot. Vui lòng thử lại sau.');
     } finally {
       setIsDeleting(false);
     }
   };
 
   return (
-    <Layout>
+    <>
       <div className="w-full h-full flex flex-col px-4 sm:px-6 lg:px-8 py-8">
-        <ToastContainer position="top-right" autoClose={3000} />
         <div className="md:flex md:items-center md:justify-between mb-6">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
@@ -275,7 +273,7 @@ const CreateBotPage: React.FC = () => {
                           Đang xử lý...
                         </span>
                       ) : (
-                    "Tạo mới"
+                        'Tạo mới'
                       )}
                     </button>
                   </div>
@@ -412,7 +410,7 @@ const CreateBotPage: React.FC = () => {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 };
 

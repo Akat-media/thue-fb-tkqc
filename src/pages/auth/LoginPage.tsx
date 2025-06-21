@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { useNotification } from "../../context/NotificationContext";
+import React, { useState, useEffect } from 'react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useNotification } from '../../context/NotificationContext';
 // import axios from "axios";
-import BaseHeader, { BaseUrl } from "../../api/BaseHeader";
-import AtomicSpinner from "atomic-spinner";
-import { useUserStore } from "../../stores/useUserStore";
-import ForgotPasswordModal from "./ForgotPasswordModal.tsx";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import loginimg from "../../public/login.jpg";
+import BaseHeader, { BaseUrl } from '../../api/BaseHeader';
+import AtomicSpinner from 'atomic-spinner';
+import { useUserStore } from '../../stores/useUserStore';
+import ForgotPasswordModal from './ForgotPasswordModal.tsx';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import loginimg from '../../public/login.jpg';
 
 const LoginPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {}
@@ -26,14 +26,14 @@ const LoginPage: React.FC = () => {
   const validateForm = (): boolean => {
     const newErrors: { email?: string; password?: string } = {};
     if (!email) {
-      newErrors.email = "Email là bắt buộc";
+      newErrors.email = 'Email là bắt buộc';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Email không hợp lệ";
+      newErrors.email = 'Email không hợp lệ';
     }
     if (!password) {
-      newErrors.password = "Mật khẩu là bắt buộc";
+      newErrors.password = 'Mật khẩu là bắt buộc';
     } else if (password.length < 6) {
-      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+      newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -47,8 +47,8 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     try {
       const res = await BaseHeader({
-        method: "post",
-        url: "/login",
+        method: 'post',
+        url: '/login',
         baseURL: BaseUrl,
         data: {
           email: email,
@@ -56,14 +56,14 @@ const LoginPage: React.FC = () => {
         },
       });
       setUser(res.data.data.user);
-      navigate("/");
-      localStorage.setItem("access_token", res.data.data.access_token);
-      localStorage.setItem("refresh_token", res.data.data.refresh_token);
-      localStorage.setItem("user", JSON.stringify(res.data.data));
-      toast.success("Đăng nhập thành công!");
+      navigate('/');
+      localStorage.setItem('access_token', res.data.data.access_token);
+      localStorage.setItem('refresh_token', res.data.data.refresh_token);
+      localStorage.setItem('user', JSON.stringify(res.data.data));
+      toast.success('Đăng nhập thành công!');
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
+        error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại'
       );
     } finally {
       setIsLoading(false);
@@ -71,8 +71,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex">
-      <ToastContainer position="top-right" autoClose={3000} />
+    <div className="h-screen flex">
       <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-r from-transparent via-blue-100/70 to-white backdrop-blur-sm relative">
         <Link
           to="/"
@@ -117,7 +116,7 @@ const LoginPage: React.FC = () => {
               </label>
               <div className="relative mt-1">
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -168,7 +167,7 @@ const LoginPage: React.FC = () => {
             </button>
           </form>
           <p className="mt-6 text-center text-sm">
-            Chưa Có Tài Khoản?{" "}
+            Chưa Có Tài Khoản?{' '}
             <Link to="/register" className="text-[#0167F8] hover:underline">
               Đăng Ký Ngay
             </Link>

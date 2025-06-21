@@ -9,7 +9,6 @@ import {
   User,
   ChevronRight,
 } from 'lucide-react';
-import Layout from '../components/layout/Layout';
 import Button from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import StatCard from './analytics/StatCard.tsx';
@@ -22,7 +21,7 @@ import dayjs from 'dayjs';
 import { createGlobalStyle } from 'styled-components';
 import img1 from '../public/homepage.png';
 import metalogo from '../public/metalogo.png';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import BaseHeader from '../api/BaseHeader.ts';
 
 type MonthlyTotal = {
@@ -152,10 +151,10 @@ const HomePage: React.FC = () => {
         targetFrom: targetDayFrom,
         targetTo: targetDayTo,
       });
-      if (role === 'admin') fetchDataChart(targetDayFrom,targetDayTo);
+      if (role === 'admin') fetchDataChart(targetDayFrom, targetDayTo);
     }
   };
-  const fetchDataChart = async (targetDayFrom:string,targetDayTo:string) => {
+  const fetchDataChart = async (targetDayFrom: string, targetDayTo: string) => {
     try {
       const response = await BaseHeader(
         `/monthlyStatistics?targetDayFrom=${targetDayFrom}&targetDayTo=${targetDayTo}`
@@ -168,21 +167,11 @@ const HomePage: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (role === 'admin') fetchDataChart(dateRange.targetFrom, dateRange.targetTo);
+    if (role === 'admin')
+      fetchDataChart(dateRange.targetFrom, dateRange.targetTo);
   }, []);
   return (
-    <Layout>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+    <>
       {role !== 'admin' && (
         <>
           <div className="bg-gradient-to-r from-[#1e3a8a] to-[#3b82f6] text-white relative overflow-hidden">
@@ -640,7 +629,7 @@ const HomePage: React.FC = () => {
           </div>
         </>
       )}
-    </Layout>
+    </>
   );
 };
 

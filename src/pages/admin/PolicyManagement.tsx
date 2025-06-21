@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../../components/layout/Layout';
 import { Plus, Edit, Trash2, Save } from 'lucide-react';
 import Button from '../../components/ui/Button';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import BaseHeader from '../../api/BaseHeader';
 
@@ -129,18 +128,7 @@ const PolicyManagement: React.FC = () => {
   };
 
   return (
-    <Layout>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+    <>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
         <main className="w-full mx-auto px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
@@ -305,7 +293,7 @@ const PolicyManagement: React.FC = () => {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 };
 

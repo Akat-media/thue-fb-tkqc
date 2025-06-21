@@ -1,7 +1,6 @@
-import React, { useState, useMemo, useEffect } from "react";
-import Layout from "../../components/layout/Layout";
-import Button from "../../components/ui/Button";
-import { useOnOutsideClick } from "../../hook/useOutside";
+import React, { useState, useMemo, useEffect } from 'react';
+import Button from '../../components/ui/Button';
+import { useOnOutsideClick } from '../../hook/useOutside';
 import {
   MoreVertical,
   ArrowUp,
@@ -14,15 +13,15 @@ import {
   Phone,
   Eye,
   Contact,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface User {
   id: string;
   name: string;
   email: string;
   phone: string;
-  role: "Admin" | "User" | "Moderator";
-  status: "Hoạt động" | "Đã khóa";
+  role: 'Admin' | 'User' | 'Moderator';
+  status: 'Hoạt động' | 'Đã khóa';
   createdAt: string;
   lastActive: string;
   totalDeposit: number;
@@ -31,215 +30,215 @@ interface User {
 
 const mockUsers: User[] = [
   {
-    id: "U001",
-    name: "Nguyễn Văn A",
-    email: "a@example.com",
-    phone: "0909123456",
-    role: "Admin",
-    status: "Hoạt động",
-    createdAt: "2025-05-01",
-    lastActive: "2025-05-22",
+    id: 'U001',
+    name: 'Nguyễn Văn A',
+    email: 'a@example.com',
+    phone: '0909123456',
+    role: 'Admin',
+    status: 'Hoạt động',
+    createdAt: '2025-05-01',
+    lastActive: '2025-05-22',
     totalDeposit: 5000000,
-    adAccounts: ["All"],
+    adAccounts: ['All'],
   },
   {
-    id: "U002",
-    name: "Trần Thị B",
-    email: "b@example.com",
-    phone: "0909123456",
-    role: "User",
-    status: "Hoạt động",
-    createdAt: "2025-05-01",
-    lastActive: "2025-05-22",
+    id: 'U002',
+    name: 'Trần Thị B',
+    email: 'b@example.com',
+    phone: '0909123456',
+    role: 'User',
+    status: 'Hoạt động',
+    createdAt: '2025-05-01',
+    lastActive: '2025-05-22',
     totalDeposit: 80000000,
-    adAccounts: ["ADS001", "ADS002"],
+    adAccounts: ['ADS001', 'ADS002'],
   },
   {
-    id: "U003",
-    name: "Lê Minh Cường",
-    email: "cuonglm@example.com",
-    phone: "0909129616",
-    role: "User",
-    status: "Hoạt động",
-    createdAt: "2025-05-01",
-    lastActive: "2025-05-22",
+    id: 'U003',
+    name: 'Lê Minh Cường',
+    email: 'cuonglm@example.com',
+    phone: '0909129616',
+    role: 'User',
+    status: 'Hoạt động',
+    createdAt: '2025-05-01',
+    lastActive: '2025-05-22',
     totalDeposit: 52000000,
-    adAccounts: ["ADS003", "ADS004"],
+    adAccounts: ['ADS003', 'ADS004'],
   },
   {
-    id: "U004",
-    name: "Phạm Thị Duyên",
-    email: "duyenpt@example.com",
-    phone: "0909129616",
-    role: "User",
-    status: "Đã khóa",
-    createdAt: "2025-05-01",
-    lastActive: "2025-05-22",
+    id: 'U004',
+    name: 'Phạm Thị Duyên',
+    email: 'duyenpt@example.com',
+    phone: '0909129616',
+    role: 'User',
+    status: 'Đã khóa',
+    createdAt: '2025-05-01',
+    lastActive: '2025-05-22',
     totalDeposit: 15000000,
-    adAccounts: ["ADS006", "ADS005"],
+    adAccounts: ['ADS006', 'ADS005'],
   },
   {
-    id: "U005",
-    name: "Hoàng Văn Tèo",
-    email: "teohoang@example.com",
-    phone: "0909129616",
-    role: "User",
-    status: "Hoạt động",
-    createdAt: "2025-05-01",
-    lastActive: "2025-05-22",
+    id: 'U005',
+    name: 'Hoàng Văn Tèo',
+    email: 'teohoang@example.com',
+    phone: '0909129616',
+    role: 'User',
+    status: 'Hoạt động',
+    createdAt: '2025-05-01',
+    lastActive: '2025-05-22',
     totalDeposit: 1850000,
-    adAccounts: ["ADS007", "ADS008"],
+    adAccounts: ['ADS007', 'ADS008'],
   },
   {
-    id: "U006",
-    name: "Hứa Quang Hán",
-    email: "huaquang@example.com",
-    phone: "0909121616",
-    role: "User",
-    status: "Hoạt động",
-    createdAt: "2025-05-01",
-    lastActive: "2025-05-22",
+    id: 'U006',
+    name: 'Hứa Quang Hán',
+    email: 'huaquang@example.com',
+    phone: '0909121616',
+    role: 'User',
+    status: 'Hoạt động',
+    createdAt: '2025-05-01',
+    lastActive: '2025-05-22',
     totalDeposit: 18350000,
-    adAccounts: ["ADS013", "ADS018"],
+    adAccounts: ['ADS013', 'ADS018'],
   },
   {
-    id: "U007",
-    name: "Ngô Kiến Huy",
-    email: "ngokienhuy@example.com",
-    phone: "0911223344",
-    role: "User",
-    status: "Hoạt động",
-    createdAt: "2025-05-03",
-    lastActive: "2025-05-28",
+    id: 'U007',
+    name: 'Ngô Kiến Huy',
+    email: 'ngokienhuy@example.com',
+    phone: '0911223344',
+    role: 'User',
+    status: 'Hoạt động',
+    createdAt: '2025-05-03',
+    lastActive: '2025-05-28',
     totalDeposit: 12500000,
-    adAccounts: ["ADS022"],
+    adAccounts: ['ADS022'],
   },
   {
-    id: "U008",
-    name: "Trịnh Thăng Bình",
-    email: "trinhbinh@example.com",
-    phone: "0933445566",
-    role: "User",
-    status: "Đã khóa",
-    createdAt: "2025-04-15",
-    lastActive: "2025-05-10",
+    id: 'U008',
+    name: 'Trịnh Thăng Bình',
+    email: 'trinhbinh@example.com',
+    phone: '0933445566',
+    role: 'User',
+    status: 'Đã khóa',
+    createdAt: '2025-04-15',
+    lastActive: '2025-05-10',
     totalDeposit: 8350000,
     adAccounts: [],
   },
   {
-    id: "U009",
-    name: "Minh Hằng",
-    email: "minhhang@example.com",
-    phone: "0909332211",
-    role: "Admin",
-    status: "Hoạt động",
-    createdAt: "2025-03-20",
-    lastActive: "2025-05-27",
+    id: 'U009',
+    name: 'Minh Hằng',
+    email: 'minhhang@example.com',
+    phone: '0909332211',
+    role: 'Admin',
+    status: 'Hoạt động',
+    createdAt: '2025-03-20',
+    lastActive: '2025-05-27',
     totalDeposit: 20100000,
-    adAccounts: ["ADS009", "ADS010", "ADS030"],
+    adAccounts: ['ADS009', 'ADS010', 'ADS030'],
   },
   {
-    id: "U010",
-    name: "Sơn Tùng M-TP",
-    email: "sontung@example.com",
-    phone: "0988223344",
-    role: "User",
-    status: "Hoạt động",
-    createdAt: "2025-05-10",
-    lastActive: "2025-05-28",
+    id: 'U010',
+    name: 'Sơn Tùng M-TP',
+    email: 'sontung@example.com',
+    phone: '0988223344',
+    role: 'User',
+    status: 'Hoạt động',
+    createdAt: '2025-05-10',
+    lastActive: '2025-05-28',
     totalDeposit: 32000000,
-    adAccounts: ["ADS014", "ADS015"],
+    adAccounts: ['ADS014', 'ADS015'],
   },
   {
-    id: "U011",
-    name: "Hòa Minzy",
-    email: "hoaminzy@example.com",
-    phone: "0911445566",
-    role: "User",
-    status: "Đã khóa",
-    createdAt: "2025-04-01",
-    lastActive: "2025-05-12",
+    id: 'U011',
+    name: 'Hòa Minzy',
+    email: 'hoaminzy@example.com',
+    phone: '0911445566',
+    role: 'User',
+    status: 'Đã khóa',
+    createdAt: '2025-04-01',
+    lastActive: '2025-05-12',
     totalDeposit: 5500000,
-    adAccounts: ["ADS005"],
+    adAccounts: ['ADS005'],
   },
   {
-    id: "U012",
-    name: "Trúc Nhân",
-    email: "trucnhan@example.com",
-    phone: "0909556677",
-    role: "User",
-    status: "Hoạt động",
-    createdAt: "2025-05-02",
-    lastActive: "2025-05-25",
+    id: 'U012',
+    name: 'Trúc Nhân',
+    email: 'trucnhan@example.com',
+    phone: '0909556677',
+    role: 'User',
+    status: 'Hoạt động',
+    createdAt: '2025-05-02',
+    lastActive: '2025-05-25',
     totalDeposit: 17900000,
-    adAccounts: ["ADS012"],
+    adAccounts: ['ADS012'],
   },
   {
-    id: "U013",
-    name: "Đen Vâu",
-    email: "denvau@example.com",
-    phone: "0977889911",
-    role: "User",
-    status: "Hoạt động",
-    createdAt: "2025-03-18",
-    lastActive: "2025-05-28",
+    id: 'U013',
+    name: 'Đen Vâu',
+    email: 'denvau@example.com',
+    phone: '0977889911',
+    role: 'User',
+    status: 'Hoạt động',
+    createdAt: '2025-03-18',
+    lastActive: '2025-05-28',
     totalDeposit: 28700000,
-    adAccounts: ["ADS017", "ADS021"],
+    adAccounts: ['ADS017', 'ADS021'],
   },
   {
-    id: "U014",
-    name: "Bích Phương",
-    email: "bichphuong@example.com",
-    phone: "0922113344",
-    role: "User",
-    status: "Hoạt động",
-    createdAt: "2025-04-28",
-    lastActive: "2025-05-27",
+    id: 'U014',
+    name: 'Bích Phương',
+    email: 'bichphuong@example.com',
+    phone: '0922113344',
+    role: 'User',
+    status: 'Hoạt động',
+    createdAt: '2025-04-28',
+    lastActive: '2025-05-27',
     totalDeposit: 14600000,
     adAccounts: [],
   },
   {
-    id: "U015",
-    name: "Noo Phước Thịnh",
-    email: "noophuoc@example.com",
-    phone: "0909334455",
-    role: "User",
-    status: "Hoạt động",
-    createdAt: "2025-05-05",
-    lastActive: "2025-05-26",
+    id: 'U015',
+    name: 'Noo Phước Thịnh',
+    email: 'noophuoc@example.com',
+    phone: '0909334455',
+    role: 'User',
+    status: 'Hoạt động',
+    createdAt: '2025-05-05',
+    lastActive: '2025-05-26',
     totalDeposit: 19400000,
-    adAccounts: ["ADS031"],
+    adAccounts: ['ADS031'],
   },
   {
-    id: "U016",
-    name: "Tóc Tiên",
-    email: "toctien@example.com",
-    phone: "0909887766",
-    role: "User",
-    status: "Hoạt động",
-    createdAt: "2025-05-06",
-    lastActive: "2025-05-28",
+    id: 'U016',
+    name: 'Tóc Tiên',
+    email: 'toctien@example.com',
+    phone: '0909887766',
+    role: 'User',
+    status: 'Hoạt động',
+    createdAt: '2025-05-06',
+    lastActive: '2025-05-28',
     totalDeposit: 22250000,
-    adAccounts: ["ADS011", "ADS020"],
+    adAccounts: ['ADS011', 'ADS020'],
   },
 ];
 
 const handleDeactivate = (userId: string) => {
-  console.log("Vô hiệu hóa user:", userId);
+  console.log('Vô hiệu hóa user:', userId);
 };
 
 const handleActivate = (userId: string) => {
-  console.log("Mở khóa user:", userId);
+  console.log('Mở khóa user:', userId);
 };
 
 const UserManagementPage: React.FC = () => {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [filtered, setFiltered] = useState(mockUsers);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User;
-    direction: "asc" | "desc";
+    direction: 'asc' | 'desc';
   } | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [highlightedRows, setHighlightedRows] = useState<string[]>([]);
@@ -274,12 +273,12 @@ const UserManagementPage: React.FC = () => {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key];
         const bValue = b[sortConfig.key];
-        if (typeof aValue === "number" && typeof bValue === "number") {
-          return sortConfig.direction === "asc"
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          return sortConfig.direction === 'asc'
             ? aValue - bValue
             : bValue - aValue;
         }
-        return sortConfig.direction === "asc"
+        return sortConfig.direction === 'asc'
           ? String(aValue).localeCompare(String(bValue))
           : String(bValue).localeCompare(String(aValue));
       });
@@ -299,7 +298,7 @@ const UserManagementPage: React.FC = () => {
     setOpenSortKey: (key: keyof User | null) => void;
   }) => {
     const isOpen = openSortKey === sortKey;
-    const toggleSort = (direction: "asc" | "desc") => {
+    const toggleSort = (direction: 'asc' | 'desc') => {
       setSortConfig({ key: sortKey, direction });
       setOpenSortKey(null);
     };
@@ -318,13 +317,13 @@ const UserManagementPage: React.FC = () => {
         {isOpen && (
           <div className="absolute right-0 top-6 w-32 bg-white border rounded shadow z-10">
             <div
-              onClick={() => toggleSort("asc")}
+              onClick={() => toggleSort('asc')}
               className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
             >
               <ArrowUp className="w-4 h-4 mr-2" /> ASC
             </div>
             <div
-              onClick={() => toggleSort("desc")}
+              onClick={() => toggleSort('desc')}
               className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
             >
               <ArrowDown className="w-4 h-4 mr-2" /> DESC
@@ -341,20 +340,20 @@ const UserManagementPage: React.FC = () => {
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      const table = document.querySelector("table");
+      const table = document.querySelector('table');
       if (table && !table.contains(e.target as Node)) {
         setOpenSortKey(null);
       }
     };
 
-    document.addEventListener("click", handleClick);
+    document.addEventListener('click', handleClick);
     return () => {
-      document.removeEventListener("click", handleClick);
+      document.removeEventListener('click', handleClick);
     };
   }, []);
 
   return (
-    <Layout>
+    <>
       <div className="flex items-end justify-between mb-4">
         <h1 className="text-xl font-semibold leading-7 text-gray-900 sm:text-3xl sm:truncate mt-1">
           Quản lý người dùng
@@ -498,15 +497,15 @@ const UserManagementPage: React.FC = () => {
                   key={user.id}
                   className={
                     highlightedRows.includes(user.id)
-                      ? "bg-[#dcfce7] relative"
-                      : "hover:bg-gray-50"
+                      ? 'bg-[#dcfce7] relative'
+                      : 'hover:bg-gray-50'
                   }
                   style={
                     highlightedRows.includes(user.id)
                       ? {
-                          outline: "1px solid #47b46c",
-                          outlineOffset: "0px",
-                          position: "relative",
+                          outline: '1px solid #47b46c',
+                          outlineOffset: '0px',
+                          position: 'relative',
                           zIndex: 5,
                         }
                       : {}
@@ -552,7 +551,7 @@ const UserManagementPage: React.FC = () => {
                     {user.totalDeposit.toLocaleString()}₫
                   </td>
                   <td className="text-center px-2 py-2 border border-gray-100">
-                    {user.adAccounts.join(", ")}
+                    {user.adAccounts.join(', ')}
                   </td>
                 </tr>
               ))}
@@ -578,10 +577,10 @@ const UserManagementPage: React.FC = () => {
               <ul className="space-y-2 text-sm">
                 {Object.entries(selectedUser).map(([key, value]) => (
                   <li key={key}>
-                    <strong>{key}:</strong>{" "}
+                    <strong>{key}:</strong>{' '}
                     {Array.isArray(value)
-                      ? value.join(", ")
-                      : typeof value === "number"
+                      ? value.join(', ')
+                      : typeof value === 'number'
                       ? value.toLocaleString()
                       : value}
                   </li>
@@ -591,7 +590,7 @@ const UserManagementPage: React.FC = () => {
           </div>
         )}
       </div>
-    </Layout>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 import {
   Eye,
   EyeOff,
@@ -7,12 +7,11 @@ import {
   CheckCircle,
   AlertCircle,
   Loader,
-} from "lucide-react";
-import Layout from "../../components/layout/Layout.tsx";
+} from 'lucide-react';
 // import axios from "axios";
-import BaseHeader, { BaseUrl } from "../../api/BaseHeader.ts";
-import { toast } from "react-toastify";
-import { create } from "zustand";
+import BaseHeader, { BaseUrl } from '../../api/BaseHeader.ts';
+import { toast } from 'react-toastify';
+import { create } from 'zustand';
 
 interface PasswordResetState {
   password: string;
@@ -35,19 +34,19 @@ interface PasswordResetState {
 
 const validatePasswordStrength = (password: string): string[] => {
   const errors: string[] = [];
-  if (password.length < 8) errors.push("Ít nhất 8 ký tự");
-  if (!/[A-Z]/.test(password)) errors.push("Ít nhất 1 chữ hoa");
-  if (!/[a-z]/.test(password)) errors.push("Ít nhất 1 chữ thường");
-  if (!/\d/.test(password)) errors.push("Ít nhất 1 số");
+  if (password.length < 8) errors.push('Ít nhất 8 ký tự');
+  if (!/[A-Z]/.test(password)) errors.push('Ít nhất 1 chữ hoa');
+  if (!/[a-z]/.test(password)) errors.push('Ít nhất 1 chữ thường');
+  if (!/\d/.test(password)) errors.push('Ít nhất 1 số');
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password))
-    errors.push("Ít nhất 1 ký tự đặc biệt");
+    errors.push('Ít nhất 1 ký tự đặc biệt');
   return errors;
 };
 
 // Tạo Zustand store
 const usePasswordResetStore = create<PasswordResetState>((set, get) => ({
-  password: "",
-  confirmPassword: "",
+  password: '',
+  confirmPassword: '',
   errors: {},
   isValid: false,
   isLoading: false,
@@ -67,14 +66,14 @@ const usePasswordResetStore = create<PasswordResetState>((set, get) => ({
     set({
       errors: {
         ...get().errors,
-        password: errors.length > 0 ? errors.join(", ") : "",
+        password: errors.length > 0 ? errors.join(', ') : '',
       },
     });
   },
 
   validateConfirmPassword: () => {
     const error =
-      get().password !== get().confirmPassword ? "Mật khẩu không khớp" : "";
+      get().password !== get().confirmPassword ? 'Mật khẩu không khớp' : '';
     set({
       errors: {
         ...get().errors,
@@ -85,7 +84,7 @@ const usePasswordResetStore = create<PasswordResetState>((set, get) => ({
 
   resetPassword: async (token: string) => {
     if (!token) {
-      toast.error("Token không hợp lệ");
+      toast.error('Token không hợp lệ');
       return;
     }
 
@@ -93,8 +92,8 @@ const usePasswordResetStore = create<PasswordResetState>((set, get) => ({
 
     try {
       const response = await BaseHeader({
-        method: "post",
-        url: "/reset-password",
+        method: 'post',
+        url: '/reset-password',
         baseURL: BaseUrl,
         data: {
           token,
@@ -107,21 +106,21 @@ const usePasswordResetStore = create<PasswordResetState>((set, get) => ({
           isLoading: false,
           isSuccess: true,
         });
-        toast.success("Đặt lại mật khẩu thành công!");
+        toast.success('Đặt lại mật khẩu thành công!');
       }
     } catch (error: any) {
       set({ isLoading: false });
       const errorMessage =
         error.response?.data?.message ||
-        "Đã có lỗi xảy ra khi đặt lại mật khẩu";
+        'Đã có lỗi xảy ra khi đặt lại mật khẩu';
       toast.error(errorMessage);
     }
   },
 
   reset: () =>
     set({
-      password: "",
-      confirmPassword: "",
+      password: '',
+      confirmPassword: '',
       errors: {},
       isValid: false,
       isLoading: false,
@@ -133,7 +132,7 @@ const usePasswordResetStore = create<PasswordResetState>((set, get) => ({
 
 const PasswordResetForm: React.FC = () => {
   const queryParams = new URLSearchParams(window.location.search);
-  const token = queryParams.get("token") || "";
+  const token = queryParams.get('token') || '';
 
   // Sử dụng Zustand store
   const {
@@ -177,14 +176,14 @@ const PasswordResetForm: React.FC = () => {
   const getPasswordStrength = () => {
     const errors = validatePasswordStrength(password);
     if (password.length === 0)
-      return { level: 0, text: "", color: "bg-gray-200" };
+      return { level: 0, text: '', color: 'bg-gray-200' };
     if (errors.length >= 4)
-      return { level: 1, text: "Yếu", color: "bg-red-500" };
+      return { level: 1, text: 'Yếu', color: 'bg-red-500' };
     if (errors.length >= 2)
-      return { level: 2, text: "Trung bình", color: "bg-yellow-500" };
+      return { level: 2, text: 'Trung bình', color: 'bg-yellow-500' };
     if (errors.length >= 1)
-      return { level: 3, text: "Khá", color: "bg-blue-500" };
-    return { level: 4, text: "Mạnh", color: "bg-green-500" };
+      return { level: 3, text: 'Khá', color: 'bg-blue-500' };
+    return { level: 4, text: 'Mạnh', color: 'bg-green-500' };
   };
 
   const passwordStrength = getPasswordStrength();
@@ -204,7 +203,7 @@ const PasswordResetForm: React.FC = () => {
             mới.
           </p>
           <button
-            onClick={() => (window.location.href = "/login")}
+            onClick={() => (window.location.href = '/login')}
             className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold py-3 px-4 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-200"
           >
             Đăng nhập ngay
@@ -215,7 +214,7 @@ const PasswordResetForm: React.FC = () => {
   }
 
   return (
-    <Layout>
+    <>
       <div className="bg-gradient-to-br from-blue-100 via-sky-200 to-cyan-100 flex items-center justify-center p-6">
         <div className="max-w-md w-full">
           <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
@@ -225,7 +224,7 @@ const PasswordResetForm: React.FC = () => {
               </div>
               <h1 className="text-2xl font-bold mb-2">Tạo mật khẩu mới</h1>
               <p className="opacity-90">
-                Vui lòng nhập mật khẩu mới cho tài khoản{" "}
+                Vui lòng nhập mật khẩu mới cho tài khoản{' '}
               </p>
             </div>
 
@@ -237,13 +236,13 @@ const PasswordResetForm: React.FC = () => {
                 <div className="relative">
                   <input
                     id="newPassword"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className={`w-full px-4 py-3 pr-12 border rounded-xl focus:outline-none focus:ring-2 transition-all ${
                       errors.password
-                        ? "border-red-300 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-blue-500"
+                        ? 'border-red-300 focus:ring-red-500'
+                        : 'border-gray-300 focus:ring-blue-500'
                     }`}
                     placeholder="Nhập mật khẩu mới"
                   />
@@ -269,10 +268,10 @@ const PasswordResetForm: React.FC = () => {
                       <span
                         className={`text-xs font-medium ${
                           passwordStrength.level >= 3
-                            ? "text-green-600"
+                            ? 'text-green-600'
                             : passwordStrength.level >= 2
-                            ? "text-yellow-600"
-                            : "text-red-600"
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
                         }`}
                       >
                         {passwordStrength.text}
@@ -318,13 +317,13 @@ const PasswordResetForm: React.FC = () => {
                 <div className="relative">
                   <input
                     id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className={`w-full px-4 py-3 pr-12 border rounded-xl focus:outline-none focus:ring-2 transition-all ${
                       errors.confirmPassword
-                        ? "border-red-300 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-blue-500"
+                        ? 'border-red-300 focus:ring-red-500'
+                        : 'border-gray-300 focus:ring-blue-500'
                     }`}
                     placeholder="Nhập lại mật khẩu mới"
                   />
@@ -377,8 +376,8 @@ const PasswordResetForm: React.FC = () => {
                 disabled={!isValid || isLoading}
                 className={`w-full py-3 px-4 rounded-xl font-semibold text-white transition-all duration-200 flex items-center justify-center gap-2 ${
                   isValid && !isLoading
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
-                    : "bg-gray-300 cursor-not-allowed"
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:scale-[1.02]'
+                    : 'bg-gray-300 cursor-not-allowed'
                 }`}
               >
                 {isLoading ? (
@@ -394,7 +393,7 @@ const PasswordResetForm: React.FC = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

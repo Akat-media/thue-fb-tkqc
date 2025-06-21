@@ -11,7 +11,6 @@ import {
   X,
   CreditCard,
 } from 'lucide-react';
-import Layout from '../../components/layout/Layout';
 import Button from '../../components/ui/Button';
 import {
   Card,
@@ -26,7 +25,7 @@ import { useOnOutsideClick } from '../../hook/useOutside';
 import usePagination from '../../hook/usePagination';
 import { Pagination } from 'antd';
 import { NotiError, NotiSuccess } from '../../components/noti';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 interface AdAccountDetail {
   id: string;
@@ -387,7 +386,7 @@ const RentalsPage: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
@@ -950,7 +949,7 @@ const RentalsPage: React.FC = () => {
       {errorRent && (
         <NotiError onClose={() => setErrorRent('')} message={errorRent} />
       )}
-    </Layout>
+    </>
   );
 };
 

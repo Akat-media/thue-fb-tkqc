@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   LayoutDashboard,
   Briefcase,
@@ -16,13 +16,13 @@ import {
   Archive,
   FileText,
   TrendingUp,
-} from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import clsx from "clsx";
-import { useAuth } from "../../context/AuthContext";
-import socket from "../../socket";
-import { useUserStore } from "../../stores/useUserStore";
-import { useNotificationStore } from "../../stores/notificationStore";
+} from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import clsx from 'clsx';
+import { useAuth } from '../../context/AuthContext';
+import socket from '../../socket';
+import { useUserStore } from '../../stores/useUserStore';
+import { useNotificationStore } from '../../stores/notificationStore';
 
 const Sidebar: React.FC<{
   isSidebarOpen: boolean;
@@ -32,7 +32,7 @@ const Sidebar: React.FC<{
   const location = useLocation();
   const navigate = useNavigate();
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
-  const [avatar, setAvatar] = useState("/avatar.jpg");
+  const [avatar, setAvatar] = useState('/avatar.jpg');
   const { openNotification, notificationsList, overlaySize } =
     useNotificationStore();
 
@@ -40,20 +40,20 @@ const Sidebar: React.FC<{
     return notificationsList.filter((item) => !item.is_read);
   }, [notificationsList]);
   const isAdsMenuActive =
-    location.pathname.startsWith("/adsaccountmanager") ||
-    location.pathname === "/add-account" ||
-    location.pathname === "/admin/account" ||
-    location.pathname === "/admin/policy" ||
-    location.pathname === "/admin/princing";
+    location.pathname.startsWith('/adsaccountmanager') ||
+    location.pathname === '/add-account' ||
+    location.pathname === '/admin/account' ||
+    location.pathname === '/admin/policy' ||
+    location.pathname === '/admin/princing';
   const [openAdsSubmenu, setOpenAdsSubmenu] = useState(isAdsMenuActive);
   const toggleProfileMenu = () => setOpenProfileMenu(!openProfileMenu);
 
   const links = [
-    { label: "Trang chủ", icon: LayoutDashboard, path: "/" },
-    { label: "Danh sách BM", icon: Briefcase, path: "/marketplace" },
-    { label: "Danh sách tài khoản", icon: ShoppingCart, path: "/rentals" },
-    { label: "Nạp tiền", icon: CircleDollarSign, path: "/payments" },
-    { label: "Quản lý bot", icon: Bot, path: "/create-bot" },
+    { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
+    { label: 'Danh sách BM', icon: Briefcase, path: '/marketplace' },
+    { label: 'Danh sách tài khoản', icon: ShoppingCart, path: '/rentals' },
+    { label: 'Nạp tiền', icon: CircleDollarSign, path: '/payments' },
+    { label: 'Quản lý bot', icon: Bot, path: '/create-bot' },
     // { label: "QR Here", icon: QrCode, path: "/deposit" },
     // { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     // { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
@@ -67,8 +67,8 @@ const Sidebar: React.FC<{
         toggleSidebar();
       }
     };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [isSidebarOpen, toggleSidebar]);
   const fetchUser = useUserStore((state) => state.fetchUser);
   const userobj = useUserStore((state) => state.user);
@@ -78,7 +78,7 @@ const Sidebar: React.FC<{
   }, []);
 
   useEffect(() => {
-    const stored = localStorage.getItem("user");
+    const stored = localStorage.getItem('user');
     if (stored) {
       const img = JSON.parse(stored)?.user?.images;
       if (img) setAvatar(`${img}?t=${Date.now()}`);
@@ -86,46 +86,46 @@ const Sidebar: React.FC<{
   }, []);
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
-      socket.emit("joinRoom");
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id);
+      socket.emit('joinRoom');
     });
-    socket.on("payment_success", (data) => {
-      console.log("Payment thành công:", data);
+    socket.on('payment_success', (data) => {
+      console.log('Payment thành công:', data);
       fetchUser();
     });
     return () => {
-      socket.off("payment_success");
+      socket.off('payment_success');
     };
   }, [fetchUser]);
 
   const { setUser } = useUserStore();
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user");
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
     setUser(null);
-    navigate("/login");
+    navigate('/login');
   };
   return (
     <aside
       className={clsx(
-        "fixed top-0 left-0 h-screen bg-gradient-to-br from-yellow-100 via-indigo-200 to-green-200 border-r flex flex-col justify-between py-6 px-4 shadow-sm z-40 transition-all duration-500",
-        isSidebarOpen ? "w-64" : "w-14"
+        'fixed top-0 left-0 h-screen bg-gradient-to-br from-yellow-100 via-indigo-200 to-green-200 border-r flex flex-col justify-between py-6 px-4 shadow-sm z-40 transition-all duration-500',
+        isSidebarOpen ? 'w-64' : 'w-14'
       )}
     >
       <div>
         <div
           className={clsx(
-            "flex items-center mb-6 transition-all duration-300",
-            isSidebarOpen ? "justify-between px-2" : "justify-center"
+            'flex items-center mb-6 transition-all duration-300',
+            isSidebarOpen ? 'justify-between px-2' : 'justify-center'
           )}
         >
           <Link
             to="/"
             className={clsx(
-              "text-2xl font-semibold text-blue-600 hover:underline transition-all duration-300",
-              !isSidebarOpen && "opacity-0 w-0 overflow-hidden"
+              'text-2xl font-semibold text-blue-600 hover:underline transition-all duration-300',
+              !isSidebarOpen && 'opacity-0 w-0 overflow-hidden'
             )}
           >
             AKAds
@@ -149,8 +149,8 @@ const Sidebar: React.FC<{
               key={path}
               to={path}
               className={clsx(
-                "group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300",
-                location.pathname === path && "bg-white font-semibold"
+                'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+                location.pathname === path && 'bg-white font-semibold'
               )}
             >
               <div className="w-12 flex justify-center">
@@ -158,8 +158,8 @@ const Sidebar: React.FC<{
               </div>
               <span
                 className={clsx(
-                  "transition-all whitespace-nowrap overflow-hidden duration-300",
-                  isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+                  'transition-all whitespace-nowrap overflow-hidden duration-300',
+                  isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
                 )}
               >
                 {label}
@@ -175,8 +175,8 @@ const Sidebar: React.FC<{
               }
             }}
             className={clsx(
-              "group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full",
-              isAdsMenuActive && "bg-white font-semibold"
+              'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full',
+              isAdsMenuActive && 'bg-white font-semibold'
             )}
           >
             <div className="w-12 flex justify-center">
@@ -184,8 +184,8 @@ const Sidebar: React.FC<{
             </div>
             <span
               className={clsx(
-                "transition-all whitespace-nowrap overflow-hidden duration-300",
-                isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+                'transition-all whitespace-nowrap overflow-hidden duration-300',
+                isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
               )}
             >
               Quản lý hệ thống
@@ -193,8 +193,8 @@ const Sidebar: React.FC<{
             {isSidebarOpen && (
               <ChevronDown
                 className={clsx(
-                  "ml-auto w-4 h-4 transition-transform",
-                  openAdsSubmenu && "rotate-180"
+                  'ml-auto w-4 h-4 transition-transform',
+                  openAdsSubmenu && 'rotate-180'
                 )}
               />
             )}
@@ -202,19 +202,19 @@ const Sidebar: React.FC<{
 
           <div
             className={clsx(
-              "transition-all duration-1000 ease-in-out overflow-hidden transform origin-top",
+              'transition-all duration-1000 ease-in-out overflow-hidden transform origin-top',
               openAdsSubmenu && isSidebarOpen
-                ? "max-h-40 opacity-100 scale-y-100 mt-1"
-                : "max-h-0 opacity-0 scale-y-95"
+                ? 'max-h-40 opacity-100 scale-y-100 mt-1'
+                : 'max-h-0 opacity-0 scale-y-95'
             )}
           >
             <div className="ml-10 space-y-1">
               <Link
                 to="/adsaccountmanager"
                 className={clsx(
-                  "flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700",
-                  location.pathname === "/adsaccountmanager" &&
-                    "bg-white font-semibold"
+                  'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
+                  location.pathname === '/adsaccountmanager' &&
+                    'bg-white font-semibold'
                 )}
               >
                 <div className="w-8 flex justify-center">
@@ -238,9 +238,9 @@ const Sidebar: React.FC<{
               <Link
                 to="/admin/account"
                 className={clsx(
-                  "flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700",
-                  location.pathname === "/admin/account" &&
-                    "bg-white font-semibold"
+                  'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
+                  location.pathname === '/admin/account' &&
+                    'bg-white font-semibold'
                 )}
               >
                 <div className="w-8 flex justify-center">
@@ -251,9 +251,9 @@ const Sidebar: React.FC<{
               <Link
                 to="/admin/policy"
                 className={clsx(
-                  "flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700",
-                  location.pathname === "/admin/policy" &&
-                    "bg-white font-semibold"
+                  'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
+                  location.pathname === '/admin/policy' &&
+                    'bg-white font-semibold'
                 )}
               >
                 <div className="w-8 flex justify-center">
@@ -264,9 +264,9 @@ const Sidebar: React.FC<{
               <Link
                 to="/admin/princing"
                 className={clsx(
-                  "flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700",
-                  location.pathname === "/admin/princing" &&
-                    "bg-white font-semibold"
+                  'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
+                  location.pathname === '/admin/princing' &&
+                    'bg-white font-semibold'
                 )}
               >
                 <div className="w-8 flex justify-center">
@@ -282,8 +282,8 @@ const Sidebar: React.FC<{
               key={path}
               to={path}
               className={clsx(
-                "group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300",
-                location.pathname === path && "bg-white font-semibold"
+                'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+                location.pathname === path && 'bg-white font-semibold'
               )}
             >
               <div className="w-12 flex justify-center">
@@ -291,8 +291,8 @@ const Sidebar: React.FC<{
               </div>
               <span
                 className={clsx(
-                  "transition-all whitespace-nowrap overflow-hidden duration-300",
-                  isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+                  'transition-all whitespace-nowrap overflow-hidden duration-300',
+                  isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
                 )}
               >
                 {label}
@@ -312,8 +312,8 @@ const Sidebar: React.FC<{
           </div>
           <span
             className={clsx(
-              "transition-all whitespace-nowrap overflow-hidden duration-300",
-              isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+              'transition-all whitespace-nowrap overflow-hidden duration-300',
+              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
             )}
           >
             Hỗ Trợ
@@ -321,7 +321,7 @@ const Sidebar: React.FC<{
         </Link>
 
         <button
-          onClick={() => openNotification("third")}
+          onClick={() => openNotification('third')}
           className="flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full relative"
         >
           <div className="w-12 flex justify-center relative">
@@ -334,8 +334,8 @@ const Sidebar: React.FC<{
           </div>
           <span
             className={clsx(
-              "transition-all whitespace-nowrap overflow-hidden duration-300",
-              isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+              'transition-all whitespace-nowrap overflow-hidden duration-300',
+              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
             )}
           >
             Thông báo
@@ -370,10 +370,12 @@ const Sidebar: React.FC<{
             {openProfileMenu && (
               <div className="absolute left-0 bottom-12 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                 <div className="px-4 py-3 text-sm text-gray-700 border-b">
-                  <p className="font-semibold text-base truncate">{userobj?.username}</p>
+                  <p className="font-semibold text-base truncate">
+                    {userobj?.username}
+                  </p>
                   <p className="text-gray-500 truncate">{userobj?.email}</p>
                   <p className="font-semibold text-green-600 mt-1">
-                    {userobj?.points?.toLocaleString("vi-VN")} point
+                    {userobj?.points?.toLocaleString('vi-VN')} point
                   </p>
                 </div>
                 <Link
@@ -391,7 +393,7 @@ const Sidebar: React.FC<{
                 <button
                   onClick={() => {
                     handleLogout();
-                    navigate("/login");
+                    navigate('/login');
                   }}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >

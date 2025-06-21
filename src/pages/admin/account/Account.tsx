@@ -1,10 +1,9 @@
-import Layout from "../../../components/layout/Layout.tsx";
-import { Bell, Settings, User } from "lucide-react";
-import AccountForm from "./AccountForm";
+import { Bell, Settings, User } from 'lucide-react';
+import AccountForm from './AccountForm';
 
 const Account = () => {
   return (
-    <Layout>
+    <>
       {/* Header */}
       <div className="flex h-14 items-center justify-between gap-4 px-4 sm:px-6">
         {/* <div className="flex items-center gap-2">
@@ -34,7 +33,7 @@ const Account = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

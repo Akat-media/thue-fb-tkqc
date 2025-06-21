@@ -3,7 +3,7 @@ import { Menu, X, User, CreditCard, LogOut } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import LoginModal from '../../pages/auth/LoginModal.tsx';
 import RegisterModal from '../../pages/auth/RegisterModal.tsx';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useUserStore } from '../../stores/useUserStore.ts';
 import socket from '../../socket/index.ts';
 
@@ -497,19 +497,6 @@ const Navbar: React.FC = () => {
       <div className="hidden sm:block bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700">
         <nav className="relative overflow-hidden shadow-lg">
           <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/5 to-white/10 animate-[shimmer_3s_ease-in-out_infinite]" />
-
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            style={{ zIndex: 10001 }}
-          />
           <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
             <div className="flex justify-center whitespace-nowrap gap-4 max-w-[1800px] mx-auto px-2 py-6">
               {menuItems.map((item, i) => {

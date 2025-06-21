@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Layout from "../../components/layout/Layout";
-import { QRCodeSVG } from "qrcode.react";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react';
 
 // Dữ liệu mẫu cho tài khoản nạp tiền
 const paymentAccounts = [
-  { id: "1", name: "Ngân hàng Vietcombank", qrData: "vcb_123456" },
-  { id: "2", name: "Ngân hàng Techcombank", qrData: "tcb_789012" },
-  { id: "3", name: "Ví Momo", qrData: "momo_345678" },
-  { id: "4", name: "Ngân hàng BIDV", qrData: "bidv_901234" },
+  { id: '1', name: 'Ngân hàng Vietcombank', qrData: 'vcb_123456' },
+  { id: '2', name: 'Ngân hàng Techcombank', qrData: 'tcb_789012' },
+  { id: '3', name: 'Ví Momo', qrData: 'momo_345678' },
+  { id: '4', name: 'Ngân hàng BIDV', qrData: 'bidv_901234' },
 ];
 
 interface FormData {
@@ -19,8 +18,8 @@ interface FormData {
 const PaymentForm: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
-    paymentAccountId: "",
-    amount: "",
+    paymentAccountId: '',
+    amount: '',
   });
   const [selectedAccount, setSelectedAccount] = useState<
     (typeof paymentAccounts)[0] | null
@@ -32,7 +31,7 @@ const PaymentForm: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    if (name === "paymentAccountId") {
+    if (name === 'paymentAccountId') {
       const account = paymentAccounts.find((acc) => acc.id === value);
       setSelectedAccount(account || null);
     }
@@ -41,25 +40,25 @@ const PaymentForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.paymentAccountId && formData.amount) {
-      console.log("Payment Data:", {
+      console.log('Payment Data:', {
         paymentAccount: paymentAccounts.find(
           (acc) => acc.id === formData.paymentAccountId
         ),
         amount: parseFloat(formData.amount),
       });
-      alert("Xác nhận nạp tiền thành công! (Demo)");
-      navigate("/marketplace");
+      alert('Xác nhận nạp tiền thành công! (Demo)');
+      navigate('/marketplace');
     } else {
-      alert("Vui lòng điền đầy đủ thông tin!");
+      alert('Vui lòng điền đầy đủ thông tin!');
     }
   };
 
   const handleCancel = () => {
-    navigate("/marketplace");
+    navigate('/marketplace');
   };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h2 className="text-2xl font-semibold	 text-gray-900 mb-6">
@@ -152,7 +151,7 @@ const PaymentForm: React.FC = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

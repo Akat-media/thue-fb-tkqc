@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Layout from "../../components/layout/Layout";
-import { Bell, Settings, User } from "lucide-react";
-import StatCard from "./StatCard";
-import StatsCharts from "./StatsCharts";
-import ChartDashboard from "./ChartDashboard";
-import BaseHeader from "../../api/BaseHeader";
+import React, { useEffect, useState } from 'react';
+import { Bell, Settings, User } from 'lucide-react';
+import StatCard from './StatCard';
+import StatsCharts from './StatsCharts';
+import ChartDashboard from './ChartDashboard';
+import BaseHeader from '../../api/BaseHeader';
 
 const Analytics: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
@@ -13,14 +12,14 @@ const Analytics: React.FC = () => {
     const fetchStats = async () => {
       try {
         const response = await BaseHeader({
-          method: "get",
-          url: "/statistics",
+          method: 'get',
+          url: '/statistics',
         });
         if (response.data.success) {
           setStats(response.data.data);
         }
       } catch (error) {
-        console.error("Failed to fetch statistics", error);
+        console.error('Failed to fetch statistics', error);
       }
     };
 
@@ -30,16 +29,16 @@ const Analytics: React.FC = () => {
   if (!stats) return <div className="p-10">Đang tải dữ liệu...</div>;
 
   return (
-    <Layout>
+    <>
       <div className="flex h-14 items-center justify-between gap-8 px-4 sm:px-6">
         <div className="flex items-center gap-2">
           <Bell className="w-4 h-4 text-yellow-500" />
           <span className="font-medium text-red-600 font-sans">
-            {new Date().toLocaleDateString("vi-VN", {
-              weekday: "long",
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
+            {new Date().toLocaleDateString('vi-VN', {
+              weekday: 'long',
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
             })}
           </span>
         </div>
@@ -58,28 +57,28 @@ const Analytics: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full mx-auto">
             <StatCard
               title="Doanh thu"
-              value={`${stats.revenue.amountVND.toLocaleString("vi-VN")} VND`}
+              value={`${stats.revenue.amountVND.toLocaleString('vi-VN')} VND`}
               icon="/ic-glass-bag.svg"
               trend={stats.revenueGrowth}
               color="bg-green-300 text-green-800"
             />
             <StatCard
               title="Số lượng tài khoản quảng cáo"
-              value={stats.countAds.toLocaleString("vi-VN")}
+              value={stats.countAds.toLocaleString('vi-VN')}
               icon="/ic-glass-users.svg"
               trend={stats.adsGrowth}
               color="bg-purple-300 text-purple-800"
             />
             <StatCard
               title="Số lượng người dùng đăng ký"
-              value={stats.countUser.toLocaleString("vi-VN")}
+              value={stats.countUser.toLocaleString('vi-VN')}
               icon="/ic-glass-buy.svg"
               trend={stats.userGrowth}
               color="bg-yellow-300 text-yellow-800"
             />
             <StatCard
               title="Số lượng giao dịch"
-              value={stats.countTransaction.toLocaleString("vi-VN")}
+              value={stats.countTransaction.toLocaleString('vi-VN')}
               icon="/ic-glass-message.svg"
               trend={stats.transactionGrowth}
               color="bg-red-300 text-red-800"
@@ -95,7 +94,7 @@ const Analytics: React.FC = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

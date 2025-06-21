@@ -1,33 +1,33 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 // import axios from "axios";
-import BaseHeader, { BaseUrl } from "../../api/BaseHeader.ts";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import BaseHeader, { BaseUrl } from '../../api/BaseHeader.ts';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Định nghĩa schema validate với zod
 const userSchema = z.object({
   username: z
     .string()
-    .min(1, "Tên người dùng không được để trống")
-    .max(50, "Tên người dùng không được dài quá 50 ký tự"),
+    .min(1, 'Tên người dùng không được để trống')
+    .max(50, 'Tên người dùng không được dài quá 50 ký tự'),
   email: z
     .string()
-    .email("Email không hợp lệ")
-    .min(1, "Email không được để trống"),
+    .email('Email không hợp lệ')
+    .min(1, 'Email không được để trống'),
   phone: z
     .string()
-    .min(1, "Số điện thoại không được để trống")
-    .regex(/^[0-9]{10,15}$/, "Số điện thoại phải có từ 10-15 chữ số"),
+    .min(1, 'Số điện thoại không được để trống')
+    .regex(/^[0-9]{10,15}$/, 'Số điện thoại phải có từ 10-15 chữ số'),
   percentage: z
-    .number({ invalid_type_error: "Phần trăm phải là số" })
-    .min(0, "Phần trăm không được nhỏ hơn 0")
-    .max(100, "Phần trăm không được lớn hơn 100"),
+    .number({ invalid_type_error: 'Phần trăm phải là số' })
+    .min(0, 'Phần trăm không được nhỏ hơn 0')
+    .max(100, 'Phần trăm không được lớn hơn 100'),
   points: z
-    .number({ invalid_type_error: "Điểm phải là số" })
-    .min(0, "Điểm không được nhỏ hơn 0"),
+    .number({ invalid_type_error: 'Điểm phải là số' })
+    .min(0, 'Điểm không được nhỏ hơn 0'),
 });
 
 // Định nghĩa kiểu dữ liệu từ schema
@@ -46,7 +46,7 @@ interface User {
 const FloatingInput = ({
   label,
   name,
-  type = "text",
+  type = 'text',
   register,
   error,
   readOnly = false,
@@ -66,12 +66,12 @@ const FloatingInput = ({
       <input
         type={type}
         readOnly={readOnly}
-        {...register(name, { valueAsNumber: type === "number" })}
+        {...register(name, { valueAsNumber: type === 'number' })}
         className={`
                     w-full
                     rounded-md
                     border
-                    ${error ? "border-red-500" : "border-gray-300"}
+                    ${error ? 'border-red-500' : 'border-gray-300'}
                     px-3
                     pt-[14px] pb-[10px]
                     text-gray-900
@@ -79,8 +79,8 @@ const FloatingInput = ({
                     focus:ring-2
                     ${
                       readOnly
-                        ? "bg-gray-100 cursor-not-allowed"
-                        : "focus:ring-blue-500"
+                        ? 'bg-gray-100 cursor-not-allowed'
+                        : 'focus:ring-blue-500'
                     }
                 `}
       />
@@ -90,9 +90,9 @@ const FloatingInput = ({
 };
 
 const AccountForm: React.FC = () => {
-  const user = localStorage.getItem("user");
+  const user = localStorage.getItem('user');
   const initialUser: User =
-    typeof user === "string" ? JSON.parse(user).user : {};
+    typeof user === 'string' ? JSON.parse(user).user : {};
 
   // Khởi tạo react-hook-form với zod resolver
   const {
@@ -102,9 +102,9 @@ const AccountForm: React.FC = () => {
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      username: initialUser.username || "",
-      email: initialUser.email || "",
-      phone: initialUser.phone || "",
+      username: initialUser.username || '',
+      email: initialUser.email || '',
+      phone: initialUser.phone || '',
       percentage: initialUser.percentage || 0,
       points: initialUser.points || 0,
     },
@@ -112,15 +112,15 @@ const AccountForm: React.FC = () => {
 
   const onSubmit = async (data: UserFormData) => {
     if (!initialUser.id) {
-      toast.error("Không tìm thấy ID người dùng trong localStorage!", {
-        position: "top-right",
+      toast.error('Không tìm thấy ID người dùng trong localStorage!', {
+        position: 'top-right',
         autoClose: 3000,
       });
       return;
     }
     try {
       const response = await BaseHeader({
-        method: "put",
+        method: 'put',
         url: `/user/${initialUser.id}`,
         data: {
           username: data.username,
@@ -128,23 +128,23 @@ const AccountForm: React.FC = () => {
           phone: data.phone,
         },
       });
-      console.log("data saved: ", response.data);
-      toast.success("Cập nhật thông tin thành công!", {
-        position: "top-right",
+      console.log('data saved: ', response.data);
+      toast.success('Cập nhật thông tin thành công!', {
+        position: 'top-right',
         autoClose: 3000,
       });
       // Cập nhật localStorage
       localStorage.setItem(
-        "user",
+        'user',
         JSON.stringify({ user: { ...initialUser, ...data } })
       );
     } catch (error: any) {
       const apiMessage =
         error.response?.data?.message ||
         error.response?.data?.error ||
-        "Có lỗi xảy ra khi lưu dữ liệu!";
+        'Có lỗi xảy ra khi lưu dữ liệu!';
       toast.error(apiMessage, {
-        position: "top-right",
+        position: 'top-right',
         autoClose: 3000,
       });
     }
@@ -152,7 +152,6 @@ const AccountForm: React.FC = () => {
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-md flex-1 font-roboto">
-      <ToastContainer />
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-1 md:grid-cols-2 gap-x-6"

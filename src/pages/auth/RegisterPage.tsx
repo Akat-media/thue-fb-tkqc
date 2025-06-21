@@ -1,19 +1,19 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Mail, User, Phone, Eye, EyeOff } from "lucide-react";
-import { useNotification } from "../../context/NotificationContext";
-import { BaseUrl } from "../../api/BaseHeader";
-import BaseHeader from "../../api/BaseHeader";
-import AtomicSpinner from "atomic-spinner";
-import registerimg from "../../public/sand.jpg";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Mail, User, Phone, Eye, EyeOff } from 'lucide-react';
+import { useNotification } from '../../context/NotificationContext';
+import { BaseUrl } from '../../api/BaseHeader';
+import BaseHeader from '../../api/BaseHeader';
+import AtomicSpinner from 'atomic-spinner';
+import registerimg from '../../public/sand.jpg';
 
 const RegisterPage: React.FC = () => {
   // const [isOpen, setIsOpen] = useState(true);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<{
@@ -30,18 +30,18 @@ const RegisterPage: React.FC = () => {
 
   const validateForm = (): boolean => {
     const newErrors: typeof errors = {};
-    if (!name) newErrors.name = "Họ tên là bắt buộc";
-    if (!email) newErrors.email = "Email là bắt buộc";
+    if (!name) newErrors.name = 'Họ tên là bắt buộc';
+    if (!email) newErrors.email = 'Email là bắt buộc';
     else if (!/\S+@\S+\.\S+/.test(email))
-      newErrors.email = "Email không hợp lệ";
-    if (!phone) newErrors.phone = "Số điện thoại là bắt buộc";
+      newErrors.email = 'Email không hợp lệ';
+    if (!phone) newErrors.phone = 'Số điện thoại là bắt buộc';
     else if (!/^[0-9]{10}$/.test(phone))
-      newErrors.phone = "Số điện thoại phải có 10 chữ số";
-    if (!password) newErrors.password = "Mật khẩu là bắt buộc";
+      newErrors.phone = 'Số điện thoại phải có 10 chữ số';
+    if (!password) newErrors.password = 'Mật khẩu là bắt buộc';
     else if (password.length < 6)
-      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+      newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
     if (password !== confirmPassword)
-      newErrors.confirmPassword = "Mật khẩu xác nhận không khớp";
+      newErrors.confirmPassword = 'Mật khẩu xác nhận không khớp';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -52,56 +52,56 @@ const RegisterPage: React.FC = () => {
     setIsLoading(true);
     try {
       const registerRes = await BaseHeader({
-        method: "post",
-        url: "/user",
+        method: 'post',
+        url: '/user',
         baseURL: BaseUrl,
         data: {
           username: name,
           email: email,
           phone: phone,
           password: password,
-          role: "user",
+          role: 'user',
         },
       });
       if (registerRes.status === 200) {
         addNotification(
-          "Đăng ký thành công",
-          "Tài khoản của bạn đã được tạo!",
-          "success"
+          'Đăng ký thành công',
+          'Tài khoản của bạn đã được tạo!',
+          'success'
         );
         const loginRes = await BaseHeader({
-          method: "post",
-          url: "/login",
+          method: 'post',
+          url: '/login',
           baseURL: BaseUrl,
           data: {
             email: email,
             password: password,
           },
         });
-        navigate("/");
-        localStorage.setItem("access_token", loginRes.data.data.access_token);
-        localStorage.setItem("refresh_token", loginRes.data.data.refresh_token);
-        localStorage.setItem("user", JSON.stringify(loginRes.data.data));
+        navigate('/');
+        localStorage.setItem('access_token', loginRes.data.data.access_token);
+        localStorage.setItem('refresh_token', loginRes.data.data.refresh_token);
+        localStorage.setItem('user', JSON.stringify(loginRes.data.data));
       } else {
-        addNotification("Đăng ký thất bại", registerRes.data.message, "error");
+        addNotification('Đăng ký thất bại', registerRes.data.message, 'error');
       }
     } catch (error: any) {
-      console.error("Registration error:", error);
+      console.error('Registration error:', error);
 
       if (error.response?.data?.message) {
         const errorMessage = error.response.data.message;
 
-        if (errorMessage === "Email đã tồn tại") {
-          setErrors({ email: "Email đã tồn tại. Vui lòng nhập email khác." });
-          setEmail("");
+        if (errorMessage === 'Email đã tồn tại') {
+          setErrors({ email: 'Email đã tồn tại. Vui lòng nhập email khác.' });
+          setEmail('');
         } else {
-          addNotification("Đăng ký thất bại", errorMessage, "error");
+          addNotification('Đăng ký thất bại', errorMessage, 'error');
         }
       } else {
         addNotification(
-          "Đăng ký thất bại",
-          "Có lỗi xảy ra trong quá trình đăng ký",
-          "error"
+          'Đăng ký thất bại',
+          'Có lỗi xảy ra trong quá trình đăng ký',
+          'error'
         );
       }
 
@@ -112,7 +112,7 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex">
+    <div className="h-screen flex">
       <div className="hidden md:block w-1/2 h-full">
         <img
           src={registerimg}
@@ -211,7 +211,7 @@ const RegisterPage: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -247,7 +247,7 @@ const RegisterPage: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={showConfirmPassword ? "text" : "password"}
+                  type={showConfirmPassword ? 'text' : 'password'}
                   id="confirmPassword"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -287,7 +287,7 @@ const RegisterPage: React.FC = () => {
             </button>
           </form>
           <p className="mt-3 text-center text-sm">
-            Đã có tài khoản?{" "}
+            Đã có tài khoản?{' '}
             <Link to="/login" className="text-[#0167F8] hover:underline">
               Đăng nhập
             </Link>
