@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { useOnOutsideClick } from "../../../hook/useOutside.tsx";
+import React, { useState, useMemo, useEffect } from 'react';
+import { useOnOutsideClick } from '../../../hook/useOutside.tsx';
 import {
   MoreVertical,
   ArrowUp,
@@ -22,18 +22,18 @@ import {
   TrendingUp,
   Calendar,
   X,
-} from "lucide-react";
-import Pagination from "./Pagination.tsx";
+} from 'lucide-react';
+import Pagination from './Pagination.tsx';
 // import axios from "axios";
-import BaseHeader, { BaseUrl } from "../../../api/BaseHeader";
-import debounce from "lodash.debounce";
-import usePagination from "../../../hook/usePagination.tsx";
-import { useForm, Controller } from "react-hook-form";
-import UserDetailModal from "./UserDetailModal.tsx";
-import AddUserModal from "./AddUserModal.tsx";
-import { toast, ToastContainer } from "react-toastify";
-import { useUserStore } from "../../../stores/useUserStore.ts";
-import ToggleStatus from "./ToggleStatus.tsx";
+import BaseHeader, { BaseUrl } from '../../../api/BaseHeader';
+import debounce from 'lodash.debounce';
+import usePagination from '../../../hook/usePagination.tsx';
+import { useForm, Controller } from 'react-hook-form';
+import UserDetailModal from './UserDetailModal.tsx';
+import AddUserModal from './AddUserModal.tsx';
+import { toast, ToastContainer } from 'react-toastify';
+import { useUserStore } from '../../../stores/useUserStore.ts';
+import ToggleStatus from './ToggleStatus.tsx';
 
 // Define the User interface
 interface User {
@@ -52,6 +52,7 @@ interface User {
   points: number;
   percentage: number;
   created_at: string;
+  active: boolean;
 }
 
 const AccountForm: React.FC = () => {
@@ -59,14 +60,14 @@ const AccountForm: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User;
-    direction: "asc" | "desc";
+    direction: 'asc' | 'desc';
   } | null>(null);
   // const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [highlightedRows, setHighlightedRows] = useState<string[]>([]);
   const [openSortKey, setOpenSortKey] = useState<keyof User | null>(null);
   const { innerBorderRef } = useOnOutsideClick(() => setShowModal(false));
   const [data, setData] = useState<User[]>([]);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const { currentPage, pageSize, setCurrentPage, setPageSize } = usePagination(
     1,
     6
@@ -86,11 +87,11 @@ const AccountForm: React.FC = () => {
     setValue,
   } = useForm<User>({
     defaultValues: {
-      id: "",
-      username: "",
-      email: "",
-      phone: "",
-      role: "user",
+      id: '',
+      username: '',
+      email: '',
+      phone: '',
+      role: 'user',
     },
   });
 
@@ -98,7 +99,7 @@ const AccountForm: React.FC = () => {
     fetchData();
   }, [currentPage, pageSize]);
 
-  const user = localStorage.getItem("user");
+  const user = localStorage.getItem('user');
   const debounceSearch = useMemo(() => {
     return debounce((value: string) => {
       fetchData(value);
@@ -117,12 +118,12 @@ const AccountForm: React.FC = () => {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key];
         const bValue = b[sortConfig.key];
-        if (typeof aValue === "number" && typeof bValue === "number") {
-          return sortConfig.direction === "asc"
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          return sortConfig.direction === 'asc'
             ? aValue - bValue
             : bValue - aValue;
         }
-        return sortConfig.direction === "asc"
+        return sortConfig.direction === 'asc'
           ? String(aValue).localeCompare(String(bValue))
           : String(bValue).localeCompare(String(aValue));
       });
@@ -158,7 +159,7 @@ const AccountForm: React.FC = () => {
     setOpenSortKey: (key: keyof User | null) => void;
   }) => {
     const isOpen = openSortKey === sortKey;
-    const toggleSort = (direction: "asc" | "desc") => {
+    const toggleSort = (direction: 'asc' | 'desc') => {
       setSortConfig({ key: sortKey, direction });
       setOpenSortKey(null);
     };
@@ -178,14 +179,14 @@ const AccountForm: React.FC = () => {
         {isOpen && (
           <div className="absolute right-0 top-6 w-32 bg-white border rounded shadow z-10">
             <div
-              onClick={() => toggleSort("asc")}
+              onClick={() => toggleSort('asc')}
               className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
             >
               <ArrowUp className="w-4 h-4 mr-2" />
               ASC
             </div>
             <div
-              onClick={() => toggleSort("desc")}
+              onClick={() => toggleSort('desc')}
               className="px-3 py-2 hover:bg-gray-100 text-sm cursor-pointer flex items-center"
             >
               <ArrowDown className="w-4 h-4 mr-2" />
@@ -198,13 +199,13 @@ const AccountForm: React.FC = () => {
   };
 
   // const baseUrl = import.meta.env.VITE_BASE_URL;
-  const fetchData = async (searchQuery = "") => {
+  const fetchData = async (searchQuery = '') => {
     try {
-      const parsedUser = JSON.parse(user || "{}");
+      const parsedUser = JSON.parse(user || '{}');
       const userId = parsedUser?.user?.id;
 
       if (!userId) {
-        throw new Error("User ID not found");
+        throw new Error('User ID not found');
       }
 
       const params = {
@@ -214,52 +215,52 @@ const AccountForm: React.FC = () => {
       };
 
       const response = await BaseHeader({
-        method: "get",
-        url: "/user",
+        method: 'get',
+        url: '/user',
         baseURL: BaseUrl,
         params,
       });
       setData(response.data?.data?.data || []);
       setTotalItems(response.data?.data?.pagination.total || 0);
     } catch (err: any) {
-      console.error("Error fetching data:", err.message || err);
+      console.error('Error fetching data:', err.message || err);
     }
   };
 
   function formatTimestampToDate(timestamp: string | number | Date): string {
     const date = new Date(timestamp);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   }
 
   function formatPercentage(item: any): string {
     const value = Number(item);
-    return isNaN(value) ? "0" : (value * 100).toFixed(2);
+    return isNaN(value) ? '0' : (value * 100).toFixed(2);
   }
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      const table = document.querySelector("table");
+      const table = document.querySelector('table');
       if (table && !table.contains(e.target as Node)) {
         setOpenSortKey(null);
       }
     };
 
-    document.addEventListener("click", handleClick);
+    document.addEventListener('click', handleClick);
     return () => {
-      document.removeEventListener("click", handleClick);
+      document.removeEventListener('click', handleClick);
     };
   }, []);
 
   const userobj = useUserStore((state) => state.user);
   const handleEdit = (user: User) => {
-    setValue("id", user.id);
-    setValue("username", user.username);
-    setValue("email", user.email);
-    setValue("phone", user.phone);
-    setValue("role", user.role || "user");
+    setValue('id', user.id);
+    setValue('username', user.username);
+    setValue('email', user.email);
+    setValue('phone', user.phone);
+    setValue('role', user.role || 'user');
     setShowEditModal(true);
   };
 
@@ -267,7 +268,7 @@ const AccountForm: React.FC = () => {
     if (!deleteTargetId) return;
     try {
       await BaseHeader({
-        method: "delete",
+        method: 'delete',
         url: `/user/${deleteTargetId}`,
         baseURL: BaseUrl,
       });
@@ -277,7 +278,7 @@ const AccountForm: React.FC = () => {
       setShowDeleteModal(false);
       setDeleteTargetId(null);
     } catch (err: any) {
-      console.error("Error deleting user:", err.message || err);
+      console.error('Error deleting user:', err.message || err);
     }
   };
 
@@ -285,32 +286,32 @@ const AccountForm: React.FC = () => {
     try {
       if (data.id) {
         await BaseHeader({
-          method: "put",
+          method: 'put',
           url: `/user/${data.id}`,
           baseURL: BaseUrl,
           data,
         });
-        toast.success("Cập nhật người dùng thành công!");
+        toast.success('Cập nhật người dùng thành công!');
       } else {
         await BaseHeader({
-          method: "post",
-          url: "/user",
+          method: 'post',
+          url: '/user',
           baseURL: BaseUrl,
           data,
         });
-        toast.success("Thêm người dùng thành công");
+        toast.success('Thêm người dùng thành công');
       }
       await fetchData(query);
       setShowEditModal(false);
       reset();
     } catch (err: any) {
       const errorMsg =
-        err.response?.data?.message || err.message || "Lỗi không xác định";
-      if (errorMsg?.toLowerCase().includes("email")) {
-        toast.error("Email đã tồn tại");
+        err.response?.data?.message || err.message || 'Lỗi không xác định';
+      if (errorMsg?.toLowerCase().includes('email')) {
+        toast.error('Email đã tồn tại');
       } else {
-        console.error("Error updating user:", errorMsg);
-        toast.error("Có lỗi xảy ra. Vui lòng thử lại");
+        console.error('Error updating user:', errorMsg);
+        toast.error('Có lỗi xảy ra. Vui lòng thử lại');
       }
     }
   };
@@ -320,6 +321,30 @@ const AccountForm: React.FC = () => {
       debounceSearch.cancel();
     };
   }, [debounceSearch]);
+  const hanleChangeActive = async ({ id, active }: any) => {
+    try {
+      const response = await BaseHeader({
+        method: 'put',
+        url: `/user/${id}`,
+        data: {
+          active,
+        },
+      })
+        .then(() => {
+          toast.success('Đã thay đổi trạng thái người dùng');
+          fetchData(query);
+        })
+        .catch((error: any) => {
+          console.error('Error changing user status:', error.message || error);
+          toast.error('Có lỗi xảy ra khi thay đổi trạng thái người dùng');
+        });
+    } catch (error: any) {
+      console.error('Error changing user status:', error.message || error);
+      toast.error('Có lỗi xảy ra khi thay đổi trạng thái người dùng');
+    }
+  };
+  const [toggleStates, setToggleStates] = useState<Record<string, boolean>>({});
+  console.log('toggleStates:', toggleStates);
 
   return (
     <div className="min-w-0">
@@ -336,9 +361,9 @@ const AccountForm: React.FC = () => {
           {query && (
             <button
               onClick={() => {
-                setQuery("");
+                setQuery('');
                 handleSearch({
-                  target: { value: "" },
+                  target: { value: '' },
                 } as React.ChangeEvent<HTMLInputElement>);
               }}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500"
@@ -455,21 +480,22 @@ const AccountForm: React.FC = () => {
             <tbody>
               {currentItems.map((user: User) => {
                 const isDisabled =
-                  user.email !== userobj?.email && user.role === "admin";
+                  user.email !== userobj?.email && user.role === 'admin';
+                const isEnabled = user?.active ?? false;
                 return (
                   <tr
                     key={user.id}
                     className={
                       highlightedRows.includes(user.id)
-                        ? "bg-[#dcfce7] relative"
-                        : "hover:bg-gray-50"
+                        ? 'bg-[#dcfce7] relative'
+                        : 'hover:bg-gray-50'
                     }
                     style={
                       highlightedRows.includes(user.id)
                         ? {
-                            outline: "1px solid #47b46c",
-                            outlineOffset: "0px",
-                            position: "relative",
+                            outline: '1px solid #47b46c',
+                            outlineOffset: '0px',
+                            position: 'relative',
                             zIndex: 5,
                           }
                         : {}
@@ -498,7 +524,12 @@ const AccountForm: React.FC = () => {
                       {user.role}
                     </td>
                     <td className="text-center px-2 py-2 border border-gray-100">
-                      <ToggleStatus />
+                      <ToggleStatus
+                        isEnabled={isEnabled}
+                        setIsEnabled={() =>
+                          hanleChangeActive({ id: user.id, active: !isEnabled })
+                        }
+                      />
                     </td>
                     <td className="text-center px-2 py-2 border border-gray-100">
                       {user.points.toLocaleString()}
@@ -515,8 +546,8 @@ const AccountForm: React.FC = () => {
                         <button
                           className={`p-1 rounded transition ${
                             isDisabled
-                              ? "text-gray-300 cursor-not-allowed"
-                              : "hover:bg-blue-100 text-blue-500 hover:text-blue-700"
+                              ? 'text-gray-300 cursor-not-allowed'
+                              : 'hover:bg-blue-100 text-blue-500 hover:text-blue-700'
                           }`}
                           title="Chỉnh sửa"
                           onClick={() => {
@@ -531,8 +562,8 @@ const AccountForm: React.FC = () => {
                         <button
                           className={`p-1 rounded transition ${
                             isDisabled
-                              ? "text-gray-300 cursor-not-allowed"
-                              : "hover:bg-red-100 text-red-500 hover:text-red-700"
+                              ? 'text-gray-300 cursor-not-allowed'
+                              : 'hover:bg-red-100 text-red-500 hover:text-red-700'
                           }`}
                           title="Xoá"
                           onClick={() => {
@@ -558,7 +589,7 @@ const AccountForm: React.FC = () => {
         <div className="block sm:hidden space-y-4 mb-6">
           {currentItems.map((request: User) => {
             const isDisabled =
-              request.email !== userobj?.email && request.role === "admin";
+              request.email !== userobj?.email && request.role === 'admin';
             return (
               <div
                 key={request.id}
@@ -669,8 +700,8 @@ const AccountForm: React.FC = () => {
                       disabled={isDisabled}
                       className={`inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg transform hover:scale-[1.02] active:scale-[0.98] ${
                         isDisabled
-                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                          : "text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 focus:ring-amber-500 focus:ring-2"
+                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                          : 'text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 focus:ring-amber-500 focus:ring-2'
                       }`}
                     >
                       <Edit className="w-4 h-4 mr-2" />
@@ -688,8 +719,8 @@ const AccountForm: React.FC = () => {
                       disabled={isDisabled}
                       className={`inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg transform hover:scale-[1.02] active:scale-[0.98] ${
                         isDisabled
-                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                          : "text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:ring-red-500 focus:ring-2"
+                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                          : 'text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:ring-red-500 focus:ring-2'
                       }`}
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
@@ -707,7 +738,7 @@ const AccountForm: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <div className="text-sm text-gray-600">
               {/*Hiển thị {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, sortedData.length)} của {sortedData.length} mục*/}
-              Hiển thị {(currentPage - 1) * pageSize + 1} -{" "}
+              Hiển thị {(currentPage - 1) * pageSize + 1} -{' '}
               {(currentPage - 1) * pageSize + data.length} của {totalItems} mục
             </div>
             <div>
@@ -786,10 +817,10 @@ const AccountForm: React.FC = () => {
                         name="username"
                         control={control}
                         rules={{
-                          required: "Tên người dùng là bắt buộc",
+                          required: 'Tên người dùng là bắt buộc',
                           minLength: {
                             value: 3,
-                            message: "Tên người dùng phải có ít nhất 3 ký tự",
+                            message: 'Tên người dùng phải có ít nhất 3 ký tự',
                           },
                         }}
                         render={({ field }) => (
@@ -798,8 +829,8 @@ const AccountForm: React.FC = () => {
                             type="text"
                             className={`w-full p-3 pl-10 border-2 rounded-xl transition-all duration-200 outline-none bg-gray-50/50 hover:bg-white ${
                               errors.username
-                                ? "border-red-400"
-                                : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                                ? 'border-red-400'
+                                : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                             }`}
                             placeholder="Nhập tên người dùng"
                           />
@@ -836,10 +867,10 @@ const AccountForm: React.FC = () => {
                         name="email"
                         control={control}
                         rules={{
-                          required: "Email là bắt buộc",
+                          required: 'Email là bắt buộc',
                           pattern: {
                             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                            message: "Email không hợp lệ",
+                            message: 'Email không hợp lệ',
                           },
                         }}
                         render={({ field }) => (
@@ -848,8 +879,8 @@ const AccountForm: React.FC = () => {
                             type="email"
                             className={`w-full p-3 pl-10 border-2 rounded-xl transition-all duration-200 outline-none bg-gray-50/50 hover:bg-white ${
                               errors.email
-                                ? "border-red-400"
-                                : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                                ? 'border-red-400'
+                                : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                             }`}
                             placeholder="Nhập địa chỉ email"
                           />
@@ -886,10 +917,10 @@ const AccountForm: React.FC = () => {
                         name="phone"
                         control={control}
                         rules={{
-                          required: "Số điện thoại là bắt buộc",
+                          required: 'Số điện thoại là bắt buộc',
                           pattern: {
                             value: /^\+?\d{10,15}$/,
-                            message: "Số điện thoại không hợp lệ",
+                            message: 'Số điện thoại không hợp lệ',
                           },
                         }}
                         render={({ field }) => (
@@ -898,8 +929,8 @@ const AccountForm: React.FC = () => {
                             type="text"
                             className={`w-full p-3 pl-10 border-2 rounded-xl transition-all duration-200 outline-none bg-gray-50/50 hover:bg-white ${
                               errors.phone
-                                ? "border-red-400"
-                                : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                                ? 'border-red-400'
+                                : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                             }`}
                             placeholder="Nhập số điện thoại"
                           />
@@ -927,6 +958,74 @@ const AccountForm: React.FC = () => {
                       </p>
                     )}
                   </div>
+                  <div className="gap-4">
+                    <div className="group">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-blue-600 transition-colors">
+                        Vai trò
+                      </label>
+                      <div className="relative">
+                        <Controller
+                          name="role"
+                          control={control}
+                          rules={{
+                            required: 'Vai trò là bắt buộc',
+                            validate: (value) =>
+                              ['admin', 'user'].includes(value)
+                                ? true
+                                : 'Vai trò không hợp lệ',
+                          }}
+                          render={({ field }) => (
+                            <select
+                              {...field}
+                              className={`w-full p-3 pl-10 pr-8 border-2 rounded-xl transition-all duration-200 outline-none appearance-none cursor-pointer ${
+                                errors.role
+                                  ? 'border-red-400'
+                                  : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                              } bg-gray-50/50 hover:bg-white`}
+                            >
+                              <option value="admin">Admin</option>
+                              <option value="user">User</option>
+                            </select>
+                          )}
+                        />
+                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                          <svg
+                            className="w-5 h-5 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 6V9a2 2 0 00-2-2H10a2 2 0 00-2 2v3.093"
+                            />
+                          </svg>
+                        </div>
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                          <svg
+                            className="w-4 h-4 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                      {errors.role && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.role.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                   <div className="flex gap-3 pt-6 border-t border-gray-100">
                     <button
                       type="button"
@@ -943,8 +1042,8 @@ const AccountForm: React.FC = () => {
                       disabled={Object.keys(errors).length > 0}
                       className={`flex-1 px-6 py-3 text-sm font-semibold text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] ${
                         Object.keys(errors).length > 0
-                          ? "bg-gray-400 cursor-not-allowed"
-                          : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
                       }`}
                     >
                       Lưu thay đổi

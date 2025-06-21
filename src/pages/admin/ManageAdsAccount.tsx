@@ -634,7 +634,7 @@ const ManageAdsAccount: React.FC = () => {
                             setActiveRow(null);
                           }}
                       >
-                        {item?.user.username}
+                        {item?.user?.username}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${

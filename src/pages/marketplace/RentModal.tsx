@@ -52,7 +52,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const [cookies, setCookies] = useState<any[]>([]);
   const [selectedCookieId, setSelectedCookieId] = useState<any>('');
   const [isLoadingCookies, setIsLoadingCookies] = useState(false);
-  const [rentalRange, setRentalRange] = useState<[Date, Date] | null>(null);
+  const [rentalRange, setRentalRange] = useState<any>(null);
   const [rentalRangeError, setRentalRangeError] = useState<string | null>(null);
   const isVisaAccount = account?.is_visa_account;
 
@@ -69,16 +69,17 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   };
 
   const handleSubmit = async () => {
-    if (!rentalRange || !rentalRange[0] || !rentalRange[1]) {
+    if (!rentalRange) {
       setRentalRangeError('Vui lòng chọn thời gian thuê.');
       return;
     }
 
-    const [start, end] = rentalRange;
+    const { start, end } = rentalRange;
+    console.log(start, end);
     const msPerDay = 1000 * 60 * 60 * 24;
     const days = Math.round((end.getTime() - start.getTime()) / msPerDay) + 1;
 
-    if (days < 3 || days > 60) {
+    if (days < 7 || days > 60) {
       setRentalRangeError('Thời gian thuê phải từ 3 đến 60 ngày.');
       return;
     }
@@ -102,9 +103,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         ads_account_id: account?.account_id || '',
         amountPoint: calculateTotalPrice(),
         bot_id: selectedCookieId || '',
-        rentalRange,
+        ...rentalRange,
       });
-
       onClose();
       openCardModal?.();
       return;
@@ -367,7 +367,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     className="w-full sm:w-[400px]"
                     type="rangeDate"
                     name="rentalRange"
-                    label="Thời gian thuê (3-60 ngày)"
+                    label="Thời gian thuê (7-60 ngày)"
                     format="YYYY-MM-DD"
                     value={rentalRange as any}
                     onChange={(value: any) => {
@@ -388,15 +388,15 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                           (endDate.getTime() - startDate.getTime()) / msPerDay
                         ) + 1;
 
-                      if (days < 3 || days > 60) {
+                      if (days < 7 || days > 60) {
                         setRentalRangeError(
-                          'Thời gian thuê phải từ 3 đến 60 ngày.'
+                          'Thời gian thuê phải từ 7 đến 60 ngày.'
                         );
                         setRentalRange(null);
                         return;
                       }
-
-                      setRentalRange([startDate, endDate]);
+                      console.log('rentalRange', startDate, endDate);
+                      setRentalRange({ startDate, endDate });
                       setRentalRangeError(null);
                     }}
                     disabledDate={(current: any) => {
