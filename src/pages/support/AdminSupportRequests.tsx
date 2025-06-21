@@ -17,7 +17,7 @@ import Pagination from '../admin/account/Pagination.tsx';
 import usePagination from '../../hook/usePagination.tsx';
 import ChatBox from './ChatBox';
 import { useUserStore } from '../../stores/useUserStore.ts';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import BaseHeader from '../../api/BaseHeader.ts';
 
 interface SupportRequest {
@@ -285,7 +285,7 @@ const AdminSupportRequests: React.FC = () => {
         pageSize
       );
       const result = response.data.data;
-      const sendMailUser = await BaseHeader({
+      await BaseHeader({
         method: 'post',
         url: '/support/mail-user',
         data: {
@@ -297,11 +297,11 @@ const AdminSupportRequests: React.FC = () => {
           phone: result.phone,
         },
       });
-      if (sendMailUser.status === 200) {
-        toast.success('Email đã được gửi cho người dùng');
-      } else {
-        throw new Error('Gửi email không thành công');
-      }
+      // if (sendMailUser.status === 200) {
+      //   toast.success('Email đã được gửi cho người dùng');
+      // } else {
+      //   throw new Error('Gửi email không thành công');
+      // }
     } catch (error) {
       console.error('Lỗi khi cập nhật trạng thái:', error);
     }
@@ -332,7 +332,7 @@ const AdminSupportRequests: React.FC = () => {
     <div className="min-w-0">
       {/* Filters and Search */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
@@ -369,11 +369,11 @@ const AdminSupportRequests: React.FC = () => {
               <option value="low">Thấp</option>
             </select>
           </div>
-          <div className="flex items-center justify-center bg-blue-50 rounded-lg p-2">
-            <span className="text-xs sm:text-sm font-medium text-blue-900">
-              {data.length} / {totalItems} yêu cầu
-            </span>
-          </div>
+          {/*<div className="flex items-center justify-center bg-blue-50 rounded-lg p-2">*/}
+          {/*  <span className="text-xs sm:text-sm font-medium text-blue-900">*/}
+          {/*    {data.length} / {totalItems} yêu cầu*/}
+          {/*  </span>*/}
+          {/*</div>*/}
         </div>
       </div>
 
