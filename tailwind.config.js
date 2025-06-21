@@ -25,6 +25,15 @@ export default {
       },
       fontFamily: {
         work: ['"Work Sans"', "sans-serif"],
+        sans: [
+          '"Noto Sans Vietnamese"',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          'Helvetica',
+          'Arial',
+          'sans-serif',
+        ],
       },
       colors: {
         revenue: "#4CAF50",
@@ -32,9 +41,9 @@ export default {
         reach: "#2196F3",
         engagement: "#AB47BC",
       },
-      // fontFamily: {
-      //   sans: ["Poppins", "ui-sans-serif", "system-ui"],
-      // },
+      screens: {
+        'customScreen': '1510px',
+      },
     },
   },
   plugins: [

@@ -14,6 +14,8 @@ interface BudgetItem {
   end_date: string;
   currency: string;
   percentage: number;
+  subtitle: string;
+  overview: string;
 }
 type UseManagerBudgetProps = {
   form: any;
