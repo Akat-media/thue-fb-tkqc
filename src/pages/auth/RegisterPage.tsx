@@ -299,7 +299,7 @@ const RegisterPage: React.FC = () => {
       </div>
       {isLoading && (
         <div className="fixed inset-0 z-[9999] backdrop-blur-sm bg-white/60 flex items-center justify-center">
-          <AtomicSpinner size={60} color="#ffffff" />
+          <AtomicSpinner atomSize={200} nucleusParticleFillColor="#ffffff" />
         </div>
       )}
     </div>

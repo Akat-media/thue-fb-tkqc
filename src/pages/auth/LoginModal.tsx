@@ -57,8 +57,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
       localStorage.setItem('access_token', access_token);
       localStorage.setItem('refresh_token', refresh_token);
       localStorage.setItem('user', JSON.stringify(userData));
-
-      toast.success('Đăng nhập thành công!');
       onClose();
 
       if (onLoginSuccess) {
