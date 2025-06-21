@@ -31,6 +31,7 @@ import PricingPage from './pages/Princing.tsx';
 import PricingManagement from './pages/admin/manager/budget/PricingManagement.tsx';
 import Layout from './components/layout/Layout.tsx';
 import { useUserStore } from './stores/useUserStore.ts';
+import PriceList from "./pages/pricelist/PriceList.tsx";
 
 function App() {
   const userobj = useUserStore((state) => state.user);
@@ -50,6 +51,7 @@ function App() {
               <Route path="/policy" element={<Policy />} />
               <Route path="/reset-password" element={<PasswordResetForm />} />
               <Route path="/princing" element={<PricingPage />} />
+              <Route path="/price" element={<PriceList />} />
               {/* Route yêu cầu đăng nhập */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/add-account" element={<AddAccountPage />} />

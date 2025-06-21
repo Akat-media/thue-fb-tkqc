@@ -25,6 +25,15 @@ export default {
       },
       fontFamily: {
         work: ['"Work Sans"', "sans-serif"],
+        sans: [
+          '"Noto Sans Vietnamese"',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          'Helvetica',
+          'Arial',
+          'sans-serif',
+        ],
       },
       colors: {
         revenue: "#4CAF50",
