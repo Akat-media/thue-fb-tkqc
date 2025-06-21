@@ -74,32 +74,33 @@ const MarketplacePage: React.FC = () => {
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const [accountsWithCard, setAccountsWithCard] = useState<any[]>([]);
   const [accountsWithoutCard, setAccountsWithoutCard] = useState<any[]>([]);
-  const [tabWithCard, setTabWithCard] = useState<'available' | 'unavailable'>(
-    'available'
-  );
-  const [tabWithoutCard, setTabWithoutCard] = useState<
-    'available' | 'unavailable'
-  >('available');
   const [rentMeta, setRentMeta] = useState<any>(null);
+
   const handleCallAPi = async () => {
     try {
-      const response = await BaseHeader({
-        method: 'get',
-        url: 'ad-accounts',
-        params: {},
-      });
+      const [visaRes, simpleRes] = await Promise.all([
+        BaseHeader({
+          method: 'get',
+          url: 'ad-accounts-visa',
+        }),
+        BaseHeader({
+          method: 'get',
+          url: 'ad-accounts-simple',
+        }),
+      ]);
 
-      const all = response.data.data;
-      setAllAccounts(all);
-      setFilteredAccounts(all);
+      const visaAccounts = visaRes.data.data || [];
+      const simpleAccounts = simpleRes.data.data || [];
+
       setAccountsWithCard(
-        all.filter((acc: any) => acc.is_visa_account === true)
+        visaAccounts.filter((acc: any) => acc.status_rented === 'available')
       );
       setAccountsWithoutCard(
-        all.filter((acc: any) => acc.is_visa_account === false)
+        simpleAccounts.filter((acc: any) => acc.status_rented === 'available')
       );
     } catch (error) {
-      console.log(error);
+      console.error('Error fetching ad accounts:', error);
+      toast.error('Lỗi khi lấy danh sách tài khoản quảng cáo');
     }
   };
 
@@ -471,84 +472,31 @@ const MarketplacePage: React.FC = () => {
         )}
 
         {/* Ad Accounts Section */}
-        <h3 className="text-2xl font-bold text-gray-500 mb-4 mt-6">
-          TKQC đã gắn thẻ
+        <h3 className="text-2xl font-bold text-gray-600 mb-4 mt-6">
+          TKQC Đã gắn thẻ
         </h3>
-        <div className="border-b border-gray-200 mb-4">
-          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-            <button
-              className={`${
-                tabWithCard === 'available'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-              onClick={() => setTabWithCard('available')}
-            >
-              Đang có sẵn
-            </button>
-            <button
-              className={`${
-                tabWithCard === 'unavailable'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-              onClick={() => setTabWithCard('unavailable')}
-            >
-              Đã cho thuê
-            </button>
-          </nav>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {accountsWithCard
-            .filter((acc) => acc.status_rented === tabWithCard)
-            .map((account: any) => (
-              <AdAccountCard
-                key={account.id}
-                account={account}
-                onRentClick={() => handleRentClick(account)}
-              />
-            ))}
+          {accountsWithCard.map((account: any) => (
+            <AdAccountCard
+              key={account.id}
+              account={account}
+              onRentClick={() => handleRentClick(account)}
+            />
+          ))}
         </div>
 
         <h3 className="text-2xl font-bold text-red-500 my-4 mt-6">
-          TKQC chưa gắn thẻ
+          TKQC Chưa gắn thẻ
         </h3>
-        <div className="border-b border-gray-200 mb-4">
-          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-            <button
-              className={`${
-                tabWithoutCard === 'available'
-                  ? 'border-red-500 text-red-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-              onClick={() => setTabWithoutCard('available')}
-            >
-              Đang có sẵn
-            </button>
-            <button
-              className={`${
-                tabWithoutCard === 'unavailable'
-                  ? 'border-red-500 text-red-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-              onClick={() => setTabWithoutCard('unavailable')}
-            >
-              Đã cho thuê
-            </button>
-          </nav>
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {accountsWithoutCard
-            .filter((acc) => acc.status_rented === tabWithoutCard)
-            .map((account: any) => (
-              <AdAccountCard
-                key={account.id}
-                account={account}
-                onRentClick={() => handleRentClick(account)}
-              />
-            ))}
+          {accountsWithoutCard.map((account: any) => (
+            <AdAccountCard
+              key={account.id}
+              account={account}
+              onRentClick={() => handleRentClick(account)}
+            />
+          ))}
         </div>
 
         {selectedAccount && (

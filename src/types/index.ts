@@ -46,11 +46,11 @@ export interface Rental {
   totalPrice: number;
   spentBudget: number;
   status:
-    | 'rented'
-    | 'available'
-    | 'expired'
+    | 'process'
+    | 'success'
+    | 'faild'
     | 'cancelled'
-    | 'unavailable'
+    | 'available'
     | 'active';
   createdAt: Date;
   status_dischard_limit_spend: number | null;

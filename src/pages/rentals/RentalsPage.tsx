@@ -77,9 +77,9 @@ const RentalsPage: React.FC = () => {
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
   const [rentals, setRentals] = useState<(Rental & { adAccount: any })[]>([]);
-  const [activeTab, setActiveTab] = useState<'available' | 'active' | 'all'>(
-    userParse?.user?.role === 'admin' ? 'active' : 'available'
-  );
+  const [activeTab, setActiveTab] = useState<
+    'process' | 'success' | 'faild' | 'all'
+  >('all');
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRental, setSelectedRental] = useState<
     (Rental & { adAccount: any }) | null
@@ -170,26 +170,16 @@ const RentalsPage: React.FC = () => {
       const isAdmin = userInfo?.user?.role === 'admin';
 
       let response;
-      if (isAdmin) {
-        response = await BaseHeader({
-          method: 'get',
-          url: 'ads-rent-accounts-all',
-          params: {
-            page: currentPage,
-            limit: pageSize,
-          },
-        });
-      } else {
-        response = await BaseHeader({
-          method: 'get',
-          url: 'ads-rent-accounts',
-          params: {
-            user_id: userId,
-            page: currentPage,
-            limit: pageSize,
-          },
-        });
-      }
+      response = await BaseHeader({
+        method: 'get',
+        url: 'ads-rent-accounts',
+        params: {
+          user_id: userId,
+          page: currentPage,
+          limit: pageSize,
+          ...(activeTab !== 'all' && { status: activeTab }),
+        },
+      });
 
       const total = response.data.total || response.data.meta?.total || 0;
       setTotalAccounts(total);
@@ -250,12 +240,12 @@ const RentalsPage: React.FC = () => {
       });
 
       // Lọc lại theo tab hiện tại
-      const filteredByTab = formatted.filter(
-        (item: Rental & { adAccount: any }) => {
-          if (activeTab === 'all') return true;
-          return item.status === activeTab;
-        }
-      );
+      const filteredByTab = formatted.filter((item: any) => {
+        if (activeTab === 'all') return true;
+        return item.status === activeTab;
+      });
+
+      setRentals(filteredByTab);
 
       setRentals(filteredByTab);
     } catch (error) {
@@ -269,16 +259,16 @@ const RentalsPage: React.FC = () => {
 
   const mapApiStatus = (
     status: string
-  ): 'available' | 'active' | 'unavailable' => {
+  ): 'process' | 'success' | 'faild' | 'all' => {
     switch (status) {
-      case 'available':
-        return 'available';
-      case 'active':
-        return 'active';
-      case 'process_remove':
-      case 'pending':
+      case 'process':
+        return 'process';
+      case 'success':
+        return 'success';
+      case 'faild':
+        return 'faild';
       default:
-        return 'unavailable';
+        return 'process';
     }
   };
 
@@ -300,43 +290,27 @@ const RentalsPage: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'available':
+      case 'process':
         return (
-          <span
-            className="
-            min-w-[140px] justify-center
-            inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 cursor-pointer
-          bg-green-100 text-green-700 border border-green-200 shadow-sm hover:shadow-md transition-all duration-200"
-          >
-            <Clock className="h-3 w-3 mr-1" />
-            Đang thuê
+          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-yellow-100 text-yellow-800 border border-yellow-200">
+            <RefreshCw className="h-3 w-3 mr-1" /> Đang xử lý
           </span>
         );
-      // case "expired":
-      //   return (
-      //     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-      //       <Clock className="h-3 w-3 mr-1" />
-      //       Đang thuê
-      //     </span>
-      //   );
-      case 'unavailable':
+      case 'success':
         return (
-          <span
-            className=" min-w-[110px] justify-center
-            inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 cursor-pointer
-          border border-red-200 shadow-sm hover:shadow-md transition-all duration-200 bg-red-100 text-red-800"
-          >
-            <RefreshCw className="h-3 w-3 mr-1" />
-            Đang xử lý
+          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-green-100 text-green-800 border border-green-200">
+            <Clock className="h-3 w-3 mr-1" /> Thành công
+          </span>
+        );
+      case 'faild':
+        return (
+          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-red-100 text-red-700 border border-red-200">
+            <AlertTriangle className="h-3 w-3 mr-1" /> Thất bại
           </span>
         );
       default:
         return (
-          <span
-            className="min-w-[80px]
-            inline-flex items-center justify-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 cursor-pointer
-           border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 bg-gray-100 text-gray-800"
-          >
+          <span className="min-w-[80px] inline-flex items-center justify-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 bg-gray-100 text-gray-800">
             {status}
           </span>
         );
@@ -391,9 +365,7 @@ const RentalsPage: React.FC = () => {
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
-              {userParse?.user?.role === 'admin'
-                ? 'Quản lý tài khoản'
-                : 'Tài khoản đang thuê'}
+              Tài khoản đang thuê
             </h2>
           </div>
         </div>
@@ -406,83 +378,40 @@ const RentalsPage: React.FC = () => {
               className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
               value={activeTab}
               onChange={(e) =>
-                setActiveTab(e.target.value as 'available' | 'active' | 'all')
+                setActiveTab(
+                  e.target.value as 'process' | 'success' | 'faild' | 'all'
+                )
               }
             >
-              {userParse?.user?.role === 'admin' ? (
-                <>
-                  <option value="active">Đang hoạt động</option>
-                  <option value="all">Tất cả</option>
-                </>
-              ) : (
-                <>
-                  <option value="available">Đang thuê</option>
-                  <option value="active">Đang hoạt động</option>
-                  <option value="all">Tất cả</option>
-                </>
-              )}
+              <option value="process">Đang xử lý</option>
+              <option value="success">Thành công</option>
+              <option value="faild">Thất bại</option>
+              <option value="all">Tất cả</option>
             </select>
           </div>
           <div className="hidden sm:block">
             <div className="border-b border-gray-200">
-              <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-                {userParse?.user?.role === 'admin' ? (
-                  <>
-                    <button
-                      className={`${
-                        activeTab === 'active'
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                      onClick={() => setActiveTab('active')}
-                    >
-                      Đang hoạt động
-                    </button>
-                    <button
-                      className={`${
-                        activeTab === 'all'
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                      onClick={() => setActiveTab('all')}
-                    >
-                      Tất cả
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className={`${
-                        activeTab === 'available'
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                      onClick={() => setActiveTab('available')}
-                    >
-                      Đang thuê
-                    </button>
-                    <button
-                      className={`${
-                        activeTab === 'active'
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                      onClick={() => setActiveTab('active')}
-                    >
-                      Đang hoạt động
-                    </button>
-                    <button
-                      className={`${
-                        activeTab === 'all'
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                      onClick={() => setActiveTab('all')}
-                    >
-                      Tất cả
-                    </button>
-                  </>
-                )}
+              <nav className="-mb-px flex space-x-6" aria-label="Tabs">
+                {['process', 'success', 'faild', 'all'].map((tab) => (
+                  <button
+                    key={tab}
+                    className={`${
+                      activeTab === tab
+                        ? 'border-blue-500 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-blue-600 hover:border-gray-300'
+                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                    onClick={() => setActiveTab(tab as any)}
+                  >
+                    {
+                      {
+                        process: 'Đang xử lý',
+                        success: 'Thành công',
+                        faild: 'Thất bại',
+                        all: 'Tất cả',
+                      }[tab]
+                    }
+                  </button>
+                ))}
               </nav>
             </div>
           </div>
@@ -611,19 +540,19 @@ const RentalsPage: React.FC = () => {
                           </div>
                         </div>
                       )}
-                      {rental.status === 'expired' &&
+                      {rental.status === 'faild' &&
                         rental.spentBudget < rental.requestedLimit && (
-                          <div className="bg-green-50 p-3 rounded-md flex items-start">
-                            <AlertTriangle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                          <div className="bg-red-50 p-3 rounded-md flex items-start">
+                            <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                             <div className="ml-3">
-                              <h3 className="text-sm font-medium text-green-800">
+                              <h3 className="text-sm font-medium text-red-700">
                                 Hoàn tiền khả dụng
                               </h3>
-                              <p className="text-sm text-green-700 mt-1">
-                                Bạn có thể yêu cầu hoàn
+                              <p className="text-sm text-red-700 mt-1">
+                                Bạn có thể yêu cầu hoàn{' '}
                                 {(
                                   rental.requestedLimit - rental.spentBudget
-                                ).toLocaleString('vi-VN')}
+                                ).toLocaleString('vi-VN')}{' '}
                                 VNĐ chưa sử dụng
                               </p>
                             </div>
@@ -633,92 +562,21 @@ const RentalsPage: React.FC = () => {
                   </CardContent>
                   <div className="px-6 py-4 relative z-10">
                     <div className="flex space-x-3">
-                      {userParse?.user?.role === 'admin' ? (
-                        <>
-                          {rental.status_dischard_limit_spend === 1 &&
-                          rental.status_dischard_partner === 1 ? (
-                            <Button
-                              className="bg-yellow-500 hover:bg-yellow-400 py-2"
-                              size="sm"
-                              icon={<XOctagonIcon className="h-4 w-4" />}
-                              fullWidth
-                            >
-                              Dừng Hoạt Động
-                            </Button>
-                          ) : (
-                            <>
-                              <Button
-                                className="bg-red-500 hover:bg-red-400 py-2"
-                                size="sm"
-                                icon={<XOctagonIcon className="h-4 w-4" />}
-                                fullWidth
-                                onClick={() => hanleCancel(rental)}
-                              >
-                                Vô hiệu hóa
-                              </Button>
-                              <Button className="py-2" size="sm" fullWidth>
-                                Nâng cấp
-                              </Button>
-                            </>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          {rental.status === 'available' && (
-                            <>
-                              <Button
-                                onClick={() => hanleCancel(rental)}
-                                className="bg-red-500 hover:bg-red-400 py-2"
-                                size="sm"
-                                icon={<XOctagonIcon className="h-4 w-4" />}
-                                fullWidth
-                              >
-                                Hủy
-                              </Button>
-                              <Button className="py-2" size="sm" fullWidth>
-                                Nâng cấp
-                              </Button>
-                            </>
-                          )}
-                          {rental.status === 'active' &&
-                            rental.spentBudget < rental.requestedLimit && (
-                              <Button size="sm" fullWidth>
-                                Yêu cầu hoàn tiền
-                              </Button>
-                            )}
-                          {rental.status === 'active' &&
-                            rental.spentBudget >= rental.requestedLimit && (
-                              <>
-                                <Button
-                                  className="bg-red-500 hover:bg-red-400 py-2"
-                                  size="sm"
-                                  icon={<XOctagonIcon className="h-4 w-4" />}
-                                  fullWidth
-                                  disabled
-                                >
-                                  Hủy
-                                </Button>
-                                <Button
-                                  className="py-2 bg-fuchsia-700 hover:bg-fuchsia-600"
-                                  size="sm"
-                                  fullWidth
-                                >
-                                  Thuê gói
-                                </Button>
-                              </>
-                            )}
-                          {rental.status === 'unavailable' && (
-                            <Button
-                              className="bg-yellow-500 hover:bg-yellow-400 py-2"
-                              size="sm"
-                              icon={<RefreshCw className="h-4 w-4" />}
-                              fullWidth
-                              disabled
-                            >
-                              Đang xử lý
-                            </Button>
-                          )}
-                        </>
+                      {rental.status === 'success' && (
+                        <Button size="sm" fullWidth>
+                          Yêu cầu hoàn tiền
+                        </Button>
+                      )}
+                      {rental.status === 'process' && (
+                        <Button
+                          className="bg-yellow-500 hover:bg-yellow-400 py-2"
+                          size="sm"
+                          icon={<RefreshCw className="h-4 w-4" />}
+                          fullWidth
+                          disabled
+                        >
+                          Đang xử lý
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -731,9 +589,9 @@ const RentalsPage: React.FC = () => {
           ) : (
             <div className="text-center py-12">
               <p className="text-gray-500">
-                {activeTab === 'available'
+                {activeTab === 'process'
                   ? 'Bạn không có tài khoản nào đang thuê.'
-                  : activeTab === 'active'
+                  : activeTab === 'success'
                   ? 'Bạn không có tài khoản nào đang hoạt động. '
                   : 'Bạn chưa thuê tài khoản nào.'}
               </p>
