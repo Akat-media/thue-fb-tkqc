@@ -95,7 +95,7 @@ const AccountForm: React.FC = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [voucherList, setVoucherList] = useState<VoucherWithMeta[]>([]);
   const [rowUserId, setRowUserId] = useState<string>()
-
+  console.log("voucherList111",voucherList)
 
   // Initialize react-hook-form
   const {
@@ -442,7 +442,7 @@ const AccountForm: React.FC = () => {
             });
             setVoucherList(newVoucherList);
           }}
-          disabled={!record.is_checked}
+          disabled={!record.is_checked || record.is_exceeded || record.is_expired}
         />
       ),
     },
