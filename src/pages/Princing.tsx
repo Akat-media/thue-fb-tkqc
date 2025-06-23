@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { Tooltip } from 'antd';
 import BaseHeader from '../api/BaseHeader';
-import { CheckCircleOutlined, DollarOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined } from '@ant-design/icons';
+
 interface BudgetItem {
   id?: string;
   name: string;
@@ -26,6 +28,7 @@ export default function PricingPage() {
     };
     fetch();
   }, []);
+
   return (
     <>
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -76,15 +79,17 @@ export default function PricingPage() {
               </svg>
 
               <div className="relative z-10 p-8">
-                <h3 className="text-2xl font-bold text-gray-900 group-hover:text-white transition-colors duration-300">
-                  {plan.name}
-                </h3>
+                <Tooltip title={plan.name} placement="top">
+                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-white transition-colors duration-300 h-16 overflow-hidden line-clamp-2 leading-8">
+                    {plan.name}
+                  </h3>
+                </Tooltip>
                 <p className="text-sm mb-6 text-gray-500 group-hover:text-blue-200 transition-colors duration-300">
                   Chỉ từ
                 </p>
                 {/* Pricing */}
+                <div className='h-[112px]'>
                 <div className="flex items-center mb-2">
-                  <DollarOutlined className="text-2xl mr-1 text-indigo-900 group-hover:text-white transition-colors duration-300" />
                   <div className="flex items-baseline">
                     <span className="text-3xl font-bold leading-none text-gray-900 group-hover:text-white transition-colors duration-300">
                       {plan.amount}
@@ -98,6 +103,7 @@ export default function PricingPage() {
                   {plan.percentage}%{' '}
                   <span className="text-sm"> / Tài khoản</span>
                 </p>
+                </div>
                 <button className="w-full h-12 rounded-lg text-base font-medium mb-8 transition-all duration-300 bg-indigo-900 hover:bg-indigo-800 text-white group-hover:bg-green-500 group-hover:hover:bg-green-600">
                   Thuê ngay
                 </button>
