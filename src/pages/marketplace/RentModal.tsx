@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
@@ -15,9 +15,10 @@ import BaseHeader from '../../api/BaseHeader';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useUserStore } from '../../stores/useUserStore';
-import FieldForm from '../../components/form/FieldForm';
+import FieldForm, { OptionType } from '../../components/form/FieldForm';
 import { useOnOutsideClick } from '../../hook/useOutside';
 import dayjs from 'dayjs';
+import { VoucherData } from '../profile/Ticket';
 
 interface RentModalProps {
   isOpen: boolean;
@@ -54,8 +55,10 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const [isLoadingCookies, setIsLoadingCookies] = useState(false);
   const [rentalRange, setRentalRange] = useState<any>(null);
   const [rentalRangeError, setRentalRangeError] = useState<string | null>(null);
+  const [dataVoucher, setDataVoucher] = useState<VoucherData[]>([])
+  const [selectedVoucher, setSelectedVoucher] = useState('');
+  
   const isVisaAccount = account?.is_visa_account;
-  console.log('rentalRange', rentalRange);
   const { user } = useUserStore();
   const { addNotification } = useNotification();
 
@@ -68,6 +71,29 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     return requestedLimit + requestedLimit * 0.1;
   };
 
+  const selectedVoucherData = dataVoucher.find(
+    (item) => item.voucher_id === selectedVoucher
+  );
+
+  const discountAmount = (() => {
+    if (!selectedVoucherData || !selectedVoucherData.voucher) return 0;
+    const { type, discount } = selectedVoucherData.voucher;
+    if (type === 'fixed') return discount;
+    if (type === 'percentage' && requestedLimit)
+      return Math.floor((requestedLimit * discount) / 100);
+    return 0;
+  })();
+
+  const totalBill = useMemo(() => {
+    return calculateTotalPrice() - discountAmount
+  },[selectedVoucher, requestedLimit])
+
+  // Phí dịch vụ
+  const serviceFee = useMemo(() => {
+    const parsedLimit = Number(requestedLimit) || 0;
+    return parsedLimit * 0.1;
+  }, [requestedLimit]);
+  
   const handleSubmit = async () => {
     if (!rentalRange) {
       setRentalRangeError('Vui lòng chọn thời gian thuê.');
@@ -101,8 +127,9 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         ads_name: account?.name || '',
         bm_id: userBmId || '',
         ads_account_id: account?.account_id || '',
-        amountPoint: calculateTotalPrice(),
+        amountPoint: totalBill,
         bot_id: selectedCookieId || '',
+        voucher_id: selectedVoucher || '',
         start_date: [rentalRange.start],
         end_date: [rentalRange.end],
       });
@@ -120,7 +147,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         bm_id: userBmId || '',
         ads_account_id: account?.account_id || '',
         user_id: userParse.user_id || '',
-        amountPoint: calculateTotalPrice(),
+        amountPoint: totalBill,
+        voucher_id: selectedVoucher || '',
         bot_id: selectedCookieId || null,
       };
 
@@ -149,7 +177,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   useEffect(() => {
     if (isOpen) {
       fetchCookies();
-
+      fetchData()
       if (
         typeof rentMeta === 'object' &&
         rentMeta?.rentalRange &&
@@ -184,6 +212,27 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       setIsLoadingCookies(false);
     }
   };
+  const fetchData = async() => {
+    const userId = JSON.parse(localStorage.getItem('user') || '').user_id
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      `my-vouchers?user_id=${userId}`
+      const respone = await BaseHeader({
+        method: 'get',
+        url: `my-vouchers?user_id=${userId}`,
+      })
+      const formatData = respone.data.map((item:VoucherData) => {
+        return {
+          label: item.voucher.name,
+          value: item.voucher_id
+        }
+      } )
+      setDataVoucher(respone.data)
+
+    } catch(error:any) {
+      console.log('error',error)
+    }
+  }
 
   const isValidBmId = /^[0-9]+$/.test(userBmId) && userBmId.trim() !== '';
   const isValidLimit =
@@ -192,6 +241,11 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     requestedLimit > 10000;
   const isValid = isValidBmId && isValidLimit;
   const isValidRentalRange = rentalRange !== null && rentalRangeError === null;
+  const isVoucherExpired = (expiresAt: string) => {
+    const currentTime = new Date()
+    const expiryTime = new Date(expiresAt)
+    return expiryTime < currentTime
+  }
 
   if (!isOpen) return null;
   return (
@@ -440,6 +494,33 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     </div>
                   )}
                 </div>
+                <div>
+                  <label
+                    id="voucherSelect"
+                    className="text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Chọn voucher
+                  </label>
+                  <select
+                    id="voucherSelect"
+                    className="w-full px-3 py-2 border border-gray-100 rounded text-sm"
+                    onChange={(e) => setSelectedVoucher(e.target.value)}
+                  >
+                    <option className="text-gray-700" value="">
+                      -- Không sử dụng voucher --
+                    </option>
+                    {dataVoucher.map((item, index) => {
+                      const checkExpored = isVoucherExpired(item.voucher.expires_at)
+                      if(!checkExpored) {
+                        return (
+                          <option key={index} value={String(item.voucher_id)}>
+                            {item.voucher.name} (x{item.quantity})
+                          </option>
+                        )
+                      }
+                    })}
+                  </select>
+                </div>
               </div>
 
               <div className="bg-gray-50 p-4 rounded-md">
@@ -471,8 +552,21 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                         </span>
                       </div>
                     )}
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Phí dịch vụ (10%)</span>
+                  <div className="text-sm">
+                    {selectedVoucher && (
+                      <p className="text-gray-500">
+                        Giảm giá từ voucher:{' '}
+                        <span className="text-[#DC2625]">
+                          - {discountAmount.toLocaleString('vi-VN')} VNĐ
+                        </span>
+                      </p>
+                    )}
+                    <p className="text-gray-500 mt-2">
+                      Phí dịch vụ (10%):{' '}
+                      <span className="text-blue-600">
+                        {serviceFee.toLocaleString('vi-VN')}VNĐ
+                      </span>
+                    </p>
                     <span className="text-gray-900 font-medium">
                       {/* {(account.pricePerDay * rentalDays * 0.1).toLocaleString(
                         "vi-VN"
@@ -483,9 +577,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   <div className="border-t border-gray-200 pt-2 mt-2">
                     <div className="flex justify-between text-sm font-medium">
                       <span className="text-gray-900">Tổng thanh toán</span>
-                      <span className="text-blue-600">
-                        {calculateTotalPrice().toLocaleString('vi-VN')} VNĐ
-                      </span>
+                      <span className="text-blue-600">{totalBill.toLocaleString("vi-VN")} VNĐ</span>
                     </div>
                   </div>
                 </div>
@@ -496,7 +588,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   <span className="text-gray-500">Số dư của bạn: </span>
                   <span
                     className={`font-medium ${
-                      (user.points ?? 0) < calculateTotalPrice()
+                      (user.points ?? 0) < totalBill
                         ? 'text-red-600'
                         : 'text-green-600'
                     }`}
@@ -505,7 +597,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                       ? user.points.toLocaleString('vi-VN') + ' VNĐ'
                       : 'Đang tải...'}
                   </span>
-                  {(user.points ?? 0) < calculateTotalPrice() && (
+                  {(user.points ?? 0) < totalBill && (
                     <div className="mt-2 text-sm text-red-600">
                       Số dư không đủ để thuê tài khoản này. Vui lòng nạp thêm
                       tiền.
@@ -539,14 +631,14 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     !isValidBmId ||
                     !isValidLimit ||
                     !isValidRentalRange ||
-                    (user && (user.points ?? 0) < calculateTotalPrice())
+                    (user && (user.points ?? 0) < totalBill)
                   )
                 }
                 className={
                   !isValidBmId ||
                   !isValidLimit ||
                   !isValidRentalRange ||
-                  (user && (user.points ?? 0) < calculateTotalPrice())
+                  (user && (user.points ?? 0) < totalBill)
                     ? 'bg-gray-300 cursor-not-allowed'
                     : ''
                 }

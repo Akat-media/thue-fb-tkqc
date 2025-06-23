@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, User, CreditCard, LogOut } from 'lucide-react';
+import { Menu, X, User, CreditCard, LogOut, TicketPercent } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import LoginModal from '../../pages/auth/LoginModal.tsx';
 import RegisterModal from '../../pages/auth/RegisterModal.tsx';
@@ -40,6 +40,12 @@ const ProfileDropdown: React.FC<{
         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
       >
         <User className="mr-2 h-4 w-4" /> Tài khoản
+      </Link>
+      <Link
+        to="/ticket"
+        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+      >
+        <TicketPercent className="mr-2 h-4 w-4" /> Voucher
       </Link>
       <Link
         to="/payments"
