@@ -55,7 +55,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const [rentalRange, setRentalRange] = useState<any>(null);
   const [rentalRangeError, setRentalRangeError] = useState<string | null>(null);
   const isVisaAccount = account?.is_visa_account;
-
+  console.log('rentalRange', rentalRange);
   const { user } = useUserStore();
   const { addNotification } = useNotification();
 
@@ -103,7 +103,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         ads_account_id: account?.account_id || '',
         amountPoint: calculateTotalPrice(),
         bot_id: selectedCookieId || '',
-        ...rentalRange,
+        start_date: [rentalRange.start],
+        end_date: [rentalRange.end],
       });
       onClose();
       openCardModal?.();
@@ -384,7 +385,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                         return;
                       }
                       console.log('rentalRange', startDate, endDate);
-                      setRentalRange({ startDate, endDate });
+                      setRentalRange({ start: startDate, end: endDate });
                       setRentalRangeError(null);
                     }}
                     disabledDate={(current: any) => {
