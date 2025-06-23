@@ -134,11 +134,11 @@ const MarketplacePage: React.FC = () => {
     }
 
     setSelectedAccount(account);
-    if (account.is_visa_account === false) {
-      setIsRentModalOpen(true);
-    } else {
-      setIsCardModalOpen(true);
-    }
+    // if (!account.is_visa_account) {
+    setIsRentModalOpen(true);
+    // } else {
+    //   setIsCardModalOpen(true);
+    // }
   };
 
   //luu thong tin the

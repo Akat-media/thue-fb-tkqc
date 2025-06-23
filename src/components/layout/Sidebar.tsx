@@ -379,7 +379,7 @@ const Sidebar: React.FC<{
                   </p>
                   <p className="text-gray-500 truncate">{userobj?.email}</p>
                   <p className="font-semibold text-green-600 mt-1">
-                    {userobj?.points?.toLocaleString('vi-VN')} point
+                    {userobj?.points?.toLocaleString('vi-VN')} điểm
                   </p>
                 </div>
                 <Link

@@ -207,9 +207,10 @@ const RentalsPage: React.FC = () => {
           totalPrice: 1500000,
           spentBudget: parseInt(acc.amount_spent) || 0,
           status: mapApiStatus(item.status_rented || item.status),
-          createdAt: new Date(
-            acc.created_time || item.created_at || Date.now()
-          ),
+          // createdAt: new Date(
+          //   acc.created_time || item.created_at || Date.now()
+          // ),
+          createdAt: new Date(item.created_at || Date.now()),
           status_dischard_limit_spend: item.status_dischard_limit_spend,
           status_dischard_partner: item.status_dischard_partner,
           status_limit_spend: item.status_limit_spend || 0,
@@ -285,6 +286,10 @@ const RentalsPage: React.FC = () => {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: 'Asia/Ho_Chi_Minh',
     }).format(date);
   };
 
@@ -460,7 +465,7 @@ const RentalsPage: React.FC = () => {
                               Thời gian thuê:
                             </span>
                             <span className="font-semibold">
-                              {formatDate(rental.startDate)}
+                              {formatDate(new Date(rental.createdAt))}
                             </span>
                           </div>
 
@@ -559,7 +564,7 @@ const RentalsPage: React.FC = () => {
                                   {(
                                     rental.requestedLimit - rental.spentBudget
                                   ).toLocaleString('vi-VN')}{' '}
-                                  VNĐ chưa sử dụng
+                                  điểm chưa sử dụng
                                 </p>
                               </div>
                             </div>

@@ -80,7 +80,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     const days = Math.round((end.getTime() - start.getTime()) / msPerDay) + 1;
 
     if (days < 7 || days > 60) {
-      setRentalRangeError('Thời gian thuê phải từ 3 đến 60 ngày.');
+      setRentalRangeError('Thời gian thuê phải từ 7 đến 60 ngày.');
       return;
     }
 
@@ -227,6 +227,13 @@ const RentModal: React.FC<RentModalProps> = (props) => {
               <CardTitle>Thuê tài khoản quảng cáo</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {isVisaAccount == null && (
+                <div className="p-4 text-red-600 bg-red-100 rounded-md text-sm">
+                  Loại tài khoản không xác định. Vui lòng liên hệ quản trị viên
+                  để được hỗ trợ.
+                </div>
+              )}
+
               <div className="bg-blue-50 p-4 rounded-md">
                 <div className="flex">
                   <div className="flex-shrink-0">
@@ -293,119 +300,121 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     fullWidth
                   />
                 </div> */}
-
-                <div>
-                  <Input
-                    id="requestedLimit"
-                    label="Hạn mức chi tiêu yêu cầu (VNĐ)"
-                    type="number"
-                    min={account.defaultLimit / 2}
-                    max={account.defaultLimit * 2}
-                    step={50000}
-                    value={requestedLimit === null ? '' : requestedLimit}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value === '') {
-                        setRequestedLimit(null);
-                        setErrors((prev) => ({ ...prev, limit: undefined }));
-                        return;
+                {isVisaAccount === true && (
+                  <div>
+                    <Input
+                      id="requestedLimit"
+                      label="Hạn mức chi tiêu yêu cầu (VNĐ)"
+                      type="number"
+                      min={account.defaultLimit / 2}
+                      max={account.defaultLimit * 2}
+                      step={50000}
+                      value={requestedLimit === null ? '' : requestedLimit}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === '') {
+                          setRequestedLimit(null);
+                          setErrors((prev) => ({ ...prev, limit: undefined }));
+                          return;
+                        }
+                        const num = parseInt(value, 10);
+                        if (!isNaN(num) && num >= 0) {
+                          setRequestedLimit(num);
+                          setErrors((prev) => ({ ...prev, limit: undefined }));
+                        }
+                      }}
+                      onBlur={() => {
+                        if (
+                          requestedLimit === null ||
+                          !Number.isInteger(requestedLimit) ||
+                          requestedLimit <= 10000
+                        ) {
+                          setErrors((prev) => ({
+                            ...prev,
+                            limit: 'Số tiền phải lớn hơn 10.000 VNĐ',
+                          }));
+                        } else {
+                          setErrors((prev) => ({ ...prev, limit: undefined }));
+                        }
+                      }}
+                      error={
+                        !isValidLimit
+                          ? 'Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ'
+                          : ''
                       }
-                      const num = parseInt(value, 10);
-                      if (!isNaN(num) && num >= 0) {
-                        setRequestedLimit(num);
-                        setErrors((prev) => ({ ...prev, limit: undefined }));
+                      helperText={
+                        !isValidLimit
+                          ? 'Số tiền phải lớn hơn 10.000 VNĐ'
+                          : undefined
                       }
-                    }}
-                    onBlur={() => {
-                      if (
-                        requestedLimit === null ||
-                        !Number.isInteger(requestedLimit) ||
-                        requestedLimit <= 10000
-                      ) {
-                        setErrors((prev) => ({
-                          ...prev,
-                          limit: 'Số tiền phải lớn hơn 10.000 VNĐ',
-                        }));
-                      } else {
-                        setErrors((prev) => ({ ...prev, limit: undefined }));
-                      }
-                    }}
-                    error={
-                      !isValidLimit
-                        ? 'Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ'
-                        : ''
-                    }
-                    helperText={
-                      !isValidLimit
-                        ? 'Số tiền phải lớn hơn 10.000 VNĐ'
-                        : undefined
-                    }
-                    fullWidth
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                  />
-                  <div className="text-sm text-gray-500 mt-1 pl-2">
-                    Hạn mức:{' '}
-                    {requestedLimit !== null && !isNaN(requestedLimit)
-                      ? requestedLimit.toLocaleString('vi-VN')
-                      : '—'}{' '}
-                    VNĐ
-                  </div>
-                </div>
-                <div className="w-full">
-                  <FieldForm
-                    className="w-full sm:w-[400px]"
-                    type="rangeDate"
-                    name="rentalRange"
-                    label="Thời gian thuê (7-60 ngày)"
-                    format="YYYY-MM-DD"
-                    value={rentalRange as any}
-                    onChange={(value: any) => {
-                      const [start, end] = value;
-
-                      if (!start || !end) {
-                        setRentalRange(null);
-                        setRentalRangeError('Vui lòng chọn thời gian thuê.');
-                        return;
-                      }
-
-                      const startDate = start.toDate(); // chuyển từ dayjs -> Date
-                      const endDate = end.toDate();
-
-                      const msPerDay = 1000 * 60 * 60 * 24;
-                      const days =
-                        Math.round(
-                          (endDate.getTime() - startDate.getTime()) / msPerDay
-                        ) + 1;
-
-                      if (days < 7 || days > 60) {
-                        setRentalRangeError(
-                          'Thời gian thuê phải từ 7 đến 60 ngày.'
-                        );
-                        setRentalRange(null);
-                        return;
-                      }
-                      console.log('rentalRange', startDate, endDate);
-                      setRentalRange({ start: startDate, end: endDate });
-                      setRentalRangeError(null);
-                    }}
-                    disabledDate={(current: any) => {
-                      const today = new Date();
-                      today.setHours(0, 0, 0, 0);
-                      const maxEnd = new Date(today);
-                      maxEnd.setDate(maxEnd.getDate() + 59); // giới hạn 60 ngày kể từ hôm nay
-
-                      return (
-                        current.toDate() < today || current.toDate() > maxEnd
-                      );
-                    }}
-                  />
-                  {rentalRangeError && (
-                    <div className="text-red-500 text-sm mt-1">
-                      {rentalRangeError}
+                      fullWidth
+                      className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
+                    />
+                    <div className="text-sm text-gray-500 mt-1 pl-2">
+                      Hạn mức:{' '}
+                      {requestedLimit !== null && !isNaN(requestedLimit)
+                        ? requestedLimit.toLocaleString('vi-VN')
+                        : '—'}{' '}
+                      VNĐ
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
+                {isVisaAccount === false && (
+                  <div className="w-full">
+                    <FieldForm
+                      className="w-full sm:w-[400px]"
+                      type="rangeDate"
+                      name="rentalRange"
+                      label="Thời gian thuê (7-60 ngày)"
+                      format="YYYY-MM-DD"
+                      value={rentalRange as any}
+                      onChange={(value: any) => {
+                        const [start, end] = value;
 
+                        if (!start || !end) {
+                          setRentalRange(null);
+                          setRentalRangeError('Vui lòng chọn thời gian thuê.');
+                          return;
+                        }
+
+                        const startDate = start.toDate(); // chuyển từ dayjs -> Date
+                        const endDate = end.toDate();
+
+                        const msPerDay = 1000 * 60 * 60 * 24;
+                        const days =
+                          Math.round(
+                            (endDate.getTime() - startDate.getTime()) / msPerDay
+                          ) + 1;
+
+                        if (days < 7 || days > 60) {
+                          setRentalRangeError(
+                            'Thời gian thuê phải từ 7 đến 60 ngày.'
+                          );
+                          setRentalRange(null);
+                          return;
+                        }
+                        console.log('rentalRange', startDate, endDate);
+                        setRentalRange({ start: startDate, end: endDate });
+                        setRentalRangeError(null);
+                      }}
+                      disabledDate={(current: any) => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const maxEnd = new Date(today);
+                        maxEnd.setDate(maxEnd.getDate() + 59); // giới hạn 60 ngày kể từ hôm nay
+
+                        return (
+                          current.toDate() < today || current.toDate() > maxEnd
+                        );
+                      }}
+                    />
+                    {rentalRangeError && (
+                      <div className="text-red-500 text-sm mt-1">
+                        {rentalRangeError}
+                      </div>
+                    )}
+                  </div>
+                )}
                 <div>
                   <label
                     htmlFor="cookieSelect"
