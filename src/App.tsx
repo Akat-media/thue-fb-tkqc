@@ -31,6 +31,8 @@ import PricingManagement from './pages/admin/manager/budget/PricingManagement.ts
 import Layout from './components/layout/Layout.tsx';
 import { useUserStore } from './stores/useUserStore.ts';
 import RentalsManagement from './pages/admin/RentalsManagement';
+import VoucherManager from './pages/admin/manager/voucher/VoucherManager.tsx';
+import TicketPage from './pages/profile/Ticket.tsx';
 
 function App() {
   const userobj = useUserStore((state) => state.user);
@@ -71,6 +73,8 @@ function App() {
                 <Route path="/admin/policy" element={<PolicyManagement />} />
                 <Route path="/admin/princing" element={<PricingManagement />} />
                 <Route path="/admin/rentals" element={<RentalsManagement />} />
+                <Route path="/admin/voucher" element={<VoucherManager />} />
+
                 <Route
                   path="/admin/notifications"
                   element={<NotificationOverlay />}
@@ -80,6 +84,7 @@ function App() {
                 <Route path="/create-request" element={<RequestForm />} />
                 <Route path="/support" element={<ListSupport />} />
                 <Route path="/support/:id" element={<SupportTicketDetail />} />
+                <Route path="/ticket" element={<TicketPage />} />
               </Route>
             </Routes>
           </Layout>

@@ -1,12 +1,13 @@
 import React from "react";
 import { Form, Input, Select, Switch, Checkbox, DatePicker } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
+import { number } from "zod";
 
 const { TextArea } = Input;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-type OptionType = {
+export type OptionType = {
   label: string;
   value: string | number | boolean;
 };
@@ -158,7 +159,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
       required={false}
       label={
         type !== 'checkbox' || options.length > 0 ? (
-          <span className="font-semibold">
+          <span className="text-sm font-medium text-gray-700 mb-1" >
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
           </span>
