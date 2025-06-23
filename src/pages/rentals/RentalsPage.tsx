@@ -169,8 +169,7 @@ const RentalsPage: React.FC = () => {
       const userId = userInfo?.user_id || userInfo?.user?.id || '';
       const isAdmin = userInfo?.user?.role === 'admin';
 
-      let response;
-      response = await BaseHeader({
+      const response = await BaseHeader({
         method: 'get',
         url: 'ads-rent-accounts',
         params: {
@@ -235,6 +234,7 @@ const RentalsPage: React.FC = () => {
             includesAdAccount: true,
             status: acc.account_status === 1 ? 'active' : 'available',
             currency: acc.currency || 'VND',
+            is_sefl_used_visa: item?.is_sefl_used_visa,
           },
         };
       });
@@ -424,167 +424,174 @@ const RentalsPage: React.FC = () => {
             </div>
           ) : rentals.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {rentals.map((rental) => (
-                <Card
-                  key={rental.userBmId}
-                  className="h-full flex flex-col relative cursor-pointer hover:shadow-lg transition-shadow duration-200"
-                >
-                  <CardHeader>
-                    <div
-                      onClick={() => handleCardClick(rental)}
-                      className="flex justify-between items-start"
-                    >
-                      <CardTitle className="text-[22px]">
-                        {rental.adAccount.name}
-                      </CardTitle>
-                      {getStatusBadge(rental.status)}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex-grow relative z-10">
-                    <div className="space-y-4">
-                      <div className="font-sans text-gray-700 space-y-3">
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="flex items-center gap-1 text-gray-500">
-                            <Lightbulb className="w-4 h-4 text-yellow-400" />
-                            BM ID:
-                          </span>
-                          <span className="font-semibold">
-                            {rental.userBmId}
-                          </span>
+              {rentals.map((rental) => {
+                return (
+                  <Card
+                    key={rental.userBmId}
+                    className="h-full flex flex-col relative cursor-pointer hover:shadow-lg transition-shadow duration-200"
+                  >
+                    <CardHeader>
+                      <div
+                        onClick={() => handleCardClick(rental)}
+                        className="flex justify-between items-start"
+                      >
+                        <CardTitle className="text-[22px]">
+                          {rental.adAccount.name}
+                        </CardTitle>
+                        {getStatusBadge(rental.status)}
+                      </div>
+                    </CardHeader>
+                    <CardContent className="flex-grow relative z-10">
+                      <div className="space-y-4">
+                        <div className="font-sans text-gray-700 space-y-3">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="flex items-center gap-1 text-gray-500">
+                              <Lightbulb className="w-4 h-4 text-yellow-400" />
+                              BM ID:
+                            </span>
+                            <span className="font-semibold">
+                              {rental.userBmId}
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="flex items-center gap-1 text-gray-500">
+                              <Calendar className="w-4 h-4 text-blue-400" />
+                              Thời gian thuê:
+                            </span>
+                            <span className="font-semibold">
+                              {formatDate(rental.startDate)}
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="flex items-center gap-1 text-gray-500">
+                              <DollarSign className="w-4 h-4 text-green-400" />
+                              Giới hạn chi:
+                            </span>
+                            <span className="font-semibold">
+                              {rental?.adAccount?.is_sefl_used_visa
+                                ? 'No limit'
+                                : rental.requestedLimit.toLocaleString(
+                                    'vi-VN'
+                                  )}{' '}
+                              {!rental?.adAccount?.is_sefl_used_visa &&
+                                (rental.adAccount.currency || 'VND')}
+                            </span>
+                          </div>
+
+                          {!rental?.adAccount?.is_sefl_used_visa && (
+                            <>
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="flex items-center gap-1 text-gray-500">
+                                  <CreditCard className="w-4 h-4 text-red-400" />
+                                  Đã chi tiêu:
+                                </span>
+                                <span className="font-semibold">
+                                  {rental.spentBudget.toLocaleString('vi-VN')}{' '}
+                                  {rental.adAccount.currency || 'VND'}
+                                </span>
+                              </div>
+
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="flex items-center gap-1 text-gray-500">
+                                  <Wallet className="w-4 h-4 text-purple-400" />
+                                  Còn lại:
+                                </span>
+                                <span className="font-semibold">
+                                  {(
+                                    rental.requestedLimit - rental.spentBudget
+                                  ).toLocaleString('vi-VN')}{' '}
+                                  {rental.adAccount.currency || 'VND'}
+                                </span>
+                              </div>
+                            </>
+                          )}
                         </div>
 
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="flex items-center gap-1 text-gray-500">
-                            <Calendar className="w-4 h-4 text-blue-400" />
-                            Thời gian thuê:
-                          </span>
-                          <span className="font-semibold">
-                            {formatDate(rental.startDate)}
-                          </span>
-                        </div>
-
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="flex items-center gap-1 text-gray-500">
-                            <DollarSign className="w-4 h-4 text-green-400" />
-                            Giới hạn chi:
-                          </span>
-                          <span className="font-semibold">
-                            {rental.requestedLimit.toLocaleString('vi-VN')}{' '}
-                            {rental.adAccount.currency || 'VND'}
-                          </span>
-                        </div>
-
-                        {rental.adAccount.is_sefl_used_visa && (
-                          <>
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="flex items-center gap-1 text-gray-500">
-                                <CreditCard className="w-4 h-4 text-red-400" />
-                                Đã chi tiêu:
-                              </span>
-                              <span className="font-semibold">
-                                {rental.spentBudget.toLocaleString('vi-VN')}{' '}
-                                {rental.adAccount.currency || 'VND'}
-                              </span>
+                        {rental.status === 'available' && (
+                          <div className="pt-2">
+                            <div className="w-full bg-gray-200 rounded-full h-4">
+                              <div
+                                className="h-4 rounded-full"
+                                style={{
+                                  width: `${
+                                    rental.requestedLimit > 0
+                                      ? Math.min(
+                                          100,
+                                          (rental.spentBudget /
+                                            rental.requestedLimit) *
+                                            100
+                                        )
+                                      : 0
+                                  }%`,
+                                  background:
+                                    'linear-gradient(90deg, #4ade80, #22d3ee)',
+                                }}
+                              ></div>
                             </div>
-
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="flex items-center gap-1 text-gray-500">
-                                <Wallet className="w-4 h-4 text-purple-400" />
-                                Còn lại:
+                            <div className="flex justify-between text-xs text-gray-500 mt-1">
+                              <span>0%</span>
+                              <span>
+                                {rental.requestedLimit > 0
+                                  ? Math.round(
+                                      (rental.spentBudget /
+                                        rental.requestedLimit) *
+                                        100
+                                    )
+                                  : 0}
+                                %
                               </span>
-                              <span className="font-semibold">
-                                {(
-                                  rental.requestedLimit - rental.spentBudget
-                                ).toLocaleString('vi-VN')}{' '}
-                                {rental.adAccount.currency || 'VND'}
-                              </span>
+                              <span>100%</span>
                             </div>
-                          </>
+                          </div>
+                        )}
+                        {rental.status === 'faild' &&
+                          rental.spentBudget < rental.requestedLimit && (
+                            <div className="bg-red-50 p-3 rounded-md flex items-start">
+                              <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+                              <div className="ml-3">
+                                <h3 className="text-sm font-medium text-red-700">
+                                  Hoàn tiền khả dụng
+                                </h3>
+                                <p className="text-sm text-red-700 mt-1">
+                                  Bạn có thể yêu cầu hoàn{' '}
+                                  {(
+                                    rental.requestedLimit - rental.spentBudget
+                                  ).toLocaleString('vi-VN')}{' '}
+                                  VNĐ chưa sử dụng
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                      </div>
+                    </CardContent>
+                    <div className="px-6 py-4 relative z-10">
+                      <div className="flex space-x-3">
+                        {rental.status === 'success' && (
+                          <Button size="sm" fullWidth>
+                            Yêu cầu hoàn tiền
+                          </Button>
+                        )}
+                        {rental.status === 'process' && (
+                          <Button
+                            className="bg-yellow-500 hover:bg-yellow-400 py-2"
+                            size="sm"
+                            icon={<RefreshCw className="h-4 w-4" />}
+                            fullWidth
+                            disabled
+                          >
+                            Đang xử lý
+                          </Button>
                         )}
                       </div>
-
-                      {rental.status === 'available' && (
-                        <div className="pt-2">
-                          <div className="w-full bg-gray-200 rounded-full h-4">
-                            <div
-                              className="h-4 rounded-full"
-                              style={{
-                                width: `${
-                                  rental.requestedLimit > 0
-                                    ? Math.min(
-                                        100,
-                                        (rental.spentBudget /
-                                          rental.requestedLimit) *
-                                          100
-                                      )
-                                    : 0
-                                }%`,
-                                background:
-                                  'linear-gradient(90deg, #4ade80, #22d3ee)',
-                              }}
-                            ></div>
-                          </div>
-                          <div className="flex justify-between text-xs text-gray-500 mt-1">
-                            <span>0%</span>
-                            <span>
-                              {rental.requestedLimit > 0
-                                ? Math.round(
-                                    (rental.spentBudget /
-                                      rental.requestedLimit) *
-                                      100
-                                  )
-                                : 0}
-                              %
-                            </span>
-                            <span>100%</span>
-                          </div>
-                        </div>
-                      )}
-                      {rental.status === 'faild' &&
-                        rental.spentBudget < rental.requestedLimit && (
-                          <div className="bg-red-50 p-3 rounded-md flex items-start">
-                            <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-                            <div className="ml-3">
-                              <h3 className="text-sm font-medium text-red-700">
-                                Hoàn tiền khả dụng
-                              </h3>
-                              <p className="text-sm text-red-700 mt-1">
-                                Bạn có thể yêu cầu hoàn{' '}
-                                {(
-                                  rental.requestedLimit - rental.spentBudget
-                                ).toLocaleString('vi-VN')}{' '}
-                                VNĐ chưa sử dụng
-                              </p>
-                            </div>
-                          </div>
-                        )}
                     </div>
-                  </CardContent>
-                  <div className="px-6 py-4 relative z-10">
-                    <div className="flex space-x-3">
-                      {rental.status === 'success' && (
-                        <Button size="sm" fullWidth>
-                          Yêu cầu hoàn tiền
-                        </Button>
-                      )}
-                      {rental.status === 'process' && (
-                        <Button
-                          className="bg-yellow-500 hover:bg-yellow-400 py-2"
-                          size="sm"
-                          icon={<RefreshCw className="h-4 w-4" />}
-                          fullWidth
-                          disabled
-                        >
-                          Đang xử lý
-                        </Button>
-                      )}
+                    <div className="absolute bottom-0 left-0 w-full">
+                      <img className="w-full" src={url} alt="img" />
                     </div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 w-full">
-                    <img className="w-full" src={url} alt="img" />
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-12">
