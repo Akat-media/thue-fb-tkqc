@@ -32,7 +32,7 @@ const ProfileDropdown: React.FC<{
           {user?.email || 'email@example.com'}
         </p>
         <p className="font-semibold text-green-600 mt-1">
-          {user?.points || 0} điểm
+          {user?.points?.toLocaleString('vi-VN')} điểm
         </p>
       </div>
       <Link

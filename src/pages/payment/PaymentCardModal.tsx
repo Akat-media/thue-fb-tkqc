@@ -139,7 +139,11 @@ const PaymentCardModal: React.FC<Props> = ({
             <input
               type="text"
               value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/\D/g, '').slice(0, 16);
+                const formatted = rawValue.replace(/(.{4})/g, '$1 ').trim();
+                setCardNumber(formatted);
+              }}
               className="w-full border border-gray-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="1234 5678 9012 3456"
               inputMode="numeric"
@@ -160,11 +164,18 @@ const PaymentCardModal: React.FC<Props> = ({
               <input
                 type="text"
                 value={expiry}
-                onChange={(e) => setExpiry(e.target.value)}
+                onChange={(e) => {
+                  let raw = e.target.value.replace(/\D/g, '').slice(0, 4);
+                  if (raw.length >= 3) {
+                    raw = `${raw.slice(0, 2)}/${raw.slice(2)}`;
+                  }
+                  setExpiry(raw);
+                }}
                 className="w-full border border-gray-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
                 placeholder="12/25"
                 maxLength={5}
               />
+
               {errors.expiry && (
                 <div className="text-red-500 text-xs mt-1">{errors.expiry}</div>
               )}
@@ -176,11 +187,13 @@ const PaymentCardModal: React.FC<Props> = ({
               <input
                 type="password"
                 value={cvv}
-                onChange={(e) => setCvv(e.target.value)}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/\D/g, '').slice(0, 4);
+                  setCvv(raw);
+                }}
                 className="w-full border border-gray-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
                 placeholder="•••"
                 inputMode="numeric"
-                maxLength={4}
               />
               {errors.cvv && (
                 <div className="text-red-500 text-xs mt-1">{errors.cvv}</div>
