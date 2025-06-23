@@ -178,6 +178,7 @@ export default function TicketPage() {
     const fetchData = async() => {
       const userId = JSON.parse(localStorage.getItem('user') || '').user_id
       try {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         `my-vouchers?user_id=${userId}`
         const respone = await BaseHeader({
           method: 'get',
@@ -187,8 +188,8 @@ export default function TicketPage() {
         setStateDate(respone.data)
         console.log('userId1111', respone)
   
-      } catch {
-  
+      } catch(error:any) {
+        console.log('object', error)
       }
     }
     fetchData()
