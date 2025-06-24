@@ -434,7 +434,7 @@ const MarketplacePage: React.FC = () => {
                     htmlFor="accountType"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Loại tài khoản
+                    Dạng tài khoản
                   </label>
                   <select
                     id="accountType"
