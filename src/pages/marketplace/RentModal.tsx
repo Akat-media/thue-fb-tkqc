@@ -196,6 +196,23 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isOpen) {
+      // Chặn scroll khi modal mở
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = '15px'; // Bù trừ scrollbar width
+    } else {
+      // Khôi phục scroll khi modal đóng
+      document.body.style.overflow = 'unset';
+      document.body.style.paddingRight = '0px';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.body.style.paddingRight = '0px';
+    };
+  }, [isOpen]);
+
   const fetchCookies = async () => {
     try {
       setIsLoadingCookies(true);
@@ -249,7 +266,11 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div 
+      className="fixed inset-0 z-50"
+      onWheel={(e) => e.preventDefault()}
+      onTouchMove={(e) => e.preventDefault()}
+    >
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -264,7 +285,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
         <div
           ref={innerBorderRef}
-          className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+          className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-lg sm:w-full"
         >
           <Card className="border-0 shadow-none">
             <CardHeader className="relative">
@@ -280,7 +301,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
               </button>
               <CardTitle>Thuê tài khoản quảng cáo</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 overflow-y-auto max-h-[calc(100vh-150px)]">
               {isVisaAccount == null && (
                 <div className="p-4 text-red-600 bg-red-100 rounded-md text-sm">
                   Loại tài khoản không xác định. Vui lòng liên hệ quản trị viên
@@ -585,7 +606,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
               {user && (
                 <div className="text-sm">
-                  <span className="text-gray-500">Số dư của bạn: </span>
+                  <span className="text-gray-500">Số dư của bạn: </span> 
                   <span
                     className={`font-medium ${
                       (user.points ?? 0) < totalBill
