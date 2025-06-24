@@ -232,25 +232,15 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const fetchData = async() => {
     const userId = JSON.parse(localStorage.getItem('user') || '').user_id
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      `my-vouchers?user_id=${userId}`
       const respone = await BaseHeader({
         method: 'get',
         url: `my-vouchers?user_id=${userId}`,
       })
-      const formatData = respone.data.map((item:VoucherData) => {
-        return {
-          label: item.voucher.name,
-          value: item.voucher_id
-        }
-      } )
-      setDataVoucher(respone.data)
-
+      setDataVoucher(respone.data.data)
     } catch(error:any) {
       console.log('error',error)
     }
   }
-
   const isValidBmId = /^[0-9]+$/.test(userBmId) && userBmId.trim() !== '';
   const isValidLimit =
     requestedLimit !== null &&
