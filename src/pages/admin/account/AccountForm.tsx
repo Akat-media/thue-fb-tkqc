@@ -374,7 +374,7 @@ const AccountForm: React.FC = () => {
         url: `/all-vouchers/${id}`,
         baseURL: BaseUrl,
       });
-      const vouchersWithInitialState = respone.data.map(
+      const vouchersWithInitialState = respone.data.data.map(
         (v: VoucherWithMeta) => ({
           ...v,
           initial_quantity: v.quantity,
@@ -404,7 +404,7 @@ const AccountForm: React.FC = () => {
         data: payload,
       });
       setShowVoucherModal(false);
-      toast.success('Cập nhật voucher cho người dùng thành công')
+      toast.success(respone.data.message)
     } catch (err: any) {
       toast.error(err?.response?.data?.error ||'Có lỗi xảy ra. Vui lòng thử lại');
     }
@@ -955,7 +955,7 @@ const AccountForm: React.FC = () => {
                 </h2>
               </div>
               <div className="p-6">
-                <div className="space-y-6">
+                <div className="space-y-6 overflow-y-scroll max-h-[500px]">
                   <Table
                     dataSource={voucherList}
                     rowKey="id"
@@ -1000,6 +1000,7 @@ const AccountForm: React.FC = () => {
                     }}
                     columns={columns}
                   />
+                </div>
                   <div className="flex gap-3 pt-6 border-t border-gray-100">
                     <button
                       type="button"
@@ -1024,7 +1025,6 @@ const AccountForm: React.FC = () => {
                       Lưu thay đổi
                     </button>
                   </div>
-                </div>
               </div>
             </div>
           </div>

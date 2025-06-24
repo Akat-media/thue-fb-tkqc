@@ -42,9 +42,9 @@ const revenueOptions: ChartOptions<"line"> = {
   scales: {
     y: {
       beginAtZero: true,
-      ticks: {
-        callback: (value: any) => `${(value / 1000000).toFixed(0)} M`,
-      },
+      // ticks: {
+      //   callback: (value: any) => `${(value).toFixed(0)} M`,
+      // },
     },
     x: {
       ticks: {

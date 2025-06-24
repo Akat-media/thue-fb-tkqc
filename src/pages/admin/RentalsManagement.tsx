@@ -23,6 +23,7 @@ import usePagination from '../../hook/usePagination';
 import { Pagination } from 'antd';
 import { NotiError, NotiSuccess } from '../../components/noti';
 import url from '../../assets/bg.svg';
+import { toast } from 'react-toastify';
 
 const RentalsManagement: React.FC = () => {
   const [rentals, setRentals] = useState<any[]>([]);
@@ -85,10 +86,8 @@ const RentalsManagement: React.FC = () => {
       if (success) setSuccessRent(message);
       else setErrorRent(message);
     } catch (error: any) {
-      setErrorRent(
-        error?.response?.data?.message ||
-          'Lỗi kết nối hệ thống. Vui lòng thử lại!'
-      );
+      toast.error(error?.response?.data?.message ||
+        'Lỗi kết nối hệ thống. Vui lòng thử lại!');
     }
   };
 
@@ -304,9 +303,9 @@ const RentalsManagement: React.FC = () => {
           />
         )}
 
-        {errorRent && (
+        {/* {errorRent && (
           <NotiError onClose={() => setErrorRent(null)} message={errorRent} />
-        )}
+        )} */}
       </div>
     </>
   );
