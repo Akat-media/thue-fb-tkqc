@@ -231,14 +231,14 @@ const AdminTransactionsPage: React.FC = () => {
         </th>
       ),
     },
-    {
-      key: 'edit',
-      render: () => (
-        <th className="px-4 py-3 text-center min-w-[50px] border border-gray-200">
-          <SquarePen className="w-4 h-4 text-gray-500" />
-        </th>
-      ),
-    },
+    // {
+    //   key: 'edit',
+    //   render: () => (
+    //     <th className="px-4 py-3 text-center min-w-[50px] border border-gray-200">
+    //       <SquarePen className="w-4 h-4 text-gray-500" />
+    //     </th>
+    //   ),
+    // },
     {
       key: 'id',
       label: 'ID',
@@ -343,14 +343,14 @@ const AdminTransactionsPage: React.FC = () => {
         </th>
       ),
     },
-    {
-      key: 'edit',
-      render: () => (
-        <th className="px-4 py-3 text-center min-w-[50px] border border-gray-200">
-          <SquarePen className="w-4 h-4 text-gray-500" />
-        </th>
-      ),
-    },
+    // {
+    //   key: 'edit',
+    //   render: () => (
+    //     <th className="px-4 py-3 text-center min-w-[50px] border border-gray-200">
+    //       <SquarePen className="w-4 h-4 text-gray-500" />
+    //     </th>
+    //   ),
+    // },
     {
       key: 'id',
       label: 'ID',
@@ -591,7 +591,7 @@ const AdminTransactionsPage: React.FC = () => {
                         </label>
                       </td>
 
-                      <td className="px-4 py-2 text-center border border-gray-100">
+                      {/* <td className="px-4 py-2 text-center border border-gray-100">
                         <button
                           onClick={() => {
                             setSelectedAccount(item);
@@ -602,7 +602,7 @@ const AdminTransactionsPage: React.FC = () => {
                         >
                           <SquarePen className="w-4 h-4 mx-auto" />
                         </button>
-                      </td>
+                      </td> */}
 
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
@@ -900,7 +900,7 @@ const AdminTransactionsPage: React.FC = () => {
                         </label>
                       </td>
 
-                      <td className="px-4 py-2 text-center border border-gray-100">
+                      {/* <td className="px-4 py-2 text-center border border-gray-100">
                         <button
                           onClick={() => {
                             setSelectedAccount(item);
@@ -911,7 +911,7 @@ const AdminTransactionsPage: React.FC = () => {
                         >
                           <SquarePen className="w-4 h-4 mx-auto" />
                         </button>
-                      </td>
+                      </td> */}
 
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${

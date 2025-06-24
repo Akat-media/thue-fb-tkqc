@@ -351,7 +351,7 @@ const MarketplacePage: React.FC = () => {
               </div>
               <input
                 type="text"
-                placeholder="Tìm kiếm BM, tài khoản..."
+                placeholder="Tìm kiếm tài khoản..."
                 className="w-full h-[42px] block pl-10 pr-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
                 value={searchTerm}
                 onChange={handleSearch}
