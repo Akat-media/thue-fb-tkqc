@@ -351,7 +351,7 @@ const MarketplacePage: React.FC = () => {
               </div>
               <input
                 type="text"
-                placeholder="Tìm kiếm BM, tài khoản..."
+                placeholder="Tìm kiếm tài khoản..."
                 className="w-full max-w-[400px] h-[42px] block pl-10 pr-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
                 value={searchTerm}
                 onChange={handleSearch}
@@ -362,7 +362,9 @@ const MarketplacePage: React.FC = () => {
                 onClick={toggleFilters}
               >
                 <Filter className="h-5 w-5 text-gray-400" />
-                <span className="ml-2 hidden whitespace-nowrap lg:inline">Bộ lọc</span>
+                <span className="ml-2 hidden whitespace-nowrap lg:inline">
+                  Bộ lọc
+                </span>
                 <ChevronDown
                   className={`ml-1 h-4 w-4 transition-transform ${
                     isFiltersOpen ? 'rotate-180' : ''
@@ -370,7 +372,6 @@ const MarketplacePage: React.FC = () => {
                 />
               </button>
             </div>
-
           </div>
 
           <div className="mt-3 md:mt-0 flex items-center gap-3">

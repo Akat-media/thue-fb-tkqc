@@ -33,15 +33,26 @@ import { useUserStore } from './stores/useUserStore.ts';
 import RentalsManagement from './pages/admin/RentalsManagement';
 import VoucherManager from './pages/admin/manager/voucher/VoucherManager.tsx';
 import TicketPage from './pages/profile/Ticket.tsx';
+import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 
 function App() {
   const userobj = useUserStore((state) => state.user);
+  const ScrollToTop = () => {
+    const { pathname } = useLocation();
+    useEffect(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [pathname]);
+
+    return null;
+  };
   return (
     <AuthProvider>
       <NotificationProvider>
         <Router>
           <Navbar />
           <Layout role={userobj?.role}>
+            <ScrollToTop />
             <Routes>
               {/* Route công khai: Không yêu cầu đăng nhập */}
               <Route path="/login" element={<LoginPage />} />

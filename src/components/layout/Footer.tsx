@@ -1,6 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Facebook, Twitter, Instagram, Mail, Phone } from "lucide-react";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Facebook, Twitter, Instagram, Mail, Phone } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -41,14 +41,14 @@ const Footer: React.FC = () => {
               Dịch vụ
             </h3>
             <ul className="mt-4 space-y-2">
-              <li>
+              {/* <li>
                 <Link
                   to="/marketplace"
                   className="text-gray-300 hover:text-white"
                 >
                   Cho thuê BM
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
                   to="/marketplace"
