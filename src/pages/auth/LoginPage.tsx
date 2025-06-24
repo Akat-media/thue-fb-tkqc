@@ -10,9 +10,9 @@ import ForgotPasswordModal from './ForgotPasswordModal.tsx';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import loginimg from '../../public/login.jpg';
+import axios from 'axios';
 
 const LoginPage: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -46,21 +46,28 @@ const LoginPage: React.FC = () => {
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      const res = await BaseHeader({
-        method: 'post',
-        url: '/login',
-        baseURL: BaseUrl,
-        data: {
+      const res = await axios.post(
+        '/login',
+        {
           email: email,
           password: password,
         },
-      });
-      setUser(res.data.data.user);
-      navigate('/');
-      localStorage.setItem('access_token', res.data.data.access_token);
-      localStorage.setItem('refresh_token', res.data.data.refresh_token);
-      localStorage.setItem('user', JSON.stringify(res.data.data));
-      toast.success('Đăng nhập thành công!');
+        {
+          baseURL: BaseUrl,
+        }
+      );
+      if (res.status == 200) {
+        setIsLoading(false);
+        setUser(res.data.data.user);
+        navigate('/');
+        localStorage.setItem('access_token', res.data.data.access_token);
+        localStorage.setItem('refresh_token', res.data.data.refresh_token);
+        localStorage.setItem('user', JSON.stringify(res.data.data));
+        toast.success('Đăng nhập thành công!');
+      } else {
+        setIsLoading(false);
+        toast.error(res.data.message);
+      }
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại'

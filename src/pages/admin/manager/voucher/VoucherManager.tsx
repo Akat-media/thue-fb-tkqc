@@ -33,12 +33,11 @@ const VoucherManager = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingVoucher, setEditingVoucher] = useState<any | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
-  console.log('data', data);
   const fetchVouchers = async () => {
     setLoading(true);
     try {
       const res = await BaseHeader.get('/voucher');
-      const formatData = res.data.map((item:Voucher) => {
+      const formatData = res.data.data.map((item:Voucher) => {
         return {
           ...item,
           type: item.type === 'fixed' ? 'VNĐ' : '%',
@@ -92,7 +91,8 @@ const VoucherManager = () => {
       setModalVisible(false);
       fetchVouchers();
     } catch (err: any) {
-      toast.error('Lỗi khi lưu voucher');
+      const errorMessage = err.response?.data.message || 'Lỗi khi lưu voucher';
+      toast.error(errorMessage);
     } finally {
       setModalLoading(false);
     }

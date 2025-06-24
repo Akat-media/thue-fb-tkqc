@@ -138,6 +138,22 @@ const PricingManagement: React.FC = () => {
                 placeholder="0"
               />
               <FieldForm
+                type="input"
+                name="currency"
+                label="Đơn vị tiền tệ"
+                placeholder="VND"
+                required
+              />
+              <FieldForm
+                type="input"
+                name="percentage"
+                label="Phần trăm (%) chiết khấu thêm"
+                placeholder="Nhập phần trăm (%)"
+                inputType="number"
+                min={0}
+                max={100}
+              />
+              <FieldForm
                 type="textarea"
                 name="description"
                 label="Mô tả"
@@ -161,22 +177,7 @@ const PricingManagement: React.FC = () => {
                   }
                 />
               </div>
-              <FieldForm
-                type="input"
-                name="currency"
-                label="Đơn vị tiền tệ"
-                placeholder="VND"
-                required
-              />
-              <FieldForm
-                type="input"
-                name="percentage"
-                label="Phần trăm (%) chiết khấu thêm"
-                placeholder="Nhập phần trăm (%)"
-                inputType="number"
-                min={0}
-                max={100}
-              />
+              
               <FieldForm type="hidden" name="id" label={''} />
               <div className="flex justify-end space-x-2 mt-4">
                 <Button

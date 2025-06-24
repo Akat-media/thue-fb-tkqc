@@ -23,6 +23,7 @@ import img1 from '../public/homepage.png';
 import metalogo from '../public/metalogo.png';
 import { toast } from 'react-toastify';
 import BaseHeader from '../api/BaseHeader.ts';
+import { useTranslation } from 'react-i18next';
 
 type MonthlyTotal = {
   totalRevenue: number;
@@ -170,10 +171,19 @@ const HomePage: React.FC = () => {
     if (role === 'admin')
       fetchDataChart(dateRange.targetFrom, dateRange.targetTo);
   }, []);
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
   return (
     <>
       {role !== 'admin' && (
         <>
+          <h1>{t('welcome')}</h1>
+          <button onClick={() => changeLanguage('vi')}>Tiếng Việt</button>
+          <button onClick={() => changeLanguage('en')}>English</button>
+          {/* phần translate xóa khi dùng xong */}
           <div className="bg-gradient-to-r from-[#1e3a8a] to-[#3b82f6] text-white relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
               <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">

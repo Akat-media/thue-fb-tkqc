@@ -6,6 +6,7 @@ import { BaseUrl } from '../../api/BaseHeader';
 import BaseHeader from '../../api/BaseHeader';
 import AtomicSpinner from 'atomic-spinner';
 import registerimg from '../../public/sand.jpg';
+import axios from 'axios';
 
 const RegisterPage: React.FC = () => {
   // const [isOpen, setIsOpen] = useState(true);
@@ -64,25 +65,28 @@ const RegisterPage: React.FC = () => {
         },
       });
       if (registerRes.status === 200) {
+        setIsLoading(false);
         addNotification(
           'Đăng ký thành công',
           'Tài khoản của bạn đã được tạo!',
           'success'
         );
-        const loginRes = await BaseHeader({
-          method: 'post',
-          url: '/login',
-          baseURL: BaseUrl,
-          data: {
+        const loginRes = await axios.post(
+          '/login',
+          {
             email: email,
             password: password,
           },
-        });
+          {
+            baseURL: BaseUrl,
+          }
+        );
         navigate('/');
         localStorage.setItem('access_token', loginRes.data.data.access_token);
         localStorage.setItem('refresh_token', loginRes.data.data.refresh_token);
         localStorage.setItem('user', JSON.stringify(loginRes.data.data));
       } else {
+        setIsLoading(false);
         addNotification('Đăng ký thất bại', registerRes.data.message, 'error');
       }
     } catch (error: any) {

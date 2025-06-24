@@ -65,7 +65,6 @@ const MarketplacePage: React.FC = () => {
   const [selectedBMId, setSelectedBMId] = useState<string>('all');
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [successRent, setSuccessRent] = useState<any>(null);
-  const [errorRent, setErrorRent] = useState<any>(null);
   const [selectedSyncBMId, setSelectedSyncBMId] = useState<string>('');
   const [isSyncing, setIsSyncing] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -338,39 +337,41 @@ const MarketplacePage: React.FC = () => {
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
-              Danh sách BM / Tài khoản quảng cáo
+              {/* Danh sách BM / Tài khoản quảng cáo */}
+              Tài khoản quảng cáo BM
             </h2>
           </div>
         </div>
 
         <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between">
           <div className="w-full lg:w-1/2 flex items-center gap-2">
-            <div className="relative flex-1">
+            <div className="relative flex gap-3 flex-1">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
                 type="text"
                 placeholder="Tìm kiếm tài khoản..."
-                className="w-full h-[42px] block pl-10 pr-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
+                className="w-full max-w-[400px] h-[42px] block pl-10 pr-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
                 value={searchTerm}
                 onChange={handleSearch}
               />
+              <button
+                type="button"
+                className="h-[42px] px-3 sm:px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center"
+                onClick={toggleFilters}
+              >
+                <Filter className="h-5 w-5 text-gray-400" />
+                <span className="ml-2 hidden whitespace-nowrap lg:inline">
+                  Bộ lọc
+                </span>
+                <ChevronDown
+                  className={`ml-1 h-4 w-4 transition-transform ${
+                    isFiltersOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
             </div>
-
-            <button
-              type="button"
-              className="h-[42px] px-3 sm:px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center"
-              onClick={toggleFilters}
-            >
-              <Filter className="h-5 w-5 text-gray-400" />
-              <span className="ml-2 hidden sm:inline">Bộ lọc</span>
-              <ChevronDown
-                className={`ml-1 h-4 w-4 transition-transform ${
-                  isFiltersOpen ? 'rotate-180' : ''
-                }`}
-              />
-            </button>
           </div>
 
           <div className="mt-3 md:mt-0 flex items-center gap-3">
@@ -505,7 +506,6 @@ const MarketplacePage: React.FC = () => {
             onClose={() => setIsRentModalOpen(false)}
             account={selectedAccount}
             setSuccessRent={setSuccessRent}
-            setErrorRent={setErrorRent}
             openCardModal={() => setIsCardModalOpen(true)}
             skipCardStep={selectedAccount?.is_visa_account === true}
             setRentMeta={setRentMeta}
@@ -520,9 +520,9 @@ const MarketplacePage: React.FC = () => {
           />
         )}
 
-        {errorRent && (
+        {/* {errorRent && (
           <NotiError onClose={() => setErrorRent('')} message={errorRent} />
-        )}
+        )} */}
         <CreateBMModal
           isOpen={isCreateBMModalOpen}
           onClose={() => setIsCreateBMModalOpen(false)}

@@ -1,7 +1,8 @@
 import React from "react";
-import { Briefcase, ShieldCheck, CircleFadingPlus, Trash2 } from "lucide-react";
+import { Briefcase, ShieldCheck, CircleFadingPlus, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardFooter } from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
+import { Tooltip } from "antd";
 import styled from "styled-components";
 import url from "../../assets/bg.svg";
 
@@ -25,11 +26,13 @@ const BMCard: React.FC<BMCardProps> = ({ bm, onClick, onDelete }) => {
     <CardContainer url={url}>
       <Card className="relative main-card h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
         <CardContent className="flex-grow relative z-10">
-          <div className="flex justify-between items-start">
-            <h3 className="text-[22px] font-semibold text-gray-900">
-              {bm?.bm_name}
-            </h3>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium gap-1 cursor-pointer bg-green-100 text-green-700 border border-green-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="flex justify-between items-start h-[55px]">
+            <Tooltip title={bm?.bm_name} placement="top">
+              <h3 className="text-[22px] font-semibold text-gray-900 line-clamp-2 overflow-hidden text-ellipsis leading-tight max-w-[200px] cursor-pointer">
+                {bm?.bm_name}
+              </h3>
+            </Tooltip>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium gap-1 cursor-pointer bg-green-100 text-green-700 border border-green-200 shadow-sm hover:shadow-md transition-all duration-200 whitespace-nowrap">
               Hoạt động
             </span>
           </div>
@@ -39,7 +42,9 @@ const BMCard: React.FC<BMCardProps> = ({ bm, onClick, onDelete }) => {
                 <Briefcase className="h-4 w-4 text-gray-400" />
                 BM ID:
               </span>
-              <span className="text-gray-900 font-medium">{bm?.bm_id}</span>
+              <Tooltip title={bm?.bm_id} placement="top">
+                <span className="text-gray-900 font-medium overflow-hidden text-ellipsis leading-tight cursor-pointer">{bm?.bm_id}</span>
+              </Tooltip>
             </div>
             <div className="flex items-center text-sm">
               <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
@@ -75,7 +80,7 @@ const BMCard: React.FC<BMCardProps> = ({ bm, onClick, onDelete }) => {
           </div>
         </CardFooter>
         <div className="absolute bottom-0 left-0 w-full">
-          <img className="w-full" src={url} alt="img" />
+          <img className="w-full" src={url || "/placeholder.svg"} alt="img" />
         </div>
       </Card>
     </CardContainer>
