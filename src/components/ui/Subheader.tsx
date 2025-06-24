@@ -14,11 +14,11 @@ const Subheader = ({ active, setActive }: Props) => {
       <div className="bg-info mb-5 w-full justify-between rounded-lg p-2 sm:p-4 md:p-6 flex flex-col md:flex-row gap-2 md:gap-4">
         <div className="flex flex-col md:flex-row w-full md:w-auto">
           <a
-            className="relative flex min-w-0 sm:min-w-[200px] md:min-w-[284px] flex-col justify-between"
+            className="relative flex min-w-0 sm:min-w-[200px] md:min-w-[200px] flex-col justify-between"
             href={userobj?.role === "admin" ? "/admin/profile" : "/profile"}
           >
-            <div className="flex w-full flex-row justify-between">
-              <div className="flex w-full flex-row">
+            <div className="flex flex-row">
+              <div className="flex flex-row">
                 <span
                   className="rounded-full ant-avatar ant-avatar-circle ant-avatar-icon shrink-1 !h-10 !w-10 sm:!h-[50px] sm:!w-[50px] md:!h-[60px] md:!w-[60px] !m-[5px] !text-[20px] sm:!text-[24px] md:!text-[28px] css-1k979oh"
                   style={{ backgroundColor: "rgb(184, 184, 184)" }}

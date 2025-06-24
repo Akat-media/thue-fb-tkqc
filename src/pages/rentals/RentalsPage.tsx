@@ -92,7 +92,6 @@ const RentalsPage: React.FC = () => {
   const [showCreateAdAccountModal, setShowCreateAdAccountModal] =
     useState(false);
   const [successRent, setSuccessRent] = useState<any>(null);
-  const [errorRent, setErrorRent] = useState<any>(null);
 
   const { innerBorderRef } = useOnOutsideClick(() => {
     setShowModal(false);
@@ -814,10 +813,6 @@ const RentalsPage: React.FC = () => {
           onClose={() => setSuccessRent('')}
           message={'Vui lòng đợi giây lát để hệ thống setup'}
         />
-      )}
-
-      {errorRent && (
-        <NotiError onClose={() => setErrorRent('')} message={errorRent} />
       )}
     </>
   );

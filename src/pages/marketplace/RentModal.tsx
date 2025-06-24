@@ -25,7 +25,6 @@ interface RentModalProps {
   onClose: () => void;
   account: any;
   setSuccessRent: React.Dispatch<React.SetStateAction<any>>;
-  setErrorRent: React.Dispatch<React.SetStateAction<any>>;
   skipCardStep?: boolean;
   openCardModal?: () => void;
   setRentMeta?: (meta: any) => void;
@@ -38,7 +37,6 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     onClose,
     account,
     setSuccessRent,
-    setErrorRent,
     skipCardStep,
     openCardModal,
     setRentMeta,
@@ -164,11 +162,9 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         toast.success(response.data.message || 'Thuê tài khoản thành công!');
       } else {
         toast.error(response.data.message || 'Không thể thuê tài khoản.');
-        setErrorRent(response.data.message);
       }
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Lỗi khi thuê tài khoản.');
-      setErrorRent(error?.response?.data?.message);
     } finally {
       setIsLoading(false);
     }

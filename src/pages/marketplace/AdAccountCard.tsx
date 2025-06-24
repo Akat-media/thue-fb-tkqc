@@ -12,6 +12,7 @@ import { Card, CardContent, CardFooter } from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import styled from "styled-components";
 import url from "../../assets/bg.svg";
+import { Tooltip } from "antd";
 
 interface AdAccountCardProps {
   account: any;
@@ -82,17 +83,19 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
     <CardContainer url={url}>
       <Card className="relative main-card h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
         <CardContent className="flex-grow relative z-10">
-          <div className="flex justify-between items-start">
-            <h3 className="text-[22px] font-semibold text-gray-900">
-              {account?.name}
-            </h3>
+          <div className="flex justify-between items-start h-[55px]">
+            <Tooltip title={account?.name} placement="top">
+              <h3 className="text-[22px] font-semibold text-gray-900 line-clamp-2 overflow-hidden text-ellipsis leading-tight max-w-[200px] cursor-pointer">
+                {account?.name}
+              </h3>
+            </Tooltip>
             <span
               className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium gap-1 cursor-pointer ${getStatusBadgeClass(
                 account?.status
               )}`}
             >
               {getStatusIcon(account?.status)}
-              <span className="ml-1">{getStatusLabel(account?.status)}</span>
+              <span className="ml-1 whitespace-nowrap">{getStatusLabel(account?.status)}</span>
             </span>
           </div>
           <div className="mt-4 space-y-3">

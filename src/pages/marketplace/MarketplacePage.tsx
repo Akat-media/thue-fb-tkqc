@@ -65,7 +65,6 @@ const MarketplacePage: React.FC = () => {
   const [selectedBMId, setSelectedBMId] = useState<string>('all');
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [successRent, setSuccessRent] = useState<any>(null);
-  const [errorRent, setErrorRent] = useState<any>(null);
   const [selectedSyncBMId, setSelectedSyncBMId] = useState<string>('');
   const [isSyncing, setIsSyncing] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -506,7 +505,6 @@ const MarketplacePage: React.FC = () => {
             onClose={() => setIsRentModalOpen(false)}
             account={selectedAccount}
             setSuccessRent={setSuccessRent}
-            setErrorRent={setErrorRent}
             openCardModal={() => setIsCardModalOpen(true)}
             skipCardStep={selectedAccount?.is_visa_account === true}
             setRentMeta={setRentMeta}
@@ -521,9 +519,9 @@ const MarketplacePage: React.FC = () => {
           />
         )}
 
-        {errorRent && (
+        {/* {errorRent && (
           <NotiError onClose={() => setErrorRent('')} message={errorRent} />
-        )}
+        )} */}
         <CreateBMModal
           isOpen={isCreateBMModalOpen}
           onClose={() => setIsCreateBMModalOpen(false)}

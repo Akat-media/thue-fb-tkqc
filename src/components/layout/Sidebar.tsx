@@ -197,7 +197,7 @@ const Sidebar: React.FC<{
             {isSidebarOpen && (
               <ChevronDown
                 className={clsx(
-                  'ml-auto w-4 h-4 transition-transform',
+                  'ml-auto mr-2 w-4 h-4 transition-transform',
                   openAdsSubmenu && 'rotate-180'
                 )}
               />
