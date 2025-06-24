@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        DEPLOY_DIR = '/var/www/fb-rent-account'
+        DEPLOY_DIR = '/var/www/thue-fb-tkqc'
         SSH_CREDENTIALS_ID = 'vps-ssh-key'
         VPS_USER = "${env.VPS_USER}"
         VPS_IP = "${env.VPS_IP}"
