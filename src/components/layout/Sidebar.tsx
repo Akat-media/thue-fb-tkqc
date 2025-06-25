@@ -16,6 +16,8 @@ import {
   Archive,
   FileText,
   TrendingUp,
+  CreditCard,
+  Settings,
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
@@ -203,13 +205,13 @@ const Sidebar: React.FC<{
               />
             )}
           </button>
-           {/* Thêm max-height nếu thêm item */}
+          {/* Thêm max-height nếu thêm item */}
           <div
             className={clsx(
               'transition-all duration-1000 ease-in-out overflow-hidden transform origin-top',
               openAdsSubmenu && isSidebarOpen
-                ? "max-h-50 opacity-100 scale-y-100 mt-1"
-                : "max-h-0 opacity-0 scale-y-95"
+                ? 'max-h-50 opacity-100 scale-y-100 mt-1'
+                : 'max-h-0 opacity-0 scale-y-95'
             )}
           >
             <div className="ml-10 space-y-1">
@@ -281,13 +283,13 @@ const Sidebar: React.FC<{
               <Link
                 to="/admin/voucher"
                 className={clsx(
-                  "flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700",
-                  location.pathname === "/admin/voucher" &&
-                    "bg-white font-semibold"
+                  'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
+                  location.pathname === '/admin/voucher' &&
+                    'bg-white font-semibold'
                 )}
               >
                 <div className="w-8 flex justify-center">
-                  <TrendingUp className="w-4 h-4" />
+                  <CreditCard className="w-4 h-4" />
                 </div>
                 <span className="text-gray-600">Quản lý voucher</span>
               </Link>
@@ -320,6 +322,22 @@ const Sidebar: React.FC<{
       </div>
 
       <div className="space-y-2 mt-6">
+        <Link
+          to="/admin/settings"
+          className="flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300"
+        >
+          <div className="w-12 flex justify-center">
+            <Settings className="w-5 h-5" />
+          </div>
+          <span
+            className={clsx(
+              'transition-all whitespace-nowrap overflow-hidden duration-300',
+              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+            )}
+          >
+            Cài đặt
+          </span>
+        </Link>
         <Link
           to="/admin/support"
           className="flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300"

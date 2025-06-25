@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   CreditCard,
   Clock,
@@ -7,12 +7,12 @@ import {
   Briefcase,
   ShieldCheck,
   CircleFadingPlus,
-} from "lucide-react";
-import { Card, CardContent, CardFooter } from "../../components/ui/Card";
-import Button from "../../components/ui/Button";
-import styled from "styled-components";
-import url from "../../assets/bg.svg";
-import { Tooltip } from "antd";
+} from 'lucide-react';
+import { Card, CardContent, CardFooter } from '../../components/ui/Card';
+import Button from '../../components/ui/Button';
+import styled from 'styled-components';
+import url from '../../assets/bg.svg';
+import { Tooltip } from 'antd';
 
 interface AdAccountCardProps {
   account: any;
@@ -25,16 +25,16 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
   onRentClick,
 }) => {
   const getAccountTypeLabel = (type: string) => {
-    return type === "personal" ? "Cá nhân" : "BM";
+    return type === 'personal' ? 'Cá nhân' : 'BM';
   };
   const getLimitTypeLabel = (type: string) => {
     switch (type) {
-      case "visa":
-        return "Visa";
-      case "high_limit":
-        return "Limit cao";
-      case "low_limit":
-        return "Limit thấp";
+      case 'visa':
+        return 'Visa';
+      case 'high_limit':
+        return 'Limit cao';
+      case 'low_limit':
+        return 'Limit thấp';
       default:
         return type;
     }
@@ -42,37 +42,37 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case "available":
-        return "bg-green-100 text-green-800";
-      case "rented":
-        return "bg-yellow-100 text-yellow-800";
-      case "unavailable":
-        return "bg-red-100 text-red-800";
+      case 'available':
+        return 'bg-green-100 text-green-800';
+      case 'rented':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'unavailable':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-green-100 text-green-700 border border-green-200 shadow-sm hover:shadow-md transition-all duration-200";
+        return 'bg-green-100 text-green-700 border border-green-200 shadow-sm hover:shadow-md transition-all duration-200';
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "available":
-        return "Có sẵn";
-      case "rented":
-        return "Đã thuê";
-      case "unavailable":
-        return "Không khả dụng";
+      case 'available':
+        return 'Có sẵn';
+      case 'rented':
+        return 'Đã thuê';
+      case 'unavailable':
+        return 'Không khả dụng';
       default:
-        return "Có sẵn";
+        return 'Có sẵn';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "available":
+      case 'available':
         return <Check className="h-4 w-4" />;
-      case "rented":
+      case 'rented':
         return <Clock className="h-4 w-4" />;
-      case "unavailable":
+      case 'unavailable':
         return <AlertCircle className="h-4 w-4" />;
       default:
         return <Check className="h-4 w-4" />;
@@ -95,7 +95,9 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
               )}`}
             >
               {getStatusIcon(account?.status)}
-              <span className="ml-1 whitespace-nowrap">{getStatusLabel(account?.status)}</span>
+              <span className="ml-1 whitespace-nowrap">
+                {getStatusLabel(account?.status)}
+              </span>
             </span>
           </div>
           <div className="mt-4 space-y-3">
@@ -104,7 +106,9 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
                 <Briefcase className="h-4 w-4 text-gray-400" />
                 Loại TKQC:
               </span>
-              <span className="text-gray-900 font-medium">BM</span>
+              <span className="text-gray-900 font-medium">
+                {account?.is_visa_account ? 'Đã gắn thẻ' : 'Chưa gắn thẻ'}
+              </span>
             </div>
             <div className="flex items-center text-sm">
               <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
@@ -112,7 +116,7 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
                 Số tài khoản:
               </span>
               <span className="text-gray-900 font-medium">
-                {account?.funding_source_details?.display_string}
+                {account?.funding_source_details?.display_string || 'Trống'}
               </span>
             </div>
           </div>
