@@ -16,8 +16,8 @@ import {
   Archive,
   FileText,
   TrendingUp,
-  CreditCard,
   Settings,
+  TicketPercent,
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
@@ -289,7 +289,7 @@ const Sidebar: React.FC<{
                 )}
               >
                 <div className="w-8 flex justify-center">
-                  <CreditCard className="w-4 h-4" />
+                  <TicketPercent className=" h-4 w-4" /> 
                 </div>
                 <span className="text-gray-600">Quản lý voucher</span>
               </Link>
