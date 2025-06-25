@@ -35,6 +35,7 @@ import VoucherManager from './pages/admin/manager/voucher/VoucherManager.tsx';
 import TicketPage from './pages/profile/Ticket.tsx';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import PriceList from "./pages/pricelist/PriceList.tsx";
 
 function App() {
   const userobj = useUserStore((state) => state.user);
@@ -63,6 +64,7 @@ function App() {
               <Route path="/policy" element={<Policy />} />
               <Route path="/reset-password" element={<PasswordResetForm />} />
               <Route path="/princing" element={<PricingPage />} />
+              <Route path="/price" element={<PriceList />} />
               {/* Route yêu cầu đăng nhập */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/add-account" element={<AddAccountPage />} />

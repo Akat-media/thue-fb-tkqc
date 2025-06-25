@@ -91,6 +91,20 @@ const PricingManagement: React.FC = () => {
                       Phần trăm:{' '}
                       <span className="font-medium">{budget.percentage}%</span>
                     </p>
+
+                    <p className="text-sm text-gray-600 mb-2">
+                      Phụ đề:{' '}
+                      <span className="font-medium">
+                        {budget.subtitle}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Tổng quan:{' '}
+                      <span className="font-medium">
+                        {budget.overview}
+                      </span>
+                    </p>
+
                     <ul className="list-disc list-inside text-gray-700 space-y-1">
                       {budget.description.map((d, i) => (
                         <li key={i}>{d}</li>
@@ -115,6 +129,7 @@ const PricingManagement: React.FC = () => {
             }
             footer={null}
             destroyOnClose
+            style={{ top: 40, maxHeight: '100vh', overflowY: 'auto' }}
           >
             <Form
               layout="vertical"
@@ -159,6 +174,20 @@ const PricingManagement: React.FC = () => {
                 label="Mô tả"
                 required
                 placeholder="Mỗi dòng là một mô tả"
+              />
+              <FieldForm
+                  type="input"
+                  name="subtitle"
+                  label="Phụ đề"
+                  required
+                  placeholder=""
+              />
+              <FieldForm
+                  type="textarea"
+                  name="overview"
+                  label="Tổng quan"
+                  required
+                  placeholder=""
               />
               <div className="grid grid-cols-2 gap-4">
                 <FieldForm
