@@ -168,9 +168,10 @@ const MarketplacePage: React.FC = () => {
       });
 
       if (response.status === 200 && response.data.success) {
-        toast.success('Thêm thẻ thành công!');
+        toast.success(response.data.message);
         setIsCardModalOpen(false);
-        setIsRentModalOpen(true);
+        setIsRentModalOpen(false);
+        setRentMeta(null)
       } else {
         toast.error(response.data.message || 'Không thể thêm thẻ.');
       }

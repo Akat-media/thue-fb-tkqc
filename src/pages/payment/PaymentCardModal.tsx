@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import { useEffect } from 'react';
+import { Button } from 'antd';
+import { Link } from 'react-router-dom';
 
 interface Props {
   isOpen: boolean;
@@ -207,20 +209,22 @@ const PaymentCardModal: React.FC<Props> = ({
               checked={agreeTerms}
               onChange={(e) => setAgreeTerms(e.target.checked)}
             />
-            <label className="text-base text-gray-700">
+            <Link to={'/policy'} className="text-base text-blue-600 underline">
               Tôi đồng ý với các điều khoản và chính sách
               <span className="text-red-500">*</span>
-            </label>
+            </Link>
           </div>
           {errors.agreeTerms && (
             <div className="text-red-500 text-xs mt-1">{errors.agreeTerms}</div>
           )}
-          <button
+          <Button
+            type="primary"
             onClick={handleSubmit}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl mt-2"
+            disabled={!agreeTerms}
+            className='w-full text-white rounded-xl mt-2 p-4'
           >
-            Lưu
-          </button>
+            <p className='flex justify-center items-center w-full h-full p-3 font-semibold'>Lưu</p>
+          </Button>
         </div>
       </div>
     </div>

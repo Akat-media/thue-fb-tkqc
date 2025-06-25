@@ -19,6 +19,8 @@ import FieldForm, { OptionType } from '../../components/form/FieldForm';
 import { useOnOutsideClick } from '../../hook/useOutside';
 import dayjs from 'dayjs';
 import { VoucherData } from '../profile/Ticket';
+import { format, parseISO } from 'date-fns';
+import { Form, Select } from 'antd';
 
 interface RentModalProps {
   isOpen: boolean;
@@ -83,7 +85,9 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   })();
 
   const totalBill = useMemo(() => {
-    return calculateTotalPrice() - discountAmount
+    const result = calculateTotalPrice() - discountAmount
+    if (result < 0) return 0;
+    return result;
   },[selectedVoucher, requestedLimit])
 
   // Phí dịch vụ
@@ -189,6 +193,9 @@ const RentModal: React.FC<RentModalProps> = (props) => {
           setRentalRangeError(null);
         }
       }
+    } else {
+      setUserBmId('')
+      setSelectedVoucher('')
     }
   }, [isOpen]);
 
@@ -218,7 +225,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         params: {},
       });
       setCookies(response.data.data || []);
-      setSelectedCookieId(response.data.data?.[0].id);
+      setSelectedCookieId(response.data.data?.[0]?.id);
     } catch (error) {
       console.error('Error fetching cookies:', error);
     } finally {
@@ -252,7 +259,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
   if (!isOpen) return null;
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50"
       onWheel={(e) => e.preventDefault()}
       onTouchMove={(e) => e.preventDefault()}
@@ -478,37 +485,12 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 )}
                 <div>
                   <label
-                    htmlFor="cookieSelect"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Lựa chọn BOT
-                  </label>
-                  <select
-                    id="cookieSelect"
-                    value={selectedCookieId}
-                    disabled
-                    className="w-full px-3 py-2 border border-gray-100 rounded bg-gray-100 text-gray-500 cursor-not-allowed"
-                  >
-                    {cookies.map((cookie, index) => (
-                      <option key={cookie.id} value={cookie.id}>
-                        B{index + 1} ({cookie.email})
-                      </option>
-                    ))}
-                  </select>
-                  {isLoadingCookies && (
-                    <div className="text-sm text-gray-500 mt-1 pl-2">
-                      Đang tải danh sách bot...
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <label
                     id="voucherSelect"
                     className="text-sm font-medium text-gray-700 mb-1"
                   >
                     Chọn voucher
                   </label>
-                  <select
+                <select
                     id="voucherSelect"
                     className="w-full px-3 py-2 border border-gray-100 rounded text-sm"
                     onChange={(e) => setSelectedVoucher(e.target.value)}
@@ -521,7 +503,10 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                       if(!checkExpored) {
                         return (
                           <option key={index} value={String(item.voucher_id)}>
-                            {item.voucher.name} (x{item.quantity})
+                            {item.voucher.name} (x{item.quantity}) - ({format(
+                            parseISO(item.voucher.expires_at),
+                            'dd/MM/yyyy'
+                          )})
                           </option>
                         )
                       }
@@ -584,7 +569,9 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   <div className="border-t border-gray-200 pt-2 mt-2">
                     <div className="flex justify-between text-sm font-medium">
                       <span className="text-gray-900">Tổng thanh toán</span>
-                      <span className="text-blue-600">{totalBill.toLocaleString("vi-VN")} VNĐ</span>
+                      <span className="text-blue-600">
+                        {totalBill.toLocaleString('vi-VN')} VNĐ
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -592,7 +579,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
               {user && (
                 <div className="text-sm">
-                  <span className="text-gray-500">Số dư của bạn: </span> 
+                  <span className="text-gray-500">Số dư của bạn: </span>
                   <span
                     className={`font-medium ${
                       (user.points ?? 0) < totalBill

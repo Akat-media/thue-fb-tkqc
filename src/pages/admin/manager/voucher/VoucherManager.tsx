@@ -3,7 +3,6 @@ import { Table, Button, Space, Popconfirm } from 'antd';
 import BaseHeader from '../../../../api/BaseHeader';
 import { toast } from 'react-toastify';
 import VoucherForm, { VoucherFormValues } from './VoucherForm';
-import Layout from '../../../../components/layout/Layout';
 import { Plus } from 'lucide-react';
 
 const columnsBase = [
@@ -11,7 +10,7 @@ const columnsBase = [
   { title: 'Mã', dataIndex: 'code', key: 'code' },
   { title: 'Mô tả', dataIndex: 'description', key: 'description' },
   { title: 'Giảm giá', dataIndex: 'discount', key: 'discount' },
-  { title: 'Loại', dataIndex: 'type', key: 'type' },
+  { title: 'Loại', dataIndex: 'type', key: 'type', render: (type: string) => (type === 'fixed' ? 'VNĐ' : '%') },
   { title: 'Số lượng', dataIndex: 'max_usage', key: 'max_usage' },
   { title: 'HSD', dataIndex: 'expires_at', key: 'expires_at', render: (date: string) => new Date(date).toLocaleDateString() },
 ];
@@ -37,13 +36,7 @@ const VoucherManager = () => {
     setLoading(true);
     try {
       const res = await BaseHeader.get('/voucher');
-      const formatData = res.data.data.map((item:Voucher) => {
-        return {
-          ...item,
-          type: item.type === 'fixed' ? 'VNĐ' : '%',
-        }
-      })
-      setData(formatData);
+      setData(res.data.data);
     } catch (err: any) {
       toast.error('Lỗi khi tải danh sách voucher');
     } finally {
