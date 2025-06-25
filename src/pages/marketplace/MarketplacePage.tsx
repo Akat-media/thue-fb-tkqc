@@ -78,25 +78,22 @@ const MarketplacePage: React.FC = () => {
   const handleCallAPi = async () => {
     try {
       const [visaRes, simpleRes] = await Promise.all([
-        BaseHeader({
-          method: 'get',
-          url: 'ad-accounts-visa',
-        }),
-        BaseHeader({
-          method: 'get',
-          url: 'ad-accounts-simple',
-        }),
+        BaseHeader({ method: 'get', url: 'ad-accounts-visa' }),
+        BaseHeader({ method: 'get', url: 'ad-accounts-simple' }),
       ]);
 
       const visaAccounts = visaRes.data.data || [];
       const simpleAccounts = simpleRes.data.data || [];
 
-      setAccountsWithCard(
-        visaAccounts.filter((acc: any) => acc.status_rented === 'available')
-      );
-      setAccountsWithoutCard(
-        simpleAccounts.filter((acc: any) => acc.status_rented === 'available')
-      );
+      const merged = [
+        ...visaAccounts.map((acc: any) => ({ ...acc, is_visa_account: true })),
+        ...simpleAccounts.map((acc: any) => ({
+          ...acc,
+          is_visa_account: false,
+        })),
+      ];
+
+      setAllAccounts(merged);
     } catch (error) {
       console.error('Error fetching ad accounts:', error);
       toast.error('Lỗi khi lấy danh sách tài khoản quảng cáo');
@@ -477,13 +474,15 @@ const MarketplacePage: React.FC = () => {
           TKQC Đã gắn thẻ
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {accountsWithCard.map((account: any) => (
-            <AdAccountCard
-              key={account.id}
-              account={account}
-              onRentClick={() => handleRentClick(account)}
-            />
-          ))}
+          {filteredAccounts
+            .filter((acc: any) => acc.is_visa_account === true)
+            .map((account: any) => (
+              <AdAccountCard
+                key={account.id}
+                account={account}
+                onRentClick={() => handleRentClick(account)}
+              />
+            ))}
         </div>
 
         <h3 className="text-2xl font-bold text-red-500 my-4 mt-6">
@@ -491,13 +490,15 @@ const MarketplacePage: React.FC = () => {
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {accountsWithoutCard.map((account: any) => (
-            <AdAccountCard
-              key={account.id}
-              account={account}
-              onRentClick={() => handleRentClick(account)}
-            />
-          ))}
+          {filteredAccounts
+            .filter((acc: any) => acc.is_visa_account === false)
+            .map((account: any) => (
+              <AdAccountCard
+                key={account.id}
+                account={account}
+                onRentClick={() => handleRentClick(account)}
+              />
+            ))}
         </div>
 
         {selectedAccount && (

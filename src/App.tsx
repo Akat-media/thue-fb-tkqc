@@ -35,7 +35,8 @@ import VoucherManager from './pages/admin/manager/voucher/VoucherManager.tsx';
 import TicketPage from './pages/profile/Ticket.tsx';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import PriceList from "./pages/pricelist/PriceList.tsx";
+import PriceList from './pages/pricelist/PriceList.tsx';
+import SettingsPage from './pages/admin/Settings.tsx';
 
 function App() {
   const userobj = useUserStore((state) => state.user);
@@ -87,6 +88,7 @@ function App() {
                 <Route path="/admin/princing" element={<PricingManagement />} />
                 <Route path="/admin/rentals" element={<RentalsManagement />} />
                 <Route path="/admin/voucher" element={<VoucherManager />} />
+                <Route path="/admin/settings" element={<SettingsPage />} />
 
                 <Route
                   path="/admin/notifications"
