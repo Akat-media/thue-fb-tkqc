@@ -16,6 +16,8 @@ interface PricingCardProps {
     buttonContact: string;
     subtitle: string;
     overview: string;
+    buttonLabelEN: string;
+    buttonContactEN: string;
 }
 
 const PricingCard: React.FC<PricingCardProps> = ({
@@ -27,8 +29,13 @@ const PricingCard: React.FC<PricingCardProps> = ({
     buttonContact = "Liên hệ",
     subtitle,
     overview,
+    buttonLabelEN = "Start now",
+    buttonContactEN = "Contact",
  }) => {
     const navigate = useNavigate();
+    const language = localStorage.getItem("language");
+    const langParse = language ? JSON.parse(language).language : 'vi'; // default la vi
+
     return (
         <div
             className={`flex flex-col rounded-xl shadow-md border transition-all duration-300 w-full max-w-sm hover:border-blue-400 hover:-translate-y-2 hover:shadow-lg cursor-pointer`}
@@ -44,7 +51,12 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
 
                 <div className="text-base font-medium text-gray-700 flex justify-between mb-10 mt-10">
-                    <div>Phí dịch vụ thuê</div>
+                    {langParse === 'vi' ? (
+                        <div>Phí dịch vụ thuê</div>
+                    ) : (
+                        <div>Rental service fee</div>
+                    )}
+
                     { amount < 2000000000 && (
                         <div>{percentage} %</div>
                     )}
@@ -55,7 +67,11 @@ const PricingCard: React.FC<PricingCardProps> = ({
                         onClick={()=>navigate("/support")}
                         className={`w-full py-2 text-white font-medium rounded-md mb-4 bg-gradient-to-r from-green-400 to-blue-400`}
                     >
-                        {buttonContact}
+                        {langParse === 'vi' ? (
+                            buttonContact
+                        ) : (
+                            buttonContactEN
+                        )}
                     </button>
                 )}
 
@@ -64,7 +80,11 @@ const PricingCard: React.FC<PricingCardProps> = ({
                         onClick={() => navigate("/payments")}
                         className={`w-full py-2 text-white font-medium rounded-md mb-4 bg-gradient-to-r from-sky-500 to-blue-300`}
                     >
-                        {buttonLabel}
+                        {langParse === 'vi' ? (
+                            buttonLabel
+                        ) : (
+                            buttonLabelEN
+                        )}
                     </button>
                 )}
             </div>
