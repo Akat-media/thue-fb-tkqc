@@ -52,9 +52,9 @@ const Sidebar: React.FC<{
 
   const links = [
     { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
-    { label: 'Danh sách BM', icon: Briefcase, path: '/marketplace' },
+    { label: 'Danh sách tài khoản', icon: Briefcase, path: '/marketplace' },
     {
-      label: 'Danh sách tài khoản',
+      label: 'Trạng thái tài khoản',
       icon: ShoppingCart,
       path: '/admin/rentals',
     },
@@ -289,7 +289,7 @@ const Sidebar: React.FC<{
                 )}
               >
                 <div className="w-8 flex justify-center">
-                  <TicketPercent className=" h-4 w-4" /> 
+                  <TicketPercent className=" h-4 w-4" />
                 </div>
                 <span className="text-gray-600">Quản lý voucher</span>
               </Link>

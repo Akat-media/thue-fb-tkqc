@@ -17,12 +17,16 @@ import { Tooltip } from 'antd';
 interface AdAccountCardProps {
   account: any;
   onRentClick: () => void;
+  isAdmin?: boolean;
+  onViewDetail?: (account: any) => void;
 }
 const dataURI = `data:image/svg+xml,${encodeURIComponent(url)}`;
 
 const AdAccountCard: React.FC<AdAccountCardProps> = ({
   account,
   onRentClick,
+  isAdmin = false,
+  onViewDetail,
 }) => {
   const getAccountTypeLabel = (type: string) => {
     return type === 'personal' ? 'Cá nhân' : 'BM';
@@ -80,69 +84,78 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
   };
 
   return (
-    <CardContainer url={url}>
-      <Card className="relative main-card h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
-        <CardContent className="flex-grow relative z-10">
-          <div className="flex justify-between items-start h-[55px]">
-            <Tooltip title={account?.name} placement="top">
-              <h3 className="text-[22px] font-semibold text-gray-900 line-clamp-2 overflow-hidden text-ellipsis leading-tight max-w-[200px] cursor-pointer">
-                {account?.name}
-              </h3>
-            </Tooltip>
-            <span
-              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium gap-1 cursor-pointer ${getStatusBadgeClass(
-                account?.status
-              )}`}
-            >
-              {getStatusIcon(account?.status)}
-              <span className="ml-1 whitespace-nowrap">
-                {getStatusLabel(account?.status)}
-              </span>
-            </span>
-          </div>
-          <div className="mt-4 space-y-3">
-            <div className="flex items-center text-sm">
-              <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
-                <Briefcase className="h-4 w-4 text-gray-400" />
-                Loại TKQC:
-              </span>
-              <span className="text-gray-900 font-medium">
-                {account?.is_visa_account ? 'Đã gắn thẻ' : 'Chưa gắn thẻ'}
+    <div
+      onClick={() => onViewDetail?.(account)}
+      className="cursor-pointer hover:shadow-lg transition-all duration-200"
+    >
+      <CardContainer url={url}>
+        <Card className="relative main-card h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
+          <CardContent className="flex-grow relative z-10">
+            <div className="flex justify-between items-start h-[55px]">
+              <Tooltip title={account?.name} placement="top">
+                <h3 className="text-[22px] font-semibold text-gray-900 line-clamp-2 overflow-hidden text-ellipsis leading-tight max-w-[200px] cursor-pointer">
+                  {account?.name}
+                </h3>
+              </Tooltip>
+              <span
+                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium gap-1 cursor-pointer ${getStatusBadgeClass(
+                  account?.status
+                )}`}
+              >
+                {getStatusIcon(account?.status)}
+                <span className="ml-1 whitespace-nowrap">
+                  {getStatusLabel(account?.status)}
+                </span>
               </span>
             </div>
-            <div className="flex items-center text-sm">
-              <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
-                <ShieldCheck className="h-4 w-4 text-gray-400" />
-                Số tài khoản:
-              </span>
-              <span className="text-gray-900 font-medium">
-                {account?.funding_source_details?.display_string || 'Trống'}
-              </span>
+            <div className="mt-4 space-y-3">
+              <div className="flex items-center text-sm">
+                <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
+                  <Briefcase className="h-4 w-4 text-gray-400" />
+                  Loại TKQC:
+                </span>
+                <span className="text-gray-900 font-medium">
+                  {account?.is_visa_account ? 'Đã gắn thẻ' : 'Chưa gắn thẻ'}
+                </span>
+              </div>
+              <div className="flex items-center text-sm">
+                <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
+                  <ShieldCheck className="h-4 w-4 text-gray-400" />
+                  Số tài khoản:
+                </span>
+                <span className="text-gray-900 font-medium">
+                  {account?.funding_source_details?.display_string ||
+                    'Không có thông tin'}
+                </span>
+              </div>
             </div>
+            <div className="mt-4 text-sm text-gray-500 border-t pt-3">
+              <p className="flex gap-1 items-center">
+                <CircleFadingPlus className="h-4 w-4 text-gray-400" />
+                TKQC BM chất lượng cao, đã verify danh tính
+              </p>
+            </div>
+          </CardContent>
+          <CardFooter className=" relative z-10 px-6 py-4">
+            {!isAdmin && (
+              <Button
+                fullWidth
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRentClick();
+                }}
+                icon={<CreditCard className="h-4 w-4" />}
+              >
+                Thuê ngay
+              </Button>
+            )}
+          </CardFooter>
+          <div className="absolute bottom-0 left-0 w-full">
+            <img className="w-full" src={url} alt="img" />
           </div>
-          <div className="mt-4 text-sm text-gray-500 border-t pt-3">
-            <p className="flex gap-1 items-center">
-              <CircleFadingPlus className="h-4 w-4 text-gray-400" />
-              TKQC BM chất lượng cao, đã verify danh tính
-            </p>
-          </div>
-        </CardContent>
-        <CardFooter className=" relative z-10 px-6 py-4">
-          <Button
-            fullWidth
-            onClick={() => {
-              onRentClick();
-            }}
-            icon={<CreditCard className="h-4 w-4" />}
-          >
-            Thuê ngay
-          </Button>
-        </CardFooter>
-        <div className="absolute bottom-0 left-0 w-full">
-          <img className="w-full" src={url} alt="img" />
-        </div>
-      </Card>
-    </CardContainer>
+        </Card>
+      </CardContainer>
+    </div>
   );
 };
 const CardContainer = styled.div<{ url: any }>``;

@@ -47,7 +47,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
   const [userBmId, setUserBmId] = useState('');
-  const [requestedLimit, setRequestedLimit] = useState<number | null>(50000);
+  const [requestedLimit, setRequestedLimit] = useState<number | null>(null);
   const [errors, setErrors] = useState<{ bmId?: string; limit?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [cookies, setCookies] = useState<any[]>([]);
@@ -55,9 +55,13 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const [isLoadingCookies, setIsLoadingCookies] = useState(false);
   const [rentalRange, setRentalRange] = useState<any>(null);
   const [rentalRangeError, setRentalRangeError] = useState<string | null>(null);
-  const [dataVoucher, setDataVoucher] = useState<VoucherData[]>([])
+  const [dataVoucher, setDataVoucher] = useState<VoucherData[]>([]);
   const [selectedVoucher, setSelectedVoucher] = useState('');
-  
+  const [budgetData, setBudgetData] = useState<{
+    amount: number;
+    percentage: number;
+  } | null>(null);
+
   const isVisaAccount = account?.is_visa_account;
   const { user } = useUserStore();
   const { addNotification } = useNotification();
@@ -84,18 +88,39 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     return 0;
   })();
 
-  const totalBill = useMemo(() => {
-    const result = calculateTotalPrice() - discountAmount
-    if (result < 0) return 0;
-    return result;
-  },[selectedVoucher, requestedLimit])
-
   // Phí dịch vụ
   const serviceFee = useMemo(() => {
-    const parsedLimit = Number(requestedLimit) || 0;
-    return parsedLimit * 0.1;
-  }, [requestedLimit]);
-  
+    if (isVisaAccount) {
+      const limit = Number(requestedLimit || 0);
+      if (limit === 0) return 0;
+      if (limit < 500_000_000) return Math.floor(limit * 0.04);
+      if (limit < 1_000_000_000) return Math.floor(limit * 0.03);
+      return Math.floor(limit * 0.02);
+    }
+
+    const spendCap = Number(account?.spend_cap || 0);
+    const budgetAmount = Number(budgetData?.amount || 0);
+    const apiPercentage = Number(budgetData?.percentage || 0);
+
+    if (!budgetData || !budgetAmount || typeof apiPercentage !== 'number') {
+      const fallbackPercent = spendCap < 500000000 ? 0.05 : 0.04;
+      return Math.floor(spendCap * fallbackPercent);
+    }
+
+    const feePercent = spendCap < 500000000 ? 0.05 : apiPercentage;
+
+    return Math.floor(spendCap * feePercent);
+  }, [requestedLimit, account?.spend_cap, isVisaAccount, budgetData]);
+
+  const totalBill = useMemo(() => {
+    if (isVisaAccount) {
+      const basePrice = requestedLimit || 0;
+      return basePrice + serviceFee - discountAmount;
+    }
+
+    return serviceFee - discountAmount;
+  }, [requestedLimit, serviceFee, discountAmount, isVisaAccount]);
+
   const handleSubmit = async () => {
     if (!rentalRange) {
       setRentalRangeError('Vui lòng chọn thời gian thuê.');
@@ -107,8 +132,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     const msPerDay = 1000 * 60 * 60 * 24;
     const days = Math.round((end.getTime() - start.getTime()) / msPerDay) + 1;
 
-    if (days < 7 || days > 60) {
-      setRentalRangeError('Thời gian thuê phải từ 7 đến 60 ngày.');
+    if (days < 7 || days > 31) {
+      setRentalRangeError('Thời gian thuê phải từ 7 đến 31 ngày.');
       return;
     }
 
@@ -175,9 +200,32 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   };
 
   useEffect(() => {
+    const fetchBudget = async () => {
+      try {
+        const res = await BaseHeader({
+          method: 'get',
+          url: 'budget',
+        });
+        const data = res?.data;
+        if (
+          data &&
+          typeof data.amount === 'number' &&
+          typeof data.percentage === 'number'
+        ) {
+          setBudgetData({ amount: data.amount, percentage: data.percentage });
+        }
+      } catch (error) {
+        console.error('Lỗi khi gọi API ngân sách:', error);
+      }
+    };
+
     if (isOpen) {
       fetchCookies();
-      fetchData()
+      fetchData();
+      if (!isVisaAccount) {
+        fetchBudget();
+      }
+
       if (
         typeof rentMeta === 'object' &&
         rentMeta?.rentalRange &&
@@ -194,10 +242,10 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         }
       }
     } else {
-      setUserBmId('')
-      setSelectedVoucher('')
+      setUserBmId('');
+      setSelectedVoucher('');
     }
-  }, [isOpen]);
+  }, [isOpen, isVisaAccount]);
 
   useEffect(() => {
     if (isOpen) {
@@ -232,18 +280,18 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       setIsLoadingCookies(false);
     }
   };
-  const fetchData = async() => {
-    const userId = JSON.parse(localStorage.getItem('user') || '').user_id
+  const fetchData = async () => {
+    const userId = JSON.parse(localStorage.getItem('user') || '').user_id;
     try {
       const respone = await BaseHeader({
         method: 'get',
         url: `my-vouchers?user_id=${userId}`,
-      })
-      setDataVoucher(respone.data.data)
-    } catch(error:any) {
-      console.log('error',error)
+      });
+      setDataVoucher(respone.data.data);
+    } catch (error: any) {
+      console.log('error', error);
     }
-  }
+  };
   const isValidBmId = /^[0-9]+$/.test(userBmId) && userBmId.trim() !== '';
   const isValidLimit =
     requestedLimit !== null &&
@@ -252,10 +300,10 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const isValid = isValidBmId && isValidLimit;
   const isValidRentalRange = rentalRange !== null && rentalRangeError === null;
   const isVoucherExpired = (expiresAt: string) => {
-    const currentTime = new Date()
-    const expiryTime = new Date(expiresAt)
-    return expiryTime < currentTime
-  }
+    const currentTime = new Date();
+    const expiryTime = new Date(expiresAt);
+    return expiryTime < currentTime;
+  };
 
   if (!isOpen) return null;
   return (
@@ -433,7 +481,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                       className="w-full sm:w-[400px]"
                       type="rangeDate"
                       name="rentalRange"
-                      label="Thời gian thuê (7-60 ngày)"
+                      label="Thời gian thuê (7-31 ngày)"
                       format="YYYY-MM-DD"
                       value={rentalRange as any}
                       onChange={(value: any) => {
@@ -454,9 +502,9 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                             (endDate.getTime() - startDate.getTime()) / msPerDay
                           ) + 1;
 
-                        if (days < 7 || days > 60) {
+                        if (days < 7 || days > 31) {
                           setRentalRangeError(
-                            'Thời gian thuê phải từ 7 đến 60 ngày.'
+                            'Thời gian thuê phải từ 7 đến 31 ngày.'
                           );
                           setRentalRange(null);
                           return;
@@ -469,7 +517,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                         const today = new Date();
                         today.setHours(0, 0, 0, 0);
                         const maxEnd = new Date(today);
-                        maxEnd.setDate(maxEnd.getDate() + 59); // giới hạn 60 ngày kể từ hôm nay
+                        maxEnd.setDate(maxEnd.getDate() + 30);
 
                         return (
                           current.toDate() < today || current.toDate() > maxEnd
@@ -485,12 +533,37 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 )}
                 <div>
                   <label
+                    htmlFor="cookieSelect"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Lựa chọn BOT
+                  </label>
+                  <select
+                    id="cookieSelect"
+                    value={selectedCookieId}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-100 rounded bg-gray-100 text-gray-500 cursor-not-allowed"
+                  >
+                    {cookies.map((cookie, index) => (
+                      <option key={cookie.id} value={cookie.id}>
+                        B{index + 1} ({cookie.email})
+                      </option>
+                    ))}
+                  </select>
+                  {isLoadingCookies && (
+                    <div className="text-sm text-gray-500 mt-1 pl-2">
+                      Đang tải danh sách bot...
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label
                     id="voucherSelect"
                     className="text-sm font-medium text-gray-700 mb-1"
                   >
                     Chọn voucher
                   </label>
-                <select
+                  <select
                     id="voucherSelect"
                     className="w-full px-3 py-2 border border-gray-100 rounded text-sm"
                     onChange={(e) => setSelectedVoucher(e.target.value)}
@@ -499,16 +572,20 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                       -- Không sử dụng voucher --
                     </option>
                     {dataVoucher.map((item, index) => {
-                      const checkExpored = isVoucherExpired(item.voucher.expires_at)
-                      if(!checkExpored) {
+                      const checkExpored = isVoucherExpired(
+                        item.voucher.expires_at
+                      );
+                      if (!checkExpored) {
                         return (
                           <option key={index} value={String(item.voucher_id)}>
-                            {item.voucher.name} (x{item.quantity}) - ({format(
-                            parseISO(item.voucher.expires_at),
-                            'dd/MM/yyyy'
-                          )})
+                            {item.voucher.name} (x{item.quantity}) - (
+                            {format(
+                              parseISO(item.voucher.expires_at),
+                              'dd/MM/yyyy'
+                            )}
+                            )
                           </option>
-                        )
+                        );
                       }
                     })}
                   </select>
@@ -554,11 +631,12 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                       </p>
                     )}
                     <p className="text-gray-500 mt-2">
-                      Phí dịch vụ (10%):{' '}
+                      Phí dịch vụ:{' '}
                       <span className="text-blue-600">
-                        {serviceFee.toLocaleString('vi-VN')}VNĐ
+                        {serviceFee.toLocaleString('vi-VN')} VNĐ
                       </span>
                     </p>
+
                     <span className="text-gray-900 font-medium">
                       {/* {(account.pricePerDay * rentalDays * 0.1).toLocaleString(
                         "vi-VN"
@@ -623,16 +701,18 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   !!(
                     isLoading ||
                     !isValidBmId ||
-                    !isValidLimit ||
-                    !isValidRentalRange ||
+                    (isVisaAccount && !isValidLimit) ||
+                    (!isVisaAccount && !isValidRentalRange) ||
                     (user && (user.points ?? 0) < totalBill)
                   )
                 }
                 className={
-                  !isValidBmId ||
-                  !isValidLimit ||
-                  !isValidRentalRange ||
-                  (user && (user.points ?? 0) < totalBill)
+                  !!(
+                    !isValidBmId ||
+                    (isVisaAccount && !isValidLimit) ||
+                    (!isVisaAccount && !isValidRentalRange) ||
+                    (user && (user.points ?? 0) < totalBill)
+                  )
                     ? 'bg-gray-300 cursor-not-allowed'
                     : ''
                 }

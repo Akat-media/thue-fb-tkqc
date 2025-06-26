@@ -71,19 +71,23 @@ const MarketplacePage: React.FC = () => {
   const [bmToDelete, setBmToDelete] = useState<BM | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
-  const [accountsWithCard, setAccountsWithCard] = useState<any[]>([]);
-  const [accountsWithoutCard, setAccountsWithoutCard] = useState<any[]>([]);
   const [rentMeta, setRentMeta] = useState<any>(null);
+  const [rentedAccounts, setRentedAccounts] = useState<any[]>([]);
+  const [selectedAdAccountDetail, setSelectedAdAccountDetail] =
+    useState<any>(null);
+  const [isAdDetailOpen, setIsAdDetailOpen] = useState(false);
 
   const handleCallAPi = async () => {
     try {
-      const [visaRes, simpleRes] = await Promise.all([
+      const [visaRes, simpleRes, rentedRes] = await Promise.all([
         BaseHeader({ method: 'get', url: 'ad-accounts-visa' }),
         BaseHeader({ method: 'get', url: 'ad-accounts-simple' }),
+        BaseHeader({ method: 'get', url: 'ad-accounts-visa-rent' }),
       ]);
 
       const visaAccounts = visaRes.data.data || [];
       const simpleAccounts = simpleRes.data.data || [];
+      const rentedList = rentedRes.data.data || [];
 
       const merged = [
         ...visaAccounts.map((acc: any) => ({ ...acc, is_visa_account: true })),
@@ -94,6 +98,7 @@ const MarketplacePage: React.FC = () => {
       ];
 
       setAllAccounts(merged);
+      setRentedAccounts(rentedList);
     } catch (error) {
       console.error('Error fetching ad accounts:', error);
       toast.error('Lỗi khi lấy danh sách tài khoản quảng cáo');
@@ -171,7 +176,7 @@ const MarketplacePage: React.FC = () => {
         toast.success(response.data.message);
         setIsCardModalOpen(false);
         setIsRentModalOpen(false);
-        setRentMeta(null)
+        setRentMeta(null);
       } else {
         toast.error(response.data.message || 'Không thể thêm thẻ.');
       }
@@ -482,6 +487,11 @@ const MarketplacePage: React.FC = () => {
                 key={account.id}
                 account={account}
                 onRentClick={() => handleRentClick(account)}
+                isAdmin={isAdmin}
+                onViewDetail={(acc) => {
+                  setSelectedAdAccountDetail(acc);
+                  setIsAdDetailOpen(true);
+                }}
               />
             ))}
         </div>
@@ -489,18 +499,57 @@ const MarketplacePage: React.FC = () => {
         <h3 className="text-2xl font-bold text-red-500 my-4 mt-6">
           TKQC Chưa gắn thẻ
         </h3>
+        {filteredAccounts.filter((acc: any) => acc.is_visa_account === false)
+          .length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredAccounts
+              .filter((acc: any) => acc.is_visa_account === false)
+              .map((account: any) => (
+                <AdAccountCard
+                  key={account.id}
+                  account={account}
+                  onRentClick={() => handleRentClick(account)}
+                  isAdmin={isAdmin}
+                  onViewDetail={(acc) => {
+                    setSelectedAdAccountDetail(acc);
+                    setIsAdDetailOpen(true);
+                  }}
+                />
+              ))}
+          </div>
+        ) : (
+          <div className="text-center text-gray-500">
+            Không có tài khoản nào chưa gắn thẻ.
+          </div>
+        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAccounts
-            .filter((acc: any) => acc.is_visa_account === false)
-            .map((account: any) => (
-              <AdAccountCard
-                key={account.id}
-                account={account}
-                onRentClick={() => handleRentClick(account)}
-              />
-            ))}
-        </div>
+        {isAdmin && (
+          <>
+            <h3 className="text-2xl font-bold text-green-600 my-4 mt-6">
+              TKQC Đang thuê
+            </h3>
+            {rentedAccounts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {rentedAccounts.map((account: any) => (
+                  <AdAccountCard
+                    key={account.id}
+                    account={account}
+                    onRentClick={() => handleRentClick(account)}
+                    isAdmin={isAdmin}
+                    onViewDetail={(acc) => {
+                      setSelectedAdAccountDetail(acc);
+                      setIsAdDetailOpen(true);
+                    }}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center text-gray-500 italic py-4">
+                Không có tài khoản nào đang được thuê.
+              </div>
+            )}
+          </>
+        )}
 
         {selectedAccount && (
           <RentModal
@@ -745,6 +794,49 @@ const MarketplacePage: React.FC = () => {
                 >
                   Xóa
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {isAdDetailOpen && selectedAdAccountDetail && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative max-h-[80vh] overflow-y-auto">
+              <button
+                className="absolute top-3 right-3 text-gray-500 hover:text-black text-4xl"
+                onClick={() => setIsAdDetailOpen(false)}
+              >
+                ×
+              </button>
+              <h2 className="text-xl text-blue-900 font-semibold mb-4">
+                Chi tiết tài khoản quảng cáo:
+              </h2>
+              <div className="space-y-3 text-gray-700">
+                {[
+                  'id',
+                  'account_id',
+                  'account_status',
+                  'amount_spent',
+                  'balance',
+                  'currency',
+                  'name',
+                  'spend_cap',
+                  'owner',
+                  'status_rented',
+                  'spend_limit',
+                  'note_aka',
+                  'active',
+                ].map((field) => (
+                  <div key={field} className="flex items-start">
+                    <span className="font-medium w-1/3 capitalize">
+                      {field}:
+                    </span>
+                    <span className="break-all">
+                      {typeof selectedAdAccountDetail[field] === 'number'
+                        ? selectedAdAccountDetail[field].toLocaleString('vi-VN')
+                        : String(selectedAdAccountDetail[field] ?? '—')}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
