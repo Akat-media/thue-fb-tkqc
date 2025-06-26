@@ -518,7 +518,7 @@ const MarketplacePage: React.FC = () => {
               ))}
           </div>
         ) : (
-          <div className="text-center text-gray-500">
+          <div className="text-center text-gray-500 italic py-4">
             Không có tài khoản nào chưa gắn thẻ.
           </div>
         )}
