@@ -129,7 +129,16 @@ const PricingManagement: React.FC = () => {
             }
             footer={null}
             destroyOnClose
-            style={{ top: 40, maxHeight: '100vh', overflowY: 'auto' }}
+            style={{
+              padding: 0,
+              top: 40,
+              marginBottom: 40,
+            }}
+            bodyStyle={{
+              maxHeight: 'calc(100vh - 160px)', // 40px top + 40px bottom + khoảng tiêu đề & footer
+              overflowY: 'auto', // cuộn bên trong modal
+              paddingRight: 16,
+            }}
           >
             <Form
               layout="vertical"
@@ -174,6 +183,7 @@ const PricingManagement: React.FC = () => {
                 label="Mô tả"
                 required
                 placeholder="Mỗi dòng là một mô tả"
+                style={{ height: 120 }}
               />
               <FieldForm
                   type="input"
@@ -188,6 +198,7 @@ const PricingManagement: React.FC = () => {
                   label="Tổng quan"
                   required
                   placeholder=""
+                  style={{ height: 70 }}
               />
               <div className="grid grid-cols-2 gap-4">
                 <FieldForm

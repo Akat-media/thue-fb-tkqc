@@ -17,15 +17,25 @@ interface BudgetItem {
     buttonContact: string;
     subtitle: string;
     overview: string;
+    buttonLabelEN: string;
+    buttonContactEN: string;
 }
 
 const PricingPage: React.FC = () => {
     const [data, setData] = useState<BudgetItem[]>([]);
 
     useEffect(() => {
+        const language = localStorage.getItem("language");
+        const langParse = language ? JSON.parse(language).language : 'vi'; // default la vi
         const fetch = async () => {
             try {
-                const res = await BaseHeader({ method: 'get', url: '/budget' });
+                const res = await BaseHeader({
+                    method: 'get',
+                    url: '/budget',
+                    params: {
+                      lang: langParse,
+                    },
+                });
                 setData(res.data.data || []);
             } catch {
                 setData([]);
