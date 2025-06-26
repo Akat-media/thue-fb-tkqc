@@ -6,8 +6,8 @@ export default {
       animation: {
         "spin-slow": "spin 240s linear infinite",
         "background-slow": "bgMove 20s ease-in-out infinite",
-        // "float": "float 20s ease-in-out infinite",
         float: "float 3s ease-in-out infinite",
+        scroll: "scroll 30s linear infinite",
       },
       keyframes: {
         bgMove: {
@@ -21,6 +21,10 @@ export default {
         float: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10px)" },
+        },
+        scroll: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
       },
       fontFamily: {

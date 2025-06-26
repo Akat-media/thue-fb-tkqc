@@ -83,8 +83,8 @@ const PricingManagement: React.FC = () => {
                     <p className="text-sm text-gray-600 mb-2">
                       Thời gian:{' '}
                       <span className="font-medium">
-                        {budget.start_date.slice(0, 10)} /{' '}
-                        {budget.end_date.slice(0, 10)}
+                        {budget.start_date?.slice(0, 10)} /{' '}
+                        {budget.end_date?.slice(0, 10)}
                       </span>
                     </p>
                     <p className="text-sm text-gray-600 mb-2">
@@ -116,6 +116,7 @@ const PricingManagement: React.FC = () => {
             </div>
           )}
 
+          {isOpenModal && (
           <Modal
             open={isOpenModal}
             onCancel={() => {
@@ -128,16 +129,18 @@ const PricingManagement: React.FC = () => {
                 : 'Thêm gói giá mới'
             }
             footer={null}
-            destroyOnClose
+            destroyOnHidden
             style={{
               padding: 0,
               top: 40,
               marginBottom: 40,
             }}
-            bodyStyle={{
-              maxHeight: 'calc(100vh - 160px)', // 40px top + 40px bottom + khoảng tiêu đề & footer
-              overflowY: 'auto', // cuộn bên trong modal
-              paddingRight: 16,
+            styles={{
+              body: {
+                maxHeight: 'calc(100vh - 160px)',
+                overflowY: 'auto', // cuộn bên trong modal
+                paddingRight: 16,
+              },
             }}
           >
             <Form
@@ -234,6 +237,7 @@ const PricingManagement: React.FC = () => {
               </div>
             </Form>
           </Modal>
+           )}
         </main>
       </div>
     </>

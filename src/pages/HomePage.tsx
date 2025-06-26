@@ -24,6 +24,7 @@ import metalogo from '../public/metalogo.png';
 import { toast } from 'react-toastify';
 import BaseHeader from '../api/BaseHeader.ts';
 import { useTranslation } from 'react-i18next';
+import InfiniteLogoScroll from "./home/InfiniteLogoScroll.tsx";
 
 type MonthlyTotal = {
   totalRevenue: number;
@@ -355,6 +356,9 @@ const HomePage: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/*image logo*/}
+          <InfiniteLogoScroll />
 
           {/* News Section with Slider */}
           <div className="py-10 bg-white">
