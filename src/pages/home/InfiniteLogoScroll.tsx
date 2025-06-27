@@ -8,17 +8,17 @@ interface Logo {
 }
 
 const defaultLogos: Logo[] = [
-    { id: 'fpt', name: 'fpt', src: '/fpt2.png', alt: 'FPT' },
-    { id: 'vcb', name: 'vcb', src: '/vcb2.png', alt: 'VCB' },
-    { id: 'mb', name: 'mb', src: '/mb2.png', alt: 'MB' },
-    { id: 'manulife', name: 'manulife', src: '/manulife2.png', alt: 'Manulife' },
-    { id: 'vinamilk', name: 'vinamilk', src: '/vinamilk.png', alt: 'Vinamilk' },
-    { id: 'vnpt', name: 'vnpt', src: '/vnpt.png', alt: 'VNPT' },
+    { id: 'fpt', name: 'fpt', src: '/homepage/logo-running/fpt2.png', alt: 'FPT' },
+    { id: 'vcb', name: 'vcb', src: '/homepage/logo-running/vcb2.png', alt: 'VCB' },
+    { id: 'mb', name: 'mb', src: '/homepage/logo-running/mb2.png', alt: 'MB' },
+    { id: 'manulife', name: 'manulife', src: '/homepage/logo-running/manulife2.png', alt: 'Manulife' },
+    { id: 'vinamilk', name: 'vinamilk', src: '/homepage/logo-running/vinamilk.png', alt: 'Vinamilk' },
+    { id: 'vnpt', name: 'vnpt', src: '/homepage/logo-running/vnpt.png', alt: 'VNPT' },
 ];
 
 const InfiniteLogoScroll: React.FC = () => {
     return (
-        <div className="w-full bg-gradient-to-r from-slate-50 to-slate-100 py-10 overflow-hidden">
+        <div className="w-full bg-gradient-to-r from-slate-50 to-slate-100 py-3 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="relative overflow-hidden">
                     <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-slate-50 to-transparent z-10"></div>

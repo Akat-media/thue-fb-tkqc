@@ -4,7 +4,7 @@ import { IconProps } from './types';
 const Logo: React.FC<IconProps> = () => {
   return (
     <svg width="259" height="64" viewBox="0 0 259 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_1_31)">
+    <g clipPath="url(#clip0_1_31)">
     <path d="M99.3357 42.0476H95.1663C93.1594 42.0476 92.5815 41.6251 92.2708 40.4259L91.3823 37.6484H83.0436L82.1551 40.4259C81.7698 41.6251 81.2665 42.0476 79.3403 42.0476H75.2891C74.0898 42.0476 73.8599 41.507 74.2452 40.4632L83.1244 15.994C83.5096 14.8756 84.0129 14.6457 85.1314 14.6457H89.5306C90.6491 14.6457 91.1524 14.9129 91.5376 15.9195L100.454 40.4694C100.839 41.5133 100.491 42.0538 99.3357 42.0538V42.0476ZM87.3683 21.667H86.983C86.983 21.667 87.0203 24.4445 86.2498 27.0294L84.8207 31.5839H89.6425L88.2133 27.0667C87.4428 24.4445 87.3621 21.6608 87.3621 21.6608L87.3683 21.667Z" fill="url(#paint0_linear_1_31)"/>
     <path d="M124.159 42.0476H119.99C117.946 42.0476 117.212 41.7742 116.554 40.4259L113.198 33.5163C112.583 32.2798 112.043 31.5839 110.576 31.5839H109.88V40.4259C109.88 41.6251 109.495 42.0476 108.259 42.0476H103.897C102.66 42.0476 102.238 41.6251 102.238 40.4259V16.2612C102.238 15.062 102.66 14.6395 103.897 14.6395H108.259C109.495 14.6395 109.88 15.062 109.88 16.2612V24.8297H110.732L116.293 16.0686C117.026 14.8694 117.374 14.6395 119.381 14.6395H123.817C124.973 14.6395 125.358 15.3354 124.743 16.3358L117.716 27.5264C118.679 28.2224 119.412 29.1855 120.071 30.4965L125.166 40.1463C125.706 41.1901 125.433 42.0352 124.159 42.0352V42.0476Z" fill="url(#paint1_linear_1_31)"/>
     <path d="M152.095 42.0476H147.926C145.919 42.0476 145.341 41.6251 145.031 40.4259L144.142 37.6484H135.803L134.915 40.4259C134.53 41.6251 134.026 42.0476 132.1 42.0476H128.049C126.85 42.0476 126.62 41.507 127.005 40.4632L135.884 15.994C136.269 14.8756 136.773 14.6457 137.891 14.6457H142.29C143.409 14.6457 143.912 14.9129 144.297 15.9195L153.214 40.4694C153.599 41.5133 153.251 42.0538 152.095 42.0538V42.0476ZM140.128 21.667H139.743C139.743 21.667 139.78 24.4445 139.01 27.0294L137.58 31.5839H142.402L140.973 27.0667C140.203 24.4445 140.122 21.6608 140.122 21.6608L140.128 21.667Z" fill="url(#paint2_linear_1_31)"/>
@@ -38,40 +38,40 @@ const Logo: React.FC<IconProps> = () => {
     </g>
     <defs>
     <linearGradient id="paint0_linear_1_31" x1="81.7698" y1="46.1237" x2="97.5524" y2="18.7901" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#323CEB"/>
-    <stop offset="0.41" stop-color="#0596FF"/>
-    <stop offset="0.75" stop-color="#1DC1FF"/>
-    <stop offset="1" stop-color="#2DDCFF"/>
+    <stop stopColor="#323CEB"/>
+    <stop offset="0.41" stopColor="#0596FF"/>
+    <stop offset="0.75" stopColor="#1DC1FF"/>
+    <stop offset="1" stopColor="#2DDCFF"/>
     </linearGradient>
     <linearGradient id="paint1_linear_1_31" x1="105.282" y1="43.2655" x2="122.438" y2="13.5459" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#323CEB"/>
-    <stop offset="0.41" stop-color="#0596FF"/>
-    <stop offset="0.75" stop-color="#1DC1FF"/>
-    <stop offset="1" stop-color="#2DDCFF"/>
+    <stop stopColor="#323CEB"/>
+    <stop offset="0.41" stopColor="#0596FF"/>
+    <stop offset="0.75" stopColor="#1DC1FF"/>
+    <stop offset="1" stopColor="#2DDCFF"/>
     </linearGradient>
     <linearGradient id="paint2_linear_1_31" x1="134.53" y1="46.1237" x2="150.306" y2="18.7901" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#323CEB"/>
-    <stop offset="0.41" stop-color="#0596FF"/>
-    <stop offset="0.75" stop-color="#1DC1FF"/>
-    <stop offset="1" stop-color="#2DDCFF"/>
+    <stop stopColor="#323CEB"/>
+    <stop offset="0.41" stopColor="#0596FF"/>
+    <stop offset="0.75" stopColor="#1DC1FF"/>
+    <stop offset="1" stopColor="#2DDCFF"/>
     </linearGradient>
     <linearGradient id="paint3_linear_1_31" x1="4.5048" y1="49.777" x2="27.4019" y2="21.3622" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#0167F8"/>
-    <stop offset="0.53" stop-color="#0596FF"/>
-    <stop offset="0.8" stop-color="#1DC1FF"/>
-    <stop offset="1" stop-color="#2DDCFF"/>
+    <stop stopColor="#0167F8"/>
+    <stop offset="0.53" stopColor="#0596FF"/>
+    <stop offset="0.8" stopColor="#1DC1FF"/>
+    <stop offset="1" stopColor="#2DDCFF"/>
     </linearGradient>
     <linearGradient id="paint4_linear_1_31" x1="23.7048" y1="52.6973" x2="67.5666" y2="58.7556" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#2DDCFF"/>
-    <stop offset="0.21" stop-color="#1DC1FF"/>
-    <stop offset="0.5" stop-color="#0596FF"/>
-    <stop offset="0.99" stop-color="#0167F8"/>
+    <stop stopColor="#2DDCFF"/>
+    <stop offset="0.21" stopColor="#1DC1FF"/>
+    <stop offset="0.5" stopColor="#0596FF"/>
+    <stop offset="0.99" stopColor="#0167F8"/>
     </linearGradient>
     <linearGradient id="paint5_linear_1_31" x1="41.1153" y1="4.65384" x2="53.4804" y2="36.803" gradientUnits="userSpaceOnUse">
-    <stop offset="0.16" stop-color="#0167F8"/>
-    <stop offset="0.5" stop-color="#0596FF"/>
-    <stop offset="0.79" stop-color="#1DC1FF"/>
-    <stop offset="1" stop-color="#2DDCFF"/>
+    <stop offset="0.16" stopColor="#0167F8"/>
+    <stop offset="0.5" stopColor="#0596FF"/>
+    <stop offset="0.79" stopColor="#1DC1FF"/>
+    <stop offset="1" stopColor="#2DDCFF"/>
     </linearGradient>
     <clipPath id="clip0_1_31">
     <rect width="258.013" height="64" fill="white"/>
