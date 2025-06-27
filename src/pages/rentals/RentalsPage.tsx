@@ -7,8 +7,7 @@ import {
   Calendar,
   DollarSign,
   Wallet,
-  XOctagonIcon,
-  X,
+  XCircle,
   CreditCard,
 } from 'lucide-react';
 import Button from '../../components/ui/Button';
@@ -346,22 +345,28 @@ const RentalsPage: React.FC = () => {
       });
 
       const { success, message } = response.data;
-
-      if (success) {
-        toast.success(message || 'Vô hiệu hóa thành công!');
-      } else {
-        toast.error(message || 'Vô hiệu hóa thất bại!');
-      }
-
-      console.log(response.data);
+      if (success) toast.success(message || 'Vô hiệu hóa thành công!');
+      else toast.error('Vô hiệu hóa thất bại!');
     } catch (error: any) {
-      console.error('Rental error:', error);
       const errorMessage =
         error?.response?.data?.message ||
         'Lỗi kết nối hệ thống. Vui lòng thử lại!';
       toast.error(errorMessage);
     }
   };
+
+  //an scroll
+  useEffect(() => {
+    if (showModal) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [showModal]);
 
   return (
     <>
@@ -432,13 +437,11 @@ const RentalsPage: React.FC = () => {
                 return (
                   <Card
                     key={rental.userBmId}
+                    onClick={() => handleCardClick(rental)}
                     className="h-full flex flex-col relative cursor-pointer hover:shadow-lg transition-shadow duration-200"
                   >
                     <CardHeader>
-                      <div
-                        onClick={() => handleCardClick(rental)}
-                        className="flex justify-between items-start"
-                      >
+                      <div className="flex justify-between items-start">
                         <CardTitle className="text-[22px]">
                           {rental.adAccount.name}
                         </CardTitle>
@@ -559,11 +562,7 @@ const RentalsPage: React.FC = () => {
                                   Hoàn tiền khả dụng
                                 </h3>
                                 <p className="text-sm text-red-700 mt-1">
-                                  Bạn có thể yêu cầu hoàn{' '}
-                                  {(
-                                    rental.requestedLimit - rental.spentBudget
-                                  ).toLocaleString('vi-VN')}{' '}
-                                  điểm chưa sử dụng
+                                  Hoàn lại số điểm chưa sử dụng
                                 </p>
                               </div>
                             </div>
@@ -573,10 +572,20 @@ const RentalsPage: React.FC = () => {
                     <div className="px-6 py-4 relative z-10">
                       <div className="flex space-x-3">
                         {rental.status === 'success' && (
-                          <Button size="sm" fullWidth>
-                            Yêu cầu hoàn tiền
+                          <Button
+                            className="bg-red-500 hover:bg-red-400 text-white rounded-lg px-3 py-2 text-sm font-medium"
+                            size="sm"
+                            icon={<XCircle className="h-4 w-4 mr-1" />}
+                            fullWidth
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              hanleCancel(rental);
+                            }}
+                          >
+                            Vô hiệu hóa
                           </Button>
                         )}
+
                         {rental.status === 'process' && (
                           <Button
                             className="bg-yellow-500 hover:bg-yellow-400 py-2"
@@ -621,179 +630,180 @@ const RentalsPage: React.FC = () => {
           <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
             <div
               ref={innerBorderRef}
-              className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative max-h-[80vh] overflow-y-auto"
+              className="bg-white rounded-2xl shadow-lg w-[90%] max-w-[600px] relative max-h-[80vh] overflow-hidden"
             >
-              <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-black"
-                onClick={() => setShowModal(false)}
-              >
-                <X className="h-5 w-5" />
-              </button>
-              <h2 className="text-xl font-semibold mb-4">
-                Chi tiết tài khoản quảng cáo
-              </h2>
+              <div className="p-6 overflow-y-auto max-h-[80vh]">
+                <h2 className="text-xl font-semibold mb-4">
+                  Chi tiết tài khoản quảng cáo
+                </h2>
 
-              {loadingDetail ? (
-                <div className="text-center py-4">
-                  <p className="text-gray-500">
-                    Đang tải thông tin chi tiết...
-                  </p>
-                </div>
-              ) : adAccountDetail ? (
-                <div className="space-y-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-medium text-lg mb-2">
-                      Thông tin tài khoản
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <p className="text-sm text-gray-500">ID tài khoản:</p>
-                        <p className="font-medium">
-                          {adAccountDetail.account_id}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Tên tài khoản:</p>
-                        <p className="font-medium">{adAccountDetail.name}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">
-                          Business Manager:
-                        </p>
-                        <p className="font-medium">
-                          {adAccountDetail.business?.name || 'N/A'}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Trạng thái:</p>
-                        <p className="font-medium">
-                          {getStatusBadge(selectedRental.status)}
-                        </p>
-                      </div>
-                    </div>
+                {loadingDetail ? (
+                  <div className="text-center py-4">
+                    <p className="text-gray-500">
+                      Đang tải thông tin chi tiết...
+                    </p>
                   </div>
-
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-medium text-lg mb-2">
-                      Thông tin tài chính
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <p className="text-sm text-gray-500">Số dư:</p>
-                        <p className="font-medium">
-                          {parseInt(adAccountDetail.balance).toLocaleString()}{' '}
-                          {adAccountDetail.currency}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Đã chi tiêu:</p>
-                        <p className="font-medium">
-                          {parseInt(
-                            adAccountDetail.amount_spent
-                          ).toLocaleString()}{' '}
-                          {adAccountDetail.currency}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">
-                          Hạn mức chi tiêu:
-                        </p>
-                        <p className="font-medium">
-                          {adAccountDetail.spend_limit
-                            ? adAccountDetail.spend_limit.toLocaleString()
-                            : 'Không giới hạn'}{' '}
-                          {adAccountDetail.currency}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">
-                          Phương thức thanh toán:
-                        </p>
-                        <p className="font-medium flex items-center">
-                          <CreditCard className="h-4 w-4 mr-1 text-blue-500" />
-                          {adAccountDetail.funding_source_details
-                            ?.display_string || 'N/A'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-medium text-lg mb-2">Thông tin thuê</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <p className="text-sm text-gray-500">Ngày bắt đầu:</p>
-                        <p className="font-medium">
-                          {formatDate(selectedRental.startDate)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">
-                          Ngày tạo tài khoản:
-                        </p>
-                        <p className="font-medium">
-                          {new Date(
-                            adAccountDetail.created_time
-                          ).toLocaleDateString('vi-VN')}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Múi giờ:</p>
-                        <p className="font-medium">
-                          {adAccountDetail.timezone_name}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Loại tài khoản:</p>
-                        <p className="font-medium">
-                          {adAccountDetail.is_personal === 1
-                            ? 'Cá nhân'
-                            : 'Doanh nghiệp'}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Tổng tiền:</p>
-                        <p className="font-medium">
-                          {selectedRental.totalPrice.toLocaleString()} VND
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Giá thuê/ngày:</p>
-                        <p className="font-medium">
-                          {selectedRental.adAccount.pricePerDay.toLocaleString()}{' '}
-                          VND
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {adAccountDetail.note_aka && (
+                ) : adAccountDetail ? (
+                  <div className="space-y-4">
                     <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="font-medium text-lg mb-2">Ghi chú</h3>
-                      <p className="text-sm">{adAccountDetail.note_aka}</p>
+                      <h3 className="font-medium text-lg mb-2">
+                        Thông tin tài khoản
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-sm text-gray-500">ID tài khoản:</p>
+                          <p className="font-medium">
+                            {adAccountDetail.account_id}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Tên tài khoản:
+                          </p>
+                          <p className="font-medium">{adAccountDetail.name}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Business Manager:
+                          </p>
+                          <p className="font-medium">
+                            {adAccountDetail.business?.name || 'N/A'}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Trạng thái thuê:
+                          </p>
+                          <p className="font-medium">
+                            {getStatusBadge(selectedRental.status)}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  )}
 
-                  <div className="mt-4 flex justify-end">
-                    <Button onClick={() => setShowModal(false)}>Đóng</Button>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="font-medium text-lg mb-2">
+                        Thông tin tài chính
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-sm text-gray-500">Số dư:</p>
+                          <p className="font-medium">
+                            {parseInt(adAccountDetail.balance).toLocaleString()}{' '}
+                            {adAccountDetail.currency}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">Đã chi tiêu:</p>
+                          <p className="font-medium">
+                            {parseInt(
+                              adAccountDetail.amount_spent
+                            ).toLocaleString()}{' '}
+                            {adAccountDetail.currency}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Hạn mức chi tiêu:
+                          </p>
+                          <p className="font-medium">
+                            {adAccountDetail.spend_limit
+                              ? adAccountDetail.spend_limit.toLocaleString()
+                              : 'Không giới hạn'}{' '}
+                            {adAccountDetail.currency}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Phương thức thanh toán:
+                          </p>
+                          <p className="font-medium flex items-center">
+                            <CreditCard className="h-4 w-4 mr-1 text-blue-500" />
+                            {adAccountDetail.funding_source_details
+                              ?.display_string || 'N/A'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h3 className="font-medium text-lg mb-2">
+                        Thông tin thêm
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Ngày tạo tài khoản:
+                          </p>
+                          <p className="font-medium">
+                            {new Date(
+                              adAccountDetail.created_time
+                            ).toLocaleString('vi-VN')}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">Múi giờ:</p>
+                          <p className="font-medium">
+                            {adAccountDetail.timezone_name}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Loại tài khoản:
+                          </p>
+                          <p className="font-medium">
+                            {adAccountDetail.is_personal === 1
+                              ? 'Cá nhân'
+                              : 'Doanh nghiệp'}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">Tên BM:</p>
+                          <p className="font-medium">
+                            {adAccountDetail.business?.name || 'N/A'}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Trạng thái tài khoản:
+                          </p>
+                          <p className="font-medium">
+                            {adAccountDetail.account_status === 1
+                              ? 'Đang hoạt động'
+                              : 'Không hoạt động'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {adAccountDetail.note_aka && (
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="font-medium text-lg mb-2">Ghi chú</h3>
+                        <p className="text-sm">{adAccountDetail.note_aka}</p>
+                      </div>
+                    )}
+
+                    <div className="mt-4 flex justify-end">
+                      <Button onClick={() => setShowModal(false)}>Đóng</Button>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="text-center py-4">
-                  <p className="text-gray-500">
-                    Không thể tải thông tin chi tiết tài khoản. Vui lòng thử lại
-                    sau.
-                  </p>
-                  <Button
-                    className="mt-3"
-                    onClick={() =>
-                      fetchAdAccountDetail(selectedRental.adAccountId)
-                    }
-                  >
-                    Thử lại
-                  </Button>
-                </div>
-              )}
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-gray-500">
+                      Không thể tải thông tin chi tiết tài khoản. Vui lòng thử
+                      lại sau.
+                    </p>
+                    <Button
+                      className="mt-3"
+                      onClick={() =>
+                        fetchAdAccountDetail(selectedRental.adAccountId)
+                      }
+                    >
+                      Thử lại
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
