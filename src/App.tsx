@@ -16,7 +16,6 @@ import ProfilePage from './pages/profile/Profile.tsx';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Policy from './pages/policy/Policy.tsx';
 import AdminProfilePage from './pages/profile/AdminProfilePage.tsx';
-import Navbar from './components/layout/Navbar.tsx';
 import AdminSupport from './pages/support/AdminSupport';
 import NotificationOverlay from './pages/notify/NotificationOverlay.tsx';
 import Account from './pages/admin/account/Account.tsx';
@@ -34,75 +33,77 @@ import RentalsManagement from './pages/admin/RentalsManagement';
 import VoucherManager from './pages/admin/manager/voucher/VoucherManager.tsx';
 import TicketPage from './pages/profile/Ticket.tsx';
 import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import PriceList from './pages/pricelist/PriceList.tsx';
 import SettingsPage from './pages/admin/Settings.tsx';
+import Navbar from './components/layout/Navbar.tsx';
 
 function App() {
   const userobj = useUserStore((state) => state.user);
+  const [isHomePage, setIsHomepage] = useState(false)
   const ScrollToTop = () => {
     const { pathname } = useLocation();
     useEffect(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [pathname]);
-
+    setIsHomepage(pathname === '/' || pathname === '/dashboard' || pathname === '/login' || pathname === '/register');
     return null;
   };
   return (
     <AuthProvider>
       <NotificationProvider>
         <Router>
-          <Navbar />
-          <Layout role={userobj?.role}>
-            <ScrollToTop />
-            <Routes>
-              {/* Route công khai: Không yêu cầu đăng nhập */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/" element={<HomePage />} />
-              <Route path="/dashboard" element={<HomePage />} />
-              <Route path="/marketplace" element={<MarketplacePage />} />
-              <Route path="/policy" element={<Policy />} />
-              <Route path="/reset-password" element={<PasswordResetForm />} />
-              <Route path="/princing" element={<PricingPage />} />
-              <Route path="/price" element={<PriceList />} />
-              {/* Route yêu cầu đăng nhập */}
-              <Route element={<ProtectedRoute />}>
-                <Route path="/add-account" element={<AddAccountPage />} />
-                <Route path="/rentals" element={<RentalsPage />} />
-                <Route path="/payments" element={<PaymentPage />} />
-                <Route path="/deposit" element={<PaymentForm />} />
-                <Route
-                  path="/adsaccountmanager"
-                  element={<ManageAdsAccount />}
-                />
-                <Route
-                  path="/admintransaction"
-                  element={<AdminTransactionsPage />}
-                />
-                <Route path="/usermanage" element={<UserManagementPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/admin/profile" element={<AdminProfilePage />} />
-                <Route path="/admin/support" element={<AdminSupport />} />
-                <Route path="/admin/policy" element={<PolicyManagement />} />
+          {!isHomePage && <Navbar />}
+            <Layout role={userobj?.role}>
+              <ScrollToTop />
+              <Routes>
+                {/* Route công khai: Không yêu cầu đăng nhập */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/dashboard" element={<HomePage />} />
+                <Route path="/marketplace" element={<MarketplacePage />} />
+                <Route path="/policy" element={<Policy />} />
+                <Route path="/reset-password" element={<PasswordResetForm />} />
+                <Route path="/princing" element={<PricingPage />} />
+                <Route path="/price" element={<PriceList />} />
+                {/* Route yêu cầu đăng nhập */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/add-account" element={<AddAccountPage />} />
+                  <Route path="/rentals" element={<RentalsPage />} />
+                  <Route path="/payments" element={<PaymentPage />} />
+                  <Route path="/deposit" element={<PaymentForm />} />
+                  <Route
+                    path="/adsaccountmanager"
+                    element={<ManageAdsAccount />}
+                  />
+                  <Route
+                    path="/admintransaction"
+                    element={<AdminTransactionsPage />}
+                  />
+                  <Route path="/usermanage" element={<UserManagementPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/admin/profile" element={<AdminProfilePage />} />
+                  <Route path="/admin/support" element={<AdminSupport />} />
+                  <Route path="/admin/policy" element={<PolicyManagement />} />
                 <Route path="/admin/princing" element={<PricingManagement />} />
                 <Route path="/admin/rentals" element={<RentalsManagement />} />
-                <Route path="/admin/voucher" element={<VoucherManager />} />
-                <Route path="/admin/settings" element={<SettingsPage />} />
+                  <Route path="/admin/voucher" element={<VoucherManager />} />
+                  <Route path="/admin/settings" element={<SettingsPage />} />
 
-                <Route
-                  path="/admin/notifications"
-                  element={<NotificationOverlay />}
-                />
-                <Route path="/admin/account" element={<Account />} />
-                <Route path="/create-bot" element={<CreateBotPage />} />
-                <Route path="/create-request" element={<RequestForm />} />
-                <Route path="/support" element={<ListSupport />} />
+                  <Route
+                    path="/admin/notifications"
+                    element={<NotificationOverlay />}
+                  />
+                  <Route path="/admin/account" element={<Account />} />
+                  <Route path="/create-bot" element={<CreateBotPage />} />
+                  <Route path="/create-request" element={<RequestForm />} />
+                  <Route path="/support" element={<ListSupport />} />
                 <Route path="/support/:id" element={<SupportTicketDetail />} />
-                <Route path="/ticket" element={<TicketPage />} />
-              </Route>
-            </Routes>
-          </Layout>
+                  <Route path="/ticket" element={<TicketPage />} />
+                </Route>
+              </Routes>
+            </Layout>
         </Router>
       </NotificationProvider>
     </AuthProvider>

@@ -1,4 +1,3 @@
-import Navbar from "../../components/layout/Navbar.tsx";
 import React from "react";
 import AccountPage from "./AccountPage.tsx";
 
