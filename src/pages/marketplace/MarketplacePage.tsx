@@ -76,6 +76,7 @@ const MarketplacePage: React.FC = () => {
   const [selectedAdAccountDetail, setSelectedAdAccountDetail] =
     useState<any>(null);
   const [isAdDetailOpen, setIsAdDetailOpen] = useState(false);
+  const moneyFields = ['spend_cap', 'amount_spent', 'balance', 'spend_limit'];
 
   const handleCallAPi = async () => {
     try {
@@ -825,18 +826,29 @@ const MarketplacePage: React.FC = () => {
                   'spend_limit',
                   'note_aka',
                   'active',
-                ].map((field) => (
-                  <div key={field} className="flex items-start">
-                    <span className="font-medium w-1/3 capitalize">
-                      {field}:
-                    </span>
-                    <span className="break-all">
-                      {typeof selectedAdAccountDetail[field] === 'number'
-                        ? selectedAdAccountDetail[field].toLocaleString('vi-VN')
-                        : String(selectedAdAccountDetail[field] ?? '—')}
-                    </span>
-                  </div>
-                ))}
+                ].map((field) => {
+                  const value = selectedAdAccountDetail[field];
+                  const moneyFields = [
+                    'spend_cap',
+                    'amount_spent',
+                    'balance',
+                    'spend_limit',
+                  ];
+
+                  const formattedValue =
+                    moneyFields.includes(field) && !isNaN(Number(value))
+                      ? `${Number(value).toLocaleString('vi-VN')} VNĐ`
+                      : String(value ?? '—');
+
+                  return (
+                    <div key={field} className="flex items-start">
+                      <span className="font-medium w-1/3 capitalize">
+                        {field}:
+                      </span>
+                      <span className="break-all">{formattedValue}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

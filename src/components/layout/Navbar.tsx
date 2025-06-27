@@ -272,12 +272,12 @@ const Navbar: React.FC = () => {
   }
 
   return (
-      <div>
-        <nav className="bg-white shadow-sm w-full flex flex-row sm:flex-col">
-          {/*text running*/}
-          <div className="w-full flex justify-center items-center px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-100 via-sky-200 to-cyan-100">
-            <style>
-              {`
+    <div>
+      <nav className="bg-white shadow-sm w-full flex flex-row sm:flex-col">
+        {/*text running*/}
+        <div className="w-full flex justify-center items-center px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-100 via-sky-200 to-cyan-100">
+          <style>
+            {`
                     @keyframes marquee {
                       0% { transform: translateX(100%); }
                       100% { transform: translateX(-100%); }
@@ -294,162 +294,164 @@ const Navbar: React.FC = () => {
                       animation-play-state: paused;
                     }
                 `}
-            </style>
-            <div className="w-full max-w-[1510px] mx-auto py-2">
-              <div className="h-14 flex items-center justify-between space-x-2 sm:space-x-4 customScreen:space-x-6">
-                <div className="flex items-center space-x-2 sm:space-x-4 customScreen:space-x-6 flex-1 min-w-0 justify-between">   {/*sm:justify-start*/}
-                  {/* Sidebar for mobile and tablet */}
-                  <div className="customScreen:hidden">
-                    <button
-                      onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                      className="text-gray-800 focus:outline-none"
-                    >
-                      {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
-                    {isSidebarOpen && (
-                      <div
-                        className="fixed inset-0 bg-black bg-opacity-40 z-40"
-                        onClick={() => setIsSidebarOpen(false)}
-                      />
-                    )}
+          </style>
+          <div className="w-full max-w-[1510px] mx-auto py-2">
+            <div className="h-14 flex items-center justify-between space-x-2 sm:space-x-4 customScreen:space-x-6">
+              <div className="flex items-center space-x-2 sm:space-x-4 customScreen:space-x-6 flex-1 min-w-0 justify-between">
+                {' '}
+                {/*sm:justify-start*/}
+                {/* Sidebar for mobile and tablet */}
+                <div className="customScreen:hidden">
+                  <button
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    className="text-gray-800 focus:outline-none"
+                  >
+                    {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+                  </button>
+                  {isSidebarOpen && (
                     <div
-                      className={`fixed top-0 left-0 h-full w-64 sm:w-72 bg-gradient-to-br from-yellow-100 via-indigo-200 to-green-200 shadow-lg z-50 transform transition-transform duration-300 ${
-                          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                      }`}
-                    >
-                      <div className="p-4 sm:p-5 border-b font-semibold text-blue-700 text-base sm:text-lg">
-                        Menu
-                      </div>
-                      <nav className="flex flex-col p-4 sm:p-5 space-y-3 sm:space-y-4">
-                        {menuItems.map((item, index) => {
-                          const isActive = location.pathname === item.href;
-
-                          return (
-                            <Link
-                              key={index}
-                              to={item.href}
-                              onClick={() => setIsSidebarOpen(false)}
-                              className={`flex items-center px-3 py-2 sm:px-4 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors ${
-                                isActive
-                                  ? 'bg-white text-blue-700 font-semibold'
-                                  : 'text-gray-800 hover:text-blue-600'
-                              }`}
-                            >
-                              <span className="mr-2 sm:mr-3 text-base sm:text-lg">{item.icon}</span>
-                              {item.label}
-                            </Link>
-                          );
-                        })}
-                      </nav>
+                      className="fixed inset-0 bg-black bg-opacity-40 z-40"
+                      onClick={() => setIsSidebarOpen(false)}
+                    />
+                  )}
+                  <div
+                    className={`fixed top-0 left-0 h-full w-64 sm:w-72 bg-gradient-to-br from-yellow-100 via-indigo-200 to-green-200 shadow-lg z-50 transform transition-transform duration-300 ${
+                      isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                    }`}
+                  >
+                    <div className="p-4 sm:p-5 border-b font-semibold text-blue-700 text-base sm:text-lg">
+                      Menu
                     </div>
-                  </div>
+                    <nav className="flex flex-col p-4 sm:p-5 space-y-3 sm:space-y-4">
+                      {menuItems.map((item, index) => {
+                        const isActive = location.pathname === item.href;
 
-                  <img
-                    src="/akamedia.png"
-                    alt="User Avatar"
-                    className="h-10 sm:h-12 customScreen:h-14 shrink-0"
-                  />
-
-                  {/* Text run on desktop only */}
-                  <div className="hidden customScreen:flex customScreen:items-center customScreen:relative customScreen:overflow-hidden customScreen:w-full customScreen:h-[40px]">
-                    <div className="absolute right-0 whitespace-nowrap animate-marquee text-[12px] sm:text-[13px] customScreen:text-[14px]">
-                      <span className="mx-4 font-[13px]">
-                        {user ? (
-                          <>
-                            Chào mừng{' '}
-                            <span className="font-bold text-blue-600">
-                              {user.username}
-                            </span>{' '}
-                            đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và đáng tin cậy trên các nền tảng số
-                          </>
-                        ) : (
-                          'Chào mừng bạn đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và đáng tin cậy trên các nền tảng số'
-                        )}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Auth button with dropdown for mobile and tablet */}
-                  <div className="customScreen:hidden">
-                    {user ? (
-                      <button
-                        onClick={toggleProfileMenu}
-                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-white hover:border-gray-300 transition-colors"
-                      >
-                        <img
-                          src={avatar}
-                          alt="User Avatar"
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ) : (
-                      <button
-                        onClick={toggleAuthMenu}
-                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-white hover:border-gray-300 transition-colors"
-                      >
-                        <img
-                          src={avatar}
-                          alt="Auth Avatar"
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    )}
-
-                    {/* Dropdowns */}
-                    {user ? (
-                      <div>
-                        {isProfileMenuOpen && (
-                          <ProfileDropdown
-                            user={user}
-                            isProfileMenuOpen={isProfileMenuOpen}
-                            handleLogout={handleLogout}
-                            onClose={() => setIsProfileMenuOpen(false)}
-                          />
-                        )}
-                      </div>
-                    ) : (
-                      <div>
-                        {isAuthMenuOpen && (
-                          <AuthDropdown
-                            isAuthMenuOpen={isAuthMenuOpen}
-                            onClose={() => setIsAuthMenuOpen(false)}
-                            onLoginClick={() => setShowLoginModal(true)}
-                            onRegisterClick={() => setShowRegisterModal(true)}
-                          />
-                        )}
-                      </div>
-                    )}
+                        return (
+                          <Link
+                            key={index}
+                            to={item.href}
+                            onClick={() => setIsSidebarOpen(false)}
+                            className={`flex items-center px-3 py-2 sm:px-4 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors ${
+                              isActive
+                                ? 'bg-white text-blue-700 font-semibold'
+                                : 'text-gray-800 hover:text-blue-600'
+                            }`}
+                          >
+                            <span className="mr-2 sm:mr-3 text-base sm:text-lg">
+                              {item.icon}
+                            </span>
+                            {item.label}
+                          </Link>
+                        );
+                      })}
+                    </nav>
                   </div>
                 </div>
-
-                {/* Auth buttons for desktop */}
-                <div className="hidden customScreen:flex customScreen:items-center customScreen:space-x-4">
+                <img
+                  src="/akamedia.png"
+                  alt="User Avatar"
+                  className="h-10 sm:h-12 customScreen:h-14 shrink-0"
+                />
+                {/* Text run on desktop only */}
+                <div className="hidden customScreen:flex customScreen:items-center customScreen:relative customScreen:overflow-hidden customScreen:w-full customScreen:h-[40px]">
+                  <div className="absolute right-0 whitespace-nowrap animate-marquee text-[12px] sm:text-[13px] customScreen:text-[14px]">
+                    <span className="mx-4 font-[13px]">
+                      {user ? (
+                        <>
+                          Chào mừng{' '}
+                          <span className="font-bold text-blue-600">
+                            {user.username}
+                          </span>{' '}
+                          đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và
+                          đáng tin cậy trên các nền tảng số
+                        </>
+                      ) : (
+                        'Chào mừng bạn đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và đáng tin cậy trên các nền tảng số'
+                      )}
+                    </span>
+                  </div>
+                </div>
+                {/* Auth button with dropdown for mobile and tablet */}
+                <div className="customScreen:hidden">
                   {user ? (
-                    <div className="relative">
-                      <button
-                        onClick={toggleProfileMenu}
-                        className="w-12 h-12 rounded-full overflow-hidden border-2 border-white hover:border-gray-300 transition-colors"
-                      >
-                        <img
-                          src={avatar}
-                          alt="User Avatar"
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                      <div>
+                    <button
+                      onClick={toggleProfileMenu}
+                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-white hover:border-gray-300 transition-colors"
+                    >
+                      <img
+                        src={avatar}
+                        alt="User Avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={toggleAuthMenu}
+                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-white hover:border-gray-300 transition-colors"
+                    >
+                      <img
+                        src={avatar}
+                        alt="Auth Avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  )}
+
+                  {/* Dropdowns */}
+                  {user ? (
+                    <div>
+                      {isProfileMenuOpen && (
                         <ProfileDropdown
                           user={user}
                           isProfileMenuOpen={isProfileMenuOpen}
                           handleLogout={handleLogout}
                           onClose={() => setIsProfileMenuOpen(false)}
                         />
-                      </div>
+                      )}
                     </div>
                   ) : (
-                    <>
-                      <button
-                        onClick={() => setShowLoginModal(true)}
-                        className="
+                    <div>
+                      {isAuthMenuOpen && (
+                        <AuthDropdown
+                          isAuthMenuOpen={isAuthMenuOpen}
+                          onClose={() => setIsAuthMenuOpen(false)}
+                          onLoginClick={() => setShowLoginModal(true)}
+                          onRegisterClick={() => setShowRegisterModal(true)}
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Auth buttons for desktop */}
+              <div className="hidden customScreen:flex customScreen:items-center customScreen:space-x-4">
+                {user ? (
+                  <div className="relative">
+                    <button
+                      onClick={toggleProfileMenu}
+                      className="w-12 h-12 rounded-full overflow-hidden border-2 border-white hover:border-gray-300 transition-colors"
+                    >
+                      <img
+                        src={avatar}
+                        alt="User Avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                    <div>
+                      <ProfileDropdown
+                        user={user}
+                        isProfileMenuOpen={isProfileMenuOpen}
+                        handleLogout={handleLogout}
+                        onClose={() => setIsProfileMenuOpen(false)}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setShowLoginModal(true)}
+                      className="
                                 px-5 py-2.5
                                 bg-gradient-to-r from-sky-500 via-cyan-500 to-sky-600
                                 hover:from-sky-600 hover:via-cyan-600 hover:to-sky-700
@@ -462,12 +464,12 @@ const Navbar: React.FC = () => {
                                 cursor-pointer
                                 active:scale-95
                               "
-                      >
-                        Đăng nhập
-                      </button>
-                      <button
-                        onClick={() => setShowRegisterModal(true)}
-                        className="
+                    >
+                      Đăng nhập
+                    </button>
+                    <button
+                      onClick={() => setShowRegisterModal(true)}
+                      className="
                                 px-5 py-2.5
                                 bg-gradient-to-r from-green-400 via-emerald-400 to-green-500
                                 hover:from-green-500 hover:via-emerald-500 hover:to-green-600
@@ -480,91 +482,93 @@ const Navbar: React.FC = () => {
                                 cursor-pointer
                                 active:scale-95
                               "
-                      >
-                        Đăng ký
-                      </button>
-                    </>
-                  )}
-                </div>
+                    >
+                      Đăng ký
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
+        </div>
 
-          {/*navbar redirect desktop*/}
-          <div className="hidden customScreen:block bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700">
-            <nav className="relative overflow-hidden shadow-lg">
-              <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/5 to-white/10 animate-[shimmer_3s_ease-in-out_infinite]" />
-              <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-                <div className="flex justify-center whitespace-nowrap gap-4 max-w-[1200px] mx-auto px-2 py-6">
-                  {menuItems.map((item, i) => {
-                    const protectedRoutes = [
-                      '/rentals',
-                      '/payments',
-                      '/admintransaction',
-                      '/support',
-                    ];
-                    const isProtected = protectedRoutes.includes(item.href);
-                    const isActive = location.pathname === item.href;
+        {/*navbar redirect desktop*/}
+        <div className="hidden customScreen:block bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700">
+          <nav className="relative overflow-hidden shadow-lg">
+            <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/5 to-white/10 animate-[shimmer_3s_ease-in-out_infinite]" />
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+              <div className="flex justify-center whitespace-nowrap gap-4 max-w-[1200px] mx-auto px-2 py-6">
+                {menuItems.map((item, i) => {
+                  const protectedRoutes = [
+                    '/rentals',
+                    '/payments',
+                    '/admintransaction',
+                    '/support',
+                  ];
+                  const isProtected = protectedRoutes.includes(item.href);
+                  const isActive = location.pathname === item.href;
 
-                    const handleClick = (e: React.MouseEvent) => {
-                      if (!user && isProtected) {
-                        e.preventDefault();
-                        setShowLoginModal(true);
-                      }
-                    };
+                  const handleClick = (e: React.MouseEvent) => {
+                    if (!user && isProtected) {
+                      e.preventDefault();
+                      setShowLoginModal(true);
+                    }
+                  };
 
-                    return (
-                      <Link
-                        key={i}
-                        to={item.href}
-                        onClick={handleClick}
-                        className={`group relative flex items-center gap-2 text-white font-medium text-base
+                  return (
+                    <Link
+                      key={i}
+                      to={item.href}
+                      onClick={handleClick}
+                      className={`group relative flex items-center gap-2 text-white font-medium text-base
                           px-5 py-3 rounded-full border
                           transition duration-300 ease-in-out
                           hover:scale-105 hover:-translate-y-1 active:scale-100
                           shadow-md bg-white/10 border-white/20 hover:shadow-xl
-                          ${isActive ? 'scale-105 -translate-y-1 shadow-xl' : ''}`}
-                      >
-                        <div
-                          className={`absolute inset-0 rounded-full ${
-                            isActive
-                              ? 'opacity-100'
-                              : 'opacity-0 group-hover:opacity-100'
-                          } transition-opacity duration-300 ${
-                            item.hoverColor
-                          } z-[-1]`}
-                        />
-                        <span className="text-base drop-shadow">{item.icon}</span>
-                        <span>{item.label}</span>
-                      </Link>
-                    );
-                  })}
-                  {/* Modals */}
-                  {showLoginModal && (
-                    <LoginModal
-                      isOpen={showLoginModal}
-                      onClose={() => setShowLoginModal(false)}
-                      onLoginSuccess={handleLoginSuccess}
-                      onSwitchToRegister={switchToRegister}
-                    />
-                  )}
-                  {showRegisterModal && (
-                    <RegisterModal
-                      isOpen={showRegisterModal}
-                      onClose={() => setShowRegisterModal(false)}
-                      onRegisterSuccess={handleRegisterSuccess}
-                      onSwitchToLogin={switchToLogin}
-                    />
-                  )}
-                </div>
+                          ${
+                            isActive ? 'scale-105 -translate-y-1 shadow-xl' : ''
+                          }`}
+                    >
+                      <div
+                        className={`absolute inset-0 rounded-full ${
+                          isActive
+                            ? 'opacity-100'
+                            : 'opacity-0 group-hover:opacity-100'
+                        } transition-opacity duration-300 ${
+                          item.hoverColor
+                        } z-[-1]`}
+                      />
+                      <span className="text-base drop-shadow">{item.icon}</span>
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
+                {/* Modals */}
+                {showLoginModal && (
+                  <LoginModal
+                    isOpen={showLoginModal}
+                    onClose={() => setShowLoginModal(false)}
+                    onLoginSuccess={handleLoginSuccess}
+                    onSwitchToRegister={switchToRegister}
+                  />
+                )}
+                {showRegisterModal && (
+                  <RegisterModal
+                    isOpen={showRegisterModal}
+                    onClose={() => setShowRegisterModal(false)}
+                    onRegisterSuccess={handleRegisterSuccess}
+                    onSwitchToLogin={switchToLogin}
+                  />
+                )}
               </div>
-            </nav>
-          </div>
-        </nav>
+            </div>
+          </nav>
+        </div>
+      </nav>
 
-        <div className="customScreen:hidden bg-blue-100">
-          <style>
-            {`
+      <div className="customScreen:hidden bg-blue-100">
+        <style>
+          {`
               @keyframes marquee-infinite {
                 0% { transform: translateX(0); }
                 100% { transform: translateX(-50%); }
@@ -584,7 +588,7 @@ const Navbar: React.FC = () => {
               }
               .marquee-item {
                 display: inline-block;
-                padding-right: 1rem; /* Khoảng cách giữa các bản sao */
+                padding-right: 10rem; /* Khoảng cách giữa các bản sao */
               }
               /* Thêm style để căn giữa text theo chiều dọc */
               .center-text {
@@ -593,33 +597,38 @@ const Navbar: React.FC = () => {
                 height: 100%; /* Đảm bảo chiếm toàn bộ chiều cao */
               }
             `}
-          </style>
+        </style>
 
-          <div className="flex items-center relative overflow-hidden w-full h-[40px] group">
-            <div className="absolute top-0 left-0 w-full h-full center-text">
-              <div className="marquee-container">
-                <div className="marquee-content">
-                  {/* Tạo 4 bản sao để đảm bảo chạy liên tục */}
-                  {[...Array(4)].map((_, index) => (
-                      <span key={index} className="marquee-item text-[12px] sm:text-[13px] customScreen:text-[14px]">
-              {user ? (
-                  <>
-                    Chào mừng{' '}
-                    <span className="font-bold text-blue-600">{user.username}</span>{' '}
-                    đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và đáng tin cậy trên các nền tảng số
-                  </>
-              ) : (
-                  'Chào mừng bạn đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và đáng tin cậy trên các nền tảng số'
-              )}
-            </span>
-                  ))}
-                </div>
+        <div className="flex items-center relative overflow-hidden w-full h-[40px] group">
+          <div className="absolute top-0 left-0 w-full h-full center-text">
+            <div className="marquee-container">
+              <div className="marquee-content">
+                {/* Tạo 4 bản sao để đảm bảo chạy liên tục */}
+                {[...Array(4)].map((_, index) => (
+                  <span
+                    key={index}
+                    className="marquee-item text-[12px] sm:text-[13px] customScreen:text-[14px]"
+                  >
+                    {user ? (
+                      <>
+                        Chào mừng{' '}
+                        <span className="font-bold text-blue-600">
+                          {user.username}
+                        </span>{' '}
+                        đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và
+                        đáng tin cậy trên các nền tảng số
+                      </>
+                    ) : (
+                      'Chào mừng bạn đến với AKA MEDIA - Giải pháp nhanh chóng, an toàn và đáng tin cậy trên các nền tảng số'
+                    )}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
         </div>
-
       </div>
+    </div>
   );
 };
 
