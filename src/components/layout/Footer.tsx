@@ -1,121 +1,106 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Mail, Phone } from 'lucide-react';
+import ChevronRightGradient from "../../pages/home/ChevronRightGradient.tsx";
+import { Copyright } from 'lucide-react';
+
+// import { Link } from 'react-router-dom';
+// import { Facebook, Twitter, Instagram, Mail, Phone } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-800 text-white">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="col-span-1">
-            <Link to="/" className="text-white text-2xl font-semibold	">
-              AKAds
-            </Link>
-            <p className="mt-2 text-sm text-gray-300">
-              Nền tảng cho thuê tài khoản quảng cáo Facebook uy tín, nhanh chóng
-              và an toàn.
-            </p>
-            <div className="mt-4 flex space-x-4">
-              <a
-                href="https://www.facebook.com/akamedia.giaiphapso"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white"
-              >
-                <span className="sr-only">Facebook</span>
-                <Facebook className="h-6 w-6" />
-              </a>
-              <a
-                href="https://www.instagram.com/akamedia.vn/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white"
-              >
-                <span className="sr-only">Instagram</span>
-                <Instagram className="h-6 w-6" />
-              </a>
+      <div>
+        {/*<div className="bg-gray-200 h-28"></div>*/}
+        <footer className="bg-gradient-to-r from-[#0061FF] to-[#60EFFF]  text-white">
+            <div className="max-w-7xl mx-auto pt-12 px-4 sm:px-6 lg:px-8">
+                <div>
+                    <img src="/homepage/footer/aka-white.png" alt="aka-footer"/>
+                </div>
+
+                <div className="flex flex-col md:flex-row md:gap-28">
+                    {/*left*/}
+                    <div className="flex flex-col p-6">
+                        <div className="font-hubot text-[20px] md:text-[32px] font-[700]">Agency Truyền Thông AKA Media</div>
+                        <div>
+                            <div className="flex flex-row items-center py-3">
+                                <img src="/homepage/footer/location.png" alt="location"/>
+                                <div className="font-hubot font-[500] pl-5 max-w-[450px]">Tầng 4, Tòa nhà Việt
+                                    Hương, 1 Làng nghề, Triều Khúc, Thanh Trì, Hà Nội, Việt Nam
+                                </div>
+                            </div>
+                            <div className="flex flex-row items-center py-3">
+                                <img src="/homepage/footer/message.png" alt="message"/>
+                                <div className="font-hubot font-[500] pl-5">cskh@akamedia.vn</div>
+                            </div>
+                            <div className="flex flex-row items-center py-3">
+                                <img src="/homepage/footer/phone.png" alt="phone"/>
+                                <div className="font-hubot font-[500] pl-5">038 595 8416</div>
+                            </div>
+
+                            <div className="flex flex-row items-center py-3 gap-2 pl-14">
+                                <img src="/homepage/footer/fb.png" alt="facebook"/>
+                                <img src="/homepage/footer/zalo.png" alt="zalo"/>
+                                <img src="/homepage/footer/youtube.png" alt="youtube"/>
+                                <img src="/homepage/footer/insta.png" alt="instagram"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/*right */}
+                    <div className="flex md:flex-row flex-col">
+                        <div className="mb-5 md:mb-0">
+                            <div className="font-hubot text-[20px] font-[700]">DỊCH VỤ</div>
+                            <div className="font-hubot font-[500] flex flex-row text-black px-2 pt-2">
+                                <ChevronRightGradient isBlack width={24} height={24}/>
+                                Cho thuê BM
+                            </div>
+                            <div className="font-hubot font-[500] flex flex-row text-black pl-2">
+                                <ChevronRightGradient isBlack width={24} height={24}/>
+                                Cho thuê tài khoản quảng cáo
+                            </div>
+                            <div className="font-hubot font-[500] flex flex-row text-black pl-2">
+                                <ChevronRightGradient isBlack width={24} height={24}/>
+                                Nạp tiền
+                            </div>
+                            <div className="font-hubot font-[500] flex flex-row text-black pl-2">
+                                <ChevronRightGradient isBlack width={24} height={24}/>
+                                Quản lý tài khoản
+                            </div>
+                        </div>
+                        <div className="md:pl-8 mb-5 md:mb-0">
+                            <div className="font-hubot text-[20px] font-[700]">HỖ TRỢ</div>
+                            <div className="font-hubot font-[500] flex flex-row text-black px-2 pt-2">
+                                <ChevronRightGradient isBlack width={24} height={24}/>
+                                FAQ
+                            </div>
+                            <div className="font-hubot font-[500] flex flex-row text-black pl-2">
+                                <ChevronRightGradient isBlack width={24} height={24}/>
+                                Điều khoản sử dụng
+                            </div>
+                            <div className="font-hubot font-[500] flex flex-row text-black pl-2">
+                                <ChevronRightGradient isBlack width={24} height={24}/>
+                                Chính sách bảo mật
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/*copyright*/}
+                <div className="font-hubot flex flex-row justify-center font-normal p-4 text-[16px] leading-[24px] tracking-[0.1px] text-right border-t border-white ">
+                    <Copyright />
+                    <span className="pl-2 ">AKA Media, 2025. Bảo lưu mọi quyền.</span>
+                </div>
+
             </div>
-          </div>
-          <div className="col-span-1">
-            <h3 className="text-md font-semibold text-white uppercase tracking-wider">
-              Dịch vụ
-            </h3>
-            <ul className="mt-4 space-y-2">
-              {/* <li>
-                <Link
-                  to="/marketplace"
-                  className="text-gray-300 hover:text-white"
-                >
-                  Cho thuê BM
-                </Link>
-              </li> */}
-              <li>
-                <Link
-                  to="/marketplace"
-                  className="text-gray-300 hover:text-white"
-                >
-                  Cho thuê tài khoản quảng cáo
-                </Link>
-              </li>
-              <li>
-                <Link to="/payments" className="text-gray-300 hover:text-white">
-                  Nạp tiền
-                </Link>
-              </li>
-              <li>
-                <Link to="/rentals" className="text-gray-300 hover:text-white">
-                  Quản lý tài khoản
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="col-span-1">
-            <h3 className="text-md font-semibold text-white uppercase tracking-wider">
-              Hỗ trợ
-            </h3>
-            <ul className="mt-4 space-y-2">
-              <li>
-                <Link to="/policy" className="text-gray-300 hover:text-white">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link to="/policy" className="text-gray-300 hover:text-white">
-                  Điều khoản sử dụng
-                </Link>
-              </li>
-              <li>
-                <Link to="/policy" className="text-gray-300 hover:text-white">
-                  Chính sách bảo mật
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="col-span-1">
-            <h3 className="text-md font-semibold text-white uppercase tracking-wider">
-              Liên hệ
-            </h3>
-            <ul className="mt-4 space-y-2">
-              <li className="flex items-center">
-                <Phone className="h-5 w-5 mr-2 text-gray-400" />
-                <span className="text-gray-300">+84 123 456 789</span>
-              </li>
-              <li className="flex items-center">
-                <Mail className="h-5 w-5 mr-2 text-gray-400" />
-                <span className="text-gray-300">support@akads.vn</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="mt-8 border-t border-gray-700 pt-8 md:flex md:items-center md:justify-between">
-          <div className="mt-8 md:mt-0">
-            <p className="text-base text-gray-400">
-              &copy; {new Date().getFullYear()} AKAds. Bản quyền thuộc về AKAds.
-            </p>
-          </div>
-        </div>
+
+            {/*copyright*/}
+            {/*<div className="border-t border-white w-full">*/}
+            {/*    <div className="font-hubot flex flex-row justify-center font-normal p-4 text-[16px] leading-[24px] tracking-[0.1px] text-right border-t border-white ">*/}
+            {/*        <Copyright />*/}
+            {/*        <span className="pl-2 ">AKA Media, 2025. Bảo lưu mọi quyền.</span>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+        </footer>
       </div>
-    </footer>
+
   );
 };
 

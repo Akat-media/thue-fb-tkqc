@@ -25,6 +25,7 @@ const Icon: React.FC<IconComponentProps> = ({ name, ...props }) => {
     support: SupportIcon,
     logo: Logo,
     logoVietnam: VietnameseIcon,
+    // clipPath: ClipPathIcon,
   };
 
   const IconComponent = iconComponents[name];

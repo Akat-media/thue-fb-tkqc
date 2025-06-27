@@ -38,6 +38,7 @@ export default {
           'Arial',
           'sans-serif',
         ],
+        hubot: ['"Hubot Sans"', 'sans-serif'],
       },
       colors: {
         revenue: "#4CAF50",
