@@ -128,6 +128,17 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
                     'Không có thông tin'}
                 </span>
               </div>
+              <div className="flex items-center text-sm">
+                <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
+                  <CreditCard className="h-4 w-4 text-gray-400" />
+                  Giới hạn chi:
+                </span>
+                <span className="text-gray-900 font-medium">
+                  {account?.spend_cap
+                    ? `${Number(account.spend_cap).toLocaleString('vi-VN')} VNĐ`
+                    : 'Không có thông tin'}
+                </span>
+              </div>
             </div>
             <div className="mt-4 text-sm text-gray-500 border-t pt-3">
               <p className="flex gap-1 items-center">

@@ -531,7 +531,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     )}
                   </div>
                 )}
-                <div>
+                {/* <div>
                   <label
                     htmlFor="cookieSelect"
                     className="block text-sm font-medium text-gray-700 mb-1"
@@ -555,7 +555,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                       Đang tải danh sách bot...
                     </div>
                   )}
-                </div>
+                </div> */}
                 <div>
                   <label
                     id="voucherSelect"
@@ -596,6 +596,11 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 <h4 className="text-sm font-medium text-gray-900">
                   Chi tiết thanh toán
                 </h4>
+                <p className="text-xs text-gray-500 mt-1 italic">
+                  * Phí dịch vụ được tính theo bảng giá quy định. Vui lòng xem
+                  chi tiết hoặc liên hệ hỗ trợ.
+                </p>
+
                 <div className="mt-2 space-y-1">
                   {/* <div className="flex justify-between text-sm">
                     <span className="text-gray-500">
