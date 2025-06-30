@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import loginimg from '../../public/login.jpg';
 import axios from 'axios';
+import logo1 from '/public/logo.png';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -78,118 +79,104 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex">
-      <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-r from-transparent via-blue-100/70 to-white backdrop-blur-sm relative">
-        <Link
-          to="/"
-          className="absolute top-6 left-6 text-[#0167F8] font-semibold	 text-3xl hover:underline"
-        >
-          AKAds
-        </Link>
-        <div className="w-[420px] p-8 mt-10 rounded-lg">
-          <h1 className="text-2xl font-semibold text-[#0167F8] mb-2">
-            Vui Lòng Đăng Nhập
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      style={{ backgroundImage: `url(${loginimg})` }}
+    >
+      <img
+        src={logo1}
+        alt="Logo"
+        className="absolute top-0 left-6 w-52 h-59 object-contain z-20 mt-6"
+      />
+
+      <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-lg shadow-xl p-8 z-10">
+        <div className="mb-6">
+          <h1
+            className="relative inline-block text-3xl font-bold text-[#0f172a] 
+    before:content-[''] before:absolute before:-right-3 before:-left-1 before:inset-x-0 before:bottom-0 before:h-1/2 
+    before:bg-gradient-to-r before:from-[#6cffd8] before:to-[#c1f4ff] 
+    before:-z-10"
+          >
+            Đăng nhập
           </h1>
-          <h3 className="text-sm text-gray-500 mb-6"> RPA </h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-xs font-semibold uppercase text-[#0167F8]"
-              >
-                Tài Khoản
-              </label>
-              <div className="relative mt-1">
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8] pr-10"
-                />
-                <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              </div>
-              {errors.email && (
-                <p className="text-sm text-red-500 mt-1">{errors.email}</p>
-              )}
-            </div>
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-xs font-semibold uppercase text-[#0167F8]"
-              >
-                Mật Khẩu
-              </label>
-              <div className="relative mt-1">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8] pr-10"
-                />
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
-                  </button>
-                </div>
-              </div>
-              {errors.password && (
-                <p className="text-sm text-red-500 mt-1">{errors.password}</p>
-              )}
-            </div>
-            <div className="flex justify-between items-center text-sm text-gray-600">
-              <button
-                type="button"
-                onClick={() => setShowForgotPassword(true)}
-                className="text-blue-600 hover:underline"
-              >
-                Quên Mật Khẩu?
-              </button>
-              {showForgotPassword && (
-                <ForgotPasswordModal
-                  isOpen={showForgotPassword}
-                  onClose={() => setShowForgotPassword(false)}
-                  onSwitchToLogin={() => {
-                    setShowForgotPassword(false);
-                  }}
-                />
-              )}
-            </div>
-            <button
-              type="submit"
-              className="px-8 py-2 bg-[#0167F8] text-white rounded-full hover:bg-[#005fce] transition mx-auto block shadow-md hover:shadow-lg"
-            >
-              Đăng Nhập
-            </button>
-          </form>
-          <p className="mt-6 text-center text-sm">
-            Chưa Có Tài Khoản?{' '}
-            <Link to="/register" className="text-[#0167F8] hover:underline">
-              Đăng Ký Ngay
-            </Link>
-          </p>
-          <p className="mt-4 text-center text-xs text-gray-400">
-            © Bản quyền thuộc về AKA Media
+          <p className="text-sm font-thin text-gray-800 mt-1">
+            Chào mừng bạn quay lại với AKAds
           </p>
         </div>
-      </div>
-      <div className="hidden md:block w-1/2 h-full">
-        <img
-          src={loginimg}
-          alt="Background"
-          className="w-full h-full object-cover"
-        />
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold uppercase text-black mb-1">
+              Tài khoản
+            </label>
+            <div className="relative">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                className="w-full px-4 py-3 border border-black rounded-md focus:outline-none focus:border-[#f2f2f2] pr-10 text-base"
+              />
+              <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            </div>
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold uppercase text-black mb-1">
+              Mật khẩu
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className="w-full px-4 py-3 border border-black rounded-md focus:outline-none focus:border-[#f2f2f2] pr-10 text-base"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+            )}
+          </div>
+
+          <div className="text-sm text-left">
+            <Link to="#" className="text-[#42e1b6] hover:underline">
+              Quên mật khẩu?
+            </Link>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2 bg-[#0a1f38] text-white rounded-full font-semibold hover:bg-[#062b57] transition"
+          >
+            Đăng nhập
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-sm text-gray-800">
+          Chưa có tài khoản?{' '}
+          <Link to="/register" className="text-[#42e1b6] hover:underline">
+            Đăng ký ngay
+          </Link>
+        </p>
+
+        <p className="mt-6 text-center text-base text-gray-500">
+          © AKA Media, 2025. Bảo lưu mọi quyền.
+        </p>
       </div>
 
       {/* Loading spinner */}

@@ -28,7 +28,7 @@ const useManagerBudget = ({ form }: UseManagerBudgetProps) => {
   }, []);
   const fetchBudgets = async () => {
     try {
-      const res = await BaseHeader({ method: 'get', url: '/budget' });
+      const res = await BaseHeader({ method: 'get', url: '/budget?lang=vi' });
       const data = (res.data.data || []).map((item: any) => ({
         ...item,
         description: Array.isArray(item.description)
