@@ -1,7 +1,7 @@
 'use client';
 import { Menu, X } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { ProfileDropdown } from '../layout/ProfileDropdown';
 import Icon from '../icons';
 import { NAV_ITEMS } from '../layout/Navbar';
@@ -33,6 +33,7 @@ export default function MobileNavigation({
   onClose,
 }: MobileNavigationProps) {
   const { i18n, t } = useTranslation();
+  const navigate = useNavigate();
   
   return (
     <>
@@ -48,7 +49,9 @@ export default function MobileNavigation({
           >
             <Menu className="w-6 h-6 transition-transform duration-200" />
           </button>
-          <div className="flex items-center">
+          <div
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center cursor-pointer">
             <img
               src="/logo.png"
               alt=""

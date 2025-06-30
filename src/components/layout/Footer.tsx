@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
                     </div>
 
                     {/*right */}
-                    <div className="flex md:flex-row flex-col">
+                    <div className="flex md:flex-row flex-col mb-[50px] md:mb-[0px]">
                         <div className="mb-5 md:mb-0">
                             <div className="font-hubot text-[20px] font-[700]">DỊCH VỤ</div>
                             <div className="font-hubot font-[500] flex flex-row text-black px-2 pt-2">
