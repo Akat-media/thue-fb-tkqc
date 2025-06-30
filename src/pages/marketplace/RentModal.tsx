@@ -122,19 +122,20 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   }, [requestedLimit, serviceFee, discountAmount, isVisaAccount]);
 
   const handleSubmit = async () => {
-    if (!rentalRange) {
-      setRentalRangeError('Vui lòng chọn thời gian thuê.');
-      return;
-    }
+    if (!isVisaAccount) {
+      if (!rentalRange) {
+        setRentalRangeError('Vui lòng chọn thời gian thuê.');
+        return;
+      }
 
-    const { start, end } = rentalRange;
-    console.log(start, end);
-    const msPerDay = 1000 * 60 * 60 * 24;
-    const days = Math.round((end.getTime() - start.getTime()) / msPerDay) + 1;
+      const { start, end } = rentalRange;
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const days = Math.round((end.getTime() - start.getTime()) / msPerDay) + 1;
 
-    if (days < 7 || days > 31) {
-      setRentalRangeError('Thời gian thuê phải từ 7 đến 31 ngày.');
-      return;
+      if (days < 7 || days > 31) {
+        setRentalRangeError('Thời gian thuê phải từ 7 đến 31 ngày.');
+        return;
+      }
     }
 
     if (
@@ -190,7 +191,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       if (response.status === 200 && response.data.success) {
         setSuccessRent(response.data.message);
         onClose();
-        toast.success(response.data.message || 'Thuê tài khoản thành công!');
+        toast.success('Thuê tài khoản thành công!');
       } else {
         toast.error(response.data.message || 'Không thể thuê tài khoản.');
       }
