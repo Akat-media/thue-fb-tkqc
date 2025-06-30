@@ -98,7 +98,7 @@ export default function MobileNavigation({
       >
         <div className="p-4">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold">Dịch vụ</h3>
+            <h3 className="text-lg font-semibold">{t('subTextNavbar')}</h3>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"

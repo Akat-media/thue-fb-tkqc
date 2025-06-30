@@ -3,6 +3,7 @@
     "vi": "Tiếng Việt",
     "en": "Tiếng Anh"
   },
+  "subTextNavbar" : "Dịch vụ",
   "authen": {
     "login":"Đăng nhập",
     "register": "Đăng ký",
