@@ -91,9 +91,12 @@ const PaymentPage: React.FC = () => {
     'loading' | 'success' | 'failed' | null
   >(null);
   const { user, fetchUser } = useUserStore();
+  const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(true);
+  const [currencyTab, setCurrencyTab] = useState<'VND' | 'USD' | null>(null);
 
   useEffect(() => {
     fetchUser();
+    setIsCurrencyModalOpen(true);
   }, [fetchUser]);
 
   const hanleCalTransaction = async (number: any) => {
@@ -236,6 +239,85 @@ const PaymentPage: React.FC = () => {
 
   return (
     <>
+      {isCurrencyModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-sm">
+            <h2 className="text-xl font-semibold text-gray-800 mb-5 text-center">
+              Select Payment Method
+            </h2>
+
+            <div className="space-y-3">
+              <div
+                className={`flex items-center justify-between border rounded-lg p-3 cursor-pointer shadow-sm hover:shadow-md transition ${
+                  currencyTab === 'VND'
+                    ? 'border-blue-600 ring-2 ring-blue-400'
+                    : 'border-gray-300'
+                }`}
+                onClick={() => {
+                  setCurrencyTab('VND');
+                  setIsCurrencyModalOpen(false);
+                }}
+              >
+                <div className="flex items-center space-x-3">
+                  <div
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      currencyTab === 'VND'
+                        ? 'border-blue-600'
+                        : 'border-gray-400'
+                    }`}
+                  >
+                    {currencyTab === 'VND' && (
+                      <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+                    )}
+                  </div>
+                  <span className="font-medium text-gray-800">
+                    VNĐ (Internet Banking)
+                  </span>
+                </div>
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/3128/3128313.png"
+                  alt="Bank icon"
+                  className="h-6"
+                />
+              </div>
+              <div
+                className={`flex items-center justify-between border rounded-lg p-3 cursor-pointer shadow-sm hover:shadow-md transition ${
+                  currencyTab === 'USD'
+                    ? 'border-blue-600 ring-2 ring-blue-400'
+                    : 'border-gray-300'
+                }`}
+                onClick={() => {
+                  setCurrencyTab('USD');
+                  setIsCurrencyModalOpen(false);
+                }}
+              >
+                <div className="flex items-center space-x-3">
+                  <div
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      currencyTab === 'USD'
+                        ? 'border-blue-600'
+                        : 'border-gray-400'
+                    }`}
+                  >
+                    {currencyTab === 'USD' && (
+                      <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+                    )}
+                  </div>
+                  <span className="font-medium text-gray-800">
+                    USD (PayPal)
+                  </span>
+                </div>
+                <img
+                  src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
+                  alt="PayPal"
+                  className="h-6"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
@@ -308,7 +390,7 @@ const PaymentPage: React.FC = () => {
         </div>
 
         <div className="mt-6">
-          {activeTab === 'deposit' && (
+          {activeTab === 'deposit' && currencyTab === 'VND' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="h-full">
                 <CardHeader>
@@ -646,6 +728,110 @@ const PaymentPage: React.FC = () => {
                       </div>
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'deposit' && currencyTab === 'USD' && (
+            <div className="grid grid-cols-10 gap-6">
+              <div className="col-span-4 p-8 rounded-lg shadow-lg text-center w-full border border-blue-100 h-full flex flex-col justify-center bg-gradient-to-br from-blue-100 to-white">
+                <div className="flex items-center justify-center mb-4">
+                  <img
+                    src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
+                    alt="PayPal Logo"
+                    className="h-10 w-auto"
+                  />
+                  <h3 className="text-2xl font-bold text-yellow-500 ml-3">
+                    Make a payment with{' '}
+                    <span className="italic">
+                      <span className="text-blue-900">Pay</span>
+                      <span className="text-blue-400">Pal</span>
+                    </span>
+                  </h3>
+                </div>
+
+                <p className="text-gray-700 mb-6 text-sm">
+                  Please enter the amount (USD) you wish to deposit (minimum
+                  $10), then click the button below to proceed with PayPal
+                  payment.
+                </p>
+
+                <div className="mb-6">
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={customAmount}
+                      onChange={(e) => setCustomAmount(e.target.value)}
+                      placeholder="Enter amount (USD)"
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 pr-10 text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      min={10}
+                    />
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg font-medium">
+                      $
+                    </span>
+                  </div>
+                  {customAmount && parseFloat(customAmount) < 10 && (
+                    <p className="text-red-500 text-sm mt-2">
+                      Minimum amount is $10.
+                    </p>
+                  )}
+                </div>
+
+                <a
+                  href={`https://www.paypal.com/paypalme/yourbusinesslink/${
+                    customAmount || 0
+                  }`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-block w-full text-center ${
+                    parseFloat(customAmount || '0') >= 10
+                      ? 'bg-yellow-400 hover:bg-yellow-500 text-black'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  } font-semibold py-3 rounded-md transition text-lg`}
+                  onClick={(e) => {
+                    if (!customAmount || parseFloat(customAmount) < 10)
+                      e.preventDefault();
+                  }}
+                >
+                  Pay with{' '}
+                  <span className="text-blue-900 font-extrabold italic">
+                    Pay
+                  </span>
+                  <span className="text-blue-400 font-extrabold italic">
+                    Pal
+                  </span>
+                </a>
+
+                <p className="text-xs text-red-500 mt-5">
+                  After completing the payment, please check your account to
+                  verify the transaction.
+                </p>
+              </div>
+
+              <Card className="col-span-6 h-full mb-2">
+                <CardContent className="py-4 h-full flex flex-col justify-start">
+                  <h2 className="text-lg text-blue-900 font-bold mb-3">
+                    How to Pay?
+                  </h2>
+                  <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600">
+                    <li>Enter the amount you want to deposit (minimum $10).</li>
+                    <li>
+                      Click the <strong>Pay with PayPal</strong> button to open
+                      the payment page.
+                    </li>
+                    <li>
+                      Log in to your PayPal account and confirm the payment.
+                    </li>
+                    <li>
+                      Wait a few minutes for the system to verify and credit
+                      your account.
+                    </li>
+                    <li>
+                      If you have any questions or issues during the payment
+                      process, please contact us for assistance.
+                    </li>
+                  </ol>
                 </CardContent>
               </Card>
             </div>
