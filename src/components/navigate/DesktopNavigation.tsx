@@ -5,26 +5,25 @@ import Icon from '../icons';
 import { ProfileDropdown } from '../layout/ProfileDropdown';
 import { NAV_ITEMS } from '../layout/Navbar';
 import { Link } from 'react-router-dom';
+import { Dropdown } from 'antd';
+import { LANGUAGE_ITEMS } from '../layout/Navbar';
+import { useTranslation } from 'react-i18next';
 type DesktopNavigationProps = {
   user: any;
   avatar:string;
-  languageDropdown: boolean
   setShowLoginModal: Dispatch<SetStateAction<boolean>>;
   setShowRegisterModal: Dispatch<SetStateAction<boolean>>;
-  setLanguageDropdown: Dispatch<SetStateAction<boolean>>
   handleLogout: () => void
 };
 export default function DesktopNavigation({
   user,
   avatar,
-  languageDropdown,
   setShowLoginModal,
   setShowRegisterModal,
   handleLogout,
-  setLanguageDropdown
 }: DesktopNavigationProps) {
+  const { i18n, t } = useTranslation();
   const [isScrolled, setIsScrolled] = useState(false)
-
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY
@@ -36,7 +35,7 @@ export default function DesktopNavigation({
       window.removeEventListener("scroll", handleScroll)
     }
   }, [])
-  console.log('isScrolled', isScrolled)
+
   return (
     <div className={`hidden lg:block ${isScrolled ? 'relative' : 'unset'}`}>
       {/* Desktop Header */}
@@ -62,50 +61,54 @@ export default function DesktopNavigation({
               ) : (
                 <Fragment>
                   <button
-                    onClick={() => setShowRegisterModal(true)}
+                    onClick={() => setShowLoginModal(true)}
                     className="px-6 py-2 border border-gray-300 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white/90 transition-all duration-200 hover:scale-105"
                   >
-                    Đăng ký
+                    {t('authen.login')}
                   </button>
                   <button
-                    onClick={() => setShowLoginModal(true)}
+                    onClick={() => setShowRegisterModal(true)}
                     className="px-6 py-2 bg-slate-700 text-white rounded-full hover:bg-slate-800 transition-all duration-200 hover:scale-105"
                   >
-                    Đăng nhập
+                    {t('authen.register')}
                   </button>
                 </Fragment>
               )}
               {/* Language Dropdown */}
-              <div className="relative">
-                <button
-                  className="text-white rounded-full transition-all duration-200 flex items-center hover:scale-105"
-                  onClick={() => setLanguageDropdown(!languageDropdown)}
+                <Dropdown
+                  menu={{ 
+                    items: LANGUAGE_ITEMS(i18n.language, t),
+                    onClick: ({ key }) => {
+                      i18n.changeLanguage(key);
+                    },
+                   }}
+                  placement="topRight"
                 >
-                  <Icon name="logoVietnam" />
-                </button>
-
-                {languageDropdown && (
-                  <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border z-20 animate-in slide-in-from-top-2 duration-200">
-                    <div className="py-1">
-                      <button className="w-full px-4 py-2 text-left hover:bg-gray-50 transition-colors duration-150">
-                        Tiếng Việt
-                      </button>
-                      <button className="w-full px-4 py-2 text-left hover:bg-gray-50 transition-colors duration-150">
-                        English
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+                  <button
+                    className="text-white rounded-full transition-all duration-200 flex items-center"
+                  >
+                    {i18n.language === 'vi' ? (
+                      <Icon name="logoVietnam" />
+                    ) : (
+                      <Icon name="logoEL" />
+                    )}
+                  </button>
+                </Dropdown>
             </div>
           </div>
         </div>
       </header>
 
       {/* Desktop Navigation Menu */}
-      <nav className={`${isScrolled ? 'fixed top-0 left-0 right-0 z-20' : 'pt-6'}`}>
-        <div className="container mx-auto px-4">
-          <div className={` backdrop-blur-sm rounded-3xl p-4 transition-all duration-300 hover:shadow-xl ${isScrolled ? 'bg-white shadow-xl' : 'bg-white/90'}`}>
+      <nav
+        className={`${isScrolled ? 'fixed top-0 left-0 right-0 z-20' : 'pt-6'}`}
+      >
+        <div className="container mx-auto pb-3 px-4">
+          <div
+            className={` backdrop-blur-sm rounded-3xl p-4 transition-all duration-300 hover:shadow-xl ${
+              isScrolled ? 'bg-white shadow-xl' : 'bg-white/90'
+            }`}
+          >
             <div className="flex items-center justify-evenly space-x-8">
               {NAV_ITEMS.map((item) => {
                 const protectedRoutes = [
@@ -131,24 +134,16 @@ export default function DesktopNavigation({
                     <div className="text-2xl text-blue-500 transition-transform duration-200">
                       {item.icon}
                     </div>
-                    <span className="text-sm text-gray-700 whitespace-nowrap">
-                      {item.label}
+                    <span className="text-[#6B7280] text-base whitespace-nowrap font-hubot">
+                      {t(item.i18nKey)}
                     </span>
                   </Link>
-                )
+                );
               })}
             </div>
           </div>
         </div>
       </nav>
-
-      {/* Click outside to close dropdown */}
-      {languageDropdown && (
-        <div
-          className="fixed inset-0 z-10"
-          onClick={() => setLanguageDropdown(false)}
-        />
-      )}
     </div>
   );
 }

@@ -1,4 +1,34 @@
 {
-  "welcome": "Chào mừng",
-  "language": "Ngôn ngữ"
+  "language": {
+    "vi": "Tiếng Việt",
+    "en": "Tiếng Anh"
+  },
+  "authen": {
+    "login":"Đăng nhập",
+    "register": "Đăng ký",
+    "logout": "Đăng xuất"
+  },
+  "profile": {
+    "point": "Điểm",
+    "account": "Tài khoản",
+    "voucher": "Voucher",
+    "deposit": "Nạp tiền"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "accounts": "Danh sách tài khoản",
+    "pricing": "Bảng giá",
+    "rented": "Tài khoản đang thuê",
+    "topup": "Nạp tiền",
+    "history": "Lịch sử giao dịch",
+    "support": "Hỗ trợ",
+    "policy": "Chính sách"
+  },
+  "mainHeading": {
+    "title": "Giải Pháp Cho Thuê",
+    "titleBot": "TÀI KHOẢN QUẢNG CÁO AGENCY",
+    "subtitle": "AKAds đồng hành cùng doanh nghiệp tối ưu hóa lợi nhuận",
+    "subtitleBot": "Nhờ hệ thống tài khoản quảng cáo uy tín và nguyên liệu quảng cáo chất lượng",
+    "textButton": "Thuê tài khoản ngay"
+  }
 }

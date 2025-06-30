@@ -20,7 +20,7 @@ export default function MainHero() {
       <div
         className="min-h-[500px] lg:min-h-[800px] relative overflow-hidden font-[Helvetica,Arial,sans-serif]"
         style={{
-          backgroundImage: "url('/background.jpg')",
+          backgroundImage: "url('/homepage/header/background.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center center',
           backgroundRepeat: 'no-repeat',
