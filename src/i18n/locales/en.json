@@ -1,4 +1,34 @@
 {
-  "welcome": "Welcome",
-  "language": "Language"
+  "language": {
+    "vi": "Vietnamese",
+    "en": "English"
+  },
+  "authen": {
+    "login":"Login",
+    "register": "Regiser",
+    "logout": "Logout"
+  },
+  "profile": {
+    "points": "points",
+    "account": "Account",
+    "voucher": "Voucher",
+    "deposit": "Deposit"
+  },
+  "nav": {
+    "home": "Home",
+    "accounts": "Account List",
+    "pricing": "Pricing",
+    "rented": "Rented Accounts",
+    "topup": "Top-up",
+    "history": "Transaction History",
+    "support": "Support",
+    "policy": "Policy"
+  },
+  "mainHeading": {
+    "title": "Advertising Rental Solution",
+    "titleBot": "AGENCY ADVERTISING ACCOUNTS",
+    "subtitle": "AKAds accompanies businesses to optimize profits",
+    "subtitleBot": "Through a trusted ad account system and high-quality creative materials",
+    "textButton": "Rent an account now"
+  }
 }

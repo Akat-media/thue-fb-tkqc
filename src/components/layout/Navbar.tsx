@@ -10,63 +10,91 @@ import RegisterModal from '../../pages/auth/RegisterModal';
 import socket from '../../socket';
 import DesktopNavigation from '../navigate/DesktopNavigation';
 import MobileNavigation from '../navigate/MobileNavigation';
-
+import { MenuProps } from 'antd';
+import { TFunction } from 'i18next';
 type NavbarV2Props = {
   isHomePage?: boolean;
 };
 type NavType = {
   key: string;
-  label: string;
+  i18nKey: string;
   url: string;
   icon: JSX.Element;
 }[];
 // eslint-disable-next-line react-refresh/only-export-components
-export const NAV_ITEMS: NavType = [
+  export const LANGUAGE_ITEMS = (currentLang: string, t: TFunction): MenuProps['items'] => [
+  {
+    key: 'vi',
+    label: (
+      <div className="flex justify-between items-center">
+        <span className={currentLang === 'vi' ? 'font-semibold text-blue-600' : ''}>
+        {t('language.vi')}
+        </span>
+      </div>
+    ),
+  },
+  {
+    key: 'en',
+    label: (
+      <div className="flex justify-between items-center">
+        <span className={currentLang === 'en' ? 'font-semibold text-blue-600' : ''}>
+        {t('language.en')}
+        </span>
+      </div>
+    )
+  },
+]
+// eslint-disable-next-line react-refresh/only-export-components
+export const NAV_ITEMS:NavType = [
   {
     key: 'home',
-    label: 'Trang chủ',
+    i18nKey: 'nav.home',
     url: '/dashboard',
     icon: <Icon name="home" />,
   },
   {
     key: 'accounts',
-    label: 'Danh sách tài khoản',
+    i18nKey: 'nav.accounts',
     url: '/marketplace',
     icon: <Icon name="accounts" />,
   },
   {
     key: 'pricing',
-    label: 'Bảng giá',
+    i18nKey: 'nav.pricing',
     url: '/price',
     icon: <Icon name="pricing" />,
   },
   {
     key: 'rented',
-    label: 'Tài khoản đang thuê',
+    i18nKey: 'nav.rented',
     url: '/rentals',
     icon: <Icon name="rented" />,
   },
   {
     key: 'topup',
-    label: 'Nạp tiền',
+    i18nKey: 'nav.topup',
     url: '/payments',
     icon: <Icon name="topup" />,
   },
   {
     key: 'history',
-    label: 'Lịch sử giao dịch',
+    i18nKey: 'nav.history',
     url: '/admintransaction',
     icon: <Icon name="history" />,
   },
   {
     key: 'support',
-    label: 'Hỗ trợ',
+    i18nKey: 'nav.support',
     url: '/support',
     icon: <Icon name="support" />,
   },
-  // Thiếu chính sách
+  {
+    key: 'policy',
+    i18nKey: 'nav.policy',
+    url: '/policy',
+    icon: <img className="h-8 w-8" src="/homepage/header/policyIcon.png" alt="" />,
+  },
 ];
-
 export default function Navbar({ isHomePage }: NavbarV2Props) {
   const navigate = useNavigate();
   const { setUser } = useUserStore();
@@ -77,8 +105,6 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [avatar, setAvatar] = useState('/avatar.jpg');
-  const [languageDropdown, setLanguageDropdown] = useState(false);
-
   
   // Side effect   
   useEffect(() => {
@@ -174,7 +200,7 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
         isHomePage
           ? {}
           : {
-              backgroundImage: "url('/backgroundTop.png')",
+              backgroundImage: "url('/homepage/header/backgroundTop.png')",
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
@@ -188,8 +214,6 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
         handleLogout={handleLogout}
         setShowLoginModal={setShowLoginModal}
         setShowRegisterModal={setShowRegisterModal}
-        setLanguageDropdown={setLanguageDropdown}
-        languageDropdown={languageDropdown}
       />
 
       {/* SP Navigation */}
@@ -200,8 +224,7 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
         handleLogout={handleLogout}
         setShowLoginModal={setShowLoginModal}
         setShowRegisterModal={setShowRegisterModal}
-        setLanguageDropdown={setLanguageDropdown}
-        languageDropdown={languageDropdown}
+        setMobileNavOpen={setMobileNavOpen}
         onToggle={handleMobileNavToggle}
         onClose={handleMobileNavClose}
       />

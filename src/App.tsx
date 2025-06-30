@@ -42,13 +42,16 @@ function App() {
   const userobj = useUserStore((state) => state.user);
   const [isHomePage, setIsHomepage] = useState(false)
   const ScrollToTop = () => {
-    const { pathname } = useLocation();
-    useEffect(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, [pathname]);
-    setIsHomepage(pathname === '/' || pathname === '/dashboard' || pathname === '/login' || pathname === '/register');
-    return null;
-  };
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const isHome = ['/', '/dashboard', '/login', '/register'].includes(pathname);
+    setIsHomepage(isHome);
+  }, [pathname]);
+
+  return null;
+};
   return (
     <AuthProvider>
       <NotificationProvider>

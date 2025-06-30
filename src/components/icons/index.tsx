@@ -9,6 +9,8 @@ import HistoryIcon from './HistoryIcon';
 import SupportIcon from './SupportIcon';
 import Logo from './Logo';
 import VietnameseIcon from './VietnameseIcon';
+import VietnameseFlag from './VietnamFlag';
+import EnglishIcon from './EnglishIcon';
 
 interface IconComponentProps extends IconProps {
   name: IconType;
@@ -25,7 +27,8 @@ const Icon: React.FC<IconComponentProps> = ({ name, ...props }) => {
     support: SupportIcon,
     logo: Logo,
     logoVietnam: VietnameseIcon,
-    // clipPath: ClipPathIcon,
+    logoEL:EnglishIcon,
+    vietnameseFlag:VietnameseFlag
   };
 
   const IconComponent = iconComponents[name];

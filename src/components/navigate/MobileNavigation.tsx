@@ -5,15 +5,17 @@ import { Link } from 'react-router-dom';
 import { ProfileDropdown } from '../layout/ProfileDropdown';
 import Icon from '../icons';
 import { NAV_ITEMS } from '../layout/Navbar';
+import { Dropdown } from 'antd';
+import { LANGUAGE_ITEMS } from '../layout/Navbar';
+import { useTranslation } from 'react-i18next';
 
 interface MobileNavigationProps {
   isOpen: boolean;
   user: any;
   avatar: string;
-  languageDropdown: boolean;
   setShowLoginModal: Dispatch<SetStateAction<boolean>>;
   setShowRegisterModal: Dispatch<SetStateAction<boolean>>;
-  setLanguageDropdown: Dispatch<SetStateAction<boolean>>;
+  setMobileNavOpen:Dispatch<SetStateAction<boolean>>;
   handleLogout: () => void;
   onToggle: () => void;
   onClose: () => void;
@@ -23,22 +25,22 @@ export default function MobileNavigation({
   isOpen,
   user,
   avatar,
-  languageDropdown,
   setShowLoginModal,
   setShowRegisterModal,
-  setLanguageDropdown,
   handleLogout,
+  setMobileNavOpen,
   onToggle,
   onClose,
 }: MobileNavigationProps) {
+  const { i18n, t } = useTranslation();
+  
   return (
     <>
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between py-4">
         <div className="container mx-auto px-4 flex items-center justify-between">
           {/* Mobile menu button - Left side */}
-          {!user && (
-            <button
+          <button
             className={`p-2 hover:bg-white/20 rounded-lg transition-all duration-200 hover:scale-110 ${
               isOpen ? 'rotate-90' : 'rotate-0'
             }`}
@@ -46,7 +48,6 @@ export default function MobileNavigation({
           >
             <Menu className="w-6 h-6 transition-transform duration-200" />
           </button>
-          )}
           <div className="flex items-center">
             <img
               src="/logo.png"
@@ -54,10 +55,9 @@ export default function MobileNavigation({
               className="h-10 sm:h-12 customScreen:h-14 shrink-0"
             />
           </div>
-          <div className='flex'>
+          <div className="flex">
             {user && (
               <div className="relative">
-
                 <div>
                   <ProfileDropdown
                     user={user}
@@ -68,27 +68,24 @@ export default function MobileNavigation({
               </div>
             )}
             {/* Language Dropdown */}
-            <div className="relative ml-2">
-              <button
-                className="text-white rounded-full transition-all duration-200 flex items-center hover:scale-105"
-                onClick={() => setLanguageDropdown(!languageDropdown)}
-              >
-                <Icon name="logoVietnam" />
+            <Dropdown
+              menu={{
+                items: LANGUAGE_ITEMS(i18n.language, t),
+                onClick: ({ key }) => {
+                  i18n.changeLanguage(key);
+                },
+              }}
+              placement="topRight"
+              className='ml-2'
+            >
+              <button className="text-white rounded-full transition-all duration-200 flex items-center">
+                {i18n.language === 'vi' ? (
+                  <Icon name="logoVietnam" />
+                ) : (
+                  <Icon name="logoEL" />
+                )}
               </button>
-
-              {languageDropdown && (
-                <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border z-20 animate-in slide-in-from-top-2 duration-200">
-                  <div className="py-1">
-                    <button className="w-full px-4 py-2 text-left hover:bg-gray-50 transition-colors duration-150">
-                      Tiếng Việt
-                    </button>
-                    <button className="w-full px-4 py-2 text-left hover:bg-gray-50 transition-colors duration-150">
-                      English
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            </Dropdown>
           </div>
         </div>
       </div>
@@ -100,8 +97,8 @@ export default function MobileNavigation({
         }`}
       >
         <div className="p-4">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-semibold">Menu</h3>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-lg font-semibold">Dịch vụ</h3>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
@@ -109,27 +106,61 @@ export default function MobileNavigation({
               <X className="w-5 h-5" />
             </button>
           </div>
-
-          <div className="space-y-4">
-            <button
-              onClick={() => {
-                onClose();
-                setShowRegisterModal(true);
-              }}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:scale-105"
-            >
-              Đăng ký
-            </button>
-            <button
-              onClick={() => {
-                onClose();
-                setShowLoginModal(true);
-              }}
-              className="w-full px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-all duration-200 hover:scale-105"
-            >
-              Đăng nhập
-            </button>
+          <div className="space-y-2">
+            {NAV_ITEMS.slice(5).map((item) => {
+              const protectedRoutes = [
+                '/rentals',
+                '/payments',
+                '/admintransaction',
+                '/support',
+              ];
+              const isProtected = protectedRoutes.includes(item.url);
+              const handleClick = (e: React.MouseEvent) => {
+                if (!user && isProtected) {
+                  e.preventDefault();
+                  setShowLoginModal(true);
+                }
+                setMobileNavOpen(false);
+              };
+              return (
+                <Link
+                  key={item.key}
+                  to={item.url}
+                  onClick={handleClick}
+                  className="flex items-center gap-3 w-full px-3 py-2.5 text-gray-700 hover:bg-[#EBEBEB] hover:text-gray-900 rounded-lg transition-all duration-200 group"
+                >
+                  <div className="flex-shrink-0 group-hover:scale-110 transition-transform duration-200">
+                    {item.icon}
+                  </div>
+                  <span className="text-sm font-hubot text-[#6B7280]">
+                  {t(item.i18nKey)}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
+          {!user && (
+            <div className="space-y-4 mt-4">
+              <button
+                onClick={() => {
+                  onClose();
+                  setShowRegisterModal(true);
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:scale-105"
+              >
+                Đăng ký
+              </button>
+              <button
+                onClick={() => {
+                  onClose();
+                  setShowLoginModal(true);
+                }}
+                className="w-full px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-all duration-200 hover:scale-105"
+              >
+                Đăng nhập
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -172,9 +203,6 @@ export default function MobileNavigation({
                   <div className="text-lg text-blue-500 transition-transform duration-200">
                     {item.icon}
                   </div>
-                  <span className="text-xs text-gray-700 text-center leading-tight">
-                    {item.label.split(' ')[0]}
-                  </span>
                 </Link>
               );
             })}

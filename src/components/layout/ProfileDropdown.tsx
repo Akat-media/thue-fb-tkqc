@@ -2,12 +2,14 @@ import React from 'react';
 import { X, User, CreditCard, LogOut, TicketPercent } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Dropdown, MenuProps } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 export const ProfileDropdown: React.FC<{
   user: any;
   avatar: string;
   handleLogout: () => void;
 }> = ({ user, avatar, handleLogout }) => {
+  const { t } = useTranslation();
   const items: MenuProps['items'] = [
     {
       key: '1',
@@ -20,7 +22,7 @@ export const ProfileDropdown: React.FC<{
               {user?.email || 'email@example.com'}
             </p>
             <p className="font-semibold text-green-600 mt-1">
-              {user?.points?.toLocaleString('vi-VN')} điểm
+              {user?.points?.toLocaleString('vi-VN')} {t('profile.points')}
             </p>
           </div>
         </div>
@@ -33,7 +35,7 @@ export const ProfileDropdown: React.FC<{
               to="/profile"
               className="flex items-start justify-start py-2 min-w-36 text-sm text-gray-700 hover:bg-gray-100"
             >
-              <User className="mr-2 h-4 w-4" /> Tài khoản
+              <User className="mr-2 h-4 w-4" /> {t('profile.account')}
             </Link>
           ),
         },
@@ -44,7 +46,7 @@ export const ProfileDropdown: React.FC<{
               to="/ticket"
               className="flex items-center py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
-              <TicketPercent className="mr-2 h-4 w-4" /> Voucher
+              <TicketPercent className="mr-2 h-4 w-4" /> {t('profile.voucher')}
             </Link>
           ),
         },
@@ -55,7 +57,7 @@ export const ProfileDropdown: React.FC<{
               to="/payments"
               className="flex items-center py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
-              <CreditCard className="mr-2 h-4 w-4" /> Nạp tiền
+              <CreditCard className="mr-2 h-4 w-4" /> {t('profile.deposit')}
             </Link>
           ),
         },
@@ -66,7 +68,7 @@ export const ProfileDropdown: React.FC<{
               onClick={handleLogout}
               className="flex w-full items-center py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
-              <LogOut className="mr-2 h-4 w-4" /> Đăng xuất
+              <LogOut className="mr-2 h-4 w-4" /> {t('authen.logout')}
             </button>
           ),
         },
@@ -74,7 +76,7 @@ export const ProfileDropdown: React.FC<{
     },
   ];
   return (
-    <Dropdown menu={{ items }} placement="topRight" trigger={['click']}>
+    <Dropdown menu={{ items }} placement="topRight">
       <a onClick={(e) => e.preventDefault()}>
         <button className="w-12 h-12 rounded-full overflow-hidden border-2 border-white hover:border-gray-300 transition-colors">
           <img
