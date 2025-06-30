@@ -138,9 +138,10 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     }
 
     if (
-      requestedLimit === null ||
-      isNaN(requestedLimit) ||
-      requestedLimit <= 10000
+      isVisaAccount &&
+      (requestedLimit === null ||
+        isNaN(requestedLimit) ||
+        requestedLimit <= 10000)
     ) {
       setErrors((prev) => ({
         ...prev,
@@ -148,6 +149,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       }));
       return;
     }
+
     if (!isVisaAccount) {
       setRentMeta?.({
         bm_origin: account?.owner || '',
@@ -477,60 +479,67 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 )}
                 {isVisaAccount === false && (
                   <div className="w-full">
-                    <FieldForm
-                      className="w-full sm:w-[400px]"
-                      type="rangeDate"
-                      name="rentalRange"
-                      label="Thời gian thuê (7-31 ngày)"
-                      format="YYYY-MM-DD"
-                      value={rentalRange as any}
-                      onChange={(value: any) => {
-                        const [start, end] = value;
+                    <Form layout="vertical" className="w-full">
+                      <FieldForm
+                        className="w-full sm:w-[400px]"
+                        type="rangeDate"
+                        name="rentalRange"
+                        label="Thời gian thuê (7-31 ngày)"
+                        format="YYYY-MM-DD"
+                        value={rentalRange as any}
+                        onChange={(value: any) => {
+                          if (!Array.isArray(value) || value.length < 2) {
+                            setRentalRange(null);
+                            setRentalRangeError(
+                              'Vui lòng chọn thời gian thuê.'
+                            );
+                            return;
+                          }
 
-                        if (!start || !end) {
-                          setRentalRange(null);
-                          setRentalRangeError('Vui lòng chọn thời gian thuê.');
-                          return;
-                        }
+                          const [start, end] = value;
+                          const startDate = start.toDate();
+                          const endDate = end.toDate();
 
-                        const startDate = start.toDate(); // chuyển từ dayjs -> Date
-                        const endDate = end.toDate();
+                          const msPerDay = 1000 * 60 * 60 * 24;
+                          const days =
+                            Math.round(
+                              (endDate.getTime() - startDate.getTime()) /
+                                msPerDay
+                            ) + 1;
 
-                        const msPerDay = 1000 * 60 * 60 * 24;
-                        const days =
-                          Math.round(
-                            (endDate.getTime() - startDate.getTime()) / msPerDay
-                          ) + 1;
+                          if (days < 7 || days > 31) {
+                            setRentalRangeError(
+                              'Thời gian thuê phải từ 7 đến 31 ngày.'
+                            );
+                            setRentalRange(null);
+                            return;
+                          }
 
-                        if (days < 7 || days > 31) {
-                          setRentalRangeError(
-                            'Thời gian thuê phải từ 7 đến 31 ngày.'
+                          setRentalRange({ start: startDate, end: endDate });
+                          setRentalRangeError(null);
+                        }}
+                        disabledDate={(current: any) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          const maxEnd = new Date(today);
+                          maxEnd.setDate(maxEnd.getDate() + 30);
+
+                          return (
+                            current.toDate() < today ||
+                            current.toDate() > maxEnd
                           );
-                          setRentalRange(null);
-                          return;
-                        }
-                        console.log('rentalRange', startDate, endDate);
-                        setRentalRange({ start: startDate, end: endDate });
-                        setRentalRangeError(null);
-                      }}
-                      disabledDate={(current: any) => {
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const maxEnd = new Date(today);
-                        maxEnd.setDate(maxEnd.getDate() + 30);
+                        }}
+                      />
 
-                        return (
-                          current.toDate() < today || current.toDate() > maxEnd
-                        );
-                      }}
-                    />
-                    {rentalRangeError && (
-                      <div className="text-red-500 text-sm mt-1">
-                        {rentalRangeError}
-                      </div>
-                    )}
+                      {rentalRangeError && (
+                        <div className="text-red-500 text-sm mt-1">
+                          {rentalRangeError}
+                        </div>
+                      )}
+                    </Form>
                   </div>
                 )}
+
                 {/* <div>
                   <label
                     htmlFor="cookieSelect"
@@ -597,8 +606,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   Chi tiết thanh toán
                 </h4>
                 <p className="text-xs text-gray-500 mt-1 italic">
-                  * Phí dịch vụ được tính theo bảng giá quy định. Vui lòng xem
-                  chi tiết hoặc liên hệ hỗ trợ.
+                  * Phí dịch vụ được tính dựa trên giới hạn chi tiêu của tài
+                  khoản. Vui lòng tham khảo bảng giá hoặc liên hệ hỗ trợ.
                 </p>
 
                 <div className="mt-2 space-y-1">
