@@ -335,6 +335,21 @@ const MarketplacePage: React.FC = () => {
     setIsDeleteModalOpen(false);
   });
 
+  const fieldNameMap: Record<string, string> = {
+    id: 'ID Tài khoản',
+    account_status: 'Trạng thái tài khoản',
+    amount_spent: 'Số tiền chi tiêu',
+    balance: 'Số dư',
+    currency: 'Tiền tệ',
+    name: 'Tên tài khoản',
+    spend_cap: 'Giới hạn chi tiêu',
+    owner: 'Chủ sở hữu',
+    status_rented: 'Tình trạng thuê',
+    spend_limit: 'Hạn mức',
+    note_aka: 'Ghi chú',
+    active: 'Kích hoạt',
+  };
+
   return (
     <>
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
@@ -803,17 +818,16 @@ const MarketplacePage: React.FC = () => {
           <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
             <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative max-h-[80vh] overflow-y-auto">
               <button
-                className="absolute top-3 right-3 text-gray-500 hover:text-black text-4xl"
+                className="absolute top-5 right-3 text-gray-500 hover:text-black text-4xl"
                 onClick={() => setIsAdDetailOpen(false)}
               >
                 ×
               </button>
-              <h2 className="text-xl text-blue-900 font-semibold mb-4">
-                Chi tiết tài khoản quảng cáo:
+              <h2 className="text-2xl text-blue-900 font-semibold mb-8">
+                Thông tin chi tiết
               </h2>
               <div className="space-y-3 text-gray-700">
                 {[
-                  'id',
                   'account_id',
                   'account_status',
                   'amount_spent',
@@ -841,11 +855,13 @@ const MarketplacePage: React.FC = () => {
                       : String(value ?? '—');
 
                   return (
-                    <div key={field} className="flex items-start">
-                      <span className="font-medium w-1/3 capitalize">
-                        {field}:
+                    <div key={field} className="grid grid-cols-2 gap-x-2 py-1">
+                      <span className="font-medium text-left">
+                        {fieldNameMap[field] || field}:
                       </span>
-                      <span className="break-all">{formattedValue}</span>
+                      <span className="text-right break-words">
+                        {formattedValue}
+                      </span>
                     </div>
                   );
                 })}
