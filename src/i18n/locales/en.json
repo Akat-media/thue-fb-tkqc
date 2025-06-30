@@ -3,6 +3,7 @@
     "vi": "Vietnamese",
     "en": "English"
   },
+  "subTextNavbar" : "Services",
   "authen": {
     "login":"Login",
     "register": "Regiser",
