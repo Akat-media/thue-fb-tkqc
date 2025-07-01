@@ -33,8 +33,11 @@ const PricingCard: React.FC<PricingCardProps> = ({
     buttonContactEN = "Contact",
  }) => {
     const navigate = useNavigate();
-    const language = localStorage.getItem("language");
-    const langParse = language ? JSON.parse(language).language : 'vi'; // default la vi
+    // const language = localStorage.getItem("language");
+    // const langParse = language ? JSON.parse(language).language : 'vi'; // default la vi
+
+    const language = localStorage.getItem("i18nextLng");
+    const langParse = language ? language : 'vi';
 
     return (
         <div

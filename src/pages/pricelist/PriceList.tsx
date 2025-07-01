@@ -94,8 +94,11 @@ const PriceList: React.FC = () => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  const language = localStorage.getItem('language');
-  const langParse = language ? JSON.parse(language).language : 'vi'; // default la vi
+    // const language = localStorage.getItem("language");
+    // const langParse = language ? JSON.parse(language).language : 'vi'; // default la vi
+
+    const language = localStorage.getItem("i18nextLng");
+    const langParse = language ? language : 'vi';
 
   useEffect(() => {
     if (langParse === 'vi') {
@@ -175,10 +178,10 @@ const PriceList: React.FC = () => {
           </div>
         </div>
 
-        {/*question frequently*/}
-        <div className="py-12 md:py-[64px]">
-          <style>
-            {`
+                {/*question frequently*/}
+                <div className="py-12 md:py-[64px]">
+                    <style>
+                        {`
                             .faq-content {
                               max-height: 0;
                               overflow: hidden;

@@ -33,7 +33,7 @@ const SupportDashboard: React.FC = () => {
     const [data, setData] = useState<SupportRequest[]>([]);
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore, setHasMore] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
@@ -86,7 +86,7 @@ const SupportDashboard: React.FC = () => {
         debounce((query: string, status: string) => {
             fetchData(1, false, query, status);
             setPage(1);
-            setHasMore(true);
+            // setHasMore(true);
         }, 800), [fetchData]);
 
     useEffect(() => {
@@ -184,7 +184,7 @@ const SupportDashboard: React.FC = () => {
         <div className="min-h-[800px] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
             {/* Header */}
             <div className=" backdrop-blur-sm border-b border-white/20 z-50">
-                <div className="max-w-7xl mx-auto px-6 ">
+                <div className="container mx-auto px-6 ">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className="flex-1 min-w-0">
@@ -201,7 +201,7 @@ const SupportDashboard: React.FC = () => {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="container mx-auto px-6 py-8">
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/20 mb-8">
                     <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
                         <div className="flex flex-wrap gap-3">

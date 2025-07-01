@@ -112,5 +112,12 @@
       "privacy": "Chính sách bảo mật"
     },
     "footerBot": "AKA Media, 2025. Bảo lưu mọi quyền."
+  },
+  "price": {
+    "title": "BÁO GIÁ DỊCH VỤ",
+    "title2": "Gói Thuê Tài Khoản",
+    "title3": "Quảng Cáo",
+    "fee": "Phí dịch vụ",
+    "rent": "Thuê ngay"
   }
 }

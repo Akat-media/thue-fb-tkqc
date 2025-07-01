@@ -112,5 +112,12 @@
       "privacy": "Privacy policy"
     },
     "footerBot": "Aka Media, 2025. Reserve all rights."
+  },
+  "price": {
+    "title": "SERVICE QUOTE",
+    "title2": "Account Rental Package",
+    "title3": "Advertisement",
+    "fee": "Service fee",
+    "rent": "Rent now"
   }
 }
