@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
       'process.env': env,
     },
     server: {
-      allowedHosts: ['aruba-savings-works-left.trycloudflare.com'],
+      allowedHosts: ['lie-andreas-ment-intend.trycloudflare.com'],
     },
   };
 });
