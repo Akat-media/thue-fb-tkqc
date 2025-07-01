@@ -3,6 +3,7 @@
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 export default function IntroSection() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -42,7 +43,8 @@ export default function IntroSection() {
                 {t('mainHeading.subtitleBot')}
               </p>
             </div>
-            <button
+            <Link
+              to={'/marketplace'}
               className={`
                 relative inline-flex items-center justify-between
                 bg-white hover:bg-gray-50
@@ -76,7 +78,7 @@ export default function IntroSection() {
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white transition-transform duration-200 group-hover:translate-x-0.5" />
                 </div>
               </div>
-            </button>
+            </Link>
           </div>
         </div>
       </main>

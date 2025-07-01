@@ -3,9 +3,10 @@
     "vi": "Tiếng Việt",
     "en": "Tiếng Anh"
   },
-  "subTextNavbar" : "Dịch vụ",
+  "readMore": "Đọc thêm",
+  "subTextNavbar": "Dịch vụ",
   "authen": {
-    "login":"Đăng nhập",
+    "login": "Đăng nhập",
     "register": "Đăng ký",
     "logout": "Đăng xuất"
   },
@@ -31,5 +32,85 @@
     "subtitle": "AKAds đồng hành cùng doanh nghiệp tối ưu hóa lợi nhuận",
     "subtitleBot": "Nhờ hệ thống tài khoản quảng cáo uy tín và nguyên liệu quảng cáo chất lượng",
     "textButton": "Thuê tài khoản ngay"
+  },
+  "whyChoose": {
+    "button": "TẠI SAO CHỌN AKA ADS?",
+    "headingLine1": "Tài khoản ổn định",
+    "highlight": "bứt tốc doanh số",
+    "headingLine2": "hiệu quả"
+  },
+  "strongAccount": {
+    "titleLine1": "Tài khoản mạnh",
+    "titleLine2": "Đẩy nhanh quảng cáo",
+    "descLine1": "Tài khoản chất lượng cao",
+    "descLine2": "Ngưỡng thanh toán lớn.",
+    "descLine3": "Xét duyệt nhanh, phân phối hiệu quả",
+    "descLine4": "Không lo giới hạn ngân sách."
+  },
+  "streamlinedProcess": {
+    "title": "Quy trình quản lý tinh gọn",
+    "descLine1": "Linh hoạt lựa chọn – tài khoản mạnh,",
+    "descLine2": "backup sẵn sàng, quảng cáo không ngắt mạch"
+  },
+  "systemSecurity": {
+    "titleLine1": "Tích hợp hệ thống",
+    "titleLine2": "bảo mật hiện đại",
+    "descLine1": "Cam kết bảo mật 100%,",
+    "descLine2": "không lo bị hack.",
+    "descLine3": "Giao dịch minh bạch,",
+    "descLine4": "không phát sinh chi phí ẩn."
+  },
+  "active": {
+    "title": "Kích hoạt nhanh, vận hành <br/>liền mạch",
+    "descLine1": "Nạp tiền tự động, dễ dàng chọn mệnh giá và tạo lệnh.",
+    "descLine2": "Hệ thống tự động cập nhật chính xác <br/> trên từng tài khoản."
+  },
+  "payment": {
+    "title": "Thanh toán linh hoạt,<br/>dễ dàng",
+    "descLine1": "Tích hợp đa phương thức thanh toán.",
+    "descLine2": "Tự động xử lý giao dịch, bảo mật tuyệt đối,<br/> không lo gián đoạn"
+  },
+  "blog": {
+    "titleLine1": "Cập Nhật Tin Tức Mới Nhất",
+    "titleLine2": "Từ <span>Thị Trường & Nền Tảng</span>"
+  },
+  "news": {
+    "1": {
+      "title": "Thuê tài khoản quảng cáo Facebook",
+      "excerpt": "Giải pháp thuê tài khoản quảng cáo Facebook an toàn, hiệu quả cho doanh nghiệp."
+    },
+    "2": {
+      "title": "Tài Khoản Quảng Cáo Facebook: Hướng Dẫn Chi Tiết Cho Người Mới",
+      "excerpt": "Trong thời đại số hóa ngày nay, việc quảng bá sản phẩm và dịch vụ trên các nền tảng mạng xã hội trở nên quan trọng hơn bao giờ hết. Facebook có hơn 2,9 tỷ người dùng hoạt động hàng tháng."
+    },
+    "3": {
+      "title": "Chạy quảng cáo Facebook giá rẻ",
+      "excerpt": "Chiến lược tối ưu ngân sách khi chạy quảng cáo Facebook với chi phí thấp nhất."
+    },
+    "4": {
+      "title": "Tối ưu hóa quảng cáo Facebook cho doanh nghiệp nhỏ",
+      "excerpt": "Hướng dẫn chi tiết cách tối ưu hóa quảng cáo Facebook cho các doanh nghiệp nhỏ với ngân sách hạn chế."
+    }
+  },
+  "footer": {
+    "companyName": "Agency Truyền Thông AKA Media",
+    "slogan": "Giải pháp số toàn diện",
+    "address": "Tầng 4, Tòa nhà Việt Hương, Làng nghề, Triều Khúc, Thanh Trì, Hà Nội, Việt Nam",
+
+    "serviceTitle": "Dịch vụ",
+    "services": {
+      "rentBM": "Cho thuê BM",
+      "rentAdAccount": "Cho thuê tài khoản quảng cáo",
+      "deposit": "Nạp tiền",
+      "accountManagement": "Quản lý tài khoản"
+    },
+
+    "supportTitle": "Hỗ trợ",
+    "support": {
+      "faq": "FAQ",
+      "terms": "Điều khoản sử dụng",
+      "privacy": "Chính sách bảo mật"
+    },
+    "footerBot": "AKA Media, 2025. Bảo lưu mọi quyền."
   }
 }

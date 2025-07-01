@@ -3,9 +3,10 @@
     "vi": "Vietnamese",
     "en": "English"
   },
-  "subTextNavbar" : "Services",
+  "readMore": "Read more",
+  "subTextNavbar": "Services",
   "authen": {
-    "login":"Login",
+    "login": "Login",
     "register": "Regiser",
     "logout": "Logout"
   },
@@ -31,5 +32,85 @@
     "subtitle": "AKAds accompanies businesses to optimize profits",
     "subtitleBot": "Through a trusted ad account system and high-quality creative materials",
     "textButton": "Rent an account now"
+  },
+  "whyChoose": {
+    "button": "WHY CHOOSE AKA ADS?",
+    "headingLine1": "Stable account",
+    "highlight": "boost sales",
+    "headingLine2": "effectively"
+  },
+  "strongAccount": {
+    "titleLine1": "Strong account",
+    "titleLine2": "Boost advertising quickly",
+    "descLine1": "High-quality account",
+    "descLine2": "High payment threshold.",
+    "descLine3": "Fast approval, effective delivery",
+    "descLine4": "No budget limit concerns."
+  },
+  "streamlinedProcess": {
+    "title": "Streamlined management process",
+    "descLine1": "Flexible selection – strong accounts,",
+    "descLine2": "ready backups, uninterrupted advertising"
+  },
+  "systemSecurity": {
+    "titleLine1": "Integrated system",
+    "titleLine2": "with modern security",
+    "descLine1": "100% security commitment,",
+    "descLine2": "no worries about hacking.",
+    "descLine3": "Transparent transactions,",
+    "descLine4": "no hidden fees."
+  },
+  "active": {
+    "title": "Quick activation, seamless<br/>operation",
+    "descLine1": "Automatic top-up, easy denomination selection and order creation.",
+    "descLine2": "The system automatically updates accurately<br/>for each account."
+  },
+  "payment": {
+    "title": "Flexible, easy<br/>payment",
+    "descLine1": "Integrated with multiple payment methods.",
+    "descLine2": "Automatically processes transactions, fully secure,<br/> no disruptions."
+  },
+  "blog": {
+    "titleLine1": "Stay Updated with the Latest News",
+    "titleLine2": "From <span>Markets & Platforms</span>"
+  },
+  "news": {
+    "1": {
+      "title": "Rent Facebook Advertising Accounts",
+      "excerpt": "A safe and effective solution for businesses to rent Facebook advertising accounts."
+    },
+    "2": {
+      "title": "Facebook Ad Accounts: A Beginner’s Complete Guide",
+      "excerpt": "In today’s digital era, promoting products and services on social platforms is more important than ever. Facebook has over 2.9 billion monthly active users."
+    },
+    "3": {
+      "title": "Run Facebook Ads on a Budget",
+      "excerpt": "Strategies to optimize your advertising budget when running Facebook ads at the lowest cost."
+    },
+    "4": {
+      "title": "Optimizing Facebook Ads for Small Businesses",
+      "excerpt": "A step-by-step guide to optimizing Facebook ads for small businesses with limited budgets."
+    }
+  },
+  "footer": {
+    "companyName": "AKA Media Agency",
+    "slogan": "Comprehensive digital solutions",
+    "address": "4th Floor, Viet Huong Building, Craft Village, Trieu Khuc, Thanh Tri, Hanoi, Vietnam",
+
+    "serviceTitle": "Services",
+    "services": {
+      "rentBM": "BM rental",
+      "rentAdAccount": "Ad account rental",
+      "deposit": "Deposit",
+      "accountManagement": "Account management"
+    },
+
+    "supportTitle": "Support",
+    "support": {
+      "faq": "FAQ",
+      "terms": "Terms of use",
+      "privacy": "Privacy policy"
+    },
+    "footerBot": "Aka Media, 2025. Reserve all rights."
   }
 }

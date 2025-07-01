@@ -3,72 +3,42 @@ import { Card, CardContent } from "../../components/ui/Card.tsx";
 import ChevronRightGradient from "./ChevronRightGradient.tsx";
 import { ChevronRight } from "lucide-react";
 import { useSwipeable } from 'react-swipeable';
+import { Trans, useTranslation } from "react-i18next";
 
 const Blog = () => {
     const [startIndex, setStartIndex] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [articlesCount, setArticlesCount] = useState(window.innerWidth >= 768 ? 3 : 1);
+    const { t } = useTranslation();
 
 
     const newsArticles = [
         {
-            id: 1,
-            title: "Thuê tài khoản quảng cáo Facebook 1",
-            date: "25/04/2025",
-            excerpt: "Giải pháp thuê tài khoản quảng cáo Facebook an toàn, hiệu quả cho doanh nghiệp.",
-            url: "https://akamedia.vn/thue-tai-khoan-quang-cao-facebook",
-            image: "https://akamedia.vn/assets/images/news-and-events/content/thue-tai-khoan-quang-cao-facebook.png",
+          id: 1,
+          date: "25/04/2025",
+          url: "https://akamedia.vn/thue-tai-khoan-quang-cao-facebook",
+          image: "https://akamedia.vn/assets/images/news-and-events/content/thue-tai-khoan-quang-cao-facebook.png",
         },
         {
-            id: 2,
-            title: "Tài Khoản Quảng Cáo Facebook: Hướng Dẫn Chi Tiết Cho Người Mới 2",
-            date: "06/05/2025",
-            excerpt:
-                "Trong thời đại số hóa ngày nay, việc quảng bá sản phẩm và dịch vụ trên các nền tảng mạng xã hội trở nên quan trọng hơn bao giờ hết. Facebook có hơn 2,9 tỷ người dùng hoạt động hàng tháng.",
-            url: "https://akamedia.vn/tai-khoan-quang-cao-facebook",
-            image: "https://akamedia.vn/assets/images/news-and-events/content/T%C3%A0i%20kho%E1%BA%A3n%20qu%E1%BA%A3ng%20c%C3%A1o%20Facebook.png",
+          id: 2,
+          date: "06/05/2025",
+          url: "https://akamedia.vn/tai-khoan-quang-cao-facebook",
+          image: "https://akamedia.vn/assets/images/news-and-events/content/T%C3%A0i%20kho%E1%BA%A3n%20qu%E1%BA%A3ng%20c%C3%A1o%20Facebook.png",
         },
         {
-            id: 3,
-            title: "Chạy quảng cáo Facebook giá rẻ 3",
-            date: "15/05/2025",
-            excerpt: "Chiến lược tối ưu ngân sách khi chạy quảng cáo Facebook với chi phí thấp nhất.",
-            url: "https://akamedia.vn/chay-quang-cao-facebook-gia-re",
-            image: "https://akamedia.vn/assets/images/news-and-events/content/chay-quang-cao-facebook-gia-re.png",
+          id: 3,
+          date: "15/05/2025",
+          url: "https://akamedia.vn/chay-quang-cao-facebook-gia-re",
+          image: "https://akamedia.vn/assets/images/news-and-events/content/chay-quang-cao-facebook-gia-re.png",
         },
         {
-            id: 4,
-            title: "Tối ưu hóa quảng cáo Facebook cho doanh nghiệp nhỏ 4",
-            date: "20/05/2025",
-            excerpt: "Hướng dẫn chi tiết cách tối ưu hóa quảng cáo Facebook cho các doanh nghiệp nhỏ với ngân sách hạn chế.",
-            url: "https://akamedia.vn/toi-uu-hoa-quang-cao-facebook",
-            image: "https://akamedia.vn/assets/images/news-and-events/content/chay-quang-cao-facebook-gia-re.png",
+          id: 4,
+          date: "20/05/2025",
+          url: "https://akamedia.vn/toi-uu-hoa-quang-cao-facebook",
+          image: "https://akamedia.vn/assets/images/news-and-events/content/chay-quang-cao-facebook-gia-re.png",
         },
-        {
-            id: 5,
-            title: "Tối ưu hóa quảng cáo Facebook cho doanh nghiệp nhỏ 5",
-            date: "20/05/2025",
-            excerpt: "Hướng dẫn chi tiết cách tối ưu hóa quảng cáo Facebook cho các doanh nghiệp nhỏ với ngân sách hạn chế.",
-            url: "https://akamedia.vn/toi-uu-hoa-quang-cao-facebook",
-            image: "https://akamedia.vn/assets/images/news-and-events/content/chay-quang-cao-facebook-gia-re.png",
-        },
-        {
-            id: 6,
-            title: "Tối ưu hóa quảng cáo Facebook cho doanh nghiệp nhỏ 6",
-            date: "20/05/2025",
-            excerpt: "Hướng dẫn chi tiết cách tối ưu hóa quảng cáo Facebook cho các doanh nghiệp nhỏ với ngân sách hạn chế.",
-            url: "https://akamedia.vn/toi-uu-hoa-quang-cao-facebook",
-            image: "https://akamedia.vn/assets/images/news-and-events/content/chay-quang-cao-facebook-gia-re.png",
-        },
-        {
-            id: 7,
-            title: "Tối ưu hóa quảng cáo Facebook cho doanh nghiệp nhỏ 7",
-            date: "20/05/2025",
-            excerpt: "Hướng dẫn chi tiết cách tối ưu hóa quảng cáo Facebook cho các doanh nghiệp nhỏ với ngân sách hạn chế.",
-            url: "https://akamedia.vn/toi-uu-hoa-quang-cao-facebook",
-            image: "https://akamedia.vn/assets/images/news-and-events/content/chay-quang-cao-facebook-gia-re.png",
-        },
-    ];
+      ];
+      
 
     const handleNext = () => {
         if (isTransitioning) return;
@@ -153,11 +123,10 @@ const Blog = () => {
                     </div>
                     <div className="flex flex-col items-end w-full">
                         <div className="font-hubot font-medium text-[20px] md:text-[40px] leading-[1] pb-2">
-                            Cập Nhật Tin Tức Mới Nhất
+                            {t('blog.titleLine1')}
                         </div>
                         <div className="font-hubot font-medium text-[20px] md:text-[38px] leading-[1]">
-                            <span>Từ </span>
-                            <span className="text-blue-600">Thị Trường & Nền Tảng</span>
+                            <Trans i18nKey="blog.titleLine2" components={{ span: <span className="text-blue-600" /> }} />
                         </div>
                     </div>
                     <div className="hidden md:flex w-[107px] h-[52px] gap-[10px] rounded-[60px] border border-solid border-black flex-row items-center justify-between invisible">
@@ -178,7 +147,7 @@ const Blog = () => {
                             >
                                 <img
                                     src={article.image}
-                                    alt={article.title}
+                                    alt={t(`news.${article.id}.title`)} 
                                     className="w-full h-68 object-cover"
                                 />
                                 <CardContent className="p-6 flex flex-col flex-grow">
@@ -187,10 +156,10 @@ const Blog = () => {
                                             {article.date}
                                         </div>
                                         <h3 className="max-w-full text-[#676767] font-hubot text-[20px] font-bold leading-[24px] tracking-[0.25px] mt-[15px] mb-[15px]">
-                                            {article.title}
+                                            {t(`news.${article.id}.title`)}
                                         </h3>
                                         <p className="text-[#676767] font-hubot text-[16px] leading-[24px] tracking-[0.25px] line-clamp-2 mb-4">
-                                            {article.excerpt}
+                                            {t(`news.${article.id}.excerpt`)}
                                         </p>
                                     </div>
                                     <a
@@ -200,7 +169,7 @@ const Blog = () => {
                                         className="flex items-center text-sm font-medium mt-auto"
                                     >
                                         <span className="font-hubot inline-flex items-center bg-gradient-to-r from-[#00EFBF] via-[#00EAEA] to-[#00F2F6] bg-clip-text text-transparent">
-                                            Đọc thêm
+                                            {t(`readMore`)}
                                             <ChevronRightGradient className="ml-1 h-4 w-4" />
                                         </span>
                                     </a>
