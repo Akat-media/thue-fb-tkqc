@@ -116,7 +116,7 @@ const Blog = () => {
             `}</style>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center mb-8">
+                <div className="md:flex mb-8 gap-3">
                     <div className="w-[107px] h-[52px] gap-[10px] rounded-[60px] border border-solid border-black p-[20px] flex flex-row items-center justify-between">
                         <div className="w-[12px] h-[12px] rounded-full bg-cyan-400 border-4 border-cyan-400"></div>
                         <div className="font-hubot font-normal md:text-[16px] text-[14px]">BLOG</div>
@@ -128,10 +128,6 @@ const Blog = () => {
                         <div className="font-hubot font-medium text-[20px] md:text-[38px] leading-[1]">
                             <Trans i18nKey="blog.titleLine2" components={{ span: <span className="text-blue-600" /> }} />
                         </div>
-                    </div>
-                    <div className="hidden md:flex w-[107px] h-[52px] gap-[10px] rounded-[60px] border border-solid border-black flex-row items-center justify-between invisible">
-                        <div className="w-[12px] h-[12px] rounded-full bg-cyan-400 border-4 border-cyan-400" />
-                        <div className="font-[400] text-[16px]">BLOG</div>
                     </div>
                 </div>
 
