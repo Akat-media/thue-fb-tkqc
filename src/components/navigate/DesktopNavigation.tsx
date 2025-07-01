@@ -4,7 +4,7 @@ import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
 import Icon from '../icons';
 import { ProfileDropdown } from '../layout/ProfileDropdown';
 import { NAV_ITEMS } from '../layout/Navbar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Dropdown } from 'antd';
 import { LANGUAGE_ITEMS } from '../layout/Navbar';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +24,9 @@ export default function DesktopNavigation({
 }: DesktopNavigationProps) {
   const { i18n, t } = useTranslation();
   const [isScrolled, setIsScrolled] = useState(false)
+
+   const navigate = useNavigate();
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY
@@ -42,7 +45,10 @@ export default function DesktopNavigation({
       <header className="relative z-10 py-4">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
+            <div
+                onClick={() => navigate('/dashboard')}
+                className="flex items-center cursor-pointer"
+            >
               <Icon name="logo" />
             </div>
 

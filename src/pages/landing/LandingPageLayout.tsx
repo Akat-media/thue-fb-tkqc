@@ -11,6 +11,7 @@ import Counter from '../../components/ui/Counter';
 import metalogo from '../../public/metalogo.png';
 import InfiniteLogoScroll from '../home/InfiniteLogoScroll';
 import Blog from "../home/Blog.tsx";
+import WhyChoose from "../home/WhyChoose.tsx";
 
 export default function MainHero() {
   const [isHomePage] = useState(true);
@@ -32,9 +33,7 @@ export default function MainHero() {
       </div>
 
       {/*why choose*/}
-      <div className="">
-
-      </div>
+      <WhyChoose />
 
       <div className="py-16 bg-blue-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
