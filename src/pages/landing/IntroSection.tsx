@@ -28,7 +28,7 @@ export default function IntroSection() {
       <main className="relative mt-8 lg:mt-16">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h2 className="text-2xl lg:text-4xl font-bold text-gray-800 mb-4 lg:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <h2 className="text-3xl lg:text-5xl font-bold text-gray-800 mb-4 lg:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
               {t('mainHeading.title')}
             </h2>
             <h1 className="text-3xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-6 pt-2 lg:mb-8 leading-tight animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200 drop-shadow-2xl"

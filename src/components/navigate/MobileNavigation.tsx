@@ -1,7 +1,7 @@
 'use client';
 import { Menu, X } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, useNavigate, useLocation} from 'react-router-dom';
 import { ProfileDropdown } from '../layout/ProfileDropdown';
 import Icon from '../icons';
 import { NAV_ITEMS } from '../layout/Navbar';
@@ -34,6 +34,7 @@ export default function MobileNavigation({
 }: MobileNavigationProps) {
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   
   return (
     <>
@@ -125,17 +126,19 @@ export default function MobileNavigation({
                 }
                 setMobileNavOpen(false);
               };
+              const isActive = location.pathname === item.url;
               return (
                 <Link
                   key={item.key}
                   to={item.url}
                   onClick={handleClick}
-                  className="flex items-center gap-3 w-full px-3 py-2.5 text-gray-700 hover:bg-[#EBEBEB] hover:text-gray-900 rounded-lg transition-all duration-200 group"
-                >
-                  <div className="flex-shrink-0 group-hover:scale-110 transition-transform duration-200">
+                  className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg transition-all duration-200 group
+                    ${isActive ? 'bg-[#B3D8FF] text-blue-600 font-semibold' : 'text-gray-700 hover:bg-[#EBEBEB] hover:text-gray-900'}`}
+                  >
+                  <div className={`flex-shrink-0 transition-transform duration-200 ${isActive ? 'text-blue-600' : 'group-hover:scale-110'}`}>
                     {item.icon}
                   </div>
-                  <span className="text-sm font-hubot text-[#6B7280]">
+                  <span className={`text-sm font-hubot ${isActive ? 'text-blue-600' : 'text-[#6B7280]'}`}>
                   {t(item.i18nKey)}
                   </span>
                 </Link>
@@ -193,17 +196,19 @@ export default function MobileNavigation({
                   setShowLoginModal(true);
                 }
               };
+              const isActive = location.pathname === item.url;
               return (
                 <Link
                   key={item.key}
                   to={item.url}
                   onClick={handleClick}
-                  className="flex flex-col items-center space-y-1 cursor-pointer hover:text-blue-600 transition-all duration-200 p-2 hover:scale-110 hover:-translate-y-1"
+                  className={`flex flex-col items-center space-y-1 cursor-pointer transition-all duration-200 p-2 rounded-lg
+                    ${isActive ? 'bg-[#B3D8FF] text-blue-600 font-semibold' : 'hover:text-blue-600'}`}
                   style={{
                     animationDelay: `${index * 100}ms`,
                   }}
                 >
-                  <div className="text-lg text-blue-500 transition-transform duration-200">
+                  <div className={`text-lg transition-transform duration-200 ${isActive ? 'text-blue-600' : 'text-blue-500'}`}>
                     {item.icon}
                   </div>
                 </Link>

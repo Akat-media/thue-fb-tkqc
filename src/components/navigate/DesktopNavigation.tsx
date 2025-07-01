@@ -1,10 +1,10 @@
 'use client';
 
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, Fragment, SetStateAction, useEffect, useRef, useState } from 'react';
 import Icon from '../icons';
 import { ProfileDropdown } from '../layout/ProfileDropdown';
 import { NAV_ITEMS } from '../layout/Navbar';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Dropdown } from 'antd';
 import { LANGUAGE_ITEMS } from '../layout/Navbar';
 import { useTranslation } from 'react-i18next';
@@ -24,8 +24,11 @@ export default function DesktopNavigation({
 }: DesktopNavigationProps) {
   const { i18n, t } = useTranslation();
   const [isScrolled, setIsScrolled] = useState(false)
-
-   const navigate = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [activeItem, setActiveItem] = useState("home")
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 })
+  const navRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,7 +41,43 @@ export default function DesktopNavigation({
       window.removeEventListener("scroll", handleScroll)
     }
   }, [])
+  useEffect(() => {
+    updateIndicator()
+  }, [activeItem])
 
+  const updateIndicator = () => {
+    if (navRef.current) {
+      const activeElement = navRef.current.querySelector(`[data-key="${activeItem}"]`) as HTMLElement
+      if (activeElement) {
+        const { offsetLeft, offsetWidth } = activeElement
+        setIndicatorStyle({
+          left: offsetLeft,
+          width: offsetWidth,
+        })
+      }
+    }
+  }
+
+  // Helper: map pathname to NAV_ITEMS key
+  const getKeyFromPath = (path: string) => {
+    const found = NAV_ITEMS.find(item => item.url === path);
+    return found ? found.key : 'home';
+  };
+
+  useEffect(() => {
+    setActiveItem(getKeyFromPath(location.pathname));
+  }, [location.pathname]);
+
+  const handleItemClick = (item: (typeof NAV_ITEMS)[0], e: React.MouseEvent) => {
+    const protectedRoutes = ["/rentals", "/payments", "/admintransaction", "/support"]
+    const isProtected = protectedRoutes.includes(item.url)
+    if (!user && isProtected) {
+      e.preventDefault()
+      setShowLoginModal(true)
+      return
+    }
+    console.log('item111', item)
+  }
   return (
     <div className={`hidden lg:block ${isScrolled ? 'relative' : 'unset'}`}>
       {/* Desktop Header */}
@@ -91,10 +130,10 @@ export default function DesktopNavigation({
                   placement="topRight"
                 >
                   <button
-                    className="text-white rounded-full transition-all duration-200 flex items-center"
+                    className="bg-white rounded-full transition-all duration-200 flex items-center p-[4px]"
                   >
                     {i18n.language === 'vi' ? (
-                      <Icon name="logoVietnam" />
+                      <Icon  name="logoVietnam" />
                     ) : (
                       <Icon name="logoEL" />
                     )}
@@ -107,45 +146,85 @@ export default function DesktopNavigation({
 
       {/* Desktop Navigation Menu */}
       <nav
-        className={`${isScrolled ? 'fixed top-0 left-0 right-0 z-20' : 'pt-6'} z-[9999999]`}
+        className={`${isScrolled ? 'fixed top-0 left-0 right-0 z-20' : 'pt-6'} z-[9999999] transition-all duration-300`}
       >
         <div className="container mx-auto pb-3 px-4">
           <div
-            className={` backdrop-blur-sm rounded-3xl p-4 transition-all duration-300 hover:shadow-xl ${
-              isScrolled ? 'bg-white shadow-xl' : 'bg-white/90'
+            className={`backdrop-blur-sm rounded-3xl p-4 transition-all duration-300  ${
+              isScrolled ? "bg-white shadow-xl" : "bg-white/90"
             }`}
           >
-            <div className="flex items-center justify-evenly space-x-8">
-              {NAV_ITEMS.map((item) => {
-                const protectedRoutes = [
-                  '/rentals',
-                  '/payments',
-                  '/admintransaction',
-                  '/support',
-                ];
-                const isProtected = protectedRoutes.includes(item.url);
-                const handleClick = (e: React.MouseEvent) => {
-                  if (!user && isProtected) {
-                    e.preventDefault();
-                    setShowLoginModal(true);
-                  }
-                };
-                return (
-                  <Link
-                    to={item.url}
-                    key={item.key}
-                    onClick={handleClick}
-                    className="flex flex-col items-center space-y-2 cursor-pointer hover:text-blue-600 transition-all duration-200 hover:scale-110 hover:-translate-y-1"
-                  >
-                    <div className="text-2xl text-blue-500 transition-transform duration-200">
-                      {item.icon}
-                    </div>
-                    <span className="text-[#6B7280] text-base whitespace-nowrap font-hubot">
-                      {t(item.i18nKey)}
-                    </span>
-                  </Link>
-                );
-              })}
+            <div className="relative" ref={navRef}>
+              {/* Active Indicator */}
+              <div
+                className="absolute top-0 h-full rounded-2xl transition-all duration-500 ease-out opacity-100 shadow-lg"
+                style={{
+                  left: `${indicatorStyle.left}px`,
+                  width: `${indicatorStyle.width}px`,
+                  background: "linear-gradient(90deg, #D0E8FF 0%, #B3D8FF 100%)",
+                  boxShadow: '0 4px 24px 0 rgba(64,160,255,0.10)',
+                  opacity: 0.25,
+                  transform: "translateY(0)",
+                }}
+              />
+
+              {/* Glowing Active Indicator */}
+              <div
+                className="absolute top-0 h-full rounded-2xl transition-all duration-500 ease-out blur-md"
+                style={{
+                  left: `${indicatorStyle.left}px`,
+                  width: `${indicatorStyle.width}px`,
+                  background: "linear-gradient(90deg, #D0E8FF 0%, #B3D8FF 100%)",
+                  opacity: 0.5,
+                }}
+              />
+
+              <div className="flex items-center justify-evenly relative z-10">
+                {NAV_ITEMS.map((item, index) => {
+                  const isActive = activeItem === item.key
+                  console.log('activeItem', activeItem)
+                  return (
+                    <Link
+                      to={item.url}
+                      key={item.key}
+                      data-key={item.key}
+                      onClick={(e) => handleItemClick(item, e)}
+                      className={`
+                        flex flex-col items-center space-y-2 cursor-pointer 
+                        transition-all duration-300 ease-out
+                        hover:scale-110 hover:-translate-y-1
+                        px-4 py-3 rounded-2xl
+                        group relative overflow-hidden
+                        ${isActive ? 'shadow-[0_4px_24px_0_rgba(64,160,255,0.20)] scale-105 bg-white' : ''}
+                      `}
+                      style={{
+                        animationDelay: `${index * 50}ms`,
+                      }}
+                    >
+                      <div
+                        className={`
+                          relative transition-all duration-300 ease-out
+                          ${isActive ? "text-[#4F8CFF] scale-110 drop-shadow-md" : "text-blue-400 group-hover:text-[#4F8CFF] group-hover:scale-105"}
+                        `}
+                      >
+                        {isActive && (
+                          <div className="absolute inset-0 text-[#B3D8FF] opacity-60">{item.icon}</div>
+                        )}
+                        <div className="relative z-10">{item.icon}</div>
+                      </div>
+
+                      <span
+                        className={`
+                          text-sm whitespace-nowrap font-medium transition-all duration-300
+                          ${isActive ? "text-[#3399FF] font-semibold drop-shadow-md" : "text-gray-600"}
+                        `}
+                      >
+                        {t(item.i18nKey)}
+                      </span>
+                    </Link>
+                  )
+                })}
+              </div>
             </div>
           </div>
         </div>
