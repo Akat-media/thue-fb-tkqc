@@ -10,8 +10,7 @@ export default defineConfig(({ mode }) => {
       'process.env': env,
     },
     server: {
-      host: '0.0.0.0',
-      port: 5173,
+      allowedHosts: ['aruba-savings-works-left.trycloudflare.com'],
     },
   };
 });
