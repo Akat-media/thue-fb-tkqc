@@ -17,64 +17,15 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
 import { Transaction } from '../../types';
-import BaseHeader from '../../api/BaseHeader';
+import BaseHeader, { BaseUrlSocket } from '../../api/BaseHeader';
 import socket from '../../socket';
 import { useUserStore } from '../../stores/useUserStore';
-
-const mockTransactions: Transaction[] = [
-  {
-    id: '1',
-    userId: '1',
-    amount: 1000000,
-    type: 'deposit',
-    status: 'completed',
-    description: 'Nạp tiền qua Web2m - Chuyển khoản ngân hàng',
-    transactionCode: 'DEPOSIT-123456',
-    createdAt: new Date(2023, 5, 15, 10, 30),
-  },
-  {
-    id: '2',
-    userId: '1',
-    amount: 500000,
-    type: 'payment',
-    status: 'completed',
-    description: 'Thanh toán thuê BM Agency - Visa',
-    createdAt: new Date(2023, 5, 16, 14, 45),
-  },
-  {
-    id: '3',
-    userId: '1',
-    amount: 200000,
-    type: 'deposit',
-    status: 'completed',
-    description: 'Nạp tiền qua Web2m - Ví điện tử',
-    createdAt: new Date(2023, 5, 18, 9, 15),
-  },
-  {
-    id: '4',
-    userId: '1',
-    amount: 300000,
-    type: 'payment',
-    status: 'completed',
-    description: 'Thanh toán gói dịch vụ AI - 1 tháng',
-    createdAt: new Date(2023, 5, 20, 16, 30),
-  },
-  {
-    id: '5',
-    userId: '1',
-    amount: 100000,
-    type: 'payment',
-    status: 'completed',
-    description: 'Thanh toán thuê Tài Khoản Quảng Cáo - Limit thấp',
-    createdAt: new Date(2023, 5, 16, 14, 45),
-  },
-];
+import axios from 'axios';
 
 const PaymentPage: React.FC = () => {
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
   const [activeTab, setActiveTab] = useState('deposit');
-  const [transactions] = useState<Transaction[]>(mockTransactions);
   const [selectedAmount, setSelectedAmount] = useState(500000);
   const [customAmount, setCustomAmount] = useState<string>('500000');
   const [isLoading, setIsLoading] = useState(false);
@@ -91,9 +42,13 @@ const PaymentPage: React.FC = () => {
     'loading' | 'success' | 'failed' | null
   >(null);
   const { user, fetchUser } = useUserStore();
+  const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(true);
+  const [currencyTab, setCurrencyTab] = useState<'VND' | 'USD' | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     fetchUser();
+    setIsCurrencyModalOpen(true);
   }, [fetchUser]);
 
   const hanleCalTransaction = async (number: any) => {
@@ -236,21 +191,141 @@ const PaymentPage: React.FC = () => {
 
   return (
     <>
-      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="md:flex md:items-center md:justify-between">
-          <div className="flex-1 min-w-0">
-            <h2 className="text-2xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate">
-              Cổng Thanh Toán
+      {isCurrencyModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-sm">
+            <h2 className="text-xl font-semibold text-gray-800 mb-5 text-center">
+              Select Payment Method
             </h2>
-            {user && (
-              <p className="mt-1 text-base text-gray-500">
+
+            <div className="space-y-3">
+              <div
+                className={`flex items-center justify-between border rounded-lg p-3 cursor-pointer shadow-sm hover:shadow-md transition ${
+                  currencyTab === 'VND'
+                    ? 'border-blue-600 ring-2 ring-blue-400'
+                    : 'border-gray-300'
+                }`}
+                onClick={() => {
+                  setCurrencyTab('VND');
+                  setIsCurrencyModalOpen(false);
+                }}
+              >
+                <div className="flex items-center space-x-3">
+                  <div
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      currencyTab === 'VND'
+                        ? 'border-blue-600'
+                        : 'border-gray-400'
+                    }`}
+                  >
+                    {currencyTab === 'VND' && (
+                      <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+                    )}
+                  </div>
+                  <span className="font-medium text-gray-800">
+                    VNĐ (Internet Banking)
+                  </span>
+                </div>
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/3128/3128313.png"
+                  alt="Bank icon"
+                  className="h-6"
+                />
+              </div>
+              <div
+                className={`flex items-center justify-between border rounded-lg p-3 cursor-pointer shadow-sm hover:shadow-md transition ${
+                  currencyTab === 'USD'
+                    ? 'border-blue-600 ring-2 ring-blue-400'
+                    : 'border-gray-300'
+                }`}
+                onClick={() => {
+                  setCurrencyTab('USD');
+                  setIsCurrencyModalOpen(false);
+                }}
+              >
+                <div className="flex items-center space-x-3">
+                  <div
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      currencyTab === 'USD'
+                        ? 'border-blue-600'
+                        : 'border-gray-400'
+                    }`}
+                  >
+                    {currencyTab === 'USD' && (
+                      <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+                    )}
+                  </div>
+                  <span className="font-medium text-gray-800">
+                    USD (PayPal)
+                  </span>
+                </div>
+                <img
+                  src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
+                  alt="PayPal"
+                  className="h-6"
+                />
+              </div>
+              <div className="flex items-center justify-between border rounded-lg p-3 shadow-sm opacity-50 cursor-not-allowed">
+                <div className="flex items-center space-x-3">
+                  <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
+                  <div className="flex flex-col">
+                    <span className="font-medium text-gray-800">Visa</span>
+                    <span className="text-xs text-gray-500">
+                      Đang phát triển
+                    </span>
+                  </div>
+                </div>
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"
+                  alt="Visa"
+                  className="h-3"
+                />
+              </div>
+              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
+                Chức năng này đang được phát triển
+              </div>
+              <div className="flex items-center justify-between border rounded-lg p-3 shadow-sm opacity-50 cursor-not-allowed">
+                <div className="flex items-center space-x-3">
+                  <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
+                  <div className="flex flex-col">
+                    <span className="font-medium text-gray-800">
+                      MasterCard
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      Đang phát triển
+                    </span>
+                  </div>
+                </div>
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png"
+                  alt="MasterCard"
+                  className="h-6"
+                />
+              </div>
+              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
+                Chức năng này đang được phát triển
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex-1 min-w-0">
+          <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
+            Cổng Thanh Toán
+          </h2>
+
+          {user && (
+            <div className="mt-1 text-base text-gray-500">
+              <p>
                 Số dư hiện tại:{' '}
                 <span className="font-medium text-green-700">
                   {user.points?.toLocaleString('vi-VN') || 0} điểm
                 </span>
               </p>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-6">
@@ -308,7 +383,7 @@ const PaymentPage: React.FC = () => {
         </div>
 
         <div className="mt-6">
-          {activeTab === 'deposit' && (
+          {activeTab === 'deposit' && currencyTab === 'VND' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="h-full">
                 <CardHeader>
@@ -347,7 +422,6 @@ const PaymentPage: React.FC = () => {
                               setShowQRCode(false);
                             }}
                             min="50000"
-                            //min="1000"
                             step="1000"
                           />
                           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">
@@ -644,6 +718,14 @@ const PaymentPage: React.FC = () => {
                           </p>
                         </div>
                       </div>
+                      <div className="flex">
+                        <Button
+                          onClick={() => setIsCurrencyModalOpen(true)}
+                          className="mt-6 w-full py-3 rounded-md text-lg font-semibold text-white bg-orange-400 hover:bg-orange-600 transition"
+                        >
+                          Thay đổi phương thức thanh toán
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </CardContent>
@@ -651,172 +733,155 @@ const PaymentPage: React.FC = () => {
             </div>
           )}
 
-          {activeTab === 'history' && (
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Lịch sử nạp</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Thời gian
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Loại giao dịch
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Mô tả
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Số tiền
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Trạng thái
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {transactions
-                          .filter((t) => t.type === 'deposit')
-                          .map((transaction) => (
-                            <tr
-                              key={transaction.id}
-                              className="hover:bg-gray-50"
-                            >
-                              <td className="px-6 py-4 text-sm text-gray-500">
-                                {formatTransactionDate(transaction.createdAt)}
-                              </td>
-                              <td className="px-6 py-4 text-sm">
-                                <span className="bg-green-100 text-green-800 px-2.5 py-0.5 rounded-full text-xs font-medium">
-                                  Nạp tiền
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 text-sm text-gray-500">
-                                {transaction.description}
-                              </td>
-                              <td className="px-6 py-4 text-sm">
-                                <span className="text-green-600 font-medium">
-                                  +{transaction.amount.toLocaleString('vi-VN')}{' '}
-                                  VNĐ
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 text-sm">
-                                <span
-                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                    transaction.status === 'completed'
-                                      ? 'bg-green-100 text-green-800'
-                                      : transaction.status === 'pending'
-                                      ? 'bg-yellow-100 text-yellow-800'
-                                      : 'bg-red-100 text-red-800'
-                                  }`}
-                                >
-                                  {transaction.status === 'completed'
-                                    ? 'Hoàn thành'
-                                    : transaction.status === 'pending'
-                                    ? 'Đang xử lý'
-                                    : 'Thất bại'}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        {transactions.filter((t) => t.type === 'deposit')
-                          .length === 0 && (
-                          <tr>
-                            <td
-                              colSpan={5}
-                              className="text-center py-6 text-gray-500"
-                            >
-                              Chưa có giao dịch nạp tiền nào.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+          {activeTab === 'deposit' && currencyTab === 'USD' && (
+            <div className="grid grid-cols-10 gap-6">
+              <div className="col-span-4 p-8 rounded-lg shadow-lg text-center w-full border border-blue-100 h-full flex flex-col justify-center bg-gradient-to-br from-blue-100 to-white">
+                <div className="flex items-center justify-center mb-4">
+                  <img
+                    src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
+                    alt="PayPal Logo"
+                    className="h-10 w-auto"
+                  />
+                  <h3 className="text-2xl font-bold text-yellow-400 ml-3">
+                    Send Money Securely Online with{' '}
+                    <span className="italic">
+                      <span className="text-blue-900">Pay</span>
+                      <span className="text-blue-400">Pal</span>
+                    </span>
+                  </h3>
+                </div>
 
-          {activeTab === 'platform' && (
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Lịch sử giao dịch nền tảng</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Thời gian
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Mô tả
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Số tiền
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Trạng thái
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {transactions
-                          .filter((t) => t.type === 'payment')
-                          .map((t) => (
-                            <tr key={t.id} className="hover:bg-gray-50">
-                              <td className="px-6 py-4 text-sm text-gray-500">
-                                {formatTransactionDate(t.createdAt)}
-                              </td>
-                              <td className="px-6 py-4 text-sm text-gray-500">
-                                {t.description}
-                              </td>
-                              <td className="px-6 py-4 text-sm">
-                                <span className="text-red-600 font-medium">
-                                  -{t.amount.toLocaleString('vi-VN')} VNĐ
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 text-sm">
-                                <span
-                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                    t.status === 'completed'
-                                      ? 'bg-green-100 text-green-800'
-                                      : t.status === 'pending'
-                                      ? 'bg-yellow-100 text-yellow-800'
-                                      : 'bg-red-100 text-red-800'
-                                  }`}
-                                >
-                                  {t.status === 'completed'
-                                    ? 'Hoàn thành'
-                                    : t.status === 'pending'
-                                    ? 'Đang xử lý'
-                                    : 'Thất bại'}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        {transactions.filter((t) =>
-                          t.description.toLowerCase().includes('dịch vụ ai')
-                        ).length === 0 && (
-                          <tr>
-                            <td
-                              colSpan={4}
-                              className="text-center py-6 text-gray-500"
-                            >
-                              Tài khoản chưa có giao dịch nền tảng nào.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
+                <p className="text-gray-700 mb-6 text-sm">
+                  Please enter the amount (USD) you wish to deposit (minimum
+                  $10), then click the button below to proceed with PayPal
+                  payment.
+                </p>
+
+                <div className="mb-6">
+                  <div className="relative">
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      value={customAmount}
+                      onChange={(e) => setCustomAmount(e.target.value)}
+                      placeholder="Enter amount (USD)"
+                      className="w-full border border-gray-300 rounded-md px-4 py-3 pr-10 text-lg text-center focus:outline-none focus:ring-2 focus:ring-yellow-500
+                      [appearance:textfield] 
+                      [&::-webkit-outer-spin-button]:appearance-none 
+                      [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg font-medium">
+                      $
+                    </span>
                   </div>
+                  {customAmount && parseFloat(customAmount) < 10 && (
+                    <p className="text-red-500 text-sm mt-2">
+                      Minimum amount is $10.
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  className={`w-full py-3 rounded-md text-lg font-semibold text-black transition 
+                  ${
+                    isRedirecting ||
+                    !customAmount ||
+                    parseFloat(customAmount) < 10
+                      ? '!bg-yellow-200 !cursor-not-allowed'
+                      : 'bg-yellow-400 hover:bg-yellow-500'
+                  }`}
+                  disabled={
+                    isRedirecting ||
+                    !customAmount ||
+                    parseFloat(customAmount) < 10
+                  }
+                  onClick={async () => {
+                    if (
+                      !customAmount ||
+                      parseFloat(customAmount) < 10 ||
+                      isRedirecting
+                    )
+                      return;
+
+                    setIsRedirecting(true);
+
+                    try {
+                      const res = await axios.post(
+                        `${BaseUrlSocket}paypal/payment`,
+                        {
+                          amount: String(customAmount),
+                          user_id: user?.id,
+                        }
+                      );
+
+                      if (res?.data?.data?.approvalLink) {
+                        window.open(res.data.data.approvalLink, '_blank');
+                      } else {
+                        addNotification(
+                          'Lỗi',
+                          'Có lỗi xảy ra trong quá trình thanh toán PayPal, vui lòng thử lại !',
+                          'error'
+                        );
+                      }
+                    } catch (err) {
+                      console.error(err);
+                      addNotification(
+                        'Lỗi',
+                        'Không thể tạo phiên thanh toán PayPal.',
+                        'error'
+                      );
+                    } finally {
+                      setIsRedirecting(false);
+                    }
+                  }}
+                >
+                  Pay with{' '}
+                  <span className="text-blue-900 font-extrabold italic ml-1">
+                    Pay
+                  </span>
+                  <span className="text-blue-400 font-extrabold italic">
+                    Pal
+                  </span>
+                </Button>
+
+                <p className="text-xs text-red-500 mt-5">
+                  After completing the payment, please check your account to
+                  verify the transaction.
+                </p>
+              </div>
+
+              <Card className="col-span-6 h-full mb-2">
+                <CardContent className="py-4 h-full flex flex-col justify-start">
+                  <h2 className="text-xl text-blue-900 font-bold mb-3">
+                    How to Pay?
+                  </h2>
+                  <ol className="list-decimal list-inside space-y-2 text-base text-gray-600">
+                    <li>Enter the amount you want to deposit (minimum $10).</li>
+                    <li>
+                      Click the <strong>Pay with PayPal</strong> button to open
+                      the payment page.
+                    </li>
+                    <li>
+                      Log in to your PayPal account and confirm the payment.
+                    </li>
+                    <li>
+                      Wait a few minutes for the system to verify and credit
+                      your account.
+                    </li>
+                    <li>
+                      If you have any questions or issues during the payment
+                      process, please contact us for assistance.
+                    </li>
+                    <div className="flex">
+                      <Button
+                        onClick={() => setIsCurrencyModalOpen(true)}
+                        className="mt-6 w-full py-3 rounded-md text-lg font-semibold text-white bg-orange-400 hover:bg-orange-600 transition"
+                      >
+                        Change Payment Method
+                      </Button>
+                    </div>
+                  </ol>
                 </CardContent>
               </Card>
             </div>
