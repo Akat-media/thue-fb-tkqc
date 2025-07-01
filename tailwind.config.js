@@ -39,6 +39,7 @@ export default {
           'sans-serif',
         ],
         hubot: ['"Hubot Sans"', 'sans-serif'],
+        montserrat: ['"Montserrat"', 'sans-serif'],
       },
       colors: {
         revenue: "#4CAF50",

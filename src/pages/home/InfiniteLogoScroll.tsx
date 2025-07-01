@@ -14,6 +14,11 @@ const defaultLogos: Logo[] = [
     { id: 'manulife', name: 'manulife', src: '/homepage/logo-running/manulife2.png', alt: 'Manulife' },
     { id: 'vinamilk', name: 'vinamilk', src: '/homepage/logo-running/vinamilk.png', alt: 'Vinamilk' },
     { id: 'vnpt', name: 'vnpt', src: '/homepage/logo-running/vnpt.png', alt: 'VNPT' },
+    { id: 'chamy', name: 'chamy', src: '/homepage/logo-running/chamy.svg', alt: 'chamy' },
+    { id: 'niraki', name: 'niraki', src: '/homepage/logo-running/niraki.svg', alt: 'niraki' },
+    { id: 'taybac', name: 'taybac', src: '/homepage/logo-running/tay-bac.svg', alt: 'taybac' },
+    // { id: 'thuytop', name: 'thuytop', src: '/homepage/logo-running/thuy-topd.png', alt: 'thuytop' },
+    { id: 'mailystyle', name: 'mailystyle', src: '/homepage/logo-running/maily-style.svg', alt: 'mailystyle' },
 ];
 
 const InfiniteLogoScroll: React.FC = () => {

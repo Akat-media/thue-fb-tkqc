@@ -94,7 +94,7 @@ const Blog = () => {
     }, [articlesCount, newsArticles.length]);
 
     return (
-        <div className="py-12 md:pt-24 md:pb-16 bg-blue-50">
+        <div className="py-8 md:py-12 md:pt-24 md:pb-16 bg-blue-50">
             <style>{`
                 .fade-transition {
                     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -132,6 +132,19 @@ const Blog = () => {
                 </div>
 
                 <div className="flex md:flex-row flex-col gap-8 items-start">
+                    {/* left buttons cho desktop */}
+                    <div className="hidden md:flex flex-col items-center gap-4 mt-4 ml-4 self-center">
+                        {startIndex > 0 && (
+                            <button
+                                onClick={handleBack}
+                                disabled={isTransitioning}
+                                className="p-2 bg-white rounded-lg border border-gray-300 shadow hover:shadow-md transition button-hover disabled:opacity-50"
+                            >
+                                <ChevronRight className="h-6 w-6 text-gray-600 rotate-180" />
+                            </button>
+                        )}
+                    </div>
+
                     {/* Grid cards với animation */}
                     {/*swipe left, right tren mobile*/}
                     <div {...swipeHandlers}>
@@ -172,21 +185,11 @@ const Blog = () => {
                                 </CardContent>
                             </Card>
                         ))}
-                    </div>
+                        </div>
                     </div>
 
-                    {/* Navigation buttons cho desktop */}
+                    {/* right buttons cho desktop */}
                     <div className="hidden md:flex flex-col items-center gap-4 mt-4 ml-4 self-center">
-                        {startIndex > 0 && (
-                            <button
-                                onClick={handleBack}
-                                disabled={isTransitioning}
-                                className="p-2 bg-white rounded-lg border border-gray-300 shadow hover:shadow-md transition button-hover disabled:opacity-50"
-                            >
-                                <ChevronRight className="h-6 w-6 text-gray-600 rotate-180" />
-                            </button>
-                        )}
-
                         <button
                             onClick={handleNext}
                             disabled={isTransitioning}
