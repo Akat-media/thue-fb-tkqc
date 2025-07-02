@@ -33,7 +33,7 @@ export default function DesktopNavigation({
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY
-      setIsScrolled(scrollPosition > 300)
+      setIsScrolled(scrollPosition > 500)
     }
     window.addEventListener("scroll", handleScroll)
     // Cleanup event listener on component unmount
@@ -125,6 +125,7 @@ export default function DesktopNavigation({
                     items: LANGUAGE_ITEMS(i18n.language, t),
                     onClick: ({ key }) => {
                       i18n.changeLanguage(key);
+                      localStorage.setItem('languageChoose', key);
                     },
                    }}
                   placement="topRight"
@@ -146,12 +147,12 @@ export default function DesktopNavigation({
 
       {/* Desktop Navigation Menu */}
       <nav
-        className={`${isScrolled ? 'fixed top-0 left-0 right-0 z-20' : 'pt-6'} z-[9999999] transition-all duration-300`}
+        className={`z-[999999999999] ${isScrolled ? 'fixed top-0 left-0 right-0 nav-sticky' : 'pt-6 nav-unsticky'} transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]`}
       >
         <div className="container mx-auto pb-3 px-4">
           <div
-            className={`backdrop-blur-sm rounded-3xl p-4 transition-all duration-300  ${
-              isScrolled ? "bg-white shadow-xl" : "bg-white/90"
+            className={`rounded-3xl p-4 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              isScrolled ? "bg-white/95 shadow-2xl backdrop-blur-xl scale-[1.03]" : "bg-white/90 backdrop-blur-sm"
             }`}
           >
             <div className="relative" ref={navRef}>
@@ -215,7 +216,7 @@ export default function DesktopNavigation({
 
                       <span
                         className={`
-                          text-sm whitespace-nowrap font-medium transition-all duration-300
+                          text-sm whitespace-nowrap font-medium transition-all duration-300 font-hubot
                           ${isActive ? "text-[#3399FF] font-semibold drop-shadow-md" : "text-gray-600"}
                         `}
                       >
@@ -229,6 +230,18 @@ export default function DesktopNavigation({
           </div>
         </div>
       </nav>
+      <style>{`
+        .nav-sticky {
+          backdrop-filter: blur(16px) saturate(180%);
+          transform: translateY(0) scale(1.01);
+          transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+        }
+        .nav-unsticky {
+          backdrop-filter: blur(4px) saturate(120%);
+          transform: translateY(0) scale(1);
+          transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+        }
+      `}</style>
     </div>
   );
 }

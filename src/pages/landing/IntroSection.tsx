@@ -12,7 +12,7 @@ export default function IntroSection() {
     useEffect(() => {
       const handleScroll = () => {
         const scrollPosition = window.scrollY
-        setIsScrolled(scrollPosition > 300)
+        setIsScrolled(scrollPosition > 500)
       }
       window.addEventListener("scroll", handleScroll)
       return () => {
@@ -28,14 +28,13 @@ export default function IntroSection() {
       <main className="relative mt-8 lg:mt-16">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h2 className="text-3xl lg:text-5xl font-bold text-gray-800 mb-4 lg:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <h2 className="text-3xl lg:text-5xl font-bold text-gray-800 mb-4 lg:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700" data-aos="fade-up">
               {t('mainHeading.title')}
             </h2>
-            <h1 className="text-3xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-6 pt-2 lg:mb-8 leading-tight animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200 drop-shadow-2xl"
-            >
+            <h1 className="text-3xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-6 pt-2 lg:mb-8 leading-tight animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200 drop-shadow-2xl" data-aos="fade-up" data-aos-delay="100">
               {t('mainHeading.titleBot')}
             </h1>
-            <div className="space-y-3 lg:space-y-4 mb-8 lg:mb-16 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+            <div className="space-y-3 lg:space-y-4 mb-8 lg:mb-16 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300" data-aos="fade-up" data-aos-delay="200">
               <p className="text-base lg:text-xl text-gray-700 leading-relaxed">
               {t('mainHeading.subtitle')}
               </p>
@@ -59,6 +58,8 @@ export default function IntroSection() {
                 border-transparent
                 bg-gradient-to-r from-[#07C8F9] to-[#0D41E1] p-[1px]
               `}
+              data-aos="zoom-in"
+              data-aos-delay="300"
             >
               <div className="flex items-center justify-between w-full bg-white hover:bg-gray-50 rounded-full px-2 sm:px-2 py-[6px] sm:py-2 transition-colors duration-300">
                 <span className="mx-2 font-hubot sm:mx-3 md:mx-4 text-base sm:text-lg md:text-xl font-bold text-[#193250]">

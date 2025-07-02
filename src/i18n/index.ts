@@ -14,7 +14,7 @@ i18n
       vi: { translation: vi },
     },
     fallbackLng: 'vi', // mặc định nếu ko có
-    lng: 'vi',
+    // lng: 'vi',
     interpolation: {
       escapeValue: false, // react tự xử lý XSS
     },
