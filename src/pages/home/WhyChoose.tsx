@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
-
+import AOS from "aos";
+import "aos/dist/aos.css";
 const WhyChoose = () => {
     const { t } = useTranslation();
-    
+       
     return (
       <div className="py-8 md:py-12 md:pt-24 md:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,6 +40,7 @@ const WhyChoose = () => {
                       src="/homepage/why-choose/missile.svg"
                       alt="missile"
                       className="w-12 h-12 md:w-auto md:h-auto"
+                      data-aos="zoom-in"
                     />
                   </div>
                   <div className="font-hubot text-[22px] md:text-[28px] font-[500] leading-[130%]">
@@ -67,6 +69,7 @@ const WhyChoose = () => {
                   src="/homepage/why-choose/test.png"
                   alt="akaads"
                   className="max-w-full h-auto max-h-48 md:max-h-none object-contain"
+                  data-aos="fade-left"
                 />
               </div>
             </div>
@@ -81,6 +84,7 @@ const WhyChoose = () => {
                   src="/homepage/why-choose/test.png"
                   alt="akaads"
                   className="max-w-full h-auto max-h-48 md:max-h-none object-contain"
+                  data-aos="fade-right"
                 />
               </div>
 
@@ -92,6 +96,7 @@ const WhyChoose = () => {
                       src="/homepage/why-choose/setting.svg"
                       alt="setting"
                       className="w-12 h-12 md:w-auto md:h-auto "
+                      data-aos="zoom-in"
                     />
                   </div>
                   <div className="font-hubot text-[22px] md:text-[28px] font-[500] leading-[130%]">
@@ -121,6 +126,7 @@ const WhyChoose = () => {
                       src="/homepage/why-choose/shield.svg"
                       alt="shield"
                       className="w-12 h-12 md:w-auto md:h-auto"
+                      data-aos="zoom-in"
                     />
                   </div>
                   <div className="font-hubot text-[22px] md:text-[28px] font-[500] leading-[130%]">
@@ -147,6 +153,7 @@ const WhyChoose = () => {
                   src="/homepage/why-choose/test.png"
                   alt="akaads"
                   className="max-w-full h-auto max-h-48 md:max-h-none object-contain"
+                  data-aos="fade-left"
                 />
               </div>
             </div>
@@ -161,6 +168,7 @@ const WhyChoose = () => {
                   src="/homepage/why-choose/test.png"
                   alt="akaads"
                   className="max-w-full h-auto max-h-48 md:max-h-none object-contain"
+                  data-aos="fade-right"
                 />
               </div>
 
@@ -172,6 +180,7 @@ const WhyChoose = () => {
                       src="/homepage/why-choose/lightning.svg"
                       alt="lightning"
                       className="w-12 h-12 md:w-auto md:h-auto"
+                      data-aos="zoom-in"
                     />
                   </div>
                   <div className="font-hubot text-[22px] md:text-[28px] font-[500] leading-[130%]">
@@ -204,6 +213,7 @@ const WhyChoose = () => {
                       src="/homepage/why-choose/card.svg"
                       alt="card"
                       className="w-12 h-12 md:w-auto md:h-auto"
+                      data-aos="zoom-in"
                     />
                   </div>
                   <div className="font-hubot text-[22px] md:text-[28px] font-[500] leading-[130%]">
@@ -229,6 +239,7 @@ const WhyChoose = () => {
                   src="/homepage/why-choose/test.png"
                   alt="akaads"
                   className="max-w-full h-auto max-h-48 md:max-h-none object-contain"
+                  data-aos="fade-left"
                 />
               </div>
             </div>

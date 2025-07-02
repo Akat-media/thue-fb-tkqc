@@ -38,10 +38,14 @@ import PriceList from './pages/pricelist/PriceList.tsx';
 import SettingsPage from './pages/admin/Settings.tsx';
 import Navbar from './components/layout/Navbar.tsx';
 import Paypal from './pages/paypal/index.tsx';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import { useTranslation } from 'react-i18next';
 
 function App() {
   const userobj = useUserStore((state) => state.user);
   const [isHomePage, setIsHomepage] = useState(false);
+  const { i18n } = useTranslation();
   const ScrollToTop = () => {
     const { pathname } = useLocation();
     useEffect(() => {
@@ -55,6 +59,16 @@ function App() {
 
     return null;
   };
+  useEffect(() => {
+    const savedLang = localStorage.getItem('languageChoose');
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+    AOS.init({
+      duration: 800, // thời gian hiệu ứng (ms)
+      once: false,
+    });
+  }, []);
   return (
     <AuthProvider>
       <NotificationProvider>
