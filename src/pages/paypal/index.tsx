@@ -14,7 +14,7 @@ const Paypal = () => {
       const token = searchParams.get('token');
       if (token) {
         await axios
-          .post(`${BaseUrlSocket}/paypal/verify?token=${token}`)
+          .post(`${BaseUrlSocket}paypal/verify?token=${token}`)
           .then((res) => {
             setModalContent({
               title: 'Thanh toán thành công',
