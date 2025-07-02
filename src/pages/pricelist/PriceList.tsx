@@ -76,8 +76,11 @@ const PriceList: React.FC = () => {
         setActiveIndex(activeIndex === index ? null : index);
     };
 
-    const language = localStorage.getItem("language");
-    const langParse = language ? JSON.parse(language).language : 'vi'; // default la vi
+    // const language = localStorage.getItem("language");
+    // const langParse = language ? JSON.parse(language).language : 'vi'; // default la vi
+
+    const language = localStorage.getItem("i18nextLng");
+    const langParse = language ? language : 'vi';
 
     useEffect(() => {
         if (langParse === 'vi') {
