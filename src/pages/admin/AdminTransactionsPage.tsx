@@ -487,7 +487,7 @@ const AdminTransactionsPage: React.FC = () => {
   }, [transactions, transactionPoints, active]);
 
   return (
-    <>
+    <div className="container mx-auto">
       {active === 'money' && (
         <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-4">
           <Subheader active={active} setActive={setActive} />
@@ -1060,7 +1060,7 @@ const AdminTransactionsPage: React.FC = () => {
           )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
