@@ -1,28 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Search,
-  Filter,
-  ChevronDown,
-  Check,
-  Briefcase,
-  RefreshCcw,
-  X,
-  Plus,
-} from 'lucide-react';
-import { Card, CardContent } from '../../components/ui/Card';
+import { Check, RefreshCcw, X, Plus } from 'lucide-react';
 import AdAccountCard from './AdAccountCard';
 import RentModal from './RentModal';
 import CreateBMModal from './CreateBMModal';
 import { AdAccount } from '../../types';
-import { useAdAccountStore } from './adAccountStore';
 import BaseHeader from '../../api/BaseHeader';
-import url from '../../assets/bg.svg';
 import { useOnOutsideClick } from '../../hook/useOutside';
 import { toast } from 'react-toastify';
 import BMCard from './BMCard';
 import { NotiError, NotiSuccess } from '../../components/noti';
 import LoginModal from '../auth/LoginModal';
 import PaymentCardModal from '../payment/PaymentCardModal';
+import ButtonCmp from '../../components/button';
+import usePagination from '../../hook/usePagination';
+import { Pagination } from 'antd';
+import qs from 'qs';
+import { useSearchParams } from 'react-router-dom';
+import _ from 'lodash';
 
 interface BM {
   id: string;
@@ -37,32 +31,16 @@ const MarketplacePage: React.FC = () => {
   const userString = localStorage.getItem('user');
   const userInfo = userString ? JSON.parse(userString) : null;
   const isAdmin = userInfo?.user?.role === 'admin';
-  const [savedRentalRange, setSavedRentalRange] = useState<[Date, Date] | null>(
-    null
-  );
-
-  const {
-    searchTerm,
-    selectedType,
-    selectedAccountType,
-    setSearchTerm,
-    setSelectedType,
-    setSelectedAccountType,
-  } = useAdAccountStore();
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<AdAccount | null>(
     null
   );
   const [isRentModalOpen, setIsRentModalOpen] = useState(false);
-  const [allAccounts, setAllAccounts] = useState<any[]>([]);
-  const [filteredAccounts, setFilteredAccounts] = useState<any[]>([]);
   const [bmList, setBmList] = useState<BM[]>([]);
   const [allBmList, setAllBmList] = useState<BM[]>([]);
   const [filteredBmList, setFilteredBmList] = useState<BM[]>([]);
   const [isCreateBMModalOpen, setIsCreateBMModalOpen] = useState(false);
   const [selectedBM, setSelectedBM] = useState<any>(null);
   const [isBMDetailModalOpen, setIsBMDetailModalOpen] = useState(false);
-  const [selectedBMId, setSelectedBMId] = useState<string>('all');
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [successRent, setSuccessRent] = useState<any>(null);
   const [selectedSyncBMId, setSelectedSyncBMId] = useState<string>('');
@@ -73,39 +51,108 @@ const MarketplacePage: React.FC = () => {
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const [rentMeta, setRentMeta] = useState<any>(null);
   const [rentedAccounts, setRentedAccounts] = useState<any[]>([]);
+  const [visaAccount, setVisaAccount] = useState<any[]>([]);
+  const [simpleAccount, setSimpleAccount] = useState<any[]>([]);
   const [selectedAdAccountDetail, setSelectedAdAccountDetail] =
     useState<any>(null);
   const [isAdDetailOpen, setIsAdDetailOpen] = useState(false);
-  const moneyFields = ['spend_cap', 'amount_spent', 'balance', 'spend_limit'];
+  const [total, setTotal] = useState<any>(0);
+  const [totalVisa, setTotalVisa] = useState<any>(0);
+  const [dataQuery, setDataQuery] = useState<any>({
+    pageSize: 6,
+    page: 1,
+    pageSizeSimple: 1,
+    is_ads_visa: 1,
+    is_ads_simple: 1,
+  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlPage = parseInt(searchParams.get('page') || '1', 10);
+  const urlPageSimple = parseInt(searchParams.get('pageSizeSimple') || '1', 10);
+  const { currentPage, pageSize, handleChange } = usePagination(urlPage, 6);
+  const {
+    currentPage: currentPageSimple,
+    pageSize: pageSizeSimple,
+    handleChange: handleChangeSimple,
+  } = usePagination(urlPageSimple, 6);
 
-  const handleCallAPi = async () => {
+  const handleCallAPiVisaRent = async () => {
     try {
-      const [visaRes, simpleRes, rentedRes] = await Promise.all([
-        BaseHeader({ method: 'get', url: 'ad-accounts-visa' }),
-        BaseHeader({ method: 'get', url: 'ad-accounts-simple' }),
+      const [rentedRes] = await Promise.all([
         BaseHeader({ method: 'get', url: 'ad-accounts-visa-rent' }),
       ]);
-
-      const visaAccounts = visaRes.data.data || [];
-      const simpleAccounts = simpleRes.data.data || [];
-      const rentedList = rentedRes.data.data || [];
-
-      const merged = [
-        ...visaAccounts.map((acc: any) => ({ ...acc, is_visa_account: true })),
-        ...simpleAccounts.map((acc: any) => ({
-          ...acc,
-          is_visa_account: false,
-        })),
-      ];
-
-      setAllAccounts(merged);
+      const rentedList = rentedRes.data.data.data || [];
       setRentedAccounts(rentedList);
     } catch (error) {
       console.error('Error fetching ad accounts:', error);
       toast.error('Lỗi khi lấy danh sách tài khoản quảng cáo');
     }
   };
+  const hanleSearch = (data: any) => {
+    console.log(data);
+    const cleaned = _.pickBy({
+      ...dataQuery,
+      page: currentPage,
+      pageSizeSimple: currentPageSimple,
+      is_ads_visa: data?.selectedItems.includes('1') ? '1' : null,
+      is_ads_simple: data?.selectedItems.includes('2') ? '1' : null,
+      from: data?.range?.[0],
+      to: data?.range?.[1],
+    });
+    const queryString = qs.stringify(cleaned);
+    setDataQuery(cleaned);
+    setSearchParams(queryString);
+  };
+  const handleCallAPiVisa = async () => {
+    try {
+      const [visaRes] = await Promise.all([
+        BaseHeader({
+          method: 'get',
+          url: 'ad-accounts-visa',
+          params: {
+            page: currentPage,
+            pageSize,
+          },
+        }),
+      ]);
 
+      const visaAccounts = visaRes.data.data.data || [];
+      setVisaAccount(visaAccounts);
+      setTotalVisa(visaRes.data.data.count || 0);
+    } catch (error) {
+      console.error('Error fetching ad accounts:', error);
+      toast.error('Lỗi khi lấy danh sách tài khoản quảng cáo');
+    }
+  };
+  const handleCallAPiSimple = async () => {
+    try {
+      const [simpleRes] = await Promise.all([
+        BaseHeader({
+          method: 'get',
+          url: 'ad-accounts-simple',
+          params: {
+            page: currentPageSimple,
+            pageSize: pageSizeSimple,
+          },
+        }),
+      ]);
+      const simpleAccounts = simpleRes.data.data.data || [];
+      setSimpleAccount(simpleAccounts);
+      setTotal(simpleRes.data.data.count || 0);
+    } catch (error) {
+      console.error('Error fetching ad accounts:', error);
+      toast.error('Lỗi khi lấy danh sách tài khoản quảng cáo');
+    }
+  };
+  useEffect(() => {
+    if (!isAdmin) {
+      const queryString = qs.stringify({
+        ...dataQuery,
+        page: currentPage,
+        pageSizeSimple: currentPageSimple,
+      });
+      setSearchParams(queryString);
+    }
+  }, [currentPage, currentPageSimple]);
   const fetchBMList = async () => {
     try {
       const response = await BaseHeader({
@@ -122,25 +169,31 @@ const MarketplacePage: React.FC = () => {
   };
 
   useEffect(() => {
-    handleCallAPi();
-    fetchBMList();
-  }, []);
+    if (isAdmin) {
+      handleCallAPiVisaRent();
+      fetchBMList();
+    }
+  }, [isAdmin]);
+  useEffect(() => {
+    if (!isAdmin) {
+      handleCallAPiVisa();
+    }
+  }, [isAdmin, currentPage]);
+  useEffect(() => {
+    if (!isAdmin) {
+      handleCallAPiSimple();
+    }
+  }, [isAdmin, currentPageSimple]);
 
   const handleRentClick = (account: any) => {
     const userString = localStorage.getItem('user');
     const userInfo = userString ? JSON.parse(userString) : null;
-
     if (!userInfo) {
       setShowLoginModal(true);
       return;
     }
-
     setSelectedAccount(account);
-    // if (!account.is_visa_account) {
     setIsRentModalOpen(true);
-    // } else {
-    //   setIsCardModalOpen(true);
-    // }
   };
 
   //luu thong tin the
@@ -199,75 +252,9 @@ const MarketplacePage: React.FC = () => {
     }
   };
 
-  const toggleFilters = () => {
-    setIsFiltersOpen(!isFiltersOpen);
-  };
-
   const { innerBorderRef } = useOnOutsideClick(() => {
     setIsBMDetailModalOpen(false);
   });
-
-  const filterData = (
-    data: any[],
-    bmId: string,
-    accountType: string,
-    term: string,
-    isBM = false
-  ) => {
-    let filtered = data;
-    if (!isBM && bmId !== 'all') {
-      filtered = filtered.filter((acc) => acc.facebook_bm_id === bmId);
-    }
-    if (!isBM && accountType !== 'all') {
-      filtered = filtered.filter((acc) => acc.account_type === accountType);
-    }
-    if (term) {
-      filtered = filtered.filter((item) => {
-        if (isBM) {
-          return (
-            (item.bm_name &&
-              item.bm_name.toLowerCase().includes(term.toLowerCase())) ||
-            (item.bm_id &&
-              item.bm_id.toLowerCase().includes(term.toLowerCase()))
-          );
-        } else {
-          return (
-            (item.name &&
-              item.name.toLowerCase().includes(term.toLowerCase())) ||
-            (item.id && item.id.toLowerCase().includes(term.toLowerCase()))
-          );
-        }
-      });
-    }
-    return filtered;
-  };
-
-  useEffect(() => {
-    setFilteredAccounts(
-      filterData(
-        allAccounts,
-        selectedBMId,
-        selectedAccountType,
-        searchTerm,
-        false
-      )
-    );
-    setFilteredBmList(
-      filterData(allBmList, selectedBMId, selectedAccountType, searchTerm, true)
-    );
-  }, [allAccounts, allBmList, selectedBMId, selectedAccountType, searchTerm]);
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleBMFilterChange = (bmId: string) => {
-    setSelectedBMId(bmId);
-  };
-
-  const handleAccountTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedAccountType(e.target.value);
-  };
 
   const handleSync = () => {
     setIsSyncModalOpen(true);
@@ -285,7 +272,7 @@ const MarketplacePage: React.FC = () => {
       });
       if (response.status === 200) {
         toast.success('Đồng bộ tài khoản thành công');
-        await handleCallAPi();
+        await handleCallAPiVisa();
         setIsSyncModalOpen(false);
       } else {
         toast.error('Đồng bộ thất bại. Vui lòng thử lại.');
@@ -352,11 +339,10 @@ const MarketplacePage: React.FC = () => {
 
   return (
     <>
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
+      <div className="px-4 sm:px-6 lg:px-8 py-8 container mx-auto">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
-              {/* Danh sách BM / Tài khoản quảng cáo */}
               Tài khoản quảng cáo BM
             </h2>
           </div>
@@ -364,32 +350,8 @@ const MarketplacePage: React.FC = () => {
 
         <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between">
           <div className="w-full lg:w-1/2 flex items-center gap-2">
-            <div className="relative flex gap-3 flex-1">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Tìm kiếm tài khoản..."
-                className="w-full max-w-[400px] h-[42px] block pl-10 pr-3 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-300 ease-in-out focus:outline-none focus:border-transparent focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white sm:text-sm"
-                value={searchTerm}
-                onChange={handleSearch}
-              />
-              <button
-                type="button"
-                className="h-[42px] px-3 sm:px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center"
-                onClick={toggleFilters}
-              >
-                <Filter className="h-5 w-5 text-gray-400" />
-                <span className="ml-2 hidden whitespace-nowrap lg:inline">
-                  Bộ lọc
-                </span>
-                <ChevronDown
-                  className={`ml-1 h-4 w-4 transition-transform ${
-                    isFiltersOpen ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
+            <div className="flex gap-3 flex-1">
+              <ButtonCmp onClick={hanleSearch} />
             </div>
           </div>
 
@@ -423,55 +385,6 @@ const MarketplacePage: React.FC = () => {
           </div>
         </div>
 
-        {isFiltersOpen && (
-          <Card className="mt-4">
-            <CardContent className="p-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="bmFilter"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Tài khoản BM
-                  </label>
-                  <select
-                    id="bmFilter"
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                    value={selectedBMId}
-                    onChange={(e) => handleBMFilterChange(e.target.value)}
-                  >
-                    <option value="all">Tất cả</option>
-                    {bmList.map((bm: any) => (
-                      <option key={bm.id} value={bm.bm_id}>
-                        {bm.bm_name || `BM ${bm.bm_id}`}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label
-                    htmlFor="accountType"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Dạng tài khoản
-                  </label>
-                  <select
-                    id="accountType"
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                    value={selectedAccountType}
-                    onChange={handleAccountTypeChange}
-                  >
-                    <option value="all">Tất cả</option>
-                    <option value="visa">Visa</option>
-                    <option value="high_limit">Limit cao</option>
-                    <option value="low_limit">Limit thấp</option>
-                  </select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* BM List Section */}
         {isAdmin && filteredBmList.length > 0 && (
           <div className="mt-8">
@@ -492,35 +405,13 @@ const MarketplacePage: React.FC = () => {
         )}
 
         {/* Ad Accounts Section */}
-        <h3 className="text-2xl font-bold text-gray-600 mb-4 mt-6">
-          TKQC Đã gắn thẻ
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAccounts
-            .filter((acc: any) => acc.is_visa_account === true)
-            .map((account: any) => (
-              <AdAccountCard
-                key={account.id}
-                account={account}
-                onRentClick={() => handleRentClick(account)}
-                isAdmin={isAdmin}
-                onViewDetail={(acc) => {
-                  setSelectedAdAccountDetail(acc);
-                  setIsAdDetailOpen(true);
-                }}
-              />
-            ))}
-        </div>
-
-        <h3 className="text-2xl font-bold text-red-500 my-4 mt-6">
-          TKQC Chưa gắn thẻ
-        </h3>
-        {filteredAccounts.filter((acc: any) => acc.is_visa_account === false)
-          .length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAccounts
-              .filter((acc: any) => acc.is_visa_account === false)
-              .map((account: any) => (
+        {searchParams.get('is_ads_visa') == '1' && (
+          <>
+            <h3 className="text-2xl font-bold text-gray-600 mb-4 mt-6">
+              TKQC Đã gắn thẻ
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {visaAccount.map((account: any) => (
                 <AdAccountCard
                   key={account.id}
                   account={account}
@@ -532,11 +423,58 @@ const MarketplacePage: React.FC = () => {
                   }}
                 />
               ))}
-          </div>
-        ) : (
-          <div className="text-center text-gray-500 italic py-4">
-            Không có tài khoản nào chưa gắn thẻ.
-          </div>
+            </div>
+            {Boolean(totalVisa) && (
+              <div className="mt-8 mb-4">
+                <Pagination
+                  total={totalVisa}
+                  onChange={handleChange}
+                  current={currentPage}
+                  pageSize={pageSize}
+                />
+              </div>
+            )}
+          </>
+        )}
+
+        {searchParams.get('is_ads_simple') == '1' && (
+          <>
+            <h3 className="text-2xl font-bold text-red-500 my-4 mt-6">
+              TKQC Chưa gắn thẻ
+            </h3>
+            {simpleAccount.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {simpleAccount.map((account: any) => (
+                    <AdAccountCard
+                      key={account.id}
+                      account={account}
+                      onRentClick={() => handleRentClick(account)}
+                      isAdmin={isAdmin}
+                      onViewDetail={(acc) => {
+                        setSelectedAdAccountDetail(acc);
+                        setIsAdDetailOpen(true);
+                      }}
+                    />
+                  ))}
+                </div>
+                {Boolean(total) && (
+                  <div className="mt-8 mb-4">
+                    <Pagination
+                      total={total}
+                      onChange={handleChangeSimple}
+                      current={currentPageSimple}
+                      pageSize={pageSizeSimple}
+                    />
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center text-gray-500 italic py-4">
+                Không có tài khoản nào chưa gắn thẻ.
+              </div>
+            )}
+          </>
         )}
 
         {isAdmin && (

@@ -190,7 +190,7 @@ const PaymentPage: React.FC = () => {
   }, [fetchUser]);
 
   return (
-    <>
+    <div className="container mx-auto">
       {isCurrencyModalOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-sm">
@@ -941,7 +941,7 @@ const PaymentPage: React.FC = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
