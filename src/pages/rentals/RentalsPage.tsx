@@ -77,7 +77,7 @@ const RentalsPage: React.FC = () => {
   const userParse = JSON.parse(objetUser || '{}');
   const [rentals, setRentals] = useState<(Rental & { adAccount: any })[]>([]);
   const [activeTab, setActiveTab] = useState<
-    'process' | 'success' | 'faild' | 'all'
+    'process' | 'success' | 'faild' | 'complete_remove' | 'all'
   >('all');
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRental, setSelectedRental] = useState<
@@ -258,7 +258,7 @@ const RentalsPage: React.FC = () => {
 
   const mapApiStatus = (
     status: string
-  ): 'process' | 'success' | 'faild' | 'all' => {
+  ): 'process' | 'success' | 'faild' | 'complete_remove' | 'all' => {
     switch (status) {
       case 'process':
         return 'process';
@@ -266,6 +266,8 @@ const RentalsPage: React.FC = () => {
         return 'success';
       case 'faild':
         return 'faild';
+      case 'complete_remove':
+        return 'complete_remove';
       default:
         return 'process';
     }
@@ -302,13 +304,19 @@ const RentalsPage: React.FC = () => {
       case 'success':
         return (
           <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-green-100 text-green-800 border border-green-200">
-            <Clock className="h-3 w-3 mr-1" /> Thành công
+            <Lightbulb className="h-3 w-3 mr-1" /> Thành công
           </span>
         );
       case 'faild':
         return (
           <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-red-100 text-red-700 border border-red-200">
             <AlertTriangle className="h-3 w-3 mr-1" /> Thất bại
+          </span>
+        );
+      case 'complete_remove':
+        return (
+          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-purple-200 text-purple-800 border border-purple-200">
+            <Clock className="h-3 w-3 mr-1" /> Đã thuê
           </span>
         );
       default:
@@ -395,32 +403,36 @@ const RentalsPage: React.FC = () => {
               <option value="process">Đang xử lý</option>
               <option value="success">Thành công</option>
               <option value="faild">Thất bại</option>
+              <option value="complete_remove">Đã thuê</option>
               <option value="all">Tất cả</option>
             </select>
           </div>
           <div className="hidden sm:block">
             <div className="border-b border-gray-200">
               <nav className="-mb-px flex space-x-6" aria-label="Tabs">
-                {['process', 'success', 'faild', 'all'].map((tab) => (
-                  <button
-                    key={tab}
-                    className={`${
-                      activeTab === tab
-                        ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-gray-500 hover:text-blue-600 hover:border-gray-300'
-                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                    onClick={() => setActiveTab(tab as any)}
-                  >
-                    {
+                {['process', 'success', 'faild', 'complete_remove', 'all'].map(
+                  (tab) => (
+                    <button
+                      key={tab}
+                      className={`${
+                        activeTab === tab
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-blue-600 hover:border-gray-300'
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                      onClick={() => setActiveTab(tab as any)}
+                    >
                       {
-                        process: 'Đang xử lý',
-                        success: 'Thành công',
-                        faild: 'Thất bại',
-                        all: 'Tất cả',
-                      }[tab]
-                    }
-                  </button>
-                ))}
+                        {
+                          process: 'Đang xử lý',
+                          success: 'Thành công',
+                          faild: 'Thất bại',
+                          complete_remove: 'Đã thuê',
+                          all: 'Tất cả',
+                        }[tab]
+                      }
+                    </button>
+                  )
+                )}
               </nav>
             </div>
           </div>

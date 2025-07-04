@@ -28,7 +28,7 @@ import { toast } from 'react-toastify';
 const RentalsManagement: React.FC = () => {
   const [rentals, setRentals] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<
-    'process' | 'success' | 'faild' | 'all'
+    'process' | 'success' | 'faild' | 'complete_remove' | 'all'
   >('all');
   const [loading, setLoading] = useState(true);
   const [successRent, setSuccessRent] = useState<string | null>(null);
@@ -86,8 +86,10 @@ const RentalsManagement: React.FC = () => {
       if (success) setSuccessRent(message);
       else setErrorRent(message);
     } catch (error: any) {
-      toast.error(error?.response?.data?.message ||
-        'Lỗi kết nối hệ thống. Vui lòng thử lại!');
+      toast.error(
+        error?.response?.data?.message ||
+          'Lỗi kết nối hệ thống. Vui lòng thử lại!'
+      );
     }
   };
 
@@ -113,6 +115,12 @@ const RentalsManagement: React.FC = () => {
         return (
           <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-red-100 text-red-700 border border-red-200">
             <AlertTriangle className="h-3 w-3 mr-1" /> Thất bại
+          </span>
+        );
+      case 'complete_remove':
+        return (
+          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-indigo-100 text-indigo-800 border border-indigo-200">
+            <Lightbulb className="h-3 w-3 mr-1" /> Đã thuê
           </span>
         );
       default:
@@ -167,6 +175,16 @@ const RentalsManagement: React.FC = () => {
                 onClick={() => setActiveTab('faild')}
               >
                 Thất bại
+              </button>
+              <button
+                className={`${
+                  activeTab === 'complete_remove'
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-indigo-600 hover:border-indigo-300'
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                onClick={() => setActiveTab('complete_remove')}
+              >
+                Đã thuê
               </button>
               <button
                 className={`${

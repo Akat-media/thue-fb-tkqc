@@ -125,7 +125,7 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
                 </span>
                 <span className="text-gray-900 font-medium">
                   {account?.funding_source_details?.display_string ||
-                    'Không có thông tin'}
+                    'Chưa có thông tin thẻ'}
                 </span>
               </div>
               <div className="flex items-center text-sm">
