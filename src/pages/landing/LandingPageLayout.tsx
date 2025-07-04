@@ -1,14 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Navbar from '../../components/layout/Navbar';
 import IntroSection from './IntroSection';
-import { Card, CardContent } from '../../components/ui/Card';
-import { ChevronRight, Clock, DollarSign, Shield } from 'lucide-react';
+import { ChevronRight} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Button from '../../components/ui/Button';
-import Counter from '../../components/ui/Counter';
-import metalogo from '../../public/metalogo.png';
 import InfiniteLogoScroll from '../home/InfiniteLogoScroll';
 import Blog from "../home/Blog.tsx";
 import WhyChoose from "../home/WhyChoose.tsx";

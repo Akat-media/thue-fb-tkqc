@@ -55,11 +55,11 @@ BaseHeader.interceptors.response.use(
         const res = await axios.post(BaseUrl + '/refresh-token', {
           refreshToken,
         });
-        const { accessToken } = res.data;
-        localStorage.setItem('access_token', accessToken);
-        onRefreshed(accessToken);
+        const { access_token } = res.data.data;
+        localStorage.setItem('access_token', access_token);
+        onRefreshed(access_token);
         isRefreshing = false;
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return BaseHeader(originalRequest);
       } catch (refreshError) {
         console.error('Không thể làm mới token:', refreshError);

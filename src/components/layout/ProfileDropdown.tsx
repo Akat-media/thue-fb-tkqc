@@ -3,13 +3,14 @@ import { X, User, CreditCard, LogOut, TicketPercent } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Dropdown, MenuProps } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useUserStore } from '../../stores/useUserStore';
 
 export const ProfileDropdown: React.FC<{
-  user: any;
-  avatar: string;
   handleLogout: () => void;
-}> = ({ user, avatar, handleLogout }) => {
+}> = ({  
+  handleLogout }) => {
   const { t } = useTranslation();
+  const user = useUserStore((state) => state.user);
   const items: MenuProps['items'] = [
     {
       key: '1',
@@ -80,7 +81,7 @@ export const ProfileDropdown: React.FC<{
       <a onClick={(e) => e.preventDefault()}>
         <button className="w-12 h-12 rounded-full overflow-hidden border-2 border-white hover:border-gray-300 transition-colors">
           <img
-            src={avatar}
+            src={user?.images || '/avatar.jpg'}
             alt="User Avatar"
             className="w-full h-full object-cover"
           />

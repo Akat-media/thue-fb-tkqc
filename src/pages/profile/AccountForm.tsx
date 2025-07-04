@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import BaseHeader, { BaseUrl } from '../../api/BaseHeader.ts';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useUserStore } from '../../stores/useUserStore.ts';
 
 // Định nghĩa schema validate với zod
 const userSchema = z.object({
@@ -90,28 +91,43 @@ const FloatingInput = ({
 };
 
 const AccountForm: React.FC = () => {
-  const user = localStorage.getItem('user');
-  const initialUser: User =
-    typeof user === 'string' ? JSON.parse(user).user : {};
-
+  const { user, setUser } = useUserStore();
   // Khởi tạo react-hook-form với zod resolver
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      username: initialUser.username || '',
-      email: initialUser.email || '',
-      phone: initialUser.phone || '',
-      percentage: initialUser.percentage || 0,
-      points: initialUser.points || 0,
+      username: user?.username || '',
+      email: user?.email || '',
+      phone: user?.phone || '',
+      percentage: user?.percentage || 0,
+      points: user?.points || 0,
     },
   });
-
+  function generateRandomId() {
+    return (
+        Date.now().toString(36) + 
+        Math.random().toString(36).substring(2, 15)
+    );
+  }
+  // Thêm useEffect này để cập nhật form khi user thay đổi
+  useEffect(() => {
+    if (user) {
+      reset({
+        username: user.username || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        percentage: user.percentage || 0,
+        points: user.points || 0,
+      });
+    }
+  }, [user, reset]);
   const onSubmit = async (data: UserFormData) => {
-    if (!initialUser.id) {
+    if (!user?.id) {
       toast.error('Không tìm thấy ID người dùng trong localStorage!', {
         position: 'top-right',
         autoClose: 3000,
@@ -121,7 +137,7 @@ const AccountForm: React.FC = () => {
     try {
       const response = await BaseHeader({
         method: 'put',
-        url: `/user/${initialUser.id}`,
+        url: `/user/${user.id}`,
         data: {
           username: data.username,
           email: data.email,
@@ -133,11 +149,15 @@ const AccountForm: React.FC = () => {
         position: 'top-right',
         autoClose: 3000,
       });
-      // Cập nhật localStorage
-      localStorage.setItem(
-        'user',
-        JSON.stringify({ user: { ...initialUser, ...data } })
-      );
+      setUser({...user, ...data})
+      const sessionData = {
+        id: generateRandomId(),
+        user_id: user.id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        user: {...user, ...data}
+    };
+      localStorage.setItem('user', JSON.stringify(sessionData))
     } catch (error: any) {
       const apiMessage =
         error.response?.data?.message ||

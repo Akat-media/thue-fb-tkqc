@@ -12,7 +12,10 @@ export default function IntroSection() {
     useEffect(() => {
       const handleScroll = () => {
         const scrollPosition = window.scrollY
-        setIsScrolled(scrollPosition > 500)
+        const currentPath = window.location.pathname;
+        if (currentPath === '/' || currentPath === '/dashboard') {
+        setIsScrolled(scrollPosition > 400);
+      }
       }
       window.addEventListener("scroll", handleScroll)
       return () => {
