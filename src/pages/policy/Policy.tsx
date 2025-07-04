@@ -13,7 +13,7 @@ interface PolicySection {
 const Policy: React.FC = () => {
   const [openSections, setOpenSections] = React.useState<
     Record<number, boolean>
-  >({});
+  >({ '0': true });
   const [policies, setPolicies] = useState<PolicySection[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,6 +29,7 @@ const Policy: React.FC = () => {
         url: 'policies',
       });
       setPolicies(response.data.data || []);
+      // setOpenSections(response.data.data?.[0] || []);
     } catch (error) {
       console.error('Error fetching policies:', error);
       setPolicies([
@@ -62,13 +63,14 @@ const Policy: React.FC = () => {
     }
   };
 
-  const toggleSection = (index: number) => {
+  const toggleSection = (index: any) => {
     setOpenSections((prev) => ({
       ...prev,
       [index]: !prev[index],
     }));
   };
 
+  console.log(openSections);
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-blue-100 via-sky-200 to-cyan-100">
@@ -104,7 +106,7 @@ const Policy: React.FC = () => {
                 <div
                   className={`overflow-hidden transition-all duration-1000 ease-in-out ${
                     openSections[index]
-                      ? 'max-h-96 opacity-100'
+                      ? 'opacity-100 overflow-y-auto'
                       : 'max-h-0 opacity-0'
                   }`}
                 >
