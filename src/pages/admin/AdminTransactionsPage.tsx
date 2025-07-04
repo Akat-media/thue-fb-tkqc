@@ -706,13 +706,11 @@ const AdminTransactionsPage: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {item?.createdAt
+                        {item?.createdAt || item?.created_at
                           ? format(
-                              new Date(item?.createdAt),
+                              new Date(item?.createdAt || item?.created_at),
                               'dd/MM/yyyy HH:mm:ss',
-                              {
-                                locale: vi,
-                              }
+                              { locale: vi }
                             )
                           : ''}
                       </td>
@@ -1001,13 +999,11 @@ const AdminTransactionsPage: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {item?.created_at
+                        {item?.createdAt || item?.created_at
                           ? format(
-                              new Date(item?.created_at),
+                              new Date(item?.createdAt || item?.created_at),
                               'dd/MM/yyyy HH:mm:ss',
-                              {
-                                locale: vi,
-                              }
+                              { locale: vi }
                             )
                           : ''}
                       </td>

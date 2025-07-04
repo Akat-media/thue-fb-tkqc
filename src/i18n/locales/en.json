@@ -7,7 +7,7 @@
   "subTextNavbar": "Services",
   "authen": {
     "login": "Login",
-    "register": "Regiser",
+    "register": "Register",
     "logout": "Logout"
   },
   "profile": {
