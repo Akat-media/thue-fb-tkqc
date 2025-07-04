@@ -1,6 +1,13 @@
 'use client';
 
-import { Dispatch, Fragment, SetStateAction, useEffect, useRef, useState } from 'react';
+import {
+  Dispatch,
+  Fragment,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Icon from '../icons';
 import { ProfileDropdown } from '../layout/ProfileDropdown';
 import { NAV_ITEMS } from '../layout/Navbar';
@@ -10,9 +17,10 @@ import { LANGUAGE_ITEMS } from '../layout/Navbar';
 import { useTranslation } from 'react-i18next';
 type DesktopNavigationProps = {
   user: any;
+  avatar: string;
   setShowLoginModal: Dispatch<SetStateAction<boolean>>;
   setShowRegisterModal: Dispatch<SetStateAction<boolean>>;
-  handleLogout: () => void
+  handleLogout: () => void;
 };
 export default function DesktopNavigation({
   user,
@@ -21,47 +29,49 @@ export default function DesktopNavigation({
   handleLogout,
 }: DesktopNavigationProps) {
   const { i18n, t } = useTranslation();
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeItem, setActiveItem] = useState("home")
-  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 })
-  const navRef = useRef<HTMLDivElement>(null)
+  const [activeItem, setActiveItem] = useState('home');
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const navRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY
+      const scrollPosition = window.scrollY;
       const currentPath = window.location.pathname;
       if (currentPath === '/' || currentPath === '/dashboard') {
         setIsScrolled(scrollPosition > 400);
       }
-    }
-    window.addEventListener("scroll", handleScroll)
+    };
+    window.addEventListener('scroll', handleScroll);
     // Cleanup event listener on component unmount
     return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
-  }, [])
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   useEffect(() => {
-    updateIndicator()
-  }, [activeItem])
+    updateIndicator();
+  }, [activeItem]);
 
   const updateIndicator = () => {
     if (navRef.current) {
-      const activeElement = navRef.current.querySelector(`[data-key="${activeItem}"]`) as HTMLElement
+      const activeElement = navRef.current.querySelector(
+        `[data-key="${activeItem}"]`
+      ) as HTMLElement;
       if (activeElement) {
-        const { offsetLeft, offsetWidth } = activeElement
+        const { offsetLeft, offsetWidth } = activeElement;
         setIndicatorStyle({
           left: offsetLeft,
           width: offsetWidth,
-        })
+        });
       }
     }
-  }
+  };
 
   // Helper: map pathname to NAV_ITEMS key
   const getKeyFromPath = (path: string) => {
-    const found = NAV_ITEMS.find(item => item.url === path);
+    const found = NAV_ITEMS.find((item) => item.url === path);
     return found ? found.key : 'home';
   };
 
@@ -69,16 +79,24 @@ export default function DesktopNavigation({
     setActiveItem(getKeyFromPath(location.pathname));
   }, [location.pathname]);
 
-  const handleItemClick = (item: (typeof NAV_ITEMS)[0], e: React.MouseEvent) => {
-    const protectedRoutes = ["/rentals", "/payments", "/admintransaction", "/support"]
-    const isProtected = protectedRoutes.includes(item.url)
+  const handleItemClick = (
+    item: (typeof NAV_ITEMS)[0],
+    e: React.MouseEvent
+  ) => {
+    const protectedRoutes = [
+      '/rentals',
+      '/payments',
+      '/admintransaction',
+      '/support',
+    ];
+    const isProtected = protectedRoutes.includes(item.url);
     if (!user && isProtected) {
-      e.preventDefault()
-      setShowLoginModal(true)
-      return
+      e.preventDefault();
+      setShowLoginModal(true);
+      return;
     }
-    console.log('item111', item)
-  }
+    console.log('item111', item);
+  };
   return (
     <div className={`hidden lg:block ${isScrolled ? 'relative' : 'unset'}`}>
       {/* Desktop Header */}
@@ -86,8 +104,8 @@ export default function DesktopNavigation({
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div
-                onClick={() => navigate('/dashboard')}
-                className="flex items-center cursor-pointer"
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center cursor-pointer"
             >
               <Icon name="logo" />
             </div>
@@ -97,9 +115,7 @@ export default function DesktopNavigation({
               {user ? (
                 <div className="relative">
                   <div>
-                    <ProfileDropdown
-                      handleLogout={handleLogout}
-                    />
+                    <ProfileDropdown handleLogout={handleLogout} />
                   </div>
                 </div>
               ) : (
@@ -119,26 +135,24 @@ export default function DesktopNavigation({
                 </Fragment>
               )}
               {/* Language Dropdown */}
-                <Dropdown
-                  menu={{ 
-                    items: LANGUAGE_ITEMS(i18n.language, t),
-                    onClick: ({ key }) => {
-                      i18n.changeLanguage(key);
-                      localStorage.setItem('languageChoose', key);
-                    },
-                   }}
-                  placement="topRight"
-                >
-                  <button
-                    className="bg-white rounded-full transition-all duration-200 flex items-center p-[4px]"
-                  >
-                    {i18n.language === 'vi' ? (
-                      <Icon  name="logoVietnam" />
-                    ) : (
-                      <Icon name="logoEL" />
-                    )}
-                  </button>
-                </Dropdown>
+              <Dropdown
+                menu={{
+                  items: LANGUAGE_ITEMS(i18n.language, t),
+                  onClick: ({ key }) => {
+                    i18n.changeLanguage(key);
+                    localStorage.setItem('languageChoose', key);
+                  },
+                }}
+                placement="topRight"
+              >
+                <button className="bg-white rounded-full transition-all duration-200 flex items-center p-[4px]">
+                  {i18n.language === 'vi' ? (
+                    <Icon name="logoVietnam" />
+                  ) : (
+                    <Icon name="logoEL" />
+                  )}
+                </button>
+              </Dropdown>
             </div>
           </div>
         </div>
@@ -146,12 +160,18 @@ export default function DesktopNavigation({
 
       {/* Desktop Navigation Menu */}
       <nav
-        className={`z-[999999999999] ${isScrolled ? 'fixed top-0 left-0 right-0 nav-sticky' : 'pt-6 nav-unsticky'} transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]`}
+        className={`z-[1000] ${
+          isScrolled
+            ? 'fixed top-0 left-0 right-0 nav-sticky'
+            : 'pt-6 nav-unsticky'
+        } transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]`}
       >
         <div className="container mx-auto pb-3 px-4">
           <div
             className={`rounded-3xl p-4 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-              isScrolled ? "bg-white/95 shadow-2xl backdrop-blur-xl scale-[1.03]" : "bg-white/90 backdrop-blur-sm"
+              isScrolled
+                ? 'bg-white/95 shadow-2xl backdrop-blur-xl scale-[1.03]'
+                : 'bg-white/90 backdrop-blur-sm'
             }`}
           >
             <div className="relative" ref={navRef}>
@@ -161,10 +181,11 @@ export default function DesktopNavigation({
                 style={{
                   left: `${indicatorStyle.left}px`,
                   width: `${indicatorStyle.width}px`,
-                  background: "linear-gradient(90deg, #D0E8FF 0%, #B3D8FF 100%)",
+                  background:
+                    'linear-gradient(90deg, #D0E8FF 0%, #B3D8FF 100%)',
                   boxShadow: '0 4px 24px 0 rgba(64,160,255,0.10)',
                   opacity: 0.25,
-                  transform: "translateY(0)",
+                  transform: 'translateY(0)',
                 }}
               />
 
@@ -174,15 +195,16 @@ export default function DesktopNavigation({
                 style={{
                   left: `${indicatorStyle.left}px`,
                   width: `${indicatorStyle.width}px`,
-                  background: "linear-gradient(90deg, #D0E8FF 0%, #B3D8FF 100%)",
+                  background:
+                    'linear-gradient(90deg, #D0E8FF 0%, #B3D8FF 100%)',
                   opacity: 0.5,
                 }}
               />
 
               <div className="flex items-center justify-evenly relative z-10">
                 {NAV_ITEMS.map((item, index) => {
-                  const isActive = activeItem === item.key
-                  console.log('activeItem', activeItem)
+                  const isActive = activeItem === item.key;
+                  console.log('activeItem', activeItem);
                   return (
                     <Link
                       to={item.url}
@@ -195,7 +217,11 @@ export default function DesktopNavigation({
                         hover:scale-110 hover:-translate-y-1
                         px-4 py-3 rounded-2xl
                         group relative overflow-hidden
-                        ${isActive ? 'shadow-[0_4px_24px_0_rgba(64,160,255,0.20)] scale-105 bg-white' : ''}
+                        ${
+                          isActive
+                            ? 'shadow-[0_4px_24px_0_rgba(64,160,255,0.20)] scale-105 bg-white'
+                            : ''
+                        }
                       `}
                       style={{
                         animationDelay: `${index * 50}ms`,
@@ -204,11 +230,17 @@ export default function DesktopNavigation({
                       <div
                         className={`
                           relative transition-all duration-300 ease-out
-                          ${isActive ? "text-[#4F8CFF] scale-110 drop-shadow-md" : "text-blue-400 group-hover:text-[#4F8CFF] group-hover:scale-105"}
+                          ${
+                            isActive
+                              ? 'text-[#4F8CFF] scale-110 drop-shadow-md'
+                              : 'text-blue-400 group-hover:text-[#4F8CFF] group-hover:scale-105'
+                          }
                         `}
                       >
                         {isActive && (
-                          <div className="absolute inset-0 text-[#B3D8FF] opacity-60">{item.icon}</div>
+                          <div className="absolute inset-0 text-[#B3D8FF] opacity-60">
+                            {item.icon}
+                          </div>
                         )}
                         <div className="relative z-10">{item.icon}</div>
                       </div>
@@ -216,13 +248,17 @@ export default function DesktopNavigation({
                       <span
                         className={`
                           text-sm whitespace-nowrap font-medium transition-all duration-300 font-hubot
-                          ${isActive ? "text-[#3399FF] font-semibold drop-shadow-md" : "text-gray-600"}
+                          ${
+                            isActive
+                              ? 'text-[#3399FF] font-semibold drop-shadow-md'
+                              : 'text-gray-600'
+                          }
                         `}
                       >
                         {t(item.i18nKey)}
                       </span>
                     </Link>
-                  )
+                  );
                 })}
               </div>
             </div>

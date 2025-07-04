@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from '../../components/ui/Card';
-import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
 import BaseHeader from '../../api/BaseHeader';
 import { toast } from 'react-toastify';
@@ -20,7 +19,8 @@ import { useOnOutsideClick } from '../../hook/useOutside';
 import dayjs from 'dayjs';
 import { VoucherData } from '../profile/Ticket';
 import { format, parseISO } from 'date-fns';
-import { Form, Select } from 'antd';
+import { Form, Modal, Select } from 'antd';
+import styled from 'styled-components';
 
 interface RentModalProps {
   isOpen: boolean;
@@ -32,7 +32,10 @@ interface RentModalProps {
   setRentMeta?: (meta: any) => void;
   rentMeta?: any;
 }
-
+const dataCurrency = [
+  { id: 'vnd', name: 'VND' },
+  { id: 'visa', name: 'USD' },
+];
 const RentModal: React.FC<RentModalProps> = (props) => {
   const {
     isOpen,
@@ -57,6 +60,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const [rentalRangeError, setRentalRangeError] = useState<string | null>(null);
   const [dataVoucher, setDataVoucher] = useState<VoucherData[]>([]);
   const [selectedVoucher, setSelectedVoucher] = useState('');
+  const [selectedCurrend, setSelectedCurrend] = useState('vnd');
   const [budgetData, setBudgetData] = useState<{
     amount: number;
     percentage: number;
@@ -162,6 +166,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         voucher_id: selectedVoucher || '',
         start_date: [rentalRange.start],
         end_date: [rentalRange.end],
+        currency: selectedCurrend,
       });
       onClose();
       openCardModal?.();
@@ -180,6 +185,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         amountPoint: totalBill,
         voucher_id: selectedVoucher || '',
         bot_id: selectedCookieId || null,
+        currency: selectedCurrend,
       };
 
       const response = await BaseHeader({
@@ -308,438 +314,383 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     return expiryTime < currentTime;
   };
 
+  const handleOk = () => {
+    onClose();
+  };
+
+  const handleCancel = () => {
+    onClose();
+  };
+
   if (!isOpen) return null;
   return (
-    <div
-      className="fixed inset-0 z-50"
-      onWheel={(e) => e.preventDefault()}
-      onTouchMove={(e) => e.preventDefault()}
+    <Modal
+      closable={{ 'aria-label': 'Custom Close Button' }}
+      open={isOpen}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      footer={null} // <-- Tắt cả hai nút OK và Cancel
+      centered
+      className="z-[1000000000]"
     >
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
+      <Main
+        ref={innerBorderRef}
+        className="inline-block align-bottom rounded-lg text-left overflow-hidden  transform transition-all sm:my-2 sm:align-middle sm:max-w-lg sm:w-full"
+      >
+        <Card>
+          <CardHeader className="relative">
+            <CardTitle className="text-[26px]">Thuê tài khoản</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isVisaAccount == null && (
+              <div className="p-4 text-red-600 bg-red-100 rounded-md text-sm">
+                Loại tài khoản không xác định. Vui lòng liên hệ quản trị viên để
+                được hỗ trợ.
+              </div>
+            )}
 
-        <span
-          className="hidden sm:inline-block sm:align-middle sm:h-screen"
-          aria-hidden="true"
-        >
-          &#8203;
-        </span>
-
-        <div
-          ref={innerBorderRef}
-          className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-lg sm:w-full"
-        >
-          <Card className="border-0 shadow-none">
-            <CardHeader className="relative">
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onClose();
-                }}
-                className="absolute right-4 top-4 text-gray-400 hover:text-gray-500"
-              >
-                <X className="h-5 w-5" />
-              </button>
-              <CardTitle>Thuê tài khoản quảng cáo</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 overflow-y-auto max-h-[calc(100vh-150px)]">
-              {isVisaAccount == null && (
-                <div className="p-4 text-red-600 bg-red-100 rounded-md text-sm">
-                  Loại tài khoản không xác định. Vui lòng liên hệ quản trị viên
-                  để được hỗ trợ.
+            <div className="bg-blue-50 p-4 rounded-md">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <AlertCircle className="h-5 w-5 text-blue-400" />
                 </div>
-              )}
-
-              <div className="bg-blue-50 p-4 rounded-md">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <AlertCircle className="h-5 w-5 text-blue-400" />
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-blue-800">
-                      Thông tin tài khoản
-                    </h3>
-                    <div className="mt-2 text-sm text-blue-700">
-                      <p>
-                        Bạn đang thuê: <strong>{account.name}</strong>
-                      </p>
-                      {/* <p>
-                        Limit mặc định:{" "}
-                        <strong>
-                          {account.defaultLimit.toLocaleString("vi-VN")} VNĐ
-                        </strong>
-                      </p>
-                      <p>
-                        Giá thuê/ngày:{" "}
-                        <strong>
-                          {account.pricePerDay.toLocaleString("vi-VN")} VNĐ
-                        </strong>
-                      </p> */}
-                    </div>
-                  </div>
+                <div className="ml-3">
+                  <h3 className="!text-[16px] text-sm font-medium text-blue-800">
+                    Tài khoản: <strong>{account.name}</strong>
+                  </h3>
                 </div>
               </div>
+            </div>
 
-              <div className="space-y-4">
+            <div className="space-y-4 mt-4">
+              <div>
+                <Input
+                  id="userBmId"
+                  label="BM ID của bạn"
+                  type="number"
+                  placeholder="Ví dụ: 123456789"
+                  value={userBmId}
+                  onChange={(e) => setUserBmId(e.target.value)}
+                  error={
+                    !isValidBmId
+                      ? 'BM ID phải là chuỗi ID và không được để trống'
+                      : ''
+                  }
+                  helperText={
+                    !isValidBmId
+                      ? 'BM ID phải là số nguyên dương và không được để trống'
+                      : 'BM ID để chúng tôi cấp quyền truy cập'
+                  }
+                  onWheel={(e) => e.currentTarget.blur()}
+                  className="font-semibold w-full mt-1 px-3 py-3 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
+                />
+              </div>
+              {isVisaAccount === true && (
                 <div>
                   <Input
-                    id="userBmId"
-                    label="BM ID của bạn"
-                    type="text"
-                    placeholder="Ví dụ: 123456789"
-                    value={userBmId}
-                    onChange={(e) => setUserBmId(e.target.value)}
+                    id="requestedLimit"
+                    label="Hạn mức chi tiêu yêu cầu (VNĐ)"
+                    type="number"
+                    min={account.defaultLimit / 2}
+                    max={account.defaultLimit * 2}
+                    step={50000}
+                    value={requestedLimit === null ? '' : requestedLimit}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === '') {
+                        setRequestedLimit(null);
+                        setErrors((prev) => ({
+                          ...prev,
+                          limit: undefined,
+                        }));
+                        return;
+                      }
+                      const num = parseInt(value, 10);
+                      if (!isNaN(num) && num >= 0) {
+                        setRequestedLimit(num);
+                        setErrors((prev) => ({
+                          ...prev,
+                          limit: undefined,
+                        }));
+                      }
+                    }}
+                    onBlur={() => {
+                      if (
+                        requestedLimit === null ||
+                        !Number.isInteger(requestedLimit) ||
+                        requestedLimit <= 10000
+                      ) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          limit: 'Số tiền phải lớn hơn 10.000 VNĐ',
+                        }));
+                      } else {
+                        setErrors((prev) => ({
+                          ...prev,
+                          limit: undefined,
+                        }));
+                      }
+                    }}
                     error={
-                      !isValidBmId
-                        ? 'BM ID phải là chuỗi ID và không được để trống'
+                      !isValidLimit
+                        ? 'Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ'
                         : ''
                     }
                     helperText={
-                      !isValidBmId
-                        ? 'BM ID phải là số nguyên dương và không được để trống'
-                        : 'BM ID để chúng tôi cấp quyền truy cập'
+                      !isValidLimit
+                        ? 'Số tiền phải lớn hơn 10.000 VNĐ'
+                        : undefined
                     }
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                  />
-                </div>
-
-                {/* <div>
-                  <Input
-                    id="rentalDays"
-                    label="Số ngày thuê"
-                    type="number"
-                    min="1"
-                    max="30"
-                    value={rentalDays}
-                    onChange={(e) => setRentalDays(parseInt(e.target.value))}
-                    helperText="Thời gian thuê tối thiểu 1 ngày"
                     fullWidth
+                    className="w-full mt-1 px-3 py-3 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                   />
-                </div> */}
-                {isVisaAccount === true && (
-                  <div>
-                    <Input
-                      id="requestedLimit"
-                      label="Hạn mức chi tiêu yêu cầu (VNĐ)"
-                      type="number"
-                      min={account.defaultLimit / 2}
-                      max={account.defaultLimit * 2}
-                      step={50000}
-                      value={requestedLimit === null ? '' : requestedLimit}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value === '') {
-                          setRequestedLimit(null);
-                          setErrors((prev) => ({ ...prev, limit: undefined }));
-                          return;
-                        }
-                        const num = parseInt(value, 10);
-                        if (!isNaN(num) && num >= 0) {
-                          setRequestedLimit(num);
-                          setErrors((prev) => ({ ...prev, limit: undefined }));
-                        }
-                      }}
-                      onBlur={() => {
-                        if (
-                          requestedLimit === null ||
-                          !Number.isInteger(requestedLimit) ||
-                          requestedLimit <= 10000
-                        ) {
-                          setErrors((prev) => ({
-                            ...prev,
-                            limit: 'Số tiền phải lớn hơn 10.000 VNĐ',
-                          }));
-                        } else {
-                          setErrors((prev) => ({ ...prev, limit: undefined }));
-                        }
-                      }}
-                      error={
-                        !isValidLimit
-                          ? 'Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ'
-                          : ''
-                      }
-                      helperText={
-                        !isValidLimit
-                          ? 'Số tiền phải lớn hơn 10.000 VNĐ'
-                          : undefined
-                      }
-                      fullWidth
-                      className="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                    />
-                    <div className="text-sm text-gray-500 mt-1 pl-2">
-                      Hạn mức:{' '}
-                      {requestedLimit !== null && !isNaN(requestedLimit)
-                        ? requestedLimit.toLocaleString('vi-VN')
-                        : '—'}{' '}
-                      VNĐ
-                    </div>
+                  <div className="text-sm text-gray-500 mt-1 pl-2">
+                    Hạn mức:{' '}
+                    {requestedLimit !== null && !isNaN(requestedLimit)
+                      ? requestedLimit.toLocaleString('vi-VN')
+                      : '—'}{' '}
+                    VNĐ
                   </div>
-                )}
-                {isVisaAccount === false && (
-                  <div className="w-full">
-                    <Form layout="vertical" className="w-full">
-                      <FieldForm
-                        className="w-full sm:w-[400px]"
-                        type="rangeDate"
-                        name="rentalRange"
-                        label="Thời gian thuê (7-31 ngày)"
-                        format="YYYY-MM-DD"
-                        value={rentalRange as any}
-                        onChange={(value: any) => {
-                          if (!Array.isArray(value) || value.length < 2) {
-                            setRentalRange(null);
-                            setRentalRangeError(
-                              'Vui lòng chọn thời gian thuê.'
-                            );
-                            return;
-                          }
-
-                          const [start, end] = value;
-                          const startDate = start.toDate();
-                          const endDate = end.toDate();
-
-                          const msPerDay = 1000 * 60 * 60 * 24;
-                          const days =
-                            Math.round(
-                              (endDate.getTime() - startDate.getTime()) /
-                                msPerDay
-                            ) + 1;
-
-                          if (days < 7 || days > 31) {
-                            setRentalRangeError(
-                              'Thời gian thuê phải từ 7 đến 31 ngày.'
-                            );
-                            setRentalRange(null);
-                            return;
-                          }
-
-                          setRentalRange({ start: startDate, end: endDate });
-                          setRentalRangeError(null);
-                        }}
-                        disabledDate={(current: any) => {
-                          const today = new Date();
-                          today.setHours(0, 0, 0, 0);
-                          const maxEnd = new Date(today);
-                          maxEnd.setDate(maxEnd.getDate() + 30);
-
-                          return (
-                            current.toDate() < today ||
-                            current.toDate() > maxEnd
-                          );
-                        }}
-                      />
-
-                      {rentalRangeError && (
-                        <div className="text-red-500 text-sm mt-1">
-                          {rentalRangeError}
-                        </div>
-                      )}
-                    </Form>
-                  </div>
-                )}
-
-                {/* <div>
-                  <label
-                    htmlFor="cookieSelect"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Lựa chọn BOT
-                  </label>
-                  <select
-                    id="cookieSelect"
-                    value={selectedCookieId}
-                    disabled
-                    className="w-full px-3 py-2 border border-gray-100 rounded bg-gray-100 text-gray-500 cursor-not-allowed"
-                  >
-                    {cookies.map((cookie, index) => (
-                      <option key={cookie.id} value={cookie.id}>
-                        B{index + 1} ({cookie.email})
-                      </option>
-                    ))}
-                  </select>
-                  {isLoadingCookies && (
-                    <div className="text-sm text-gray-500 mt-1 pl-2">
-                      Đang tải danh sách bot...
-                    </div>
-                  )}
-                </div> */}
-                <div>
-                  <label
-                    id="voucherSelect"
-                    className="text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Chọn voucher
-                  </label>
-                  <select
-                    id="voucherSelect"
-                    className="w-full px-3 py-2 border border-gray-100 rounded text-sm"
-                    onChange={(e) => setSelectedVoucher(e.target.value)}
-                  >
-                    <option className="text-gray-700" value="">
-                      -- Không sử dụng voucher --
-                    </option>
-                    {dataVoucher.map((item, index) => {
-                      const checkExpored = isVoucherExpired(
-                        item.voucher.expires_at
-                      );
-                      if (!checkExpored) {
-                        return (
-                          <option key={index} value={String(item.voucher_id)}>
-                            {item.voucher.name} (x{item.quantity}) - (
-                            {format(
-                              parseISO(item.voucher.expires_at),
-                              'dd/MM/yyyy'
-                            )}
-                            )
-                          </option>
-                        );
-                      }
-                    })}
-                  </select>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 p-4 rounded-md">
-                <h4 className="text-sm font-medium text-gray-900">
-                  Chi tiết thanh toán
-                </h4>
-                <p className="text-xs text-gray-500 mt-1 italic">
-                  * Phí dịch vụ được tính dựa trên giới hạn chi tiêu của tài
-                  khoản. Vui lòng tham khảo bảng giá hoặc liên hệ hỗ trợ.
-                </p>
-
-                <div className="mt-2 space-y-1">
-                  {/* <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">
-                      Phí thuê ({rentalDays} ngày)
-                    </span>
-                    <span className="text-gray-900 font-medium">
-                      {(account.pricePerDay * rentalDays).toLocaleString(
-                        "vi-VN"
-                      )}{" "}
-                      VNĐ
-                    </span>
-                  </div> */}
-                  {requestedLimit !== null &&
-                    requestedLimit > account.defaultLimit && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Phí tăng limit</span>
-                        <span className="text-gray-900 font-medium">
-                          {/* {(
-                          (requestedLimit - account.defaultLimit) *
-                          0.05
-                        ).toLocaleString("vi-VN")}{" "}
-                        VNĐ */}
-                        </span>
-                      </div>
-                    )}
-                  <div className="text-sm">
-                    {selectedVoucher && (
-                      <p className="text-gray-500">
-                        Giảm giá từ voucher:{' '}
-                        <span className="text-[#DC2625]">
-                          - {discountAmount.toLocaleString('vi-VN')} VNĐ
-                        </span>
-                      </p>
-                    )}
-                    <p className="text-gray-500 mt-2">
-                      Phí dịch vụ:{' '}
-                      <span className="text-blue-600">
-                        {serviceFee.toLocaleString('vi-VN')} VNĐ
-                      </span>
-                    </p>
-
-                    <span className="text-gray-900 font-medium">
-                      {/* {(account.pricePerDay * rentalDays * 0.1).toLocaleString(
-                        "vi-VN"
-                      )}{" "}
-                      VNĐ */}
-                    </span>
-                  </div>
-                  <div className="border-t border-gray-200 pt-2 mt-2">
-                    <div className="flex justify-between text-sm font-medium">
-                      <span className="text-gray-900">Tổng thanh toán</span>
-                      <span className="text-blue-600">
-                        {totalBill.toLocaleString('vi-VN')} VNĐ
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {user && (
-                <div className="text-sm">
-                  <span className="text-gray-500">Số dư của bạn: </span>
-                  <span
-                    className={`font-medium ${
-                      (user.points ?? 0) < totalBill
-                        ? 'text-red-600'
-                        : 'text-green-600'
-                    }`}
-                  >
-                    {user.points != null
-                      ? user.points.toLocaleString('vi-VN') + ' VNĐ'
-                      : 'Đang tải...'}
-                  </span>
-                  {(user.points ?? 0) < totalBill && (
-                    <div className="mt-2 text-sm text-red-600">
-                      Số dư không đủ để thuê tài khoản này. Vui lòng nạp thêm
-                      tiền.
-                    </div>
-                  )}
                 </div>
               )}
-            </CardContent>
-            <CardFooter className="flex justify-end space-x-3 bg-gray-50 border-t">
-              <Button
-                variant="outline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onClose();
-                }}
-                disabled={isLoading}
-              >
-                Hủy
-              </Button>
-              <Button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleSubmit();
-                }}
-                isLoading={isLoading}
-                disabled={
-                  !!(
-                    isLoading ||
-                    !isValidBmId ||
-                    (isVisaAccount && !isValidLimit) ||
-                    (!isVisaAccount && !isValidRentalRange) ||
-                    (user && (user.points ?? 0) < totalBill)
-                  )
-                }
-                className={
-                  !!(
+              {isVisaAccount === false && (
+                <div className="w-full">
+                  <Form layout="vertical" className="w-full">
+                    <FieldForm
+                      className="w-full sm:w-[400px]"
+                      type="rangeDate"
+                      name="rentalRange"
+                      label="Thời gian thuê (7-31 ngày)"
+                      format="YYYY-MM-DD"
+                      value={rentalRange as any}
+                      onChange={(value: any) => {
+                        if (!Array.isArray(value) || value.length < 2) {
+                          setRentalRange(null);
+                          setRentalRangeError('Vui lòng chọn thời gian thuê.');
+                          return;
+                        }
+
+                        const [start, end] = value;
+                        const startDate = start.toDate();
+                        const endDate = end.toDate();
+
+                        const msPerDay = 1000 * 60 * 60 * 24;
+                        const days =
+                          Math.round(
+                            (endDate.getTime() - startDate.getTime()) / msPerDay
+                          ) + 1;
+
+                        if (days < 7 || days > 31) {
+                          setRentalRangeError(
+                            'Thời gian thuê phải từ 7 đến 31 ngày.'
+                          );
+                          setRentalRange(null);
+                          return;
+                        }
+
+                        setRentalRange({ start: startDate, end: endDate });
+                        setRentalRangeError(null);
+                      }}
+                      disabledDate={(current: any) => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const maxEnd = new Date(today);
+                        maxEnd.setDate(maxEnd.getDate() + 30);
+
+                        return (
+                          current.toDate() < today || current.toDate() > maxEnd
+                        );
+                      }}
+                    />
+
+                    {rentalRangeError && (
+                      <div className="text-red-500 text-sm mt-1">
+                        {rentalRangeError}
+                      </div>
+                    )}
+                  </Form>
+                </div>
+              )}
+              <div>
+                <label
+                  id="voucherSelect"
+                  className="!text-[16px] text-sm font-semibold text-gray-700 mb-1"
+                >
+                  Chọn hình thức thanh toán
+                </label>
+                <select
+                  id="voucherSelect"
+                  className="w-full px-3 py-3 border border-gray-300 rounded text-sm"
+                  value={selectedCurrend}
+                  onChange={(e) => setSelectedCurrend(e.target.value)}
+                >
+                  {dataCurrency.map((item, index) => {
+                    return (
+                      <option key={index} value={item.id}>
+                        {item.name}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+              <div>
+                <label
+                  id="voucherSelect"
+                  className="!text-[16px] text-sm font-semibold text-gray-700 mb-1"
+                >
+                  Chọn voucher
+                </label>
+                <select
+                  id="voucherSelect"
+                  className="w-full px-3 py-3 border border-gray-300 rounded text-sm"
+                  value={selectedVoucher}
+                  onChange={(e) => setSelectedVoucher(e.target.value)}
+                >
+                  <option className="text-gray-700 font-sans" value="">
+                    -- Không sử dụng voucher --
+                  </option>
+                  {dataVoucher.map((item, index) => {
+                    const checkExpored = isVoucherExpired(
+                      item.voucher.expires_at
+                    );
+                    if (!checkExpored) {
+                      return (
+                        <option key={index} value={String(item.voucher_id)}>
+                          {item.voucher.name} (x{item.quantity}) - (
+                          {format(
+                            parseISO(item.voucher.expires_at),
+                            'dd/MM/yyyy'
+                          )}
+                          )
+                        </option>
+                      );
+                    }
+                  })}
+                </select>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-md">
+              <h4 className="text-sm text-gray-900 !text-[16px] font-semibold">
+                Chi tiết thanh toán
+              </h4>
+              <p className="text-sm text-gray-500 mt-1 italic">
+                * Phí dịch vụ được tính dựa trên giới hạn chi tiêu của tài
+                khoản. Vui lòng tham khảo bảng giá hoặc liên hệ hỗ trợ.
+              </p>
+
+              <div className="mt-2 space-y-1">
+                {requestedLimit !== null &&
+                  requestedLimit > account.defaultLimit && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Phí tăng limit</span>
+                      <span className="text-gray-900 font-medium"></span>
+                    </div>
+                  )}
+                <div className="text-sm">
+                  {selectedVoucher && (
+                    <p className="text-gray-500 text-[16px] font-semibold">
+                      Giảm giá từ voucher:{' '}
+                      <span className="text-[#DC2625]">
+                        - {discountAmount.toLocaleString('vi-VN')} VNĐ
+                      </span>
+                    </p>
+                  )}
+                  <p className="text-gray-500 mt-2 text-[16px] font-semibold">
+                    Phí dịch vụ:{' '}
+                    <span className="text-blue-600">
+                      {serviceFee.toLocaleString('vi-VN')} VNĐ
+                    </span>
+                  </p>
+                </div>
+                <div className="border-t border-gray-200 pt-2 mt-2">
+                  <div className="flex justify-between text-[20px] font-semibold">
+                    <span className="text-gray-900">Tổng thanh toán</span>
+                    <span className="text-blue-600">
+                      {totalBill.toLocaleString('vi-VN')} VNĐ
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {user && (
+              <div className="flex justify-between">
+                <span className="pl-4 text-[18px] font-semibold ">
+                  Số dư của bạn:{' '}
+                </span>
+                <span
+                  className={`font-medium text-[18px] ${
+                    (user.points ?? 0) < totalBill
+                      ? 'text-red-600'
+                      : 'text-green-600'
+                  }`}
+                >
+                  {user.points != null
+                    ? user.points.toLocaleString('vi-VN') + ' VNĐ'
+                    : 'Đang tải...'}
+                </span>
+                {(user.points ?? 0) < totalBill && (
+                  <div className="mt-2 text-red-600">
+                    Số dư không đủ để thuê tài khoản này. Vui lòng nạp thêm
+                    tiền.
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+          <CardFooter className="flex justify-end space-x-3 border-t">
+            <Button
+              variant="outline"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onClose();
+              }}
+              disabled={isLoading}
+            >
+              Hủy
+            </Button>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSubmit();
+              }}
+              isLoading={isLoading}
+              disabled={
+                !!(
+                  isLoading ||
                   !isValidBmId ||
-                    (isVisaAccount && !isValidLimit) ||
-                    (!isVisaAccount && !isValidRentalRange) ||
-                    (user && (user.points ?? 0) < totalBill)
-                  )
-                    ? 'bg-gray-300 cursor-not-allowed'
-                    : ''
-                }
-              >
-                Xác nhận thuê
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
-      </div>
-    </div>
+                  (isVisaAccount && !isValidLimit) ||
+                  (!isVisaAccount && !isValidRentalRange) ||
+                  (user && (user.points ?? 0) < totalBill)
+                )
+              }
+              className={
+                !(
+                  !isValidBmId ||
+                  (isVisaAccount && !isValidLimit) ||
+                  (!isVisaAccount && !isValidRentalRange) ||
+                  (user && (user.points ?? 0) < totalBill)
+                )
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : ''
+              }
+            >
+              Xác nhận thuê
+            </Button>
+          </CardFooter>
+        </Card>
+      </Main>
+    </Modal>
   );
 };
-
+const Main = styled.div`
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+`;
 export default RentModal;

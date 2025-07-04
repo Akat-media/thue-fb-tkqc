@@ -38,7 +38,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={props.id}
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block font-semibold text-gray-700 mb-1 !text-[16px] "
           >
             {label}
           </label>
@@ -49,18 +49,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               {icon}
             </div>
           )}
-          <input
-            ref={ref}
-            className={inputStyles}
-            {...props}
-          />
+          <input ref={ref} className={inputStyles} {...props} />
           {icon && iconPosition === 'right' && (
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
               {icon}
             </div>
           )}
         </div>
-        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-1 text-sm text-red-600 italic">{error}</p>}
         {helperText && !error && (
           <p className="mt-1 text-sm text-gray-500">{helperText}</p>
         )}

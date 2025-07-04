@@ -111,6 +111,8 @@ const MarketplacePage: React.FC = () => {
           params: {
             page: currentPage,
             pageSize,
+            from: searchParams.get('from') || 0,
+            to: searchParams.get('to') || 10000000000,
           },
         }),
       ]);
@@ -132,6 +134,8 @@ const MarketplacePage: React.FC = () => {
           params: {
             page: currentPageSimple,
             pageSize: pageSizeSimple,
+            from: searchParams.get('from') || 0,
+            to: searchParams.get('to') || 10000000000,
           },
         }),
       ]);
@@ -178,12 +182,17 @@ const MarketplacePage: React.FC = () => {
     if (!isAdmin) {
       handleCallAPiVisa();
     }
-  }, [isAdmin, currentPage]);
+  }, [isAdmin, currentPage, searchParams.get('from'), searchParams.get('to')]);
   useEffect(() => {
     if (!isAdmin) {
       handleCallAPiSimple();
     }
-  }, [isAdmin, currentPageSimple]);
+  }, [
+    isAdmin,
+    currentPageSimple,
+    searchParams.get('from'),
+    searchParams.get('to'),
+  ]);
 
   const handleRentClick = (account: any) => {
     const userString = localStorage.getItem('user');
