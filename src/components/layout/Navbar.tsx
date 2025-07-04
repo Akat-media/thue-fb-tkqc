@@ -104,7 +104,6 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [avatar, setAvatar] = useState('/avatar.jpg');
   
   // Side effect   
   useEffect(() => {
@@ -121,13 +120,6 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
     };
   }, [fetchUser]);
 
-  useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) {
-      const img = JSON.parse(stored)?.user?.images;
-      if (img) setAvatar(`${img}?t=${Date.now()}`);
-    }
-  }, [user]);
   useEffect(() => {
     socket.on('connect', () => {
       console.log('Socket connected:', socket.id);
@@ -210,7 +202,6 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
       {/* PC Navigation */}
       <DesktopNavigation
         user={user}
-        avatar={avatar}
         handleLogout={handleLogout}
         setShowLoginModal={setShowLoginModal}
         setShowRegisterModal={setShowRegisterModal}
@@ -220,7 +211,6 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
       <MobileNavigation
         isOpen={mobileNavOpen}
         user={user}
-        avatar={avatar}
         handleLogout={handleLogout}
         setShowLoginModal={setShowLoginModal}
         setShowRegisterModal={setShowRegisterModal}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { Button, Modal } from "antd"
 import { InfoCircleOutlined, ShareAltOutlined, TagOutlined } from "@ant-design/icons"
 import BaseHeader, { BaseUrl } from "../../api/BaseHeader"
@@ -50,7 +50,7 @@ const VoucherDetails = ({
 
   return (
     <div>
-      <h2 className="text-gray-800 text-xl font-bold mb-4">Chi tiết Voucher</h2>
+      <h2 className="text-gray-800 text-xl font-bold mb-4 font-hubot">Chi tiết Voucher</h2>
       <div className="bg-white rounded-lg relative overflow-hidden shadow-lg">
         {/* Left semi-circle cutout */}
         <div
@@ -280,7 +280,7 @@ export default function TicketPage() {
   console.log("stateData1111",stateData)
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#E9EFFF' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F1F7FF' }}>
       <style>{`
         .scrollbar-thin {
           scrollbar-width: thin;
@@ -301,126 +301,146 @@ export default function TicketPage() {
         }
       `}</style>
       <div className="flex h-screen">
-        {/* Left Panel - Voucher List */}
-        <div className="w-full md:w-1/2 p-4 flex flex-col h-screen">
-          <h2 className="text-gray-800 text-xl font-bold mb-4 flex-shrink-0">
-            Voucher của tôi (
-            {stateData.reduce((sum, item) => sum + item.quantity, 0)})
-          </h2>
-          <div className="flex-1 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
-            {stateData.map((item) => {
-              const isExpired = isVoucherExpired(item.voucher.expires_at);
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => handleVoucherClick(item)}
-                  className={`relative cursor-pointer transform transition-all duration-200 hover:scale-101 ${
-                    selectedVoucher?.id === item.id
-                      ? 'opacity-90'
-                      : 'opacity-100'
-                  } ${item.is_used || isExpired ? 'opacity-50' : ''}`}
-                >
-                  {/* Ticket Shape - Extra Small */}
-                  <div className="bg-white rounded-md relative overflow-hidden shadow-sm">
-                    {/* Used/Expired overlay */}
-                    {(item.is_used || isExpired) && (
-                      <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-10">
-                        <span className="text-white font-bold text-sm">
-                          {isExpired ? 'ĐÃ HẾT HẠN' : 'ĐÃ SỬ DỤNG'}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Left semi-circle cutout - Extra Small */}
+        {stateData.length > 0 ? (
+          <Fragment>
+            {/* Left Panel - Voucher List */}
+            <div className="w-full md:w-1/2 p-4 flex flex-col h-screen">
+              <h2 className="text-gray-800 text-xl font-bold mb-4 flex-shrink-0 font-hubot">
+                Voucher của tôi (
+                {stateData.reduce((sum, item) => sum + item.quantity, 0)})
+              </h2>
+              <div className="flex-1 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
+                {stateData.map((item) => {
+                  const isExpired = isVoucherExpired(item.voucher.expires_at);
+                  return (
                     <div
-                      className="absolute left-0 top-1/2 transform -translate-y-1/2 w-3 h-3 rounded-full -translate-x-1.5"
-                      style={{ backgroundColor: '#E9EFFF' }}
-                    ></div>
+                      key={item.id}
+                      onClick={() => handleVoucherClick(item)}
+                      className={`relative cursor-pointer transform transition-all duration-200 hover:scale-101 ${
+                        selectedVoucher?.id === item.id
+                          ? 'opacity-90'
+                          : 'opacity-100'
+                      } ${item.is_used || isExpired ? 'opacity-50' : ''}`}
+                    >
+                      {/* Ticket Shape - Extra Small */}
+                      <div className="bg-white rounded-md relative overflow-hidden shadow-sm">
+                        {/* Used/Expired overlay */}
+                        {(item.is_used || isExpired) && (
+                          <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-10">
+                            <span className="text-white font-bold text-sm">
+                              {isExpired ? 'ĐÃ HẾT HẠN' : 'ĐÃ SỬ DỤNG'}
+                            </span>
+                          </div>
+                        )}
 
-                    {/* Right semi-circle cutout - Extra Small */}
-                    <div
-                      className="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 rounded-full translate-x-1.5"
-                      style={{ backgroundColor: '#E9EFFF' }}
-                    ></div>
+                        {/* Left semi-circle cutout - Extra Small */}
+                        <div
+                          className="absolute left-0 top-1/2 transform -translate-y-1/2 w-3 h-3 rounded-full -translate-x-1.5"
+                          style={{ backgroundColor: '#E9EFFF' }}
+                        ></div>
 
-                    {/* Content - Extra Compact */}
-                    <div className="flex items-center p-3">
-                      {/* Logo Section - Extra Small */}
-                      <div
-                        className={`w-8 h-8 rounded-full ${getBackgroundColor(
-                          item.voucher.type
-                        )} flex items-center justify-center mr-3`}
-                      >
-                        <span className="text-white font-bold text-xs">
-                          {getVoucherIcon(item.voucher.type)}
-                        </span>
-                      </div>
+                        {/* Right semi-circle cutout - Extra Small */}
+                        <div
+                          className="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 rounded-full translate-x-1.5"
+                          style={{ backgroundColor: '#E9EFFF' }}
+                        ></div>
 
-                      {/* Divider - Extra Small */}
-                      <div className="w-px h-8 bg-gray-200 mr-3"></div>
+                        {/* Content - Extra Compact */}
+                        <div className="flex items-center p-3">
+                          {/* Logo Section - Extra Small */}
+                          <div
+                            className={`w-8 h-8 rounded-full ${getBackgroundColor(
+                              item.voucher.type
+                            )} flex items-center justify-center mr-3`}
+                          >
+                            <span className="text-white font-bold text-xs">
+                              {getVoucherIcon(item.voucher.type)}
+                            </span>
+                          </div>
 
-                      {/* Content Section - Extra Compact */}
-                      <div className="flex-1">
-                        <div className="text-sm font-bold text-gray-900 mb-0.5">
-                          {formatDiscount(
-                            item.voucher.discount,
-                            item.voucher.type
+                          {/* Divider - Extra Small */}
+                          <div className="w-px h-8 bg-gray-200 mr-3"></div>
+
+                          {/* Content Section - Extra Compact */}
+                          <div className="flex-1">
+                            <div className="text-sm font-bold text-gray-900 mb-0.5">
+                              {formatDiscount(
+                                item.voucher.discount,
+                                item.voucher.type
+                              )}
+                            </div>
+                            <div className="text-xs font-semibold text-gray-700 mb-0.5">
+                              {item.voucher.name}
+                            </div>
+                            <div
+                              className={`text-[10px] ${
+                                isExpired ? 'text-red-500' : 'text-gray-500'
+                              }`}
+                            >
+                              Hết hạn: {formatDate(item.voucher.expires_at)}
+                            </div>
+                          </div>
+
+                          {/* Quantity badge */}
+                          {item.quantity > 1 && (
+                            <div className="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">
+                              x{item.quantity}
+                            </div>
                           )}
                         </div>
-                        <div className="text-xs font-semibold text-gray-700 mb-0.5">
-                          {item.voucher.name}
-                        </div>
-                        <div
-                          className={`text-[10px] ${
-                            isExpired ? 'text-red-500' : 'text-gray-500'
-                          }`}
-                        >
-                          Hết hạn: {formatDate(item.voucher.expires_at)}
-                        </div>
                       </div>
-
-                      {/* Quantity badge */}
-                      {item.quantity > 1 && (
-                        <div className="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">
-                          x{item.quantity}
-                        </div>
-                      )}
                     </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Right Panel - Voucher Details */}
-        <div className="hidden md:block w-1/2 p-4 overflow-y-auto">
-          {selectedVoucher ? (
-            <VoucherDetails
-              voucher={selectedVoucher}
-              formatDiscount={formatDiscount}
-              formatDate={formatDate}
-              getBackgroundColor={getBackgroundColor}
-              getVoucherIcon={getVoucherIcon}
-              handleUseNow={handleUseNow}
-              isExpired={isVoucherExpired(selectedVoucher.voucher.expires_at)}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-4">
-                  <TicketPercent className="h-16 w-16 text-gray-500" />
-                </div>
-                <h3 className="text-gray-800 text-xl font-semibold mb-2">
-                  Chọn một Voucher
-                </h3>
-                <p className="text-gray-600">
-                  Click vào voucher bên trái để xem chi tiết
-                </p>
+                  );
+                })}
               </div>
             </div>
-          )}
-        </div>
+
+            {/* Right Panel - Voucher Details */}
+            <div className="hidden md:block w-1/2 p-4 overflow-y-auto">
+              {selectedVoucher ? (
+                <VoucherDetails
+                  voucher={selectedVoucher}
+                  formatDiscount={formatDiscount}
+                  formatDate={formatDate}
+                  getBackgroundColor={getBackgroundColor}
+                  getVoucherIcon={getVoucherIcon}
+                  handleUseNow={handleUseNow}
+                  isExpired={isVoucherExpired(
+                    selectedVoucher.voucher.expires_at
+                  )}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center font-hubot">
+                    <div className="flex items-center justify-center mb-4">
+                      <TicketPercent className="h-16 w-16 text-gray-500" />
+                    </div>
+                    <h3 className="text-gray-800 text-xl font-semibold mb-2">
+                      Chọn một Voucher
+                    </h3>
+                    <p className="text-gray-600">
+                      Click vào voucher bên trái để xem chi tiết
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </Fragment>
+        ) : (
+          <div className="flex items-center justify-center w-full h-3/4">
+            <div className="text-center font-hubot">
+              <div className="flex items-center justify-center mb-4">
+                <TicketPercent className="h-16 w-16 text-gray-500" />
+              </div>
+              <h3 className="text-gray-800 text-xl font-semibold mb-2">
+                Không có voucher nào
+              </h3>
+              <p className="text-gray-600">
+                Hiện tại bạn không có voucher nào trong danh sách.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
       <Modal
         open={isModalVisible}

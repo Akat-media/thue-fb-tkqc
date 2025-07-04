@@ -3,12 +3,13 @@ import React, { useRef, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { BaseUrl } from "../../api/BaseHeader";
 import BaseHeader from "../../api/BaseHeader";
+import { useUserStore } from "../../stores/useUserStore";
 
 const AccountSidebar: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string>("/avatar.jpg");
   const [isLoading, setIsLoading] = useState(false);
-
+  const { setUser} = useUserStore();
   useEffect(() => {
     updateAvatarFromStorage();
   }, []);
@@ -92,7 +93,7 @@ const AccountSidebar: React.FC = () => {
         if (updatedUser.images) {
           setPreview(`${updatedUser.images}?t=${Date.now()}`);
         }
-
+        setUser({ ...user, images: updatedUser.images });
         toast.success("Cập nhật ảnh đại diện thành công!");
       } else {
         toast.error(response.data.message || "Cập nhật ảnh thất bại!");

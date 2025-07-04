@@ -10,14 +10,12 @@ import { LANGUAGE_ITEMS } from '../layout/Navbar';
 import { useTranslation } from 'react-i18next';
 type DesktopNavigationProps = {
   user: any;
-  avatar:string;
   setShowLoginModal: Dispatch<SetStateAction<boolean>>;
   setShowRegisterModal: Dispatch<SetStateAction<boolean>>;
   handleLogout: () => void
 };
 export default function DesktopNavigation({
   user,
-  avatar,
   setShowLoginModal,
   setShowRegisterModal,
   handleLogout,
@@ -33,7 +31,10 @@ export default function DesktopNavigation({
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY
-      setIsScrolled(scrollPosition > 500)
+      const currentPath = window.location.pathname;
+      if (currentPath === '/' || currentPath === '/dashboard') {
+        setIsScrolled(scrollPosition > 400);
+      }
     }
     window.addEventListener("scroll", handleScroll)
     // Cleanup event listener on component unmount
@@ -97,8 +98,6 @@ export default function DesktopNavigation({
                 <div className="relative">
                   <div>
                     <ProfileDropdown
-                      user={user}
-                      avatar={avatar}
                       handleLogout={handleLogout}
                     />
                   </div>

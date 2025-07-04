@@ -8,6 +8,8 @@ interface User {
   email: string;
   points: number;
   role?: string;
+  images?:string
+  percentage:number
 }
 
 interface AuthState {

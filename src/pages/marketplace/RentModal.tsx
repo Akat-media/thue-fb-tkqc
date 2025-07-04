@@ -723,7 +723,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 }
                 className={
                   !!(
-                    !isValidBmId ||
+                  !isValidBmId ||
                     (isVisaAccount && !isValidLimit) ||
                     (!isVisaAccount && !isValidRentalRange) ||
                     (user && (user.points ?? 0) < totalBill)

@@ -138,9 +138,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
         <div className="hidden md:block w-1/2 bg-blue-700">
           <img
-            src={registermodal}
+            src={'/seeding.jpg'}
             alt="Ảnh mô tả"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-inherit"
           />
         </div>
 

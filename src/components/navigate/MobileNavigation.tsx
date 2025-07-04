@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 interface MobileNavigationProps {
   isOpen: boolean;
   user: any;
-  avatar: string;
   setShowLoginModal: Dispatch<SetStateAction<boolean>>;
   setShowRegisterModal: Dispatch<SetStateAction<boolean>>;
   setMobileNavOpen:Dispatch<SetStateAction<boolean>>;
@@ -24,7 +23,6 @@ interface MobileNavigationProps {
 export default function MobileNavigation({
   isOpen,
   user,
-  avatar,
   setShowLoginModal,
   setShowRegisterModal,
   handleLogout,
@@ -64,8 +62,6 @@ export default function MobileNavigation({
               <div className="relative">
                 <div>
                   <ProfileDropdown
-                    user={user}
-                    avatar={avatar}
                     handleLogout={handleLogout}
                   />
                 </div>
