@@ -7,6 +7,7 @@ import {
   Briefcase,
   ShieldCheck,
   CircleFadingPlus,
+  IterationCcw,
 } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -89,7 +90,7 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
       className="cursor-pointer hover:shadow-lg transition-all duration-200"
     >
       <CardContainer url={url}>
-        <Card className="relative main-card h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
+        <Card className="relative !overflow-visible main-card h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
           <CardContent className="flex-grow relative z-10">
             <div className="flex justify-between items-start h-[55px]">
               <Tooltip title={account?.name} placement="top">
@@ -134,9 +135,9 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
                   Giới hạn chi:
                 </span>
                 <span className="text-gray-900 font-medium">
-                  {account?.spend_cap
+                  {Number(account?.spend_cap)
                     ? `${Number(account.spend_cap).toLocaleString('vi-VN')} VNĐ`
-                    : 'Không có thông tin'}
+                    : 'No limit'}
                 </span>
               </div>
             </div>
@@ -147,19 +148,28 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
               </p>
             </div>
           </CardContent>
-          <CardFooter className=" relative z-10 px-6 py-4">
-            {!isAdmin && (
-              <Button
-                fullWidth
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRentClick();
-                }}
-                icon={<CreditCard className="h-4 w-4" />}
-              >
-                Thuê ngay
-              </Button>
-            )}
+          <CardFooter className=" relative z-10 px-6 py-4 flex gap-2">
+            <Button
+              className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm "
+              fullWidth
+              onClick={(e) => {
+                e.stopPropagation();
+                onRentClick();
+              }}
+              icon={<CreditCard className="h-4 w-4" />}
+            >
+              Thuê ngay
+            </Button>
+            <Button
+              className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm "
+              fullWidth
+              onClick={(e) => {
+                console.log('xem chi tiết');
+              }}
+              icon={<IterationCcw className="h-4 w-4" />}
+            >
+              Xem chi tiết
+            </Button>
           </CardFooter>
           <div className="absolute bottom-0 left-0 w-full">
             <img className="w-full" src={url} alt="img" />
@@ -170,4 +180,5 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
   );
 };
 const CardContainer = styled.div<{ url: any }>``;
+
 export default AdAccountCard;

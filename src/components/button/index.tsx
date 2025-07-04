@@ -47,7 +47,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
 
   const isSelected = (id: string) => selectedItems.includes(id);
   ///
-  const [range, setRange] = useState<[number, number]>([0, 1000000000]);
+  const [range, setRange] = useState<[number, number]>([0, 10000000000]);
   const handleSliderChange = (value: number[]) => {
     setRange([value[0], value[1]]);
   };
@@ -125,8 +125,8 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
               <Slider
                 range
                 min={0}
-                max={1000000000}
-                step={10000}
+                max={10000000000}
+                step={100000}
                 value={range}
                 onChange={handleSliderChange}
                 tooltip={{

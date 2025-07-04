@@ -91,13 +91,12 @@ const AdminTransactionsPage: React.FC = () => {
       } else {
         hanleTransactionPoint(value);
       }
-    }, 800);
+    }, 100);
   }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
     setCurrentPage(1);
-    debounceSearch(e.target.value);
   };
 
   const sortedData = useMemo(() => {
@@ -501,11 +500,21 @@ const AdminTransactionsPage: React.FC = () => {
             <div className="relative w-full md:min-w-[430px] max-w-fit flex gap-2">
               <input
                 type="text"
-                placeholder="Tìm kiếm theo Số Tiền, Điểm"
+                placeholder="Tìm kiếm theo ID, Tài Khoản"
                 className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
                 value={query}
                 onChange={handleSearch}
               />
+              <Button
+                className="min-w-[100px] bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-800 hover:text-white"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  debounceSearch(query);
+                }}
+              >
+                Tìm kiếm
+              </Button>
             </div>
             {userParse?.user?.role === 'admin' && (
               <div className="flex items-center gap-1">
@@ -823,6 +832,9 @@ const AdminTransactionsPage: React.FC = () => {
                 className="min-w-[100px] bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-800 hover:text-white"
                 variant="outline"
                 size="sm"
+                onClick={() => {
+                  debounceSearch(query);
+                }}
               >
                 Tìm kiếm
               </Button>
