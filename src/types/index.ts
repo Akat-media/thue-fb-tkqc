@@ -51,7 +51,8 @@ export interface Rental {
     | 'faild'
     | 'cancelled'
     | 'available'
-    | 'active';
+    | 'active'
+    | 'complete_remove';
   createdAt: Date;
   status_dischard_limit_spend: number | null;
   status_dischard_partner: number | null;

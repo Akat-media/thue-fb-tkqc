@@ -734,15 +734,15 @@ const PaymentPage: React.FC = () => {
           )}
 
           {activeTab === 'deposit' && currencyTab === 'USD' && (
-            <div className="grid grid-cols-10 gap-6">
-              <div className="col-span-4 p-8 rounded-lg shadow-lg text-center w-full border border-blue-100 h-full flex flex-col justify-center bg-gradient-to-br from-blue-100 to-white">
-                <div className="flex items-center justify-center mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-10 gap-4 md:gap-6">
+              <div className="md:col-span-4 p-4 md:p-8 rounded-lg shadow-lg text-center w-full border border-blue-100 h-full flex flex-col justify-center bg-gradient-to-br from-blue-100 to-white">
+                <div className="flex flex-col md:flex-row items-center justify-center mb-4 gap-2 md:gap-4">
                   <img
                     src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
                     alt="PayPal Logo"
-                    className="h-10 w-auto"
+                    className="h-8 md:h-10 w-auto"
                   />
-                  <h3 className="text-2xl font-bold text-yellow-400 ml-3">
+                  <h3 className="text-xl md:text-2xl font-bold text-yellow-400">
                     Send Money Securely Online with{' '}
                     <span className="italic">
                       <span className="text-blue-900">Pay</span>
@@ -751,13 +751,13 @@ const PaymentPage: React.FC = () => {
                   </h3>
                 </div>
 
-                <p className="text-gray-700 mb-6 text-sm">
+                <p className="text-gray-700 mb-4 md:mb-6 text-xs md:text-sm">
                   Please enter the amount (USD) you wish to deposit (minimum
                   $10), then click the button below to proceed with PayPal
                   payment.
                 </p>
 
-                <div className="mb-6">
+                <div className="mb-4 md:mb-6">
                   <div className="relative">
                     <input
                       type="number"
@@ -765,25 +765,25 @@ const PaymentPage: React.FC = () => {
                       value={customAmount}
                       onChange={(e) => setCustomAmount(e.target.value)}
                       placeholder="Enter amount (USD)"
-                      className="w-full border border-gray-300 rounded-md px-4 py-3 pr-10 text-lg text-center focus:outline-none focus:ring-2 focus:ring-yellow-500
+                      className="w-full border border-gray-300 rounded-md px-3 md:px-4 py-2 md:py-3 pr-10 text-base md:text-lg text-center focus:outline-none focus:ring-2 focus:ring-yellow-500
                       [appearance:textfield] 
                       [&::-webkit-outer-spin-button]:appearance-none 
                       [&::-webkit-inner-spin-button]:appearance-none"
                     />
 
-                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg font-medium">
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-base md:text-lg font-medium">
                       $
                     </span>
                   </div>
                   {customAmount && parseFloat(customAmount) < 10 && (
-                    <p className="text-red-500 text-sm mt-2">
+                    <p className="text-red-500 text-xs md:text-sm mt-2">
                       Minimum amount is $10.
                     </p>
                   )}
                 </div>
 
                 <Button
-                  className={`w-full py-3 rounded-md text-lg font-semibold text-black transition 
+                  className={`w-full py-2 md:py-3 rounded-md text-base md:text-lg font-semibold text-black transition 
                   ${
                     isRedirecting ||
                     !customAmount ||
@@ -845,18 +845,19 @@ const PaymentPage: React.FC = () => {
                   </span>
                 </Button>
 
-                <p className="text-xs text-red-500 mt-5">
+                <p className="text-xs text-red-500 mt-3 md:mt-5">
                   After completing the payment, please check your account to
                   verify the transaction.
                 </p>
               </div>
 
-              <Card className="col-span-6 h-full mb-2">
-                <CardContent className="py-4 h-full flex flex-col justify-start">
-                  <h2 className="text-xl text-blue-900 font-bold mb-3">
+              {/* How to Pay Card */}
+              <Card className="md:col-span-6 h-full mb-2 mt-4 md:mt-0">
+                <CardContent className="py-3 md:py-4 h-full flex flex-col justify-start">
+                  <h2 className="text-lg md:text-xl text-blue-900 font-bold mb-2 md:mb-3">
                     How to Pay?
                   </h2>
-                  <ol className="list-decimal list-inside space-y-2 text-base text-gray-600">
+                  <ol className="list-decimal list-inside space-y-1 md:space-y-2 text-sm md:text-base text-gray-600">
                     <li>Enter the amount you want to deposit (minimum $10).</li>
                     <li>
                       Click the <strong>Pay with PayPal</strong> button to open
@@ -873,15 +874,15 @@ const PaymentPage: React.FC = () => {
                       If you have any questions or issues during the payment
                       process, please contact us for assistance.
                     </li>
-                    <div className="flex">
-                      <Button
-                        onClick={() => setIsCurrencyModalOpen(true)}
-                        className="mt-6 w-full py-3 rounded-md text-lg font-semibold text-white bg-orange-400 hover:bg-orange-600 transition"
-                      >
-                        Change Payment Method
-                      </Button>
-                    </div>
                   </ol>
+                  <div className="flex">
+                    <Button
+                      onClick={() => setIsCurrencyModalOpen(true)}
+                      className="mt-4 md:mt-6 w-full py-2 md:py-3 rounded-md text-base md:text-lg font-semibold text-white bg-orange-400 hover:bg-orange-600 transition"
+                    >
+                      Change Payment Method
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </div>
