@@ -125,5 +125,113 @@
     "title2": "Thousands of Businesses",
     "title3": "Trust and Choice",
     "content": "Developed by AKA Media - a pioneer in the field of digital advertising, AKAds provides a reputable Facebook account rental service, proudly accompanying 5,000+ customers over the past 8 years, providing effective, stable and cost-optimized advertising solutions."
+  },
+  "supportPage": {
+    "header": {
+      "header1": "Support Center",
+      "header2": "Smart support request management"
+    },
+    "filter": {
+      "status": {
+        "status1": "All status",
+        "status2": "Pending processing",
+        "status3": "Processing",
+        "status4": "Resolved"
+      },
+      "search": {
+        "placeHolder": "Search by title, content,...",
+        "create": "Create request"
+      }
+    },
+    "main": {
+      "main1": "No support requests yet",
+      "main2": "Your system is running smoothly. Please create a support request when needed.",
+      "main3": "Create first request"
+    },
+    "hadData": {
+      "seeDetail": "Detail",
+      "deleteRequest": "Delete",
+      "low": "low",
+      "medium": "medium",
+      "high": "high",
+      "urgent": "urgent",
+      "pending": "pending",
+      "inProgress": "in-progress",
+      "resolved": "resolved",
+      "closed": "closed",
+      "loading": "Loading...",
+      "loadMore": "Load more"
+    }
+  },
+  "supportPageDetail": {
+    "head": {
+      "back": "Back to list"
+    },
+    "main": {
+      "userInfor": "User Information",
+      "detailRequest": "Detail request",
+      "category": "category",
+      "department": "department",
+      "description": "description",
+      "file": "Detail file",
+      "time": "Time information",
+      "createTime": "Create time",
+      "updateTime": "Update time",
+      "box": "Support Conversation",
+      "message": "message",
+      "message2": "There are no support requests yet",
+      "message3": "When there are messages, the conversation will appear",
+      "message4": "Enter your message",
+      "send": "Send"
+    }
+  },
+  "createRequest": {
+    "header": {
+      "header1": "Back to list",
+      "header2": "Submit a support request",
+      "header3": "We are available to support you 24/7"
+    },
+    "form": {
+      "name": "Full name",
+      "name2": "Enter your first and last name",
+      "phone": "Phone",
+      "title": "Title",
+      "title2": "Summarize your problem",
+      "department": "Department",
+      "department2": "Select department",
+      "department3": "Technical Support",
+      "department4": "Business",
+      "department5": "HR",
+      "priority": "Priority level",
+      "priority1b": "Select priority level",
+      "priority2": "Low",
+      "priority3": "Medium",
+      "priority4": "High",
+      "priority5": "Urgent",
+      "category": "Category",
+      "category2": "Select category",
+      "category3": "Account",
+      "category4": "Pay",
+      "category5": "Recover",
+      "category6": "Other",
+      "content": "Detailed content",
+      "content2": "Describe in detail the problem you are having.",
+      "content3": "Minimum 10 characters",
+      "upload": "Attach file",
+      "fileTooLarge": "The file {{fileName}} is too large. Maximum size is 5MB.",
+      "fileNotSupport": "File {{fileName}} is not supported. Only accepted: JPG, PNG, GIF, PDF, TXT.",
+      "dragFile": "Drag and drop files here or click to select",
+      "dragFile2": "Support: JPG, PNG, GIF, PDF, TXT (up to 5MB)",
+      "chooseFile": "Select file",
+      "send1": "Sending...",
+      "send2": "Send request",
+      "successToast": "Support request and email sent successfully!",
+      "error1": "One or both requests failed.",
+      "error2": "An error occurred while sending the request. Please try again.",
+      "successMessage": "Sent successfully!",
+      "successMessage2": "Your support request has been submitted. We will respond as soon as possible.",
+      "successMessage3": "Submit another request"
+    }
   }
+
 }

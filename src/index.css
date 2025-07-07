@@ -34,45 +34,45 @@ body {
 }
 
 /* Ghi đè Tailwind-style cho slick */
-.slider-container .slick-prev,
-.slider-container .slick-next {
-  /*@apply bg-black bg-opacity-30 w-10 h-10 rounded-full flex items-center justify-center z-10;*/
-  @apply bg-white rounded-lg border border-gray-500 shadow  w-[42px] h-[42px]
-}
+/*.slider-container .slick-prev,*/
+/*.slider-container .slick-next {*/
+/*  !*@apply bg-black bg-opacity-30 w-10 h-10 rounded-full flex items-center justify-center z-10;*!*/
+/*  @apply bg-white rounded-lg border border-gray-500 shadow  w-[42px] h-[42px]*/
+/*}*/
 
-.slider-container .slick-prev::before,
-.slider-container .slick-next::before {
-  @apply text-white text-lg;
-  color: lightskyblue;
-}
+/*.slider-container .slick-prev::before,*/
+/*.slider-container .slick-next::before {*/
+/*  @apply text-white text-lg;*/
+/*  color: lightskyblue;*/
+/*}*/
 
-/* Đặt vị trí mũi tên */
-.slider-container .slick-prev {
-  left: -55px;
-}
-.slider-container .slick-next {
-  right: -55px;
-}
+/*!* Đặt vị trí mũi tên *!*/
+/*.slider-container .slick-prev {*/
+/*  left: -55px;*/
+/*}*/
+/*.slider-container .slick-next {*/
+/*  right: -55px;*/
+/*}*/
 
-/* Dots styling */
-.slider-container .slick-dots li button:before {
-  @apply text-gray-400 text-xs;
-}
-.slider-container .slick-dots li.slick-active button:before {
-  @apply text-blue-500;
-}
+/*!* Dots styling *!*/
+/*.slider-container .slick-dots li button:before {*/
+/*  @apply text-gray-400 text-xs;*/
+/*}*/
+/*.slider-container .slick-dots li.slick-active button:before {*/
+/*  @apply text-blue-500;*/
+/*}*/
 
-@media only screen and (max-width: 1280px) {
-  .slider-container .slick-prev {
-    left: -45px;
-    margin: 5px;
-  }
-  .slider-container .slick-next {
-    right: -45px;
-    margin: 5px;
-  }
-  .slider-container .slick-next {
-    /*@apply bg-black bg-opacity-30 w-10 h-10 rounded-full flex items-center justify-center z-10;*/
+/*@media only screen and (max-width: 1280px) {*/
+/*  .slider-container .slick-prev {*/
+/*    left: -45px;*/
+/*    margin: 5px;*/
+/*  }*/
+/*  .slider-container .slick-next {*/
+/*    right: -45px;*/
+/*    margin: 5px;*/
+/*  }*/
+/*  .slider-container .slick-next {*/
+/*    !*@apply bg-black bg-opacity-30 w-10 h-10 rounded-full flex items-center justify-center z-10;*!*/
 
-  }
-}
+/*  }*/
+/*}*/

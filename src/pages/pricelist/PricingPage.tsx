@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import PricingCard from './PricingCard';
 import BaseHeader from "../../api/BaseHeader.ts";
+import {useTranslation} from "react-i18next";
 
 interface BudgetItem {
     id?: string;
@@ -24,19 +25,16 @@ interface BudgetItem {
 const PricingPage: React.FC = () => {
     const [data, setData] = useState<BudgetItem[]>([]);
 
-    useEffect(() => {
-        // const language = localStorage.getItem("language");
-        // const langParse = language ? JSON.parse(language).language : 'vi'; // default la vi
+    const { i18n } = useTranslation();
 
-        const language = localStorage.getItem("i18nextLng");
-        const langParse = language ? language : 'vi';
+    useEffect(() => {
         const fetch = async () => {
             try {
                 const res = await BaseHeader({
                     method: 'get',
                     url: '/budget',
                     params: {
-                      lang: langParse,
+                        lang: i18n.language,
                     },
                 });
                 setData(res.data.data || []);
@@ -45,7 +43,7 @@ const PricingPage: React.FC = () => {
             }
         };
         fetch();
-    }, []);
+    }, [i18n.language]);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-10 max-w-7xl mx-auto">

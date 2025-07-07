@@ -18,6 +18,7 @@ import {useNavigate,useParams } from "react-router-dom";
 import axios from "axios";
 import {useUserStore} from "../../stores/useUserStore.ts";
 import ChatBox from "./ChatBox.tsx";
+import {useTranslation} from "react-i18next";
 
 interface TicketData {
     id: string;
@@ -54,6 +55,8 @@ const SupportTicketDetail: React.FC = () => {
     const [data, setData] = useState<TicketData | null>(null);
     const [dataMessage, setDataMessage] = useState<ChatMessage[]>([]);
     const navigate = useNavigate();
+
+    const { t } = useTranslation();
 
     const { user: currentUser } = useUserStore();
     const { id } = useParams();
@@ -121,19 +124,19 @@ const SupportTicketDetail: React.FC = () => {
 
     const getStatusText = (status: string): string => {
         switch(status) {
-            case 'pending': return 'Đang chờ';
-            case 'resolved': return 'Đã giải quyết';
-            case 'in-progress': return 'Đang xử lý';
+            case 'in-progress': return t('supportPage.hadData.inProgress');
+            case 'pending': return t('supportPage.hadData.pending');
+            case 'resolved': return t('supportPage.hadData.resolved');
             default: return status;
         }
     };
 
     const getPriorityText = (priority: string): string => {
         switch(priority) {
-            case 'urgent': return 'Khẩn cấp';
-            case 'high': return 'Cao';
-            case 'medium': return 'Trung bình';
-            case 'low': return 'Thấp';
+            case 'urgent': return t('supportPage.hadData.urgent');
+            case 'high': return t('supportPage.hadData.high');
+            case 'medium': return t('supportPage.hadData.medium');
+            case 'low': return t('supportPage.hadData.low');
             default: return priority;
         }
     };
@@ -178,7 +181,7 @@ const SupportTicketDetail: React.FC = () => {
                         onClick={()=>navigate("/support")}
                         className="flex items-center text-gray-600 hover:text-gray-800 mb-4 transition-colors">
                         <ArrowLeft className="w-5 h-5 mr-2" />
-                        Quay lại danh sách
+                        {t('supportPageDetail.head.back')}
                     </button>
                     <div className="flex items-center justify-between">
                         <div>
@@ -207,7 +210,7 @@ const SupportTicketDetail: React.FC = () => {
                             <div className="bg-gradient-to-r from-blue-500 to-purple-300 px-6 py-4">
                                 <h2 className="text-lg font-semibold text-white flex items-center">
                                     <User className="w-5 h-5 mr-2" />
-                                    Thông tin khách hàng
+                                    {t('supportPageDetail.main.userInfor')}
                                 </h2>
                             </div>
                             <div className="p-6 space-y-4">
@@ -240,20 +243,20 @@ const SupportTicketDetail: React.FC = () => {
                             <div className="bg-gradient-to-r from-green-500 to-yellow-200 px-6 py-4">
                                 <h2 className="text-lg font-semibold text-white flex items-center">
                                     <FileText className="w-5 h-5 mr-2" />
-                                    Chi tiết yêu cầu
+                                    {t('supportPageDetail.main.detailRequest')}
                                 </h2>
                             </div>
                             <div className="p-6 space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <p className="text-sm text-gray-600 mb-1">Danh mục</p>
+                                        <p className="text-sm text-gray-600 mb-1">{t('supportPageDetail.main.category')}</p>
                                         <div className="flex items-center space-x-2">
                                             <Tag className="w-4 h-4 text-blue-600" />
                                             <span className="text-sm font-medium text-gray-900 capitalize">{data.category}</span>
                                         </div>
                                     </div>
                                     <div>
-                                        <p className="text-sm text-gray-600 mb-1">Bộ phận</p>
+                                        <p className="text-sm text-gray-600 mb-1">{t('supportPageDetail.main.department')}</p>
                                         <div className="flex items-center space-x-2">
                                             <Building2 className="w-4 h-4 text-purple-600" />
                                             <span className="text-sm font-medium text-gray-900 capitalize">{data.department}</span>
@@ -261,7 +264,7 @@ const SupportTicketDetail: React.FC = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-600 mb-2">Mô tả vấn đề</p>
+                                    <p className="text-sm text-gray-600 mb-2">{t('supportPageDetail.main.description')}</p>
                                     <div className="bg-gray-50 p-4 rounded-lg">
                                         <p className="text-sm text-gray-900 leading-relaxed">{data.content}</p>
                                     </div>
@@ -270,7 +273,7 @@ const SupportTicketDetail: React.FC = () => {
                                     <div>
                                         <p className="text-sm text-gray-600 mb-2 flex items-center">
                                             <Paperclip className="w-4 h-4 mr-1" />
-                                            File đính kèm ({data.attachments.length})
+                                            {t('supportPageDetail.main.file')} ({data.attachments.length})
                                         </p>
                                         <div className="space-y-2">
                                             {data.attachments.map((file, index) => (
@@ -290,21 +293,21 @@ const SupportTicketDetail: React.FC = () => {
                             <div className="bg-gradient-to-r from-purple-400 to-teal-400 px-6 py-4">
                                 <h2 className="text-lg font-semibold text-white flex items-center">
                                     <Clock className="w-5 h-5 mr-2" />
-                                    Thông tin thời gian
+                                    {t('supportPageDetail.main.time')}
                                 </h2>
                             </div>
                             <div className="p-6 space-y-4">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-2">
                                         <Calendar className="w-4 h-4 text-gray-500" />
-                                        <span className="text-sm text-gray-600">Tạo lúc</span>
+                                        <span className="text-sm text-gray-600">{t('supportPageDetail.main.createTime')}</span>
                                     </div>
                                     <span className="text-sm font-medium text-gray-900">{formatDate(data.created_at)}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-2">
                                         <Clock className="w-4 h-4 text-gray-500" />
-                                        <span className="text-sm text-gray-600">Cập nhật</span>
+                                        <span className="text-sm text-gray-600">{t('supportPageDetail.main.updateTime')}</span>
                                     </div>
                                     <span className="text-sm font-medium text-gray-900">{formatDate(data.updated_at)}</span>
                                 </div>

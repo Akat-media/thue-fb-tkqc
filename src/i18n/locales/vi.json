@@ -125,5 +125,112 @@
     "title2": "Hàng Ngàn Doanh Nghiệp",
     "title3": "Tin Tưởng Và Lựa Chọn",
     "content": "Được phát triển bởi AKA Media – đơn vị tiên phong trong lĩnh vực quảng cáo số, AKAds cung cấp dịch vụ cho thuê tài khoản Facebook uy tín, tự hào được đồng hành cùng 5.000+ khách hàng trong suốt hơn 8 năm qua, mang đến giải pháp quảng cáo hiệu quả, ổn định và tối ưu chi phí."
+  },
+  "supportPage": {
+    "header": {
+      "header1": "Trung tâm hỗ trợ",
+      "header2": "Quản lý yêu cầu hỗ trợ thông minh"
+    },
+    "filter": {
+      "status": {
+        "status1": "Tất cả trạng thái",
+        "status2": "Chờ xử lý",
+        "status3": "Đang xử lý",
+        "status4": "Đã giải quyết"
+      },
+      "search": {
+        "placeHolder": "Tìm theo tiêu đề, nội dung,...",
+        "create": "Tạo yêu cầu"
+      }
+    },
+    "main": {
+      "main1": "Chưa có yêu cầu hỗ trợ nào",
+      "main2": "Hệ thống của bạn đang hoạt động ổn định. Tạo yêu cầu hỗ trợ khi cần thiết.",
+      "main3": "Tạo yêu cầu đầu tiên"
+    },
+    "hadData": {
+      "seeDetail": "Xem",
+      "deleteRequest": "Xoá yêu cầu",
+      "low": "Thấp",
+      "medium": "Trung bình",
+      "high": "Cao",
+      "urgent": "Khẩn cấp",
+      "pending": "Chờ xử lý",
+      "inProgress": "Đang xử lý",
+      "resolved": "Đã giải quyết",
+      "closed": "Đã đóng",
+      "loading": "Đang tải...",
+      "loadMore": "Tải thêm"
+    }
+  },
+  "supportPageDetail": {
+    "head": {
+      "back": "Quay lại danh sách"
+    },
+    "main": {
+      "userInfor": "Thông tin khách hàng",
+      "detailRequest": "Chi tiết yêu cầu",
+      "category": "Danh mục",
+      "department": "Bộ phận",
+      "description": "Mô tả vấn đề",
+      "file": "File đính kèm",
+      "time": "Thông tin thời gian",
+      "createTime": "Tạo lúc",
+      "updateTime": "Cập nhật",
+      "box": "Hội thoại hỗ trợ",
+      "message": "tin nhắn",
+      "message2": "Chưa có yêu cầu hỗ trợ nào.",
+      "message3": "Khi có tin nhắn, cuộc hội thoại sẽ hiển thị tại đây.",
+      "message4": "Nhập tin nhắn của bạn...",
+      "send": "Gửi"
+    }
+  },
+  "createRequest": {
+    "header": {
+      "header1": "Quay lại danh sách",
+      "header2": "Gửi yêu cầu hỗ trợ",
+      "header3": "Chúng tôi sẵn sàng hỗ trợ bạn 24/7"
+    },
+    "form": {
+      "name": "Họ và tên",
+      "name2": "Nhập họ và tên của bạn",
+      "phone": "Số điện thoại",
+      "title": "Tiêu đề",
+      "title2": "Tóm tắt vấn đề của bạn",
+      "department": "Bộ phận",
+      "department2": "Chọn bộ phận",
+      "department3": "Hỗ trợ kỹ thuật",
+      "department4": "Kinh doanh",
+      "department5": "Hành chính nhân sự",
+      "priority": "Mức độ ưu tiên",
+      "priority1b": "Chọn mức độ ưu tiên",
+      "priority2": "Thấp",
+      "priority3": "Trung bình",
+      "priority4": "Cao",
+      "priority5": "Khẩn cấp",
+      "category": "Danh mục",
+      "category2": "Chọn danh mục",
+      "category3": "Tài khoản",
+      "category4": "Thanh toán",
+      "category5": "Hoàn tiền",
+      "category6": "Khác",
+      "content": "Nội dung chi tiết",
+      "content2": "Mô tả chi tiết vấn đề bạn đang gặp phải",
+      "content3": "Tối thiểu 10 ký tự",
+      "upload": " Đính kèm tệp",
+      "fileTooLarge": "File {{fileName}} quá lớn. Kích thước tối đa là 5MB.",
+      "fileNotSupport": "File {{fileName}} không được hỗ trợ. Chỉ chấp nhận: JPG, PNG, GIF, PDF, TXT.",
+      "dragFile": "Kéo thả file vào đây hoặc click để chọn",
+      "dragFile2": "Hỗ trợ: JPG, PNG, GIF, PDF, TXT (tối đa 5MB)",
+      "chooseFile": "Chọn tệp",
+      "send1": "Đang gửi...",
+      "send2": "Gửi yêu cầu",
+      "successToast": "Yêu cầu hỗ trợ và email đã được gửi thành công!",
+      "error1": "Một hoặc cả hai yêu cầu không thành công.",
+      "error2": "Đã có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.",
+      "successMessage": "Gửi thành công!",
+      "successMessage2": "Yêu cầu hỗ trợ của bạn đã được gửi. Chúng tôi sẽ phản hồi trong thời gian sớm nhất.",
+      "successMessage3": "Gửi yêu cầu khác"
+    }
   }
 }

@@ -15,6 +15,7 @@ import { useUserStore } from '../../stores/useUserStore.ts';
 // import axios from "axios";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import {useTranslation} from "react-i18next";
 
 // interface FormData {
 //     fullName: string;
@@ -61,6 +62,8 @@ const RequestForm: React.FC = () => {
   const [isDragOver, setIsDragOver] = useState(false);
   const navigate = useNavigate();
 
+  const { t } = useTranslation();
+
   const {
     register,
     handleSubmit,
@@ -81,27 +84,27 @@ const RequestForm: React.FC = () => {
     },
   });
 
-  const departments = [
-    { value: '', label: 'Chọn bộ phận' },
-    { value: 'tech', label: 'Hỗ trợ kỹ thuật' },
-    { value: 'sales', label: 'Kinh doanh' },
-    { value: 'hr', label: 'Hành chính nhân sự' },
-  ];
+  const departments = React.useMemo(() => [
+    { value: '', label: t("createRequest.form.department2") },
+    { value: 'tech', label: t("createRequest.form.department3")},
+    { value: 'sales', label: t("createRequest.form.department4") },
+    { value: 'hr', label: t("createRequest.form.department5") },
+  ], [t]);
 
   const priorities = [
-    { value: '', label: 'Chọn mức độ' },
-    { value: 'low', label: 'Thấp' },
-    { value: 'medium', label: 'Trung bình' },
-    { value: 'high', label: 'Cao' },
-    { value: 'urgent', label: 'Khẩn cấp' },
+    { value: '', label: t("createRequest.form.priority1b") },
+    { value: 'low', label: t("createRequest.form.priority2") },
+    { value: 'medium', label: t("createRequest.form.priority3") },
+    { value: 'high', label: t("createRequest.form.priority4") },
+    { value: 'urgent', label: t("createRequest.form.priority5") },
   ];
 
   const categories = [
-    { value: '', label: 'Chọn danh mục' },
-    { value: 'account', label: 'Tài khoản' },
-    { value: 'pay', label: 'Thanh toán' },
-    { value: 'recover', label: 'Hoàn tiền' },
-    { value: 'other', label: 'Khác' },
+    { value: '', label: t("createRequest.form.category2") },
+    { value: 'account', label: t("createRequest.form.category3") },
+    { value: 'pay', label: t("createRequest.form.category4") },
+    { value: 'recover', label: t("createRequest.form.category5") },
+    { value: 'other', label: t("createRequest.form.category6") },
   ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,12 +120,18 @@ const RequestForm: React.FC = () => {
 
     const validFiles = files.filter((file) => {
       if (file.size > maxSize) {
-        alert(`File ${file.name} quá lớn. Kích thước tối đa là 5MB.`);
+        alert(
+            t('createRequest.form.fileTooLarge', {
+              fileName: file.name,
+            })
+        );
         return false;
       }
       if (!allowedTypes.includes(file.type)) {
         alert(
-          `File ${file.name} không được hỗ trợ. Chỉ chấp nhận: JPG, PNG, GIF, PDF, TXT.`
+            t('createRequest.form.fileNotSupport', {
+              fileName: file.name,
+            })
         );
         return false;
       }
@@ -203,17 +212,19 @@ const RequestForm: React.FC = () => {
         mailResponse.status === 200 &&
         supportResponse.data.data !== null
       ) {
-        toast.success('Yêu cầu hỗ trợ và email đã được gửi thành công!');
+        toast.success(
+            t('createRequest.form.successToast')
+        );
         setSubmitSuccess(true);
         setAttachments([]);
         reset();
         setTimeout(() => setSubmitSuccess(false), 5000);
       } else {
-        throw new Error('Một hoặc cả hai yêu cầu không thành công.');
+        throw new Error(t('createRequest.form.error1'));
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert('Đã có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.');
+      alert(t('createRequest.form.error2'));
     } finally {
       setIsSubmitting(false);
     }
@@ -247,17 +258,16 @@ const RequestForm: React.FC = () => {
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Gửi thành công!
+            {t('createRequest.form.successMessage')}
           </h2>
           <p className="text-gray-600 mb-6">
-            Yêu cầu hỗ trợ của bạn đã được gửi. Chúng tôi sẽ phản hồi trong thời
-            gian sớm nhất.
+            {t('createRequest.form.successMessage2')}
           </p>
           <button
             onClick={() => setSubmitSuccess(false)}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Gửi yêu cầu khác
+            {t('createRequest.form.successMessage3')}
           </button>
         </div>
       </div>
@@ -273,7 +283,7 @@ const RequestForm: React.FC = () => {
             className="flex items-center text-gray-600 hover:text-gray-800 mb-4 transition-colors px-6"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Quay lại danh sách
+            {t('createRequest.header.header1')}
           </button>
 
           <div className="backdrop-blur-sm border-b border-white/20 z-50">
@@ -282,10 +292,10 @@ const RequestForm: React.FC = () => {
                 <div className="flex items-center gap-4">
                   <div className="flex-1 min-w-0">
                     <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
-                      Gửi yêu cầu hỗ trợ
+                      {t('createRequest.header.header2')}
                     </h2>
                     <p className="mt-1 text-base text-gray-500">
-                      <span>Chúng tôi sẵn sàng hỗ trợ bạn 24/7</span>
+                      <span>{t('createRequest.header.header3')}</span>
                     </p>
                   </div>
                 </div>
@@ -301,7 +311,7 @@ const RequestForm: React.FC = () => {
                   htmlFor="fullName"
                   className="block text-sm font-semibold text-gray-700 mb-2"
                 >
-                  Họ và tên <span className="text-red-500">*</span>
+                  {t('createRequest.form.name')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -312,7 +322,7 @@ const RequestForm: React.FC = () => {
                       ? 'border-red-500 bg-red-50'
                       : 'border-gray-300'
                   }`}
-                  placeholder="Nhập họ và tên của bạn"
+                  placeholder={t('createRequest.form.name2')}
                 />
                 {errors.fullName && (
                   <div className="flex items-center mt-2 text-red-600 text-sm">
@@ -355,7 +365,7 @@ const RequestForm: React.FC = () => {
                     htmlFor="phone"
                     className="block text-sm font-semibold text-gray-700 mb-2"
                   >
-                    Số điện thoại <span className="text-red-500">*</span>
+                    {t('createRequest.form.phone')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="tel"
@@ -384,7 +394,7 @@ const RequestForm: React.FC = () => {
                     htmlFor="title"
                     className="block text-sm font-semibold text-gray-700 mb-2"
                   >
-                    Tiêu đề <span className="text-red-500">*</span>
+                    {t('createRequest.form.title')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -395,7 +405,7 @@ const RequestForm: React.FC = () => {
                         ? 'border-red-500 bg-red-50'
                         : 'border-gray-300'
                     }`}
-                    placeholder="Tóm tắt vấn đề của bạn"
+                    placeholder={t('createRequest.form.title2')}
                   />
                   {errors.title && (
                     <div className="flex items-center mt-2 text-red-600 text-sm">
@@ -410,7 +420,7 @@ const RequestForm: React.FC = () => {
                     htmlFor="department"
                     className="block text-sm font-semibold text-gray-700 mb-2"
                   >
-                    Bộ phận <span className="text-red-500">*</span>
+                    {t('createRequest.form.department')} <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <select
@@ -449,7 +459,7 @@ const RequestForm: React.FC = () => {
                     htmlFor="priority"
                     className="block text-sm font-semibold text-gray-700 mb-2"
                   >
-                    Mức độ ưu tiên <span className="text-red-500">*</span>
+                    {t('createRequest.form.priority')} <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <select
@@ -485,7 +495,7 @@ const RequestForm: React.FC = () => {
                     htmlFor="category"
                     className="block text-sm font-semibold text-gray-700 mb-2"
                   >
-                    Danh mục <span className="text-red-500">*</span>
+                    {t('createRequest.form.category')} <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <select
@@ -523,7 +533,7 @@ const RequestForm: React.FC = () => {
                   htmlFor="content"
                   className="block text-sm font-semibold text-gray-700 mb-2"
                 >
-                  Nội dung chi tiết <span className="text-red-500">*</span>
+                  {t('createRequest.form.content')} <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   id="content"
@@ -534,7 +544,7 @@ const RequestForm: React.FC = () => {
                       ? 'border-red-500 bg-red-50'
                       : 'border-gray-300'
                   }`}
-                  placeholder="Mô tả chi tiết vấn đề bạn đang gặp phải..."
+                  placeholder={t('createRequest.form.content2')}
                 />
                 <div className="flex justify-between items-center mt-2">
                   {errors.content ? (
@@ -544,7 +554,7 @@ const RequestForm: React.FC = () => {
                     </div>
                   ) : (
                     <span className="text-sm text-gray-500">
-                      Tối thiểu 10 ký tự
+                     {t('createRequest.form.content3')}
                     </span>
                   )}
                 </div>
@@ -553,7 +563,7 @@ const RequestForm: React.FC = () => {
               {/* Đính kèm tệp */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Đính kèm tệp
+                  {t('createRequest.form.upload')}
                 </label>
 
                 <div
@@ -588,13 +598,17 @@ const RequestForm: React.FC = () => {
                     const validFiles = files.filter((file) => {
                       if (file.size > maxSize) {
                         alert(
-                          `File ${file.name} quá lớn. Kích thước tối đa là 5MB.`
+                            t('createRequest.form.fileTooLarge', {
+                              fileName: file.name,
+                            })
                         );
                         return false;
                       }
                       if (!allowedTypes.includes(file.type)) {
                         alert(
-                          `File ${file.name} không được hỗ trợ. Chỉ chấp nhận: JPG, PNG, GIF, PDF, TXT.`
+                            t('createRequest.form.fileNotSupport', {
+                              fileName: file.name,
+                            })
                         );
                         return false;
                       }
@@ -606,10 +620,10 @@ const RequestForm: React.FC = () => {
                 >
                   <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                   <p className="text-sm text-gray-600 mb-2">
-                    Kéo thả file vào đây hoặc click để chọn
+                    {t('createRequest.form.dragFile')}
                   </p>
                   <p className="text-xs text-gray-500 mb-4">
-                    Hỗ trợ: JPG, PNG, GIF, PDF, TXT (tối đa 5MB)
+                    {t('createRequest.form.dragFile2')}
                   </p>
                   <input
                     type="file"
@@ -624,7 +638,7 @@ const RequestForm: React.FC = () => {
                     className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
                   >
                     <Upload className="w-4 h-4 mr-2" />
-                    Chọn tệp
+                    {t('createRequest.form.chooseFile')}
                   </label>
                 </div>
 
@@ -691,12 +705,12 @@ const RequestForm: React.FC = () => {
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                       </svg>
-                      Đang gửi...
+                      {t('createRequest.form.send1')}
                     </>
                   ) : (
                     <>
                       <Send className="w-5 h-5 mr-2" />
-                      Gửi yêu cầu
+                      {t('createRequest.form.send2')}
                     </>
                   )}
                 </button>

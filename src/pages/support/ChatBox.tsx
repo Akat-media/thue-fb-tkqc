@@ -1,5 +1,6 @@
 import React from 'react';
 import { Send, MessageSquare, X, ArrowLeft  } from 'lucide-react';
+import {useTranslation} from "react-i18next";
 
 interface ChatMessage {
     id: number;
@@ -37,6 +38,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({
      onBack,
      fullHeight,
 }) => {
+    const { t } = useTranslation();
+
     const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -54,10 +57,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             >
                 <div className="rounded-[10px] bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-4 flex items-center">
                     <MessageSquare className="w-6 h-6 text-white mr-3" />
-                    <h2 className="text-xl font-semibold text-white">Hội thoại hỗ trợ</h2>
+                    <h2 className="text-xl font-semibold text-white">{t('supportPageDetail.main.box')}</h2>
                     <div className="ml-auto">
                         <span className="bg-emerald-500 text-white text-xs px-3 py-1 rounded-full">
-                          {messages.length} tin nhắn
+                          {messages.length} {t('supportPageDetail.main.message')}
                         </span>
                     </div>
 
@@ -78,10 +81,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({
                             <div className="bg-gray-50 p-6 rounded-xl border border-dashed border-gray-300 max-w-sm mx-auto">
                                 <MessageSquare className="w-8 h-8 text-emerald-500 mx-auto mb-3" />
                                 <p className="text-sm sm:text-base font-medium text-gray-700">
-                                    Chưa có yêu cầu hỗ trợ nào.
+                                    {t('supportPageDetail.main.message2')}
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1">
-                                    Khi có tin nhắn, cuộc hội thoại sẽ hiển thị tại đây.
+                                    {t('supportPageDetail.main.message3')}
                                 </p>
                             </div>
                         </div>
@@ -151,7 +154,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
                               value={newMessage}
                               onChange={(e) => setNewMessage(e.target.value)}
                               onKeyPress={handleKeyPress}
-                              placeholder="Nhập tin nhắn của bạn..."
+                              placeholder={t('supportPageDetail.main.message4')}
                               className="w-full px-4 py-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-sm shadow-sm hover:border-gray-400"
                               rows={2}
                               style={{ minHeight: '48px' }}
@@ -163,7 +166,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
                             className="mb-4 px-4 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 shadow-sm min-w-[48px] h-12"
                         >
                             <Send className="w-4 h-4" />
-                            <span className="hidden sm:inline">Gửi</span>
+                            <span className="hidden sm:inline">{t('supportPageDetail.main.send')}</span>
                         </button>
                     </div>
                 </div>

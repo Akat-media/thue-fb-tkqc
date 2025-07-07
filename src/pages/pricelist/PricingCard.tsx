@@ -1,5 +1,6 @@
 import React from 'react';
 import {useNavigate} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 interface PricingCardProps {
     id?: string;
@@ -33,11 +34,8 @@ const PricingCard: React.FC<PricingCardProps> = ({
     buttonContactEN = "Contact",
  }) => {
     const navigate = useNavigate();
-    // const language = localStorage.getItem("language");
-    // const langParse = language ? JSON.parse(language).language : 'vi'; // default la vi
 
-    const language = localStorage.getItem("i18nextLng");
-    const langParse = language ? language : 'vi';
+    const { i18n } = useTranslation();
 
     return (
         <div
@@ -54,7 +52,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
 
                 <div className="text-base font-medium text-gray-700 flex justify-between mb-10 mt-10">
-                    {langParse === 'vi' ? (
+                    {i18n.language === 'vi' ? (
                         <div>Phí dịch vụ thuê</div>
                     ) : (
                         <div>Rental service fee</div>
@@ -70,7 +68,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
                         onClick={()=>navigate("/support")}
                         className={`w-full py-2 text-white font-medium rounded-md mb-4 bg-gradient-to-r from-green-400 to-blue-400`}
                     >
-                        {langParse === 'vi' ? (
+                        {i18n.language === 'vi' ? (
                             buttonContact
                         ) : (
                             buttonContactEN
@@ -83,7 +81,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
                         onClick={() => navigate("/payments")}
                         className={`w-full py-2 text-white font-medium rounded-md mb-4 bg-gradient-to-r from-sky-500 to-blue-300`}
                     >
-                        {langParse === 'vi' ? (
+                        {i18n.language === 'vi' ? (
                             buttonLabel
                         ) : (
                             buttonLabelEN
