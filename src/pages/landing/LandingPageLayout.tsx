@@ -10,6 +10,7 @@ import InfiniteLogoScroll from '../home/InfiniteLogoScroll';
 import Blog from "../home/Blog.tsx";
 import WhyChoose from "../home/WhyChoose.tsx";
 import Price from "../home/Price.tsx";
+import HighlightProject from "../home/HighlightProject.tsx";
 
 export default function MainHero() {
   const [isHomePage] = useState(true);
@@ -33,8 +34,11 @@ export default function MainHero() {
       {/*why choose*/}
       <WhyChoose />
 
-      {/*price */}
+      {/*price*/}
       <Price />
+
+      {/*highlight project*/}
+      <HighlightProject />
 
       {/*image logo*/}
       <InfiniteLogoScroll />
