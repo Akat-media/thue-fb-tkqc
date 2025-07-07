@@ -17,7 +17,6 @@ import { LANGUAGE_ITEMS } from '../layout/Navbar';
 import { useTranslation } from 'react-i18next';
 type DesktopNavigationProps = {
   user: any;
-  avatar: string;
   setShowLoginModal: Dispatch<SetStateAction<boolean>>;
   setShowRegisterModal: Dispatch<SetStateAction<boolean>>;
   handleLogout: () => void;
