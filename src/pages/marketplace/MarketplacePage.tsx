@@ -17,6 +17,7 @@ import { Pagination } from 'antd';
 import qs from 'qs';
 import { useSearchParams } from 'react-router-dom';
 import _ from 'lodash';
+import CardDetailModal from './CardDetailModal';
 
 interface BM {
   id: string;
@@ -762,59 +763,12 @@ const MarketplacePage: React.FC = () => {
           </div>
         )}
         {isAdDetailOpen && selectedAdAccountDetail && (
-          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-[600px] relative max-h-[80vh] overflow-y-auto">
-              <button
-                className="absolute top-5 right-3 text-gray-500 hover:text-black text-4xl"
-                onClick={() => setIsAdDetailOpen(false)}
-              >
-                ×
-              </button>
-              <h2 className="text-2xl text-blue-900 font-semibold mb-8">
-                Thông tin chi tiết
-              </h2>
-              <div className="space-y-3 text-gray-700">
-                {[
-                  'account_id',
-                  'account_status',
-                  'amount_spent',
-                  'balance',
-                  'currency',
-                  'name',
-                  'spend_cap',
-                  'owner',
-                  'status_rented',
-                  'spend_limit',
-                  'note_aka',
-                  'active',
-                ].map((field) => {
-                  const value = selectedAdAccountDetail[field];
-                  const moneyFields = [
-                    'spend_cap',
-                    'amount_spent',
-                    'balance',
-                    'spend_limit',
-                  ];
-
-                  const formattedValue =
-                    moneyFields.includes(field) && !isNaN(Number(value))
-                      ? `${Number(value).toLocaleString('vi-VN')} VNĐ`
-                      : String(value ?? '—');
-
-                  return (
-                    <div key={field} className="grid grid-cols-2 gap-x-2 py-1">
-                      <span className="font-medium text-left">
-                        {fieldNameMap[field] || field}:
-                      </span>
-                      <span className="text-right break-words">
-                        {formattedValue}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          <CardDetailModal
+            isOpen={isAdDetailOpen}
+            setIsAdDetailOpen={setIsAdDetailOpen}
+            selectedAdAccountDetail={selectedAdAccountDetail}
+            fieldNameMap={fieldNameMap}
+          />
         )}
 
         {showLoginModal && (
