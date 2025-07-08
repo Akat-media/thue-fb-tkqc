@@ -68,7 +68,7 @@ const AccountPage: React.FC = () => {
           }`}
           onClick={() => setActiveTab('retrieve')}
         >
-          Lịch Nhận điểm
+          Lịch sử nhận điểm
         </button>
       </div>
 
