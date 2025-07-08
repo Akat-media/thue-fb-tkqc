@@ -69,6 +69,21 @@ const SubAccount = () => {
       }
     } catch (error) {
       console.log(error);
+      if (
+        error &&
+        typeof error === 'object' &&
+        'response' in error &&
+        error.response &&
+        typeof error.response === 'object' &&
+        'data' in error.response &&
+        error.response.data &&
+        typeof error.response.data === 'object' &&
+        'message' in error.response.data
+      ) {
+        setPointError((error as any).response.data.message);
+      } else {
+        setPointError('Đã xảy ra lỗi');
+      }
     }
   };
   const handleOkVerify = async () => {
@@ -226,6 +241,12 @@ const SubAccount = () => {
               setPointValue(e.target.value);
               setPointError('');
             }}
+            onKeyDown={(e) => {
+              if (e.key === '-' || e.key === 'e') {
+                e.preventDefault();
+              }
+            }}
+            onWheel={(e) => e.currentTarget.blur()}
           />
         </Form.Item>
       </Modal>

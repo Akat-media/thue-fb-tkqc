@@ -7,6 +7,8 @@ import BaseHeader, { BaseUrl } from '../../api/BaseHeader.ts';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useUserStore } from '../../stores/useUserStore.ts';
+import { message, Tooltip } from 'antd';
+import { Copy } from 'lucide-react';
 
 // Định nghĩa schema validate với zod
 const userSchema = z.object({
@@ -88,6 +90,7 @@ const AccountForm: React.FC = () => {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
@@ -161,6 +164,14 @@ const AccountForm: React.FC = () => {
       });
     }
   };
+  const code = watch('code');
+
+  const handleCopy = () => {
+    if (code) {
+      navigator.clipboard.writeText(code);
+      message.success('Đã sao chép mã giới thiệu!');
+    }
+  };
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-md flex-1 font-roboto">
@@ -204,13 +215,21 @@ const AccountForm: React.FC = () => {
           error={errors.points?.message}
           readOnly={true}
         />
-        <FloatingInput
-          label="Mã gới thiệu"
-          name="code"
-          register={register}
-          error={errors.code?.message}
-          readOnly={true}
-        />
+        <div className="relative">
+          <FloatingInput
+            label="Mã giới thiệu"
+            name="code"
+            register={register}
+            error={errors.code?.message}
+            readOnly={true}
+          />
+          <Tooltip title="Sao chép" className="absolute top-[50%] right-[10px]">
+            <Copy
+              style={{ cursor: 'pointer', fontSize: 10 }}
+              onClick={handleCopy}
+            />
+          </Tooltip>
+        </div>
         <div className="md:col-span-2 flex justify-end mt-4">
           <button
             type="submit"
