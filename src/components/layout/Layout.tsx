@@ -37,6 +37,7 @@ const Layout = ({
       <main className="flex-grow pl-0 w-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
         {children}
       </main>
+      <NotificationOverlay />
       <Footer />
       <Outlet />
     </div>

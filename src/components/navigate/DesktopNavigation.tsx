@@ -5,6 +5,7 @@ import {
   Fragment,
   SetStateAction,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -15,6 +16,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Dropdown } from 'antd';
 import { LANGUAGE_ITEMS } from '../layout/Navbar';
 import { useTranslation } from 'react-i18next';
+import { Bell } from 'lucide-react';
+import { useNotificationStore } from '../../stores/notificationStore';
 type DesktopNavigationProps = {
   user: any;
   setShowLoginModal: Dispatch<SetStateAction<boolean>>;
@@ -34,7 +37,7 @@ export default function DesktopNavigation({
   const [activeItem, setActiveItem] = useState('home');
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const navRef = useRef<HTMLDivElement>(null);
-
+  const { openNotification, notificationsList, overlaySize } = useNotificationStore();
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -96,6 +99,10 @@ export default function DesktopNavigation({
     }
     console.log('item111', item);
   };
+  const unReadNoti = useMemo(() => {
+    return notificationsList.filter((item) => !item.is_read);
+  }, [notificationsList]);
+
   return (
     <div className={`hidden lg:block ${isScrolled ? 'relative' : 'unset'}`}>
       {/* Desktop Header */}
@@ -113,7 +120,18 @@ export default function DesktopNavigation({
             <div className="flex items-center space-x-6">
               {user ? (
                 <div className="relative">
-                  <div>
+                  <div className="flex items-center gap-3">
+                    <div className='relative'>
+                    <Bell
+                      className="w-5 h-5 cursor-pointer"
+                      onClick={() => openNotification('third')}
+                    />
+                    {unReadNoti.length > 0 && (
+                      <div className="absolute top-0 left-3 transform -translate-y-1/2 translate-x-[calc(50%-10px)] bg-red-500 text-white text-[10px] font-semibold rounded-full h-4 min-w-[16px] flex items-center justify-center px-[4px]">
+                        {unReadNoti.length}
+                      </div>
+                    )}
+                    </div>
                     <ProfileDropdown handleLogout={handleLogout} />
                   </div>
                 </div>

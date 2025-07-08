@@ -12,6 +12,7 @@ import DesktopNavigation from '../navigate/DesktopNavigation';
 import MobileNavigation from '../navigate/MobileNavigation';
 import { MenuProps } from 'antd';
 import { TFunction } from 'i18next';
+import { useNotificationStore } from '../../stores/notificationStore';
 type NavbarV2Props = {
   isHomePage?: boolean;
 };
@@ -103,6 +104,21 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  // Notification fetch logic
+  const { fetchNotifications, notificationsList } = useNotificationStore();
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const userObj = JSON.parse(userStr);
+        if (userObj && userObj.user_id && notificationsList.length === 0) {
+          fetchNotifications(userObj.user_id);
+        }
+      } catch (e) {
+        console.log('Lỗi khi fetch noti', e)
+      }
+    }
+  }, [localStorage.getItem('user')]);
   // Side effect   
   useEffect(() => {
     fetchUser();

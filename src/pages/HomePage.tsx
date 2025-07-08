@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import BaseHeader from '../api/BaseHeader.ts';
 import { useTranslation } from 'react-i18next';
 import LandingPageLayout from './landing/LandingPageLayout.tsx';
+import { useNotificationStore } from '../stores/notificationStore.ts';
 
 type MonthlyTotal = {
   totalRevenue: number;
@@ -48,6 +49,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const HomePage: React.FC = () => {
+  const { fetchNotifications } = useNotificationStore();
   const user = localStorage.getItem('user');
   const role = typeof user === 'string' ? JSON.parse(user)?.user.role : '';
   const { RangePicker } = DatePicker;
@@ -121,8 +123,10 @@ const HomePage: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (role === 'admin')
+    if (role === 'admin') {
       fetchDataChart(dateRange.targetFrom, dateRange.targetTo);
+    }
+    fetchNotifications(JSON.parse(user || '').user_id);
   }, []);
   const { t, i18n } = useTranslation();
 

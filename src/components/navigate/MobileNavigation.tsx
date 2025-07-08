@@ -1,6 +1,6 @@
 'use client';
-import { Menu, X } from 'lucide-react';
-import { Dispatch, SetStateAction } from 'react';
+import { Bell, Menu, X } from 'lucide-react';
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
 import { ProfileDropdown } from '../layout/ProfileDropdown';
 import Icon from '../icons';
@@ -8,6 +8,7 @@ import { NAV_ITEMS } from '../layout/Navbar';
 import { Dropdown } from 'antd';
 import { LANGUAGE_ITEMS } from '../layout/Navbar';
 import { useTranslation } from 'react-i18next';
+import { useNotificationStore } from '../../stores/notificationStore';
 
 interface MobileNavigationProps {
   isOpen: boolean;
@@ -31,8 +32,12 @@ export default function MobileNavigation({
   onClose,
 }: MobileNavigationProps) {
   const { i18n, t } = useTranslation();
+  const { openNotification, notificationsList, overlaySize } = useNotificationStore();
   const navigate = useNavigate();
   const location = useLocation();
+  const unReadNoti = useMemo(() => {
+    return notificationsList.filter((item) => !item.is_read);
+  }, [notificationsList]);
   
   return (
     <>
@@ -50,7 +55,7 @@ export default function MobileNavigation({
           </button>
           <div
               onClick={() => navigate('/dashboard')}
-              className="flex items-center cursor-pointer">
+              className="hidden sm:flex items-center cursor-pointer">
             <img
               src="/logo.png"
               alt=""
@@ -60,7 +65,18 @@ export default function MobileNavigation({
           <div className="flex">
             {user && (
               <div className="relative">
-                <div>
+                <div className='flex items-center gap-3'>
+                <div className='relative'>
+                    <Bell
+                      className="w-5 h-5 cursor-pointer"
+                      onClick={() => openNotification('third')}
+                    />
+                    {unReadNoti.length > 0 && (
+                      <div className="absolute top-0 left-3 transform -translate-y-1/2 translate-x-[calc(50%-10px)] bg-red-500 text-white text-[10px] font-semibold rounded-full h-4 min-w-[16px] flex items-center justify-center px-[4px]">
+                        {unReadNoti.length}
+                      </div>
+                    )}
+                    </div>
                   <ProfileDropdown
                     handleLogout={handleLogout}
                   />

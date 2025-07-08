@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import BaseHeader from '../api/BaseHeader';
+import { useUserStore } from './useUserStore';
 
 export type Notification = {
   id: string;
@@ -13,10 +14,10 @@ export type Notification = {
 };
 
 type NotificationState = {
-  userID: string | null;
   notificationsList: Notification[];
   setNotificationsList: (data: Notification[]) => void;
-  fetchNotifications: () => Promise<void>;
+  fetchNotifications: (userID:string) => Promise<void>;
+  handleAddNotification: (data:any) => Promise<void>;
   handleMarkAsRead: (id: string) => Promise<void>;
   handleDeletedNotification: (id: string) => Promise<void>;
   handleMarkAsAllRead: (id:string) => Promise<void>;
@@ -27,10 +28,8 @@ type NotificationState = {
 };
 
 export const useNotificationStore = create<NotificationState>((set, get) => {
-  const userString = localStorage.getItem('user');
-  const userID = userString ? JSON.parse(userString).user.id : null;
-  const fetchDataList = () => {
-    return BaseHeader(`/notification-all?user_id=${userID}`);
+  const fetchDataList = (user_ID:string) => {
+    return BaseHeader(`/notification-all?user_id=${user_ID}`);
   };
 
   return {
@@ -38,19 +37,30 @@ export const useNotificationStore = create<NotificationState>((set, get) => {
     overlaySize: 'half',
     openNotification: (size) => set({ isNotificationOpen: true, overlaySize: size }),
     closeNotification: () => set({ isNotificationOpen: false }),
-    userID,
     notificationsList: [],
     setNotificationsList: (data) => set({ notificationsList: data }),
 
-    fetchNotifications: async () => {
+    fetchNotifications: async (user_ID:string) => {
       try {
-        const response = await fetchDataList();
+        const response = await fetchDataList(user_ID);
         set({ notificationsList: response.data });
       } catch (error) {
         console.error('Fetch notifications error:', error);
       }
     },
+    handleAddNotification: async(data:any) => {
+      const payload = {...data}
+      try {
+        await BaseHeader({
+          method: 'post',
+          url: 'notification',
+          data: payload,
+        });
+      } catch(error){
+        console.error('Add notification error:', error);
+      }
 
+    },
     handleMarkAsRead: async (id: string) => {
       set((state) => ({
         notificationsList: state.notificationsList.map((n) =>
@@ -80,7 +90,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => {
       }
     },
 
-    handleMarkAsAllRead: async () => {
+    handleMarkAsAllRead: async (userID:string) => {
       set((state) => ({
         notificationsList: state.notificationsList.map((n) => ({ ...n, is_read: true })),
       }));
