@@ -1,17 +1,14 @@
 import React from 'react';
-import ChevronRightGradient from "../../pages/home/ChevronRightGradient.tsx";
+import ChevronRightGradient from '../../pages/home/ChevronRightGradient.tsx';
 import { Copyright } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
-// import { Link } from 'react-router-dom';
-// import { Facebook, Twitter, Instagram, Mail, Phone } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
   return (
     <div>
       {/*<div className="bg-gray-200 h-28"></div>*/}
-      <footer className="bg-gradient-to-r from-[#0061FF] to-[#60EFFF]  text-white">
+      <footer className="bg-[#2c3641] text-white">
         <div className="max-w-7xl mx-auto pt-12 px-4 sm:px-6 lg:px-8">
           <div>
             <img src="/homepage/footer/aka-white.png" alt="aka-footer" />
@@ -50,45 +47,94 @@ const Footer: React.FC = () => {
               </div>
             </div>
 
-                    {/*right */}
+            {/*right */}
             <div className="flex md:flex-row flex-col mb-[50px] md:mb-[0px]">
               <div className="mb-5 md:mb-0">
                 <div className="font-hubot text-[20px] font-[700]">
                   {t('footer.serviceTitle')}
                 </div>
-                <div className="font-hubot font-[500] flex flex-row text-black px-2 pt-2">
-                  <ChevronRightGradient isBlack width={24} height={24} />
+                <a
+                  href="/marketplace"
+                  className="font-hubot font-[500] flex flex-row text-white px-2 pt-2 hover:underline"
+                >
+                  <ChevronRightGradient
+                    fillColor="white"
+                    width={24}
+                    height={24}
+                  />
                   {t('footer.services.rentBM')}
-                </div>
-                <div className="font-hubot font-[500] flex flex-row text-black pl-2">
-                  <ChevronRightGradient isBlack width={24} height={24} />
+                </a>
+                <a
+                  href="/marketplace"
+                  className="font-hubot font-[500] flex flex-row text-white pl-2 hover:underline"
+                >
+                  <ChevronRightGradient
+                    fillColor="white"
+                    width={24}
+                    height={24}
+                  />
                   {t('footer.services.rentAdAccount')}
-                </div>
-                <div className="font-hubot font-[500] flex flex-row text-black pl-2">
-                  <ChevronRightGradient isBlack width={24} height={24} />
+                </a>
+                <a
+                  href="/payments"
+                  className="font-hubot font-[500] flex flex-row text-white pl-2 hover:underline"
+                >
+                  <ChevronRightGradient
+                    fillColor="white"
+                    width={24}
+                    height={24}
+                  />
                   {t('footer.services.deposit')}
-                </div>
-                <div className="font-hubot font-[500] flex flex-row text-black pl-2">
-                  <ChevronRightGradient isBlack width={24} height={24} />
+                </a>
+                <a
+                  href="/rentals"
+                  className="font-hubot font-[500] flex flex-row text-white pl-2 hover:underline"
+                >
+                  <ChevronRightGradient
+                    fillColor="white"
+                    width={24}
+                    height={24}
+                  />
                   {t('footer.services.accountManagement')}
-                </div>
+                </a>
               </div>
               <div className="md:pl-8 mb-5 md:mb-0">
                 <div className="font-hubot text-[20px] font-[700]">
                   {t('footer.supportTitle')}
                 </div>
-                <div className="font-hubot font-[500] flex flex-row text-black px-2 pt-2">
-                  <ChevronRightGradient isBlack width={24} height={24} />
+                <a
+                  href="/support"
+                  className="font-hubot font-[500] flex flex-row text-white px-2 pt-2 hover:underline"
+                >
+                  <ChevronRightGradient
+                    fillColor="white"
+                    width={24}
+                    height={24}
+                  />
                   {t('footer.support.faq')}
-                </div>
-                <div className="font-hubot font-[500] flex flex-row text-black pl-2">
-                  <ChevronRightGradient isBlack width={24} height={24} />
+                </a>
+                <a
+                  href="/policy"
+                  className="font-hubot font-[500] flex flex-row text-white pl-2 hover:underline"
+                >
+                  <ChevronRightGradient
+                    fillColor="white"
+                    width={24}
+                    height={24}
+                  />
                   {t('footer.support.terms')}
-                </div>
-                <div className="font-hubot font-[500] flex flex-row text-black pl-2">
-                  <ChevronRightGradient isBlack width={24} height={24} />
+                </a>
+                <a
+                  href="/policy"
+                  className="font-hubot font-[500] flex flex-row text-white pl-2 hover:underline"
+                >
+                  <ChevronRightGradient
+                    fillColor="white"
+                    width={24}
+                    height={24}
+                  />
                   {t('footer.support.privacy')}
-                </div>
+                </a>
               </div>
             </div>
           </div>
@@ -98,7 +144,6 @@ const Footer: React.FC = () => {
             <Copyright />
             <span className="pl-2 ">{t('footer.footerBot')}</span>
           </div>
-
         </div>
 
         {/*copyright*/}
@@ -110,7 +155,6 @@ const Footer: React.FC = () => {
         {/*</div>*/}
       </footer>
     </div>
-
   );
 };
 

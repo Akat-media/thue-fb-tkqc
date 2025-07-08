@@ -13,7 +13,7 @@ interface PolicySection {
 const Policy: React.FC = () => {
   const [openSections, setOpenSections] = React.useState<
     Record<number, boolean>
-  >({ '0': true });
+  >({});
   const [policies, setPolicies] = useState<PolicySection[]>([]);
   const [loading, setLoading] = useState(true);
 
