@@ -126,7 +126,16 @@ const HomePage: React.FC = () => {
     if (role === 'admin') {
       fetchDataChart(dateRange.targetFrom, dateRange.targetTo);
     }
-    fetchNotifications(JSON.parse(user || '').user_id);
+    if (user) {
+      try {
+        const userData = JSON.parse(user);
+        if (userData && userData.user_id) {
+          fetchNotifications(userData.user_id);
+        }
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+      }
+    }
   }, []);
   const { t, i18n } = useTranslation();
 

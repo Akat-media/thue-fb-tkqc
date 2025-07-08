@@ -7,7 +7,7 @@ import {
   Briefcase,
   ShieldCheck,
   CircleFadingPlus,
-  IterationCcw,
+  Search,
 } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -166,7 +166,7 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
               onClick={(e) => {
                 console.log('xem chi tiết');
               }}
-              icon={<IterationCcw className="h-4 w-4" />}
+              icon={<Search className="h-4 w-4" />}
             >
               Xem chi tiết
             </Button>

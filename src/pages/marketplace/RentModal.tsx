@@ -68,7 +68,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   } | null>(null);
 
   const isVisaAccount = account?.is_visa_account;
-  const { user } = useUserStore();
+  const { user, fetchUser } = useUserStore();
   const {fetchNotifications , handleAddNotification} = useNotificationStore();
 
   const { innerBorderRef } = useOnOutsideClick(() => {
@@ -185,8 +185,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         user_id: userParse.user_id || '',
         amountPoint: totalBill,
         voucher_id: selectedVoucher || '',
-        // bot_id: selectedCookieId || null,
-        bot_id: "b7e55204-8952-4258-9a79-6425f2bbfe33",
+        bot_id: selectedCookieId || null,
+        // bot_id: "b7e55204-8952-4258-9a79-6425f2bbfe33",
         currency: selectedCurrend,
       };
 
@@ -240,6 +240,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     if (isOpen) {
       fetchCookies();
       fetchData();
+      fetchUser();
       if (!isVisaAccount) {
         fetchBudget();
       }
@@ -262,6 +263,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     } else {
       setUserBmId('');
       setSelectedVoucher('');
+      setRequestedLimit(null)
     }
   }, [isOpen, isVisaAccount]);
 
@@ -404,6 +406,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     max={account.defaultLimit * 2}
                     step={50000}
                     value={requestedLimit === null ? '' : requestedLimit}
+                    placeholder='0 VNĐ'
                     onChange={(e) => {
                       const value = e.target.value;
                       if (value === '') {
@@ -451,7 +454,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                         : undefined
                     }
                     fullWidth
-                    className="w-full mt-1 px-3 py-3 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
+                    className="font-semibold w-full mt-1 px-3 py-3 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                   />
                   <div className="text-sm text-gray-500 mt-1 pl-2">
                     Hạn mức:{' '}
@@ -579,7 +582,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
               </div>
             </div>
 
-            <div className="p-4 rounded-md">
+            <div className="py-4 rounded-md">
               <h4 className="text-sm text-gray-900 !text-[16px] font-semibold">
                 Chi tiết thanh toán
               </h4>
@@ -606,16 +609,16 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     </p>
                   )}
                   <p className="text-gray-500 mt-2 text-[16px] font-semibold">
-                    Phí dịch vụ:{' '}
+                    Phí dịch vụ: {' '}
                     <span className="text-blue-600">
                       {serviceFee.toLocaleString('vi-VN')} VNĐ
                     </span>
                   </p>
                 </div>
-                <div className="border-t border-gray-200 pt-2 mt-2">
-                  <div className="flex justify-between text-[20px] font-semibold">
-                    <span className="text-gray-900">Tổng thanh toán</span>
-                    <span className="text-blue-600">
+                <div className="border-t border-gray-200 pt-2">
+                  <div className="flex justify-between text-[17px] sm:text-[20px] font-semibold">
+                    <span className="text-gray-900">Tổng thanh toán:</span>
+                    <span className="text-blue-600 text-end text-nowrap">
                       {totalBill.toLocaleString('vi-VN')} VNĐ
                     </span>
                   </div>
@@ -624,9 +627,10 @@ const RentModal: React.FC<RentModalProps> = (props) => {
             </div>
 
             {user && (
-              <div className="flex justify-between">
-                <span className="pl-4 text-[18px] font-semibold ">
-                  Số dư của bạn:{' '}
+              <div>
+                <div className='flex justify-between'>
+                <span className="text-[16px] sm:text-[18px] font-semibold ">
+                  Số dư:{' '}
                 </span>
                 <span
                   className={`font-medium text-[18px] ${
@@ -639,6 +643,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     ? user.points.toLocaleString('vi-VN') + ' VNĐ'
                     : 'Đang tải...'}
                 </span>
+                </div>
                 {(user.points ?? 0) < totalBill && (
                   <div className="mt-2 text-red-600">
                     Số dư không đủ để thuê tài khoản này. Vui lòng nạp thêm
@@ -677,17 +682,18 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 )
               }
               className={
-                !(
+                // eslint-disable-next-line no-extra-boolean-cast
+                !!(
                   !isValidBmId ||
                   (isVisaAccount && !isValidLimit) ||
                   (!isVisaAccount && !isValidRentalRange) ||
                   (user && (user.points ?? 0) < totalBill)
                 )
-                  ? 'bg-gray-300 cursor-not-allowed'
+                  ? 'hover:bg-gray-300 bg-gray-300 cursor-not-allowed'
                   : ''
               }
             >
-              Xác nhận thuê 111
+              Xác nhận thuê
             </Button>
           </CardFooter>
         </Card>
