@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, User, Phone, Eye, EyeOff } from 'lucide-react';
+import { Mail, User, Phone, Eye, EyeOff, Bookmark } from 'lucide-react';
 import { useNotification } from '../../context/NotificationContext';
 import { BaseUrl } from '../../api/BaseHeader';
 import BaseHeader from '../../api/BaseHeader';
@@ -17,6 +17,7 @@ const RegisterPage: React.FC = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [referral_code, setReferral_code] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<{
@@ -64,6 +65,7 @@ const RegisterPage: React.FC = () => {
           phone: phone,
           password: password,
           role: 'user',
+          code: referral_code ? referral_code : undefined,
         },
       });
       if (registerRes.status === 200) {
@@ -254,6 +256,21 @@ const RegisterPage: React.FC = () => {
                 {errors.confirmPassword}
               </p>
             )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold uppercase text-black mb-1">
+              Nhập mã giới thiệu
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={referral_code}
+                onChange={(e) => setReferral_code(e.target.value)}
+                placeholder="Nhập mã giới thiệu"
+                className="w-full px-4 py-3 border border-black rounded-md focus:outline-none focus:border-[#f2f2f2] pr-10 text-base"
+              />
+              <Bookmark className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            </div>
           </div>
 
           <button

@@ -8,7 +8,6 @@ import AtomicSpinner from 'atomic-spinner';
 import { Mail, User, Phone, Eye, EyeOff } from 'lucide-react';
 import { useUserStore } from '../../stores/useUserStore.ts';
 import { useNavigate } from 'react-router-dom';
-import registermodal from '../../public/sand.jpg';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -28,6 +27,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [referral_code, setReferral_code] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<{
@@ -36,6 +36,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     phone?: string;
     password?: string;
     confirmPassword?: string;
+    referral_code?: string;
   }>({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -77,6 +78,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           phone: phone,
           password: password,
           role: 'user',
+          code: referral_code ? referral_code : undefined,
         },
       });
 
@@ -297,6 +299,35 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 </p>
               )}
               {!errors.confirmPassword && (
+                <p className="text-xs text-gray-400 mt-1">
+                  Nhập lại mật khẩu để xác nhận.
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="referral_code"
+                className="block text-sm font-semibold text-blue-600"
+              >
+                Nhập mã giới thiệu
+              </label>
+              <div className="relative mt-1">
+                <input
+                  type={'text'}
+                  id="referral_code"
+                  value={referral_code}
+                  onChange={(e) => setReferral_code(e.target.value)}
+                  placeholder="Nhập mã giới thiệu"
+                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400 pr-10"
+                />
+              </div>
+              {errors.referral_code && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.referral_code}
+                </p>
+              )}
+              {!errors.referral_code && (
                 <p className="text-xs text-gray-400 mt-1">
                   Nhập lại mật khẩu để xác nhận.
                 </p>
