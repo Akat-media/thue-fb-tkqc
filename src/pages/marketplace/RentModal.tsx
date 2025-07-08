@@ -21,6 +21,7 @@ import { VoucherData } from '../profile/Ticket';
 import { format, parseISO } from 'date-fns';
 import { Form, Modal, Select } from 'antd';
 import styled from 'styled-components';
+import { useNotificationStore } from '../../stores/notificationStore';
 
 interface RentModalProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
   const isVisaAccount = account?.is_visa_account;
   const { user } = useUserStore();
-  const { addNotification } = useNotification();
+  const {fetchNotifications , handleAddNotification} = useNotificationStore();
 
   const { innerBorderRef } = useOnOutsideClick(() => {
     if (isOpen) onClose();
@@ -184,7 +185,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         user_id: userParse.user_id || '',
         amountPoint: totalBill,
         voucher_id: selectedVoucher || '',
-        bot_id: selectedCookieId || null,
+        // bot_id: selectedCookieId || null,
+        bot_id: "b7e55204-8952-4258-9a79-6425f2bbfe33",
         currency: selectedCurrend,
       };
 
@@ -196,6 +198,13 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
       if (response.status === 200 && response.data.success) {
         setSuccessRent(response.data.message);
+        await handleAddNotification({
+          user_id:  userParse.user_id || '', 
+          title: `Bạn đã thuê thành công tài khoản ${account?.name}`, 
+          content:"Tài khoản đã thuê thành công hãy khám phá các tính năng", 
+          type:"success", 
+        })
+        await fetchNotifications(userParse.user_id || '');
         onClose();
         toast.success('Thuê tài khoản thành công!');
       } else {
@@ -678,7 +687,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   : ''
               }
             >
-              Xác nhận thuê
+              Xác nhận thuê 111
             </Button>
           </CardFooter>
         </Card>
