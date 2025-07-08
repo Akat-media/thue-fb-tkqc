@@ -94,7 +94,7 @@ const Blog = () => {
     }, [articlesCount, newsArticles.length]);
 
     return (
-        <div className="py-12 md:pt-24 md:pb-16 bg-blue-50">
+        <div className="py-8 md:py-12 md:pt-24 md:pb-16 bg-blue-50">
             <style>{`
                 .fade-transition {
                     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -116,22 +116,37 @@ const Blog = () => {
             `}</style>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="md:flex mb-8 gap-3">
+                <div className="flex mb-8 gap-3 items-center">
                     <div className="w-[107px] h-[52px] gap-[10px] rounded-[60px] border border-solid border-black p-[20px] flex flex-row items-center justify-between">
                         <div className="w-[12px] h-[12px] rounded-full bg-cyan-400 border-4 border-cyan-400"></div>
                         <div className="font-hubot font-normal md:text-[16px] text-[14px]">BLOG</div>
                     </div>
                     <div className="flex flex-col items-end w-full">
-                        <div className="font-hubot font-medium text-[20px] md:text-[40px] leading-[1] pb-2">
+                        <div className="font-hubot font-medium text-[17px] md:text-[40px] leading-[1] pb-2">
                             {t('blog.titleLine1')}
                         </div>
-                        <div className="font-hubot font-medium text-[20px] md:text-[38px] leading-[1]">
+                        <div className="font-hubot font-medium text-[17px] md:text-[38px] leading-[1]">
                             <Trans i18nKey="blog.titleLine2" components={{ span: <span className="text-blue-600" /> }} />
                         </div>
                     </div>
                 </div>
 
                 <div className="flex md:flex-row flex-col gap-8 items-start">
+                    {/* left buttons cho desktop */}
+                    {startIndex > 0 && articlesCount === 3 && (
+                        <div className="hidden md:flex flex-col items-center gap-4 mt-4 ml-4 self-center">
+                            {startIndex > 0 && (
+                                <button
+                                    onClick={handleBack}
+                                    disabled={isTransitioning}
+                                    className="p-2 bg-white rounded-lg border border-gray-300 shadow hover:shadow-md transition button-hover disabled:opacity-50"
+                                >
+                                    <ChevronRight className="h-6 w-6 text-gray-600 rotate-180" />
+                                </button>
+                            )}
+                        </div>
+                    )}
+
                     {/* Grid cards với animation */}
                     {/*swipe left, right tren mobile*/}
                     <div {...swipeHandlers}>
@@ -172,21 +187,11 @@ const Blog = () => {
                                 </CardContent>
                             </Card>
                         ))}
-                    </div>
+                        </div>
                     </div>
 
-                    {/* Navigation buttons cho desktop */}
+                    {/* right buttons cho desktop */}
                     <div className="hidden md:flex flex-col items-center gap-4 mt-4 ml-4 self-center">
-                        {startIndex > 0 && (
-                            <button
-                                onClick={handleBack}
-                                disabled={isTransitioning}
-                                className="p-2 bg-white rounded-lg border border-gray-300 shadow hover:shadow-md transition button-hover disabled:opacity-50"
-                            >
-                                <ChevronRight className="h-6 w-6 text-gray-600 rotate-180" />
-                            </button>
-                        )}
-
                         <button
                             onClick={handleNext}
                             disabled={isTransitioning}

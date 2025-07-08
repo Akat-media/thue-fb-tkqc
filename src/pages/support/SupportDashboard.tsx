@@ -8,6 +8,7 @@ import axios from "axios";
 import debounce from "lodash.debounce";
 import { useUserStore } from "../../stores/useUserStore.ts";
 import BaseHeader from "../../api/BaseHeader.ts";
+import {useTranslation} from "react-i18next";
 
 interface SupportRequest {
     id: string;
@@ -33,10 +34,12 @@ const SupportDashboard: React.FC = () => {
     const [data, setData] = useState<SupportRequest[]>([]);
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore, setHasMore] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+
+    const { t } = useTranslation();
 
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const navigate = useNavigate();
@@ -86,7 +89,7 @@ const SupportDashboard: React.FC = () => {
         debounce((query: string, status: string) => {
             fetchData(1, false, query, status);
             setPage(1);
-            setHasMore(true);
+            // setHasMore(true);
         }, 800), [fetchData]);
 
     useEffect(() => {
@@ -161,38 +164,42 @@ const SupportDashboard: React.FC = () => {
 
     const getStatusConfig = (status: string) => {
         const configs = {
-            pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: Clock, label: 'Chờ xử lý' },
-            'in-progress': { bg: 'bg-blue-100', text: 'text-blue-800', icon: TrendingUp, label: 'Đang xử lý' },
-            resolved: { bg: 'bg-green-100', text: 'text-green-800', icon: CheckCircle2, label: 'Đã giải quyết' },
-            closed: { bg: 'bg-gray-100', text: 'text-gray-800', icon: X, label: 'Đã đóng' }
+            pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: Clock, label: t('supportPage.hadData.pending') },
+            'in-progress': { bg: 'bg-blue-100', text: 'text-blue-800', icon: TrendingUp, label: t('supportPage.hadData.inProgress') },
+            resolved: { bg: 'bg-green-100', text: 'text-green-800', icon: CheckCircle2, label: t('supportPage.hadData.resolved') },
+            closed: { bg: 'bg-gray-100', text: 'text-gray-800', icon: X, label: t('supportPage.hadData.closed') }
         };
         return configs[status as keyof typeof configs];
     };
 
-    // const getPriorityConfig = (priority: string) => {
-    //     const configs = {
-    //         low: { bg: 'bg-gray-100', text: 'text-gray-600', dot: 'bg-gray-400' },
-    //         medium: { bg: 'bg-blue-100', text: 'text-blue-600', dot: 'bg-blue-400' },
-    //         high: { bg: 'bg-orange-100', text: 'text-orange-600', dot: 'bg-orange-400' },
-    //         urgent: { bg: 'bg-red-100', text: 'text-red-600', dot: 'bg-red-400' }
-    //     };
-    //     return configs[priority as keyof typeof configs];
-    // };
-
+    const getPriorityLabel = (priority: string) => {
+        switch (priority) {
+            case 'low':
+                return t('supportPage.hadData.low');
+            case 'medium':
+                return t('supportPage.hadData.medium');
+            case 'high':
+                return t('supportPage.hadData.high');
+            case 'urgent':
+                return t('supportPage.hadData.urgent');
+            default:
+                return priority;
+        }
+    };
 
     return (
         <div className="min-h-[800px] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
             {/* Header */}
             <div className=" backdrop-blur-sm border-b border-white/20 z-50">
-                <div className="max-w-7xl mx-auto px-6 ">
+                <div className="container mx-auto px-6 ">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className="flex-1 min-w-0">
                                 <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
-                                    Trung tâm hỗ trợ
+                                    {t('supportPage.header.header1')}
                                 </h2>
                                 <p className="mt-1 text-base text-gray-500">
-                                    <span>Quản lý yêu cầu hỗ trợ thông minh</span>
+                                    {t('supportPage.header.header2')}
                                 </p>
 
                             </div>
@@ -201,7 +208,7 @@ const SupportDashboard: React.FC = () => {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="container mx-auto px-6 py-8">
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/20 mb-8">
                     <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
                         <div className="flex flex-wrap gap-3">
@@ -213,10 +220,10 @@ const SupportDashboard: React.FC = () => {
                                     className="pl-10 pr-12 py-3 border border-gray-300 bg-gray-50 rounded-xl text-gray-700 hover:bg-blue-100 focus:ring-2 focus:ring-blue-500 transition-all min-w-[160px] appearance-none cursor-pointer
 "
                                 >
-                                    <option value="all">Tất cả trạng thái</option>
-                                    <option value="pending">Chờ xử lý</option>
-                                    <option value="in-progress">Đang xử lý</option>
-                                    <option value="resolved">Đã giải quyết</option>
+                                    <option value="all">{t('supportPage.filter.status.status1')}</option>
+                                    <option value="pending">{t('supportPage.filter.status.status2')}</option>
+                                    <option value="in-progress">{t('supportPage.filter.status.status3')}</option>
+                                    <option value="resolved">{t('supportPage.filter.status.status4')}</option>
                                 </select>
                             </div>
 
@@ -231,7 +238,7 @@ const SupportDashboard: React.FC = () => {
                                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                                 <input
                                     type="text"
-                                    placeholder="Tìm theo tiêu đề, nội dung,..."
+                                    placeholder={t('supportPage.filter.search.placeHolder')}
                                     value={searchQuery}
                                     onChange={handleSearch}
                                     className="w-full pl-12 pr-4 py-3 border-0 bg-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all placeholder-gray-400"
@@ -242,7 +249,7 @@ const SupportDashboard: React.FC = () => {
                                 className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                             >
                                 <Plus className="w-5 h-5" />
-                                Tạo yêu cầu
+                                {t('supportPage.filter.search.create')}
                             </button>
                         </div>
                     </div>
@@ -288,7 +295,7 @@ const SupportDashboard: React.FC = () => {
                                                         className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
-                                                        Xoá yêu cầu
+                                                        {t('supportPage.hadData.deleteRequest')}
                                                     </button>
                                                 </div>
 
@@ -299,15 +306,13 @@ const SupportDashboard: React.FC = () => {
                                         {/* Content */}
                                         <div className="mb-4">
                                             <div className="flex justify-between items-center gap-2 mb-2">
-                                              {/*<span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded-md">*/}
-                                              {/*  {request.phone}*/}
-                                              {/*</span>*/}
                                                 <h3 className="items-center font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
                                                     {request.title}
                                                 </h3>
                                                 <div className="flex items-center gap-1">
-                                                    {/*<div className={`w-2 h-2 rounded-full ${priorityConfig.dot}`}></div>*/}
-                                                    <span className="text-xs text-gray-500 capitalize">{request.priority}</span>
+                                                    <span className="text-xs text-gray-500 capitalize">
+                                                        {getPriorityLabel(request.priority)}
+                                                    </span>
                                                 </div>
                                             </div>
 
@@ -335,7 +340,7 @@ const SupportDashboard: React.FC = () => {
                                                     className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-all"
                                                 >
                                                     <Eye className="w-3 h-3" />
-                                                    Xem
+                                                    {t('supportPage.hadData.seeDetail')}
                                                 </button>
                                             </div>
 
@@ -378,16 +383,16 @@ const SupportDashboard: React.FC = () => {
                                 <MessageSquare className="w-10 h-10 text-blue-500" />
                             </div>
                             <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                                Chưa có yêu cầu hỗ trợ nào
+                                {t('supportPage.main.main1')}
                             </h3>
                             <p className="text-gray-500 mb-8">
-                                Hệ thống của bạn đang hoạt động ổn định. Tạo yêu cầu hỗ trợ khi cần thiết.
+                                {t('supportPage.main.main2')}
                             </p>
                             <button
                                 onClick={createRequest}
                                 className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl mx-auto">
                                 <Plus className="w-5 h-5" />
-                                Tạo yêu cầu đầu tiên
+                                {t('supportPage.main.main3')}
                                 <ArrowRight className="w-4 h-4" />
                             </button>
                         </div>
@@ -400,7 +405,7 @@ const SupportDashboard: React.FC = () => {
                             disabled={loading}
                             className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all disabled:opacity-50"
                         >
-                            {loading ? 'Đang tải...' : 'Tải thêm'}
+                            {loading ? t('supportPage.hadData.loading') : t('supportPage.hadData.loadMore')}
                         </button>
                     </div>
                 )}

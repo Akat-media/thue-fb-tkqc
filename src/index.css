@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Hubot+Sans:ital,wght@0,200..900;1,200..900&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Hubot+Sans:ital,wght@0,200..900;1,200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -31,3 +32,47 @@ body {
     animation-delay: 2s;
   }
 }
+
+/* Ghi đè Tailwind-style cho slick */
+/*.slider-container .slick-prev,*/
+/*.slider-container .slick-next {*/
+/*  !*@apply bg-black bg-opacity-30 w-10 h-10 rounded-full flex items-center justify-center z-10;*!*/
+/*  @apply bg-white rounded-lg border border-gray-500 shadow  w-[42px] h-[42px]*/
+/*}*/
+
+/*.slider-container .slick-prev::before,*/
+/*.slider-container .slick-next::before {*/
+/*  @apply text-white text-lg;*/
+/*  color: lightskyblue;*/
+/*}*/
+
+/*!* Đặt vị trí mũi tên *!*/
+/*.slider-container .slick-prev {*/
+/*  left: -55px;*/
+/*}*/
+/*.slider-container .slick-next {*/
+/*  right: -55px;*/
+/*}*/
+
+/*!* Dots styling *!*/
+/*.slider-container .slick-dots li button:before {*/
+/*  @apply text-gray-400 text-xs;*/
+/*}*/
+/*.slider-container .slick-dots li.slick-active button:before {*/
+/*  @apply text-blue-500;*/
+/*}*/
+
+/*@media only screen and (max-width: 1280px) {*/
+/*  .slider-container .slick-prev {*/
+/*    left: -45px;*/
+/*    margin: 5px;*/
+/*  }*/
+/*  .slider-container .slick-next {*/
+/*    right: -45px;*/
+/*    margin: 5px;*/
+/*  }*/
+/*  .slider-container .slick-next {*/
+/*    !*@apply bg-black bg-opacity-30 w-10 h-10 rounded-full flex items-center justify-center z-10;*!*/
+
+/*  }*/
+/*}*/

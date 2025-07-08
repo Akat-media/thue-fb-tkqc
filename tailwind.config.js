@@ -40,6 +40,7 @@ export default {
         ],
         hubot: ['"Hubot Sans"', 'sans-serif'],
         roboto: ['Roboto', 'sans-serif'],
+        montserrat: ['"Montserrat"', 'sans-serif'],
       },
       colors: {
         revenue: '#4CAF50',
