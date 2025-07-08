@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import Footer from './Footer';
 import NotificationOverlay from '../../pages/notify/NotificationOverlay';
 import { Outlet } from 'react-router-dom';
+import { usePageStore } from '../../stores/usePageStore';
 
 const Layout = ({
   children,
@@ -17,6 +18,18 @@ const Layout = ({
     setIsSidebarOpen((prev) => {
       return !prev;
     });
+
+  //render without navbar and footer
+  const is404 = usePageStore((state) => state.is404);
+  if (is404) {
+     return (
+         <div>
+             {children}
+             <NotificationOverlay />
+             <Outlet />
+         </div>
+     );
+  }
 
   return role === 'admin' ? (
     <div className="flex h-screen overflow-hidden w-full">

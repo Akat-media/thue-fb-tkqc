@@ -232,6 +232,11 @@
       "successMessage2": "Your support request has been submitted. We will respond as soon as possible.",
       "successMessage3": "Submit another request"
     }
+  },
+  "404": {
+    "text": "Page not found",
+    "text2": "Sorry your page we can't not found",
+    "text3": "Go Back"
   }
 
 }
