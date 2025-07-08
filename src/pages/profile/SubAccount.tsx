@@ -114,6 +114,7 @@ const SubAccount = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
     setPointValue('');
+    setPointError('');
   };
   const handleCancelVerify = () => {
     setIsModalOpenV2(false);
