@@ -29,20 +29,11 @@ const userSchema = z.object({
   points: z
     .number({ invalid_type_error: 'Điểm phải là số' })
     .min(0, 'Điểm không được nhỏ hơn 0'),
+  code: z.string().min(1, 'code không được để trống'),
 });
 
 // Định nghĩa kiểu dữ liệu từ schema
 type UserFormData = z.infer<typeof userSchema>;
-
-// Interface cho dữ liệu từ localStorage
-interface User {
-  id?: string;
-  username?: string;
-  email?: string;
-  phone?: string;
-  percentage?: number;
-  points?: number;
-}
 
 const FloatingInput = ({
   label,
@@ -106,12 +97,12 @@ const AccountForm: React.FC = () => {
       phone: user?.phone || '',
       percentage: user?.percentage || 0,
       points: user?.points || 0,
+      code: user?.referral_code || '',
     },
   });
   function generateRandomId() {
     return (
-        Date.now().toString(36) + 
-        Math.random().toString(36).substring(2, 15)
+      Date.now().toString(36) + Math.random().toString(36).substring(2, 15)
     );
   }
   // Thêm useEffect này để cập nhật form khi user thay đổi
@@ -123,6 +114,7 @@ const AccountForm: React.FC = () => {
         phone: user.phone || '',
         percentage: user.percentage || 0,
         points: user.points || 0,
+        code: user?.referral_code || '',
       });
     }
   }, [user, reset]);
@@ -149,15 +141,15 @@ const AccountForm: React.FC = () => {
         position: 'top-right',
         autoClose: 3000,
       });
-      setUser({...user, ...data})
+      setUser({ ...user, ...data });
       const sessionData = {
         id: generateRandomId(),
         user_id: user.id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        user: {...user, ...data}
-    };
-      localStorage.setItem('user', JSON.stringify(sessionData))
+        user: { ...user, ...data },
+      };
+      localStorage.setItem('user', JSON.stringify(sessionData));
     } catch (error: any) {
       const apiMessage =
         error.response?.data?.message ||
@@ -172,6 +164,7 @@ const AccountForm: React.FC = () => {
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-md flex-1 font-roboto">
+      <h3 className="text-[20px] font-semibold">Thông tin</h3>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-1 md:grid-cols-2 gap-x-6"
@@ -209,6 +202,13 @@ const AccountForm: React.FC = () => {
           type="number"
           register={register}
           error={errors.points?.message}
+          readOnly={true}
+        />
+        <FloatingInput
+          label="Mã gới thiệu"
+          name="code"
+          register={register}
+          error={errors.code?.message}
           readOnly={true}
         />
         <div className="md:col-span-2 flex justify-end mt-4">

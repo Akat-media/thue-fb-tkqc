@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import BaseHeader from "../api/BaseHeader";
+import { create } from 'zustand';
+import BaseHeader from '../api/BaseHeader';
 
 interface User {
   id: string;
@@ -8,8 +8,12 @@ interface User {
   email: string;
   points: number;
   role?: string;
-  images?:string
-  percentage:number
+  images?: string;
+  percentage: number;
+  referral_code: string;
+  account_type: string;
+  invitedUsers: any[];
+  invitedBy: any;
 }
 
 interface AuthState {
@@ -26,15 +30,15 @@ export const useUserStore = create<AuthState>((set) => ({
 
   fetchUser: async () => {
     try {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem('access_token');
       if (!token) return;
 
-      const objetUser = localStorage.getItem("user");
+      const objetUser = localStorage.getItem('user');
       if (!objetUser) return;
 
-      const userParse = JSON.parse(objetUser || "{}");
+      const userParse = JSON.parse(objetUser || '{}');
       if (!userParse.user_id) {
-        console.error("Không tìm thấy user_id trong localStorage");
+        console.error('Không tìm thấy user_id trong localStorage');
         return;
       }
 
@@ -46,14 +50,14 @@ export const useUserStore = create<AuthState>((set) => ({
       // console.log("User data response:", res.data);
       set({ user: res.data.data });
     } catch (err) {
-      console.error("Lỗi fetch user:", err);
+      console.error('Lỗi fetch user:', err);
       // Không xóa user state nếu có lỗi
       // set({ user: null });
     }
   },
 
   logout: () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     set({ user: null });
   },
 }));

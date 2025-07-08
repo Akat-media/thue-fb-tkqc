@@ -1,11 +1,16 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import AccountSidebar from "./AccountSidebar";
-import AccountForm from "./AccountForm";
-import ChangePasswordForm from "./ChangePasswordForm.tsx";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AccountSidebar from './AccountSidebar';
+import AccountForm from './AccountForm';
+import ChangePasswordForm from './ChangePasswordForm.tsx';
+import SubAccount from './SubAccount.tsx';
+import HistoryGivePoints from './HistoryGivePoints.tsx';
+import HistoryRetrievePoints from './HistoryRetrievePoints.tsx';
 
 const AccountPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"account" | "password">("account");
+  const [activeTab, setActiveTab] = useState<
+    'account' | 'password' | 'history' | 'retrieve'
+  >('account');
   const navigate = useNavigate();
 
   return (
@@ -15,7 +20,7 @@ const AccountPage: React.FC = () => {
         <nav className="text-sm text-gray-500 mt-1">
           <button
             className="hover:underline text-gray-500"
-            onClick={() => navigate("/")}
+            onClick={() => navigate('/')}
             type="button"
           >
             Trang chủ
@@ -27,36 +32,69 @@ const AccountPage: React.FC = () => {
       <div className="flex items-center space-x-8 border-b pb-4">
         <button
           className={`pb-1 font-semibold ${
-            activeTab === "account"
-              ? "border-b-2 border-black"
-              : "text-gray-400"
+            activeTab === 'account'
+              ? 'border-b-2 border-black'
+              : 'text-gray-400'
           }`}
-          onClick={() => setActiveTab("account")}
+          onClick={() => setActiveTab('account')}
         >
           Thông tin chung
         </button>
         <button
           className={`pb-1 font-semibold ${
-            activeTab === "password"
-              ? "border-b-2 border-black"
-              : "text-gray-400"
+            activeTab === 'password'
+              ? 'border-b-2 border-black'
+              : 'text-gray-400'
           }`}
-          onClick={() => setActiveTab("password")}
+          onClick={() => setActiveTab('password')}
         >
           Đổi mật khẩu
         </button>
+        <button
+          className={`pb-1 font-semibold ${
+            activeTab === 'history'
+              ? 'border-b-2 border-black'
+              : 'text-gray-400'
+          }`}
+          onClick={() => setActiveTab('history')}
+        >
+          Lịch sử tặng điểm
+        </button>
+        <button
+          className={`pb-1 font-semibold ${
+            activeTab === 'retrieve'
+              ? 'border-b-2 border-black'
+              : 'text-gray-400'
+          }`}
+          onClick={() => setActiveTab('retrieve')}
+        >
+          Lịch Nhận điểm
+        </button>
       </div>
 
-      {activeTab === "account" && (
-        <div className="flex flex-col lg:flex-row gap-8">
-          <AccountSidebar />
-          <AccountForm />
-        </div>
+      {activeTab === 'account' && (
+        <>
+          <div className="flex flex-col lg:flex-row gap-8">
+            <AccountSidebar />
+            <AccountForm />
+          </div>
+          <SubAccount />
+        </>
       )}
 
-      {activeTab === "password" && (
+      {activeTab === 'password' && (
         <div>
           <ChangePasswordForm />
+        </div>
+      )}
+      {activeTab === 'history' && (
+        <div>
+          <HistoryGivePoints />
+        </div>
+      )}
+      {activeTab === 'retrieve' && (
+        <div>
+          <HistoryRetrievePoints />
         </div>
       )}
     </div>
