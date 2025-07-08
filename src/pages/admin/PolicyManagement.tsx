@@ -21,6 +21,7 @@ const PolicyManagement: React.FC = () => {
   const [policyToDelete, setPolicyToDelete] = useState<PolicySection | null>(
     null
   );
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   useEffect(() => {
     fetchPolicies();
@@ -47,10 +48,12 @@ const PolicyManagement: React.FC = () => {
       title: 'Chính sách mới',
       message: 'Nội dung mới',
     });
+    setEditingIndex(-1);
   };
 
-  const handleEditPolicy = (policy: PolicySection) => {
+  const handleEditPolicy = (policy: PolicySection, index: number) => {
     setEditingPolicy({ ...policy });
+    setEditingIndex(index);
   };
 
   const handleDeletePolicy = async (policyId: string) => {
@@ -147,7 +150,7 @@ const PolicyManagement: React.FC = () => {
             </div>
           ) : (
             <>
-              {editingPolicy ? (
+              {/* {editingPolicy ? (
                 <div className="bg-white p-6 rounded-lg shadow-md mb-8">
                   <h3 className="text-lg text-blue-900 font-semibold mb-4">
                     {editingPolicy.id
@@ -202,7 +205,7 @@ const PolicyManagement: React.FC = () => {
                     </Button>
                   </div>
                 </div>
-              ) : null}
+              ) : null} */}
 
               {policies.length === 0 ? (
                 <div className="bg-white p-8 rounded-lg shadow-md text-center">
@@ -227,7 +230,7 @@ const PolicyManagement: React.FC = () => {
                         </h3>
                         <div className="flex space-x-2">
                           <button
-                            onClick={() => handleEditPolicy(policy)}
+                            onClick={() => handleEditPolicy(policy, index)}
                             className="p-1 text-blue-500 hover:text-blue-700 transition-colors"
                             title="Chỉnh sửa"
                           >
@@ -245,10 +248,62 @@ const PolicyManagement: React.FC = () => {
                           </button>
                         </div>
                       </div>
+
                       <div className="p-4">
-                        <p className="text-gray-700 whitespace-pre-wrap">
-                          {policy.message}
-                        </p>
+                        {editingIndex === index && editingPolicy ? (
+                          <>
+                            <div className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Tiêu đề <span className="text-red-500">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={editingPolicy.title}
+                                onChange={(e) =>
+                                  setEditingPolicy({
+                                    ...editingPolicy,
+                                    title: e.target.value,
+                                  })
+                                }
+                                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Nhập tiêu đề chính sách"
+                              />
+                            </div>
+
+                            <div className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Nội dung <span className="text-red-500">*</span>
+                              </label>
+                              <textarea
+                                value={editingPolicy.message}
+                                onChange={(e) =>
+                                  setEditingPolicy({
+                                    ...editingPolicy,
+                                    message: e.target.value,
+                                  })
+                                }
+                                className="w-full p-2 border border-gray-300 rounded-md min-h-[200px] focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Nhập nội dung chính sách"
+                              />
+                            </div>
+
+                            <div className="flex justify-end space-x-2">
+                              <Button
+                                variant="outline"
+                                onClick={() => setEditingPolicy(null)}
+                              >
+                                Hủy
+                              </Button>
+                              <Button onClick={handleSavePolicy}>
+                                <Save className="w-4 h-4 mr-2" /> Lưu
+                              </Button>
+                            </div>
+                          </>
+                        ) : (
+                          <p className="text-gray-700 whitespace-pre-wrap">
+                            {policy.message}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}
