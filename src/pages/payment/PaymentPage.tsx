@@ -21,6 +21,7 @@ import BaseHeader, { BaseUrlSocket } from '../../api/BaseHeader';
 import socket from '../../socket';
 import { useUserStore } from '../../stores/useUserStore';
 import axios from 'axios';
+import { useOnOutsideClick } from '../../hook/useOutside';
 
 const PaymentPage: React.FC = () => {
   const objetUser = localStorage.getItem('user');
@@ -45,6 +46,10 @@ const PaymentPage: React.FC = () => {
   const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(true);
   const [currencyTab, setCurrencyTab] = useState<'VND' | 'USD' | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
+
+  const { innerBorderRef } = useOnOutsideClick(() => {
+    setIsCurrencyModalOpen(false);
+  });
 
   useEffect(() => {
     fetchUser();
@@ -193,7 +198,16 @@ const PaymentPage: React.FC = () => {
     <div className="container mx-auto">
       {isCurrencyModalOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-sm">
+          <div
+            ref={innerBorderRef}
+            className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-sm relative"
+          >
+            <button
+              onClick={() => setIsCurrencyModalOpen(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition-colors"
+            >
+              <X size={20} />
+            </button>
             <h2 className="text-xl font-semibold text-gray-800 mb-5 text-center">
               Select Payment Method
             </h2>

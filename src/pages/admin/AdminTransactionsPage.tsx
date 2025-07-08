@@ -268,7 +268,7 @@ const AdminTransactionsPage: React.FC = () => {
     },
     {
       key: 'bank',
-      label: 'Ngân hàng',
+      label: 'Phương thức thanh toán',
       icon: <Scale className="w-4 h-4 text-gray-500" />,
       sortKey: 'bank',
       minWidth: '120px',
@@ -650,9 +650,11 @@ const AdminTransactionsPage: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {typeof item?.amountVND === 'number'
-                          ? item.amountVND.toLocaleString()
-                          : item?.amountVND}
+                        {item?.usd > 0
+                          ? `${item.usd.toLocaleString()} USD`
+                          : item?.amountVND > 0
+                          ? `${item.amountVND.toLocaleString()} VNĐ`
+                          : '-'}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
