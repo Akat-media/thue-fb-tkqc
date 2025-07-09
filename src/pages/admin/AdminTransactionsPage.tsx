@@ -1,3 +1,5 @@
+//Role User quản lý giao dịch
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { useOnOutsideClick } from '../../hook/useOutside';
 import { format } from 'date-fns';
@@ -26,6 +28,8 @@ import { Pagination } from 'antd';
 import usePagination from '../../hook/usePagination';
 import { toast } from 'react-toastify';
 import debounce from 'lodash.debounce';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n/index.ts';
 
 interface Transaction {
   id: string;
@@ -44,6 +48,7 @@ interface Transaction {
 }
 
 const AdminTransactionsPage: React.FC = () => {
+  const { t } = useTranslation();
   const user = localStorage.getItem('user');
   const userParse = JSON.parse(user || '{}');
   const [search, setSearch] = useState('');
@@ -240,77 +245,78 @@ const AdminTransactionsPage: React.FC = () => {
     // },
     {
       key: 'id',
-      label: 'ID',
+      label: i18n.language === 'en' ? 'ID' : 'ID',
       icon: <BadgeInfo className="w-4 h-4 text-gray-500" />,
       sortKey: 'id',
       minWidth: '80px',
     },
     {
       key: 'username',
-      label: 'Tên người dùng',
+      label: i18n.language === 'en' ? 'Username' : 'Tên người dùng',
       icon: <User className="w-4 h-4 text-gray-500" />,
       sortKey: 'id',
       minWidth: '80px',
     },
     {
       key: 'amountVND',
-      label: 'Số tiền đã nạp',
+      label: i18n.language === 'en' ? 'Amount' : 'Số tiền đã nạp',
       icon: <CircleDollarSign className="w-4 h-4 text-gray-500" />,
       sortKey: 'amountVND',
       minWidth: '160px',
     },
     {
       key: 'points',
-      label: 'Điểm',
+      label: i18n.language === 'en' ? 'Points' : 'Điểm',
       icon: <BadgeCheck className="w-4 h-4 text-gray-500" />,
       sortKey: 'points',
       minWidth: '160px',
     },
     {
       key: 'bank',
-      label: 'Phương thức thanh toán',
+      label:
+        i18n.language === 'en' ? 'Payment Method' : 'Phương thức thanh toán',
       icon: <Scale className="w-4 h-4 text-gray-500" />,
       sortKey: 'bank',
       minWidth: '120px',
     },
     {
       key: 'status',
-      label: 'Trạng thái',
+      label: i18n.language === 'en' ? 'Status' : 'Trạng thái',
       icon: <Briefcase className="w-4 h-4 text-gray-500" />,
       sortKey: 'status',
       minWidth: '120px',
     },
     {
       key: 'createdAt',
-      label: 'Ngày tạo',
+      label: i18n.language === 'en' ? 'Created Date' : 'Ngày tạo',
       icon: <AlarmClockPlus className="w-4 h-4 text-gray-500" />,
       sortKey: 'createdAt',
       minWidth: '150px',
     },
     {
       key: 'type',
-      label: 'Loại',
+      label: i18n.language === 'en' ? 'Type' : 'Loại',
       icon: <AlarmClockPlus className="w-4 h-4 text-gray-500" />,
       sortKey: 'type',
       minWidth: '100px',
     },
     {
       key: 'short_code',
-      label: 'Short Code',
+      label: i18n.language === 'en' ? 'Short Code' : 'Short Code',
       icon: <HandCoins className="w-4 h-4 text-gray-500" />,
       sortKey: 'short_code',
       minWidth: '140px',
     },
     {
       key: 'transactionID',
-      label: 'TransactionID',
+      label: i18n.language === 'en' ? 'Transaction ID' : 'TransactionID',
       icon: <Pen className="w-4 h-4 text-gray-500" />,
       sortKey: 'transactionID',
       minWidth: '140px',
     },
     {
       key: 'description',
-      label: 'Mô tả',
+      label: i18n.language === 'en' ? 'Description' : 'Mô tả',
       icon: <ALargeSmall className="w-4 h-4 text-gray-500" />,
       sortKey: 'description',
       minWidth: '240px',
@@ -491,8 +497,10 @@ const AdminTransactionsPage: React.FC = () => {
         <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-4">
           <Subheader active={active} setActive={setActive} />
           <div className="flex items-end justify-between mb-4">
-            <h1 className="text-1xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate mt-1">
-              Quản lý giao dịch nạp tiền
+            <h1 className="text-1xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate mt-1">
+              {i18n.language === 'en'
+                ? 'Money Transactions Management'
+                : 'Quản lý giao dịch nạp tiền'}
             </h1>
           </div>
 
@@ -500,7 +508,11 @@ const AdminTransactionsPage: React.FC = () => {
             <div className="relative w-full md:min-w-[430px] max-w-fit flex gap-2">
               <input
                 type="text"
-                placeholder="Tìm kiếm theo ID, Tài Khoản"
+                placeholder={
+                  i18n.language === 'en'
+                    ? 'Search by ID, amount, description...'
+                    : 'Tìm kiếm theo ID, số tiền, mô tả...'
+                }
                 className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
                 value={query}
                 onChange={handleSearch}
@@ -513,7 +525,7 @@ const AdminTransactionsPage: React.FC = () => {
                   debounceSearch(query);
                 }}
               >
-                Tìm kiếm
+                {i18n.language === 'en' ? 'Search' : 'Tìm kiếm'}
               </Button>
             </div>
             {userParse?.user?.role === 'admin' && (

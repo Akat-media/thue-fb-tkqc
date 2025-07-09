@@ -237,5 +237,272 @@
     "text": "Không tìm thấy trang",
     "text2": "Xin lỗi trang của bạn chúng tôi không thể tìm thấy",
     "text3": "Quay Lại"
+  },
+  "marketplacePage": {
+    "title": "Tài khoản quảng cáo BM",
+    "syncAccounts": "Đồng Bộ Tài Khoản",
+    "createBM": "Tạo tài khoản BM",
+    "bmList": "Danh sách BM",
+    "adAccountsWithCard": "TKQC Đã gắn thẻ",
+    "adAccountsWithoutCard": "TKQC Chưa gắn thẻ",
+    "rentedAccounts": "TKQC Đang thuê",
+    "noAccountsWithoutCard": "Không có tài khoản nào chưa gắn thẻ.",
+    "noRentedAccounts": "Không có tài khoản nào đang được thuê.",
+    "fields": {
+      "id": "ID Tài khoản",
+      "accountStatus": "Trạng thái tài khoản",
+      "amountSpent": "Số tiền chi tiêu",
+      "balance": "Số dư",
+      "currency": "Tiền tệ",
+      "name": "Tên tài khoản",
+      "spendCap": "Giới hạn chi tiêu",
+      "owner": "Chủ sở hữu",
+      "statusRented": "Tình trạng thuê",
+      "spendLimit": "Hạn mức",
+      "noteAka": "Ghi chú",
+      "active": "Kích hoạt"
+    },
+    "errors": {
+      "fetchAdAccounts": "Lỗi khi lấy danh sách tài khoản quảng cáo",
+      "syncFailed": "Đồng bộ thất bại. Vui lòng thử lại.",
+      "deleteBMFailed": "Không thể xóa tài khoản BM. Vui lòng thử lại sau."
+    },
+    "success": {
+      "syncComplete": "Đồng bộ tài khoản thành công",
+      "deleteBM": "Xóa tài khoản BM thành công"
+    }
+  },
+  "cardDetailModal": {
+    "title": "Thông tin chi tiết tài khoản",
+    "basicInfo": "Thông tin cơ bản",
+    "financialInfo": "Thông tin tài chính",
+    "additionalInfo": "Thông tin bổ sung",
+    "accountStatus": {
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động"
+    },
+    "yes": "Có",
+    "no": "Không",
+    "noLimit": "Không giới hạn"
+  },
+  "adAccountCard": {
+    "personal": "Cá nhân",
+    "bm": "BM",
+    "visa": "Visa",
+    "highLimit": "Limit cao",
+    "lowLimit": "Limit thấp",
+    "available": "Có sẵn",
+    "rented": "Đã thuê",
+    "unavailable": "Không khả dụng",
+    "adAccountType": "Loại TKQC",
+    "withCard": "Đã gắn thẻ",
+    "withoutCard": "Chưa gắn thẻ",
+    "accountNumber": "Số tài khoản",
+    "noCardInfo": "Chưa có thông tin thẻ",
+    "spendLimit": "Giới hạn chi",
+    "noLimit": "Không giới hạn",
+    "highQualityAccount": "TKQC BM chất lượng cao, đã verify danh tính",
+    "rentNow": "Thuê ngay",
+    "viewDetails": "Xem chi tiết"
+  },
+  "filter": {
+    "priceRange": "Khoảng giá",
+    "accountType": "Loại tài khoản",
+    "withCard": "Đã gắn thẻ",
+    "withoutCard": "Chưa gắn thẻ",
+    "noLimit": "Không giới hạn",
+    "close": "Đóng",
+    "viewResults": "Xem kết quả"
+  },
+  "rentalsPage": {
+    "title": "Tài khoản đang thuê",
+    "loading": "Đang tải dữ liệu...",
+    "tabs": {
+      "processing": "Đang xử lý",
+      "success": "Thành công",
+      "failed": "Thất bại",
+      "completed": "Đã thuê",
+      "all": "Tất cả"
+    },
+    "status": {
+      "processing": "Đang xử lý",
+      "success": "Thành công",
+      "failed": "Thất bại",
+      "completed": "Đã thuê"
+    },
+    "startDate": "Ngày bắt đầu",
+    "requestedLimit": "Giới hạn yêu cầu",
+    "spentBudget": "Ngân sách đã chi",
+    "noLimit": "Không giới hạn",
+    "bmId": "BM ID",
+    "rentalPeriod": "Thời gian thuê",
+    "spendLimit": "Giới hạn chi",
+    "spent": "Đã chi tiêu",
+    "remaining": "Còn lại",
+    "refundAvailable": "Hoàn tiền khả dụng",
+    "refundUnusedPoints": "Hoàn lại số điểm chưa sử dụng",
+    "buttons": {
+      "disable": "Vô hiệu hóa",
+      "processing": "Đang xử lý",
+      "rentNow": "Thuê ngay"
+    },
+    "emptyState": {
+      "processing": "Bạn không có tài khoản nào đang thuê.",
+      "success": "Bạn không có tài khoản nào đang hoạt động.",
+      "all": "Bạn chưa thuê tài khoản nào."
+    },
+    "modal": {
+      "title": "Chi tiết tài khoản",
+      "loading": "Đang tải thông tin chi tiết tài khoản...",
+      "basicInfo": "Thông tin cơ bản",
+      "accountId": "ID tài khoản",
+      "accountName": "Tên tài khoản",
+      "accountStatus": "Trạng thái tài khoản",
+      "statusActive": "Hoạt động",
+      "statusInactive": "Không hoạt động",
+      "currency": "Tiền tệ",
+      "financialInfo": "Thông tin tài chính",
+      "amountSpent": "Số tiền đã chi",
+      "balance": "Số dư",
+      "spendCap": "Giới hạn chi tiêu",
+      "noLimit": "Không giới hạn",
+      "additionalInfo": "Thông tin thêm",
+      "createdDate": "Ngày tạo tài khoản",
+      "timezone": "Múi giờ",
+      "accountType": "Loại tài khoản",
+      "personal": "Cá nhân",
+      "business": "Doanh nghiệp",
+      "bmName": "Tên BM",
+      "notAvailable": "N/A",
+      "close": "Đóng",
+      "loadError": "Không thể tải thông tin chi tiết tài khoản. Vui lòng thử lại sau.",
+      "retry": "Thử lại"
+    },
+    "notifications": {
+      "setupInProgress": "Vui lòng đợi giây lát để hệ thống setup",
+      "disableSuccess": "Vô hiệu hóa thành công!",
+      "disableFailed": "Vô hiệu hóa thất bại!",
+      "connectionError": "Lỗi kết nối hệ thống. Vui lòng thử lại!"
+    }
+  },
+  "paymentPage": {
+    "paymentGateway": "Cổng Thanh Toán",
+    "currentBalance": "Số dư hiện tại",
+    "points": "điểm",
+    "deposit": "Nạp Tiền",
+    "depositToSystem": "Nạp Tiền Vào Hệ Thống",
+    "enterAmount": "Nhập Số Tiền",
+    "selectDenomination": "Chọn Mệnh Giá",
+    "amountValidation": "Số tiền phải ít nhất 50.000 VNĐ và là bội số của 1.000 VNĐ",
+    "amountMustBeAtLeast": "Số tiền phải ít nhất 50.000 VNĐ",
+    "transferInfo": "Thông Tin Chuyển Khoản",
+    "bank": "Ngân hàng",
+    "accountNumber": "Số tài khoản",
+    "accountName": "Tên tài khoản",
+    "transferContent": "Nội dung chuyển khoản",
+    "amount": "Số tiền",
+    "createDepositOrder": "Tạo Lệnh Nạp Tiền",
+    "automaticDepositNote": "Hệ thống sẽ tự động cập nhật số dư sau khi chuyển khoản hoàn tất",
+    "qrCode": "Mã QR Thanh Toán",
+    "depositInstructions": "Hướng Dẫn Nạp Tiền",
+    "generatingQR": "Đang tạo mã QR...",
+    "scanQRInstructions": "Quét mã QR này bằng ứng dụng ngân hàng để thanh toán tự động",
+    "qrExpires": "Mã QR hết hạn trong",
+    "step1Title": "Nhập Số Tiền",
+    "step1Description": "Chọn hoặc nhập số tiền bạn muốn nạp",
+    "step2Title": "Tạo Lệnh Nạp Tiền",
+    "step2Description": "Nhấn nút để tạo thông tin thanh toán",
+    "step3Title": "Thực Hiện Chuyển Khoản",
+    "step3Description": "Chuyển khoản đúng số tiền với nội dung đã cung cấp",
+    "step4Title": "Xác Nhận Tự Động",
+    "step4Description": "Số dư của bạn sẽ được cập nhật tự động sau khi chuyển khoản được xác nhận",
+    "selectPaymentMethod": "Chọn Phương Thức Thanh Toán",
+    "vietnameseDong": "Việt Nam Đồng (VNĐ)",
+    "bankTransfer": "Chuyển Khoản Ngân Hàng",
+    "usDollar": "Đô La Mỹ (USD)",
+    "cryptocurrency": "Tiền Điện Tử",
+    "comingSoon": "Sắp Ra Mắt",
+    "featureInDevelopment": "Tính năng này đang được phát triển",
+    "changePaymentMethod": "Thay Đổi Phương Thức Thanh Toán",
+    "copied": "Đã sao chép",
+    "copiedToClipboard": "Đã sao chép vào bộ nhớ tạm",
+    "error": "Lỗi",
+    "enterValidAmount": "Vui lòng nhập số tiền hợp lệ",
+    "depositSuccess": "Đã Tạo Lệnh Nạp Tiền",
+    "pleaseTransfer": "Vui lòng chuyển khoản đúng số tiền với nội dung đã cung cấp",
+    "errorOccurred": "Đã Xảy Ra Lỗi",
+    "cannotCreateDeposit": "Không thể tạo lệnh nạp tiền. Vui lòng thử lại sau",
+    "paypal": {
+      "title": "Thanh toán với",
+      "description": "Phương thức thanh toán quốc tế an toàn và tiện lợi",
+      "enterAmount": "Nhập số tiền USD",
+      "redirecting": "Đang chuyển hướng đến PayPal...",
+      "payWithPaypal": "Thanh Toán Qua PayPal",
+      "securePayment": "Thanh toán an toàn được xử lý bởi PayPal",
+      "faq": {
+        "title": "Câu Hỏi Thường Gặp",
+        "q1": "Số tiền nạp tối thiểu là bao nhiêu?",
+        "a1": "Số tiền nạp tối thiểu là 5 USD.",
+        "q2": "Mất bao lâu để xử lý thanh toán?",
+        "a2": "Thanh toán PayPal thường được xử lý ngay lập tức, nhưng có thể mất đến 24 giờ trong một số trường hợp.",
+        "q3": "Tỷ giá hối đoái là bao nhiêu?",
+        "a3": "Chúng tôi sử dụng tỷ giá thị trường hiện tại tại thời điểm giao dịch, với một khoản phí xử lý nhỏ.",
+        "q4": "Tôi có thể hoàn tiền không?",
+        "a4": "Hoàn tiền có thể được xử lý trong vòng 30 ngày kể từ ngày giao dịch. Vui lòng liên hệ với đội ngũ hỗ trợ của chúng tôi."
+      },
+      "note": {
+        "title": "Lưu Ý Quan Trọng",
+        "content": "Vui lòng đảm bảo tài khoản PayPal của bạn đã được xác minh để tránh bất kỳ vấn đề thanh toán nào. Phí giao dịch quốc tế có thể áp dụng tùy thuộc vào quốc gia và ngân hàng của bạn."
+      }
+    },
+    "status": {
+      "processing": "Đang Xử Lý Thanh Toán",
+      "pleaseWait": "Vui lòng đợi trong khi chúng tôi xác nhận thanh toán của bạn...",
+      "success": "Thanh Toán Thành Công",
+      "successMessage": "Số dư của bạn đã được cập nhật thành công!",
+      "failed": "Thanh Toán Thất Bại",
+      "failedMessage": "Chúng tôi không thể xác nhận thanh toán của bạn. Vui lòng thử lại hoặc liên hệ hỗ trợ.",
+      "tryAgain": "Thử Lại"
+    }
+  },
+  "adminTransactions": {
+    "title": {
+      "moneyTransactions": "Quản lý giao dịch nạp tiền",
+      "pointsTransactions": "Quản lý giao dịch điểm"
+    },
+    "search": {
+      "placeholder": "Tìm kiếm theo ID, số tiền, mô tả..."
+    },
+    "buttons": {
+      "reset": "Đặt lại",
+      "sync": "Đồng bộ",
+      "details": "Chi tiết",
+      "edit": "Chỉnh sửa"
+    },
+    "table": {
+      "headers": {
+        "id": "ID",
+        "amount": "Số tiền",
+        "date": "Ngày",
+        "status": "Trạng thái",
+        "actions": "Thao tác"
+      },
+      "status": {
+        "completed": "Hoàn thành",
+        "pending": "Đang xử lý",
+        "failed": "Thất bại"
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "of": "của",
+      "items": "mục"
+    }
+  },
+  "common": {
+    "sort": {
+      "asc": "Tăng dần",
+      "desc": "Giảm dần"
+    }
   }
 }

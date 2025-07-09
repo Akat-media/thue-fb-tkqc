@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import BaseHeader from '../../api/BaseHeader';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n/index.ts';
 
 interface PolicySection {
   id: string;
@@ -16,10 +18,11 @@ const Policy: React.FC = () => {
   >({});
   const [policies, setPolicies] = useState<PolicySection[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchPolicies();
-  }, []);
+  }, [i18n.language]);
 
   const fetchPolicies = async () => {
     try {
@@ -27,6 +30,7 @@ const Policy: React.FC = () => {
       const response = await BaseHeader({
         method: 'get',
         url: 'policies',
+        // params: { lang: i18n.language },
       });
       setPolicies(response.data.data || []);
       // setOpenSections(response.data.data?.[0] || []);
@@ -78,47 +82,56 @@ const Policy: React.FC = () => {
         <main className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-extrabold text-blue-900 sm:text-4xl">
-              Chính Sách và Điều Khoản
+              {i18n.language === 'en'
+                ? 'Policies and Terms'
+                : 'Chính Sách và Điều Khoản'}
             </h2>
             <p className="mt-4 text-lg text-blue-900">
-              Vui lòng đọc kỹ các chính sách dưới đây để hiểu rõ quyền lợi và
-              trách nhiệm khi sử dụng dịch vụ của AKA MEDIA.
+              {i18n.language === 'en'
+                ? 'Please read the policies below carefully to understand your rights and responsibilities when using AKA MEDIA services.'
+                : 'Vui lòng đọc kỹ các chính sách dưới đây để hiểu rõ quyền lợi và trách nhiệm khi sử dụng dịch vụ của AKA MEDIA.'}
             </p>
           </div>
 
-          <div className="space-y-6">
-            {policies.map((policy, index) => (
-              <div
-                key={policy.id}
-                className="bg-white rounded-lg shadow-xl overflow-hidden"
-              >
-                <button
-                  onClick={() => toggleSection(index)}
-                  className="w-full flex justify-between items-center px-6 py-4 bg-gradient-to-r from-white to-blue-100 text-left text-lg font-semibold text-blue-900 hover:bg-gray-100 transition-colors"
-                >
-                  <span>{policy.title}</span>
-                  {openSections[index] ? (
-                    <ChevronUp className="w-5 h-5 text-gray-600 transition-transform duration-1000" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-600 transition-transform duration-1000" />
-                  )}
-                </button>
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {policies.map((policy, index) => (
                 <div
-                  className={`overflow-hidden transition-all duration-1000 ease-in-out ${
-                    openSections[index]
-                      ? 'opacity-100 overflow-y-auto'
-                      : 'max-h-0 opacity-0'
-                  }`}
+                  key={policy.id}
+                  className="bg-white rounded-lg shadow-xl overflow-hidden"
                 >
-                  <div className="px-6 py-4 bg-white">
-                    <div className="text-gray-700 whitespace-pre-wrap">
-                      {policy.message}
+                  <button
+                    onClick={() => toggleSection(index)}
+                    className="w-full flex justify-between items-center px-6 py-4 bg-gradient-to-r from-white to-blue-100 text-left text-lg font-semibold text-blue-900 hover:bg-gray-100 transition-colors"
+                  >
+                    <span>{policy.title}</span>
+                    {openSections[index] ? (
+                      <ChevronUp className="w-5 h-5 text-gray-600 transition-transform duration-1000" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-gray-600 transition-transform duration-1000" />
+                    )}
+                  </button>
+                  <div
+                    className={`overflow-hidden transition-all duration-1000 ease-in-out ${
+                      openSections[index]
+                        ? 'opacity-100 overflow-y-auto'
+                        : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <div className="px-6 py-4 bg-white">
+                      <div className="text-gray-700 whitespace-pre-wrap">
+                        {policy.message}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </main>
       </div>
     </>

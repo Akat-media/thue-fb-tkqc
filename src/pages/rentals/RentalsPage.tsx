@@ -9,6 +9,8 @@ import {
   Wallet,
   XCircle,
   CreditCard,
+  Check,
+  X,
 } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import {
@@ -25,6 +27,7 @@ import usePagination from '../../hook/usePagination';
 import { Pagination } from 'antd';
 import { NotiError, NotiSuccess } from '../../components/noti';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 interface AdAccountDetail {
   id: string;
@@ -73,6 +76,7 @@ interface AdsRental {
 }
 
 const RentalsPage: React.FC = () => {
+  const { t } = useTranslation();
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
   const [rentals, setRentals] = useState<(Rental & { adAccount: any })[]>([]);
@@ -297,26 +301,29 @@ const RentalsPage: React.FC = () => {
     switch (status) {
       case 'process':
         return (
-          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-yellow-100 text-yellow-800 border border-yellow-200">
-            <RefreshCw className="h-3 w-3 mr-1" /> Đang xử lý
+          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-yellow-100 text-yellow-700 border border-yellow-200">
+            <Clock className="h-3 w-3 mr-1" />{' '}
+            {t('rentalsPage.status.processing')}
           </span>
         );
       case 'success':
         return (
-          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-green-100 text-green-800 border border-green-200">
-            <Lightbulb className="h-3 w-3 mr-1" /> Thành công
+          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-green-100 text-green-700 border border-green-200">
+            <Check className="h-3 w-3 mr-1" /> {t('rentalsPage.status.success')}
           </span>
         );
       case 'faild':
         return (
           <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-red-100 text-red-700 border border-red-200">
-            <AlertTriangle className="h-3 w-3 mr-1" /> Thất bại
+            <AlertTriangle className="h-3 w-3 mr-1" />{' '}
+            {t('rentalsPage.status.failed')}
           </span>
         );
       case 'complete_remove':
         return (
           <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-purple-200 text-purple-800 border border-purple-200">
-            <Clock className="h-3 w-3 mr-1" /> Đã thuê
+            <Clock className="h-3 w-3 mr-1" />{' '}
+            {t('rentalsPage.status.completed')}
           </span>
         );
       default:
@@ -360,7 +367,7 @@ const RentalsPage: React.FC = () => {
     } catch (error: any) {
       const errorMessage =
         error?.response?.data?.message ||
-        'Lỗi kết nối hệ thống. Vui lòng thử lại!';
+        t('rentalsPage.notifications.connectionError');
       toast.error(errorMessage);
     }
   };
@@ -384,7 +391,7 @@ const RentalsPage: React.FC = () => {
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
-              Tài khoản đang thuê
+              {t('rentalsPage.title')}
             </h2>
           </div>
         </div>
@@ -402,11 +409,15 @@ const RentalsPage: React.FC = () => {
                 )
               }
             >
-              <option value="process">Đang xử lý</option>
-              <option value="success">Thành công</option>
-              <option value="faild">Thất bại</option>
-              <option value="complete_remove">Đã thuê</option>
-              <option value="all">Tất cả</option>
+              <option value="process">
+                {t('rentalsPage.tabs.processing')}
+              </option>
+              <option value="success">{t('rentalsPage.tabs.success')}</option>
+              <option value="faild">{t('rentalsPage.tabs.failed')}</option>
+              <option value="complete_remove">
+                {t('rentalsPage.tabs.completed')}
+              </option>
+              <option value="all">{t('rentalsPage.tabs.all')}</option>
             </select>
           </div>
           <div className="hidden sm:block">
@@ -425,11 +436,11 @@ const RentalsPage: React.FC = () => {
                     >
                       {
                         {
-                          process: 'Đang xử lý',
-                          success: 'Thành công',
-                          faild: 'Thất bại',
-                          complete_remove: 'Đã thuê',
-                          all: 'Tất cả',
+                          process: t('rentalsPage.tabs.processing'),
+                          success: t('rentalsPage.tabs.success'),
+                          faild: t('rentalsPage.tabs.failed'),
+                          complete_remove: t('rentalsPage.tabs.completed'),
+                          all: t('rentalsPage.tabs.all'),
                         }[tab]
                       }
                     </button>
@@ -443,7 +454,7 @@ const RentalsPage: React.FC = () => {
         <div className="mt-6">
           {loading ? (
             <div className="text-center py-12">
-              <p className="text-gray-500">Đang tải dữ liệu...</p>
+              <p className="text-gray-500">{t('rentalsPage.loading')}</p>
             </div>
           ) : rentals.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -468,7 +479,7 @@ const RentalsPage: React.FC = () => {
                           <div className="flex justify-between items-center text-sm">
                             <span className="flex items-center gap-1 text-gray-500">
                               <Lightbulb className="w-4 h-4 text-yellow-400" />
-                              BM ID:
+                              {t('rentalsPage.bmId')}:
                             </span>
                             <span className="font-semibold">
                               {rental.userBmId}
@@ -478,7 +489,7 @@ const RentalsPage: React.FC = () => {
                           <div className="flex justify-between items-center text-sm">
                             <span className="flex items-center gap-1 text-gray-500">
                               <Calendar className="w-4 h-4 text-blue-400" />
-                              Thời gian thuê:
+                              {t('rentalsPage.rentalPeriod')}:
                             </span>
                             <span className="font-semibold">
                               {formatDate(new Date(rental.createdAt))}
@@ -488,11 +499,11 @@ const RentalsPage: React.FC = () => {
                           <div className="flex justify-between items-center text-sm">
                             <span className="flex items-center gap-1 text-gray-500">
                               <DollarSign className="w-4 h-4 text-green-400" />
-                              Giới hạn chi:
+                              {t('rentalsPage.spendLimit')}:
                             </span>
                             <span className="font-semibold">
                               {rental?.adAccount?.is_sefl_used_visa
-                                ? 'No limit'
+                                ? t('rentalsPage.noLimit')
                                 : rental.requestedLimit.toLocaleString(
                                     'vi-VN'
                                   )}{' '}
@@ -506,7 +517,7 @@ const RentalsPage: React.FC = () => {
                               <div className="flex justify-between items-center text-sm">
                                 <span className="flex items-center gap-1 text-gray-500">
                                   <CreditCard className="w-4 h-4 text-red-400" />
-                                  Đã chi tiêu:
+                                  {t('rentalsPage.spent')}:
                                 </span>
                                 <span className="font-semibold">
                                   {rental.spentBudget.toLocaleString('vi-VN')}{' '}
@@ -517,7 +528,7 @@ const RentalsPage: React.FC = () => {
                               <div className="flex justify-between items-center text-sm">
                                 <span className="flex items-center gap-1 text-gray-500">
                                   <Wallet className="w-4 h-4 text-purple-400" />
-                                  Còn lại:
+                                  {t('rentalsPage.remaining')}:
                                 </span>
                                 <span className="font-semibold">
                                   {(
@@ -573,10 +584,10 @@ const RentalsPage: React.FC = () => {
                               <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                               <div className="ml-3">
                                 <h3 className="text-sm font-medium text-red-700">
-                                  Hoàn tiền khả dụng
+                                  {t('rentalsPage.refundAvailable')}
                                 </h3>
                                 <p className="text-sm text-red-700 mt-1">
-                                  Hoàn lại số điểm chưa sử dụng
+                                  {t('rentalsPage.refundUnusedPoints')}
                                 </p>
                               </div>
                             </div>
@@ -596,7 +607,7 @@ const RentalsPage: React.FC = () => {
                               hanleCancel(rental);
                             }}
                           >
-                            Vô hiệu hóa
+                            {t('rentalsPage.buttons.disable')}
                           </Button>
                         )}
 
@@ -608,7 +619,7 @@ const RentalsPage: React.FC = () => {
                             fullWidth
                             disabled
                           >
-                            Đang xử lý
+                            {t('rentalsPage.buttons.processing')}
                           </Button>
                         )}
                       </div>
@@ -624,16 +635,16 @@ const RentalsPage: React.FC = () => {
             <div className="text-center py-12">
               <p className="text-gray-500">
                 {activeTab === 'process'
-                  ? 'Bạn không có tài khoản nào đang thuê.'
+                  ? t('rentalsPage.emptyState.processing')
                   : activeTab === 'success'
-                  ? 'Bạn không có tài khoản nào đang hoạt động. '
-                  : 'Bạn chưa thuê tài khoản nào.'}
+                  ? t('rentalsPage.emptyState.success')
+                  : t('rentalsPage.emptyState.all')}
               </p>
               <Button
                 className="mt-4"
                 onClick={() => (window.location.href = '/marketplace')}
               >
-                Thuê tài khoản ngay
+                {t('rentalsPage.buttons.rentNow')}
               </Button>
             </div>
           )}
@@ -641,100 +652,115 @@ const RentalsPage: React.FC = () => {
 
         {/* Modal hiển thị chi tiết tài khoản */}
         {showModal && selectedRental && (
-          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowModal(false)}
+          >
             <div
               ref={innerBorderRef}
-              className="bg-white rounded-2xl shadow-lg w-[90%] max-w-[600px] relative max-h-[80vh] overflow-hidden"
+              className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-6 overflow-y-auto max-h-[80vh]">
-                <h2 className="text-xl font-semibold mb-4">
-                  Chi tiết tài khoản quảng cáo
-                </h2>
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    {t('rentalsPage.modal.title')}
+                  </h2>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
 
                 {loadingDetail ? (
-                  <div className="text-center py-4">
+                  <div className="text-center py-8">
                     <p className="text-gray-500">
-                      Đang tải thông tin chi tiết...
+                      {t('rentalsPage.modal.loading')}
                     </p>
                   </div>
                 ) : adAccountDetail ? (
-                  <div className="space-y-4">
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="space-y-6">
+                    <div className="bg-blue-50 p-4 rounded-lg">
                       <h3 className="font-medium text-lg mb-2">
-                        Thông tin tài khoản
+                        {t('rentalsPage.modal.basicInfo')}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
-                          <p className="text-sm text-gray-500">ID tài khoản:</p>
+                          <p className="text-sm text-gray-500">
+                            {t('rentalsPage.modal.accountId')}:
+                          </p>
                           <p className="font-medium">
                             {adAccountDetail.account_id}
                           </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500">
-                            Tên tài khoản:
+                            {t('rentalsPage.modal.accountName')}:
                           </p>
                           <p className="font-medium">{adAccountDetail.name}</p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500">
-                            Business Manager:
+                            {t('rentalsPage.modal.accountStatus')}:
                           </p>
                           <p className="font-medium">
-                            {adAccountDetail.business?.name || 'N/A'}
+                            {adAccountDetail.account_status === 1
+                              ? t('rentalsPage.modal.statusActive')
+                              : t('rentalsPage.modal.statusInactive')}
                           </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500">
-                            Trạng thái thuê:
+                            {t('rentalsPage.modal.currency')}:
                           </p>
                           <p className="font-medium">
-                            {getStatusBadge(selectedRental.status)}
+                            {adAccountDetail.currency}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-green-50 p-4 rounded-lg">
                       <h3 className="font-medium text-lg mb-2">
-                        Thông tin tài chính
+                        {t('rentalsPage.modal.financialInfo')}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
-                          <p className="text-sm text-gray-500">Số dư:</p>
-                          <p className="font-medium">
-                            {parseInt(adAccountDetail.balance).toLocaleString()}{' '}
-                            {adAccountDetail.currency}
+                          <p className="text-sm text-gray-500">
+                            {t('rentalsPage.modal.amountSpent')}:
                           </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-500">Đã chi tiêu:</p>
                           <p className="font-medium">
                             {parseInt(
                               adAccountDetail.amount_spent
-                            ).toLocaleString()}{' '}
+                            ).toLocaleString('vi-VN')}{' '}
                             {adAccountDetail.currency}
                           </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500">
-                            Hạn mức chi tiêu:
+                            {t('rentalsPage.modal.balance')}:
                           </p>
                           <p className="font-medium">
-                            {adAccountDetail.spend_limit
-                              ? adAccountDetail.spend_limit.toLocaleString()
-                              : 'Không giới hạn'}{' '}
+                            {parseInt(adAccountDetail.balance).toLocaleString(
+                              'vi-VN'
+                            )}{' '}
                             {adAccountDetail.currency}
                           </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500">
-                            Phương thức thanh toán:
+                            {t('rentalsPage.modal.spendCap')}:
                           </p>
-                          <p className="font-medium flex items-center">
-                            <CreditCard className="h-4 w-4 mr-1 text-blue-500" />
-                            {adAccountDetail.funding_source_details
-                              ?.display_string || 'N/A'}
+                          <p className="font-medium">
+                            {adAccountDetail.spend_cap === '0'
+                              ? t('rentalsPage.modal.noLimit')
+                              : `${parseInt(
+                                  adAccountDetail.spend_cap
+                                ).toLocaleString('vi-VN')} ${
+                                  adAccountDetail.currency
+                                }`}
                           </p>
                         </div>
                       </div>
@@ -742,12 +768,12 @@ const RentalsPage: React.FC = () => {
 
                     <div className="bg-gray-50 p-4 rounded-lg">
                       <h3 className="font-medium text-lg mb-2">
-                        Thông tin thêm
+                        {t('rentalsPage.modal.additionalInfo')}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
                           <p className="text-sm text-gray-500">
-                            Ngày tạo tài khoản:
+                            {t('rentalsPage.modal.createdDate')}:
                           </p>
                           <p className="font-medium">
                             {new Date(
@@ -756,56 +782,45 @@ const RentalsPage: React.FC = () => {
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500">Múi giờ:</p>
+                          <p className="text-sm text-gray-500">
+                            {t('rentalsPage.modal.timezone')}:
+                          </p>
                           <p className="font-medium">
                             {adAccountDetail.timezone_name}
                           </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500">
-                            Loại tài khoản:
+                            {t('rentalsPage.modal.accountType')}:
                           </p>
                           <p className="font-medium">
                             {adAccountDetail.is_personal === 1
-                              ? 'Cá nhân'
-                              : 'Doanh nghiệp'}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-500">Tên BM:</p>
-                          <p className="font-medium">
-                            {adAccountDetail.business?.name || 'N/A'}
+                              ? t('rentalsPage.modal.personal')
+                              : t('rentalsPage.modal.business')}
                           </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500">
-                            Trạng thái tài khoản:
+                            {t('rentalsPage.modal.bmName')}:
                           </p>
                           <p className="font-medium">
-                            {adAccountDetail.account_status === 1
-                              ? 'Đang hoạt động'
-                              : 'Không hoạt động'}
+                            {adAccountDetail.business?.name ||
+                              t('rentalsPage.modal.notAvailable')}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    {adAccountDetail.note_aka && (
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <h3 className="font-medium text-lg mb-2">Ghi chú</h3>
-                        <p className="text-sm">{adAccountDetail.note_aka}</p>
-                      </div>
-                    )}
-
                     <div className="mt-4 flex justify-end">
-                      <Button onClick={() => setShowModal(false)}>Đóng</Button>
+                      <Button onClick={() => setShowModal(false)}>
+                        {t('rentalsPage.modal.close')}
+                      </Button>
                     </div>
                   </div>
                 ) : (
                   <div className="text-center py-4">
                     <p className="text-gray-500">
-                      Không thể tải thông tin chi tiết tài khoản. Vui lòng thử
-                      lại sau.
+                      {t('rentalsPage.modal.loadError')}
                     </p>
                     <Button
                       className="mt-3"
@@ -813,7 +828,7 @@ const RentalsPage: React.FC = () => {
                         fetchAdAccountDetail(selectedRental.adAccountId)
                       }
                     >
-                      Thử lại
+                      {t('rentalsPage.modal.retry')}
                     </Button>
                   </div>
                 )}
@@ -835,7 +850,7 @@ const RentalsPage: React.FC = () => {
       {successRent && (
         <NotiSuccess
           onClose={() => setSuccessRent('')}
-          message={'Vui lòng đợi giây lát để hệ thống setup'}
+          message={t('rentalsPage.notifications.setupInProgress')}
         />
       )}
     </>

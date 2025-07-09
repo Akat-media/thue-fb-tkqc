@@ -18,6 +18,7 @@ import qs from 'qs';
 import { useSearchParams } from 'react-router-dom';
 import _ from 'lodash';
 import CardDetailModal from './CardDetailModal';
+import { useTranslation } from 'react-i18next';
 
 interface BM {
   id: string;
@@ -29,6 +30,7 @@ interface BM {
 }
 
 const MarketplacePage: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const userString = localStorage.getItem('user');
   const userInfo = userString ? JSON.parse(userString) : null;
   const isAdmin = userInfo?.user?.role === 'admin';
@@ -85,7 +87,7 @@ const MarketplacePage: React.FC = () => {
       setRentedAccounts(rentedList);
     } catch (error) {
       console.error('Error fetching ad accounts:', error);
-      toast.error('Lỗi khi lấy danh sách tài khoản quảng cáo');
+      toast.error(t('marketplacePage.errors.fetchAdAccounts'));
     }
   };
   const hanleSearch = (data: any) => {
@@ -123,7 +125,7 @@ const MarketplacePage: React.FC = () => {
       setTotalVisa(visaRes.data.data.count || 0);
     } catch (error) {
       console.error('Error fetching ad accounts:', error);
-      toast.error('Lỗi khi lấy danh sách tài khoản quảng cáo');
+      toast.error(t('marketplacePage.errors.fetchAdAccounts'));
     }
   };
   const handleCallAPiSimple = async () => {
@@ -145,7 +147,7 @@ const MarketplacePage: React.FC = () => {
       setTotal(simpleRes.data.data.count || 0);
     } catch (error) {
       console.error('Error fetching ad accounts:', error);
-      toast.error('Lỗi khi lấy danh sách tài khoản quảng cáo');
+      toast.error(t('marketplacePage.errors.fetchAdAccounts'));
     }
   };
   useEffect(() => {
@@ -281,7 +283,7 @@ const MarketplacePage: React.FC = () => {
         },
       });
       if (response.status === 200) {
-        toast.success('Đồng bộ tài khoản thành công');
+        toast.success(t('marketplacePage.success.syncComplete'));
         await handleCallAPiVisa();
         setIsSyncModalOpen(false);
       } else {
@@ -333,18 +335,18 @@ const MarketplacePage: React.FC = () => {
   });
 
   const fieldNameMap: Record<string, string> = {
-    id: 'ID Tài khoản',
-    account_status: 'Trạng thái tài khoản',
-    amount_spent: 'Số tiền chi tiêu',
-    balance: 'Số dư',
-    currency: 'Tiền tệ',
-    name: 'Tên tài khoản',
-    spend_cap: 'Giới hạn chi tiêu',
-    owner: 'Chủ sở hữu',
-    status_rented: 'Tình trạng thuê',
-    spend_limit: 'Hạn mức',
-    note_aka: 'Ghi chú',
-    active: 'Kích hoạt',
+    id: t('marketplacePage.fields.id'),
+    account_status: t('marketplacePage.fields.accountStatus'),
+    amount_spent: t('marketplacePage.fields.amountSpent'),
+    balance: t('marketplacePage.fields.balance'),
+    currency: t('marketplacePage.fields.currency'),
+    name: t('marketplacePage.fields.name'),
+    spend_cap: t('marketplacePage.fields.spendCap'),
+    owner: t('marketplacePage.fields.owner'),
+    status_rented: t('marketplacePage.fields.statusRented'),
+    spend_limit: t('marketplacePage.fields.spendLimit'),
+    note_aka: t('marketplacePage.fields.noteAka'),
+    active: t('marketplacePage.fields.active'),
   };
 
   return (
@@ -353,7 +355,7 @@ const MarketplacePage: React.FC = () => {
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
-              Tài khoản quảng cáo BM
+              {t('marketplacePage.title')}
             </h2>
           </div>
         </div>
@@ -373,7 +375,7 @@ const MarketplacePage: React.FC = () => {
               >
                 <RefreshCcw className="h-5 w-5 mr-1 flex-shrink-0" />
                 <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 max-w-0 group-hover:max-w-xs transition-all duration-300">
-                  Đồng Bộ Tài Khoản
+                  {t('marketplacePage.syncAccounts')}
                 </span>
               </button>
             )}
@@ -388,7 +390,7 @@ const MarketplacePage: React.FC = () => {
               >
                 <Plus className="h-5 w-5 mr-1 flex-shrink-0" />
                 <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 max-w-0 group-hover:max-w-xs transition-all duration-300">
-                  Tạo tài khoản BM
+                  {t('marketplacePage.createBM')}
                 </span>
               </button>
             )}
@@ -399,7 +401,7 @@ const MarketplacePage: React.FC = () => {
         {isAdmin && filteredBmList.length > 0 && (
           <div className="mt-8">
             <h3 className="text-2xl font-bold text-blue-900 mb-4">
-              Danh sách BM
+              {t('marketplacePage.bmList')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredBmList.map((bm: any) => (
@@ -418,7 +420,7 @@ const MarketplacePage: React.FC = () => {
         {searchParams.get('is_ads_visa') == '1' && (
           <>
             <h3 className="text-2xl font-bold text-gray-600 mb-4 mt-6">
-              TKQC Đã gắn thẻ
+              {t('marketplacePage.adAccountsWithCard')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {visaAccount.map((account: any) => (
@@ -450,7 +452,7 @@ const MarketplacePage: React.FC = () => {
         {searchParams.get('is_ads_simple') == '1' && (
           <>
             <h3 className="text-2xl font-bold text-red-500 my-4 mt-6">
-              TKQC Chưa gắn thẻ
+              {t('marketplacePage.adAccountsWithoutCard')}
             </h3>
             {simpleAccount.length > 0 ? (
               <>
@@ -481,7 +483,7 @@ const MarketplacePage: React.FC = () => {
               </>
             ) : (
               <div className="text-center text-gray-500 italic py-4">
-                Không có tài khoản nào chưa gắn thẻ.
+                {t('marketplacePage.noAccountsWithoutCard')}
               </div>
             )}
           </>
@@ -490,7 +492,7 @@ const MarketplacePage: React.FC = () => {
         {isAdmin && (
           <>
             <h3 className="text-2xl font-bold text-green-600 my-4 mt-6">
-              TKQC Đang thuê
+              {t('marketplacePage.rentedAccounts')}
             </h3>
             {rentedAccounts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -509,7 +511,7 @@ const MarketplacePage: React.FC = () => {
               </div>
             ) : (
               <div className="text-center text-gray-500 italic py-4">
-                Không có tài khoản nào đang được thuê.
+                {t('marketplacePage.noRentedAccounts')}
               </div>
             )}
           </>

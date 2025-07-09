@@ -237,6 +237,272 @@
     "text": "Page not found",
     "text2": "Sorry your page we can't not found",
     "text3": "Go Back"
+  },
+  "marketplacePage": {
+    "title": "BM Ad Accounts",
+    "syncAccounts": "Sync Accounts",
+    "createBM": "Create BM Account",
+    "bmList": "BM List",
+    "adAccountsWithCard": "Ad Accounts With Card",
+    "adAccountsWithoutCard": "Ad Accounts Without Card",
+    "rentedAccounts": "Rented Accounts",
+    "noAccountsWithoutCard": "No accounts without card.",
+    "noRentedAccounts": "No accounts are currently being rented.",
+    "fields": {
+      "id": "Account ID",
+      "accountStatus": "Account Status",
+      "amountSpent": "Amount Spent",
+      "balance": "Balance",
+      "currency": "Currency",
+      "name": "Account Name",
+      "spendCap": "Spend Cap",
+      "owner": "Owner",
+      "statusRented": "Rental Status",
+      "spendLimit": "Spend Limit",
+      "noteAka": "Note",
+      "active": "Active"
+    },
+    "errors": {
+      "fetchAdAccounts": "Error fetching ad account list",
+      "syncFailed": "Sync failed. Please try again.",
+      "deleteBMFailed": "Cannot delete BM account. Please try again later."
+    },
+    "success": {
+      "syncComplete": "Account synchronization successful",
+      "deleteBM": "BM account deleted successfully"
+    }
+  },
+  "cardDetailModal": {
+    "title": "Account Details",
+    "basicInfo": "Basic Information",
+    "financialInfo": "Financial Information",
+    "additionalInfo": "Additional Information",
+    "accountStatus": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "yes": "Yes",
+    "no": "No",
+    "noLimit": "No limit"
+  },
+  "adAccountCard": {
+    "personal": "Personal",
+    "bm": "BM",
+    "visa": "Visa",
+    "highLimit": "High Limit",
+    "lowLimit": "Low Limit",
+    "available": "Available",
+    "rented": "Rented",
+    "unavailable": "Unavailable",
+    "adAccountType": "Ad Account Type",
+    "withCard": "With Card",
+    "withoutCard": "Without Card",
+    "accountNumber": "Account Number",
+    "noCardInfo": "No card information",
+    "spendLimit": "Spend Limit",
+    "noLimit": "No limit",
+    "highQualityAccount": "High quality BM account, identity verified",
+    "rentNow": "Rent Now",
+    "viewDetails": "View Details"
+  },
+  "filter": {
+    "priceRange": "Price Range",
+    "accountType": "Account Type",
+    "withCard": "With Card",
+    "withoutCard": "Without Card",
+    "noLimit": "No Limit",
+    "close": "Close",
+    "viewResults": "View Results"
+  },
+  "rentalsPage": {
+    "title": "Rented Accounts",
+    "loading": "Loading data...",
+    "tabs": {
+      "processing": "Processing",
+      "success": "Success",
+      "failed": "Failed",
+      "completed": "Completed",
+      "all": "All"
+    },
+    "status": {
+      "processing": "Processing",
+      "success": "Success",
+      "failed": "Failed",
+      "completed": "Completed"
+    },
+    "startDate": "Start Date",
+    "requestedLimit": "Requested Limit",
+    "spentBudget": "Spent Budget",
+    "noLimit": "No limit",
+    "bmId": "BM ID",
+    "rentalPeriod": "Rental Period",
+    "spendLimit": "Spend Limit",
+    "spent": "Spent",
+    "remaining": "Remaining",
+    "refundAvailable": "Refund Available",
+    "refundUnusedPoints": "Refund unused points",
+    "buttons": {
+      "disable": "Disable",
+      "processing": "Processing",
+      "rentNow": "Rent Now"
+    },
+    "emptyState": {
+      "processing": "You don't have any accounts being rented.",
+      "success": "You don't have any active accounts.",
+      "all": "You haven't rented any accounts yet."
+    },
+    "modal": {
+      "title": "Account Details",
+      "loading": "Loading account details...",
+      "basicInfo": "Basic Information",
+      "accountId": "Account ID",
+      "accountName": "Account Name",
+      "accountStatus": "Account Status",
+      "statusActive": "Active",
+      "statusInactive": "Inactive",
+      "currency": "Currency",
+      "financialInfo": "Financial Information",
+      "amountSpent": "Amount Spent",
+      "balance": "Balance",
+      "spendCap": "Spend Cap",
+      "noLimit": "No limit",
+      "additionalInfo": "Additional Information",
+      "createdDate": "Created Date",
+      "timezone": "Timezone",
+      "accountType": "Account Type",
+      "personal": "Personal",
+      "business": "Business",
+      "bmName": "BM Name",
+      "notAvailable": "N/A",
+      "close": "Close",
+      "loadError": "Unable to load account details. Please try again later.",
+      "retry": "Retry"
+    },
+    "notifications": {
+      "setupInProgress": "Please wait a moment for the system to set up",
+      "disableSuccess": "Disabled successfully!",
+      "disableFailed": "Disable failed!",
+      "connectionError": "System connection error. Please try again!"
+    }
+  },
+  "paymentPage": {
+    "paymentGateway": "Payment Gateway",
+    "currentBalance": "Current Balance",
+    "points": "points",
+    "deposit": "Deposit",
+    "depositToSystem": "Deposit to System",
+    "enterAmount": "Enter Amount",
+    "selectDenomination": "Select Denomination",
+    "amountValidation": "Amount must be at least 50,000 VND and in multiples of 1,000 VND",
+    "amountMustBeAtLeast": "Amount must be at least 50,000 VND",
+    "transferInfo": "Transfer Information",
+    "bank": "Bank",
+    "accountNumber": "Account Number",
+    "accountName": "Account Name",
+    "transferContent": "Transfer Content",
+    "amount": "Amount",
+    "createDepositOrder": "Create Deposit Order",
+    "automaticDepositNote": "The system will automatically update your balance after the transfer is completed",
+    "qrCode": "QR Code for Payment",
+    "depositInstructions": "Deposit Instructions",
+    "generatingQR": "Generating QR code...",
+    "scanQRInstructions": "Scan this QR code with your banking app to make the payment automatically",
+    "qrExpires": "QR code expires in",
+    "step1Title": "Enter Amount",
+    "step1Description": "Choose or enter the amount you want to deposit",
+    "step2Title": "Create Deposit Order",
+    "step2Description": "Click the button to generate payment information",
+    "step3Title": "Make the Transfer",
+    "step3Description": "Transfer the exact amount with the provided content",
+    "step4Title": "Automatic Confirmation",
+    "step4Description": "Your balance will be updated automatically after the transfer is confirmed",
+    "selectPaymentMethod": "Select Payment Method",
+    "vietnameseDong": "Vietnamese Dong (VND)",
+    "bankTransfer": "Bank Transfer",
+    "usDollar": "US Dollar (USD)",
+    "cryptocurrency": "Cryptocurrency",
+    "comingSoon": "Coming Soon",
+    "featureInDevelopment": "This feature is in development",
+    "changePaymentMethod": "Change Payment Method",
+    "copied": "Copied",
+    "copiedToClipboard": "Copied to clipboard",
+    "error": "Error",
+    "enterValidAmount": "Please enter a valid amount",
+    "depositSuccess": "Deposit Order Created",
+    "pleaseTransfer": "Please transfer the exact amount with the provided content",
+    "errorOccurred": "Error Occurred",
+    "cannotCreateDeposit": "Cannot create deposit order. Please try again later",
+    "paypal": {
+      "title": "Pay with",
+      "description": "Secure and convenient international payment method",
+      "enterAmount": "Enter amount in USD",
+      "redirecting": "Redirecting to PayPal...",
+      "payWithPaypal": "Pay with PayPal",
+      "securePayment": "Secure payment processed by PayPal",
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "q1": "What is the minimum deposit amount?",
+        "a1": "The minimum deposit amount is $5 USD.",
+        "q2": "How long does it take to process the payment?",
+        "a2": "PayPal payments are usually processed instantly, but may take up to 24 hours in some cases.",
+        "q3": "What is the exchange rate?",
+        "a3": "We use the current market exchange rate at the time of transaction, with a small processing fee.",
+        "q4": "Can I get a refund?",
+        "a4": "Refunds can be processed within 30 days of the transaction. Please contact our support team."
+      },
+      "note": {
+        "title": "Important Note",
+        "content": "Please ensure your PayPal account is verified to avoid any payment issues. International transaction fees may apply depending on your country and bank."
+      }
+    },
+    "status": {
+      "processing": "Processing Payment",
+      "pleaseWait": "Please wait while we confirm your payment...",
+      "success": "Payment Successful",
+      "successMessage": "Your balance has been updated successfully!",
+      "failed": "Payment Failed",
+      "failedMessage": "We couldn't confirm your payment. Please try again or contact support.",
+      "tryAgain": "Try Again"
+    }
+  },
+  "adminTransactions": {
+    "title": {
+      "moneyTransactions": "Money Transactions Management",
+      "pointsTransactions": "Points Transactions Management"
+    },
+    "search": {
+      "placeholder": "Search by ID, amount, description..."
+    },
+    "buttons": {
+      "reset": "Reset",
+      "sync": "Sync",
+      "details": "Details",
+      "edit": "Edit"
+    },
+    "table": {
+      "headers": {
+        "id": "ID",
+        "amount": "Amount",
+        "date": "Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "completed": "Completed",
+        "pending": "Pending",
+        "failed": "Failed"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "items": "items"
+    }
+  },
+  "common": {
+    "sort": {
+      "asc": "ASC",
+      "desc": "DESC"
+    }
   }
-
 }

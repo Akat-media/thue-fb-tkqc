@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import NotiDropdown from '../icons/NotiDropdown';
 import { useOnOutsideClick } from '../../hook/useOutside';
 import { Slider } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 type ButtonCmpProps = {
   onClick?: (data: any) => void;
@@ -14,25 +15,29 @@ type ButtonCmpProps = {
   beforeIcon?: React.ReactNode;
 };
 
-const filterItems = [
-  { id: '1', label: 'Tài khoản đã gắn thẻ visa' },
-  { id: '2', label: 'Tài khoản chưa gắn thẻ' },
-  { id: '3', label: 'Tài khoản nolimit' },
-];
-const formatMoney = (value: number) => value.toLocaleString('vi-VN');
-const parseMoney = (str: string) => Number(str.replace(/\./g, '') || '0');
-
 const ButtonCmp: React.FC<ButtonCmpProps> = ({
   onClick,
   className = '',
-  label = 'Bộ lọc',
+  label,
   icon = <Filter className="h-5 w-5 text-gray-400" />,
   beforeIcon = <ChevronDown />,
   type = 'money',
 }) => {
+  const { t, i18n } = useTranslation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>(['1']);
   const { innerBorderRef } = useOnOutsideClick(() => setDropdownOpen(false));
+  const buttonLabel = label || (i18n.language === 'en' ? 'Filter' : 'Bộ lọc');
+
+  const filterItems = [
+    { id: '1', label: t('filter.withCard') },
+    { id: '2', label: t('filter.withoutCard') },
+    { id: '3', label: t('filter.noLimit') },
+  ];
+
+  const formatMoney = (value: number) => value.toLocaleString('vi-VN');
+  const parseMoney = (str: string) => Number(str.replace(/\./g, '') || '0');
+
   const toggleDropdown = () => {
     if (beforeIcon) {
       setDropdownOpen(!dropdownOpen);
@@ -77,7 +82,9 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
         }}
       >
         {icon}
-        <span className="ml-2 hidden whitespace-nowrap lg:inline">{label}</span>
+        <span className="ml-2 hidden whitespace-nowrap lg:inline">
+          {buttonLabel}
+        </span>
         {beforeIcon}
       </button>
 
@@ -89,9 +96,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
         >
           {type === 'money' && (
             <div>
-              <p className="price-title mb-3">
-                Hãy chọn mức giá phù hợp với bạn
-              </p>
+              <p className="price-title mb-3">{t('filter.priceRange')}</p>
               <div className="input-price ">
                 <div className="price-filter ">
                   <div className="price-input-group">
@@ -135,7 +140,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
               />
             </div>
           )}
-          <p className="price-title mb-3">Loại tài khoản</p>
+          <p className="price-title mb-3">{t('filter.accountType')}</p>
           <ul>
             {filterItems.map((item) => (
               <li key={item.id}>
@@ -161,7 +166,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
               className="button button__filter-children-close is-small is-danger is-light"
               onClick={() => setDropdownOpen(false)}
             >
-              Đóng
+              {t('filter.close')}
             </button>
 
             <button
@@ -173,7 +178,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
               }}
               className="button button__filter-children-submit is-small is-danger submit"
             >
-              Xem kết quả
+              {t('filter.viewResults')}
             </button>
           </div>
         </div>

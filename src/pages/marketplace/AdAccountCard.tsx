@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   CreditCard,
   Clock,
@@ -29,17 +30,22 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
   isAdmin = false,
   onViewDetail,
 }) => {
+  const { t } = useTranslation();
+
   const getAccountTypeLabel = (type: string) => {
-    return type === 'personal' ? 'Cá nhân' : 'BM';
+    return type === 'personal'
+      ? t('adAccountCard.personal')
+      : t('adAccountCard.bm');
   };
+
   const getLimitTypeLabel = (type: string) => {
     switch (type) {
       case 'visa':
-        return 'Visa';
+        return t('adAccountCard.visa');
       case 'high_limit':
-        return 'Limit cao';
+        return t('adAccountCard.highLimit');
       case 'low_limit':
-        return 'Limit thấp';
+        return t('adAccountCard.lowLimit');
       default:
         return type;
     }
@@ -61,13 +67,13 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'available':
-        return 'Có sẵn';
+        return t('adAccountCard.available');
       case 'rented':
-        return 'Đã thuê';
+        return t('adAccountCard.rented');
       case 'unavailable':
-        return 'Không khả dụng';
+        return t('adAccountCard.unavailable');
       default:
-        return 'Có sẵn';
+        return t('adAccountCard.available');
     }
   };
 
@@ -110,45 +116,53 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
               </span>
             </div>
             <div className="mt-4 space-y-3">
-              <div className="flex items-center text-sm">
-                <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
-                  <Briefcase className="h-4 w-4 text-gray-400" />
-                  Loại TKQC:
-                </span>
+              <div className="flex justify-between items-center text-sm">
+                <div className="flex items-center whitespace-nowrap">
+                  <Briefcase className="h-4 w-4 text-gray-400 mr-1" />
+                  <span className="text-gray-500 text-[16px]">
+                    {t('adAccountCard.adAccountType')}:
+                  </span>
+                </div>
                 <span className="text-gray-900 font-medium">
-                  {account?.is_visa_account ? 'Đã gắn thẻ' : 'Chưa gắn thẻ'}
+                  {account?.is_visa_account
+                    ? t('adAccountCard.withCard')
+                    : t('adAccountCard.withoutCard')}
                 </span>
               </div>
-              <div className="flex items-center text-sm">
-                <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
-                  <ShieldCheck className="h-4 w-4 text-gray-400" />
-                  Số tài khoản:
-                </span>
+              <div className="flex justify-between items-center text-sm">
+                <div className="flex items-center whitespace-nowrap">
+                  <ShieldCheck className="h-4 w-4 text-gray-400 mr-1" />
+                  <span className="text-gray-500 text-[16px]">
+                    {t('adAccountCard.accountNumber')}:
+                  </span>
+                </div>
                 <span className="text-gray-900 font-medium">
                   {account?.funding_source_details?.display_string ||
-                    'Chưa có thông tin thẻ'}
+                    t('adAccountCard.noCardInfo')}
                 </span>
               </div>
-              <div className="flex items-center text-sm">
-                <span className="text-gray-500 w-36 text-[16px] flex gap-1 items-center">
-                  <CreditCard className="h-4 w-4 text-gray-400" />
-                  Giới hạn chi:
-                </span>
+              <div className="flex justify-between items-center text-sm">
+                <div className="flex items-center whitespace-nowrap">
+                  <CreditCard className="h-4 w-4 text-gray-400 mr-1" />
+                  <span className="text-gray-500 text-[16px]">
+                    {t('adAccountCard.spendLimit')}:
+                  </span>
+                </div>
                 <span className="text-gray-900 font-medium">
                   {Number(account?.spend_cap)
                     ? `${Number(account.spend_cap).toLocaleString('vi-VN')} VNĐ`
-                    : 'No limit'}
+                    : t('adAccountCard.noLimit')}
                 </span>
               </div>
             </div>
             <div className="mt-4 text-sm text-gray-500 border-t pt-3">
               <p className="flex gap-1 items-center">
                 <CircleFadingPlus className="h-4 w-4 text-gray-400" />
-                TKQC BM chất lượng cao, đã verify danh tính
+                {t('adAccountCard.highQualityAccount')}
               </p>
             </div>
           </CardContent>
-          <CardFooter className=" relative z-10 px-6 py-4 flex gap-2">
+          <CardFooter className="relative z-10 px-6 py-4 flex gap-2">
             <Button
               className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm "
               fullWidth
@@ -158,17 +172,18 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
               }}
               icon={<CreditCard className="h-4 w-4" />}
             >
-              Thuê ngay
+              {t('adAccountCard.rentNow')}
             </Button>
             <Button
               className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm "
               fullWidth
               onClick={(e) => {
-                console.log('xem chi tiết');
+                e.stopPropagation();
+                onViewDetail?.(account);
               }}
               icon={<Search className="h-4 w-4" />}
             >
-              Xem chi tiết
+              {t('adAccountCard.viewDetails')}
             </Button>
           </CardFooter>
           <div className="absolute bottom-0 left-0 w-full">
