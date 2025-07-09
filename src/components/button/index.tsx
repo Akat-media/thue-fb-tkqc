@@ -18,15 +18,16 @@ type ButtonCmpProps = {
 const ButtonCmp: React.FC<ButtonCmpProps> = ({
   onClick,
   className = '',
-  label = 'Bộ lọc',
+  label,
   icon = <Filter className="h-5 w-5 text-gray-400" />,
   beforeIcon = <ChevronDown />,
   type = 'money',
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>(['1']);
   const { innerBorderRef } = useOnOutsideClick(() => setDropdownOpen(false));
+  const buttonLabel = label || (i18n.language === 'en' ? 'Filter' : 'Bộ lọc');
 
   const filterItems = [
     { id: '1', label: t('filter.withCard') },
@@ -81,7 +82,9 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
         }}
       >
         {icon}
-        <span className="ml-2 hidden whitespace-nowrap lg:inline">{label}</span>
+        <span className="ml-2 hidden whitespace-nowrap lg:inline">
+          {buttonLabel}
+        </span>
         {beforeIcon}
       </button>
 
