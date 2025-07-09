@@ -463,11 +463,11 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   </div>
                 </div>
               )}
-              {isVisaAccount === false && (
+              {!isVisaAccount && (
                 <div className="w-full">
                   <Form layout="vertical" className="w-full">
                     <FieldForm
-                      className="w-full sm:w-[400px]"
+                      className="w-full py-2"
                       type="rangeDate"
                       name="rentalRange"
                       label="Thời gian thuê (7-31 ngày)"

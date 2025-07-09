@@ -600,11 +600,13 @@ const SupportDashboard: React.FC = () => {
                     </span>
                   </button>
                   <div
-                    className={`faq-content ${
-                      activeIndex === index ? 'open' : ''
-                    } bg-gray-50 px-4 text-gray-600`}
+                    className={`faq-content transition-all duration-300 ease-in-out overflow-hidden ${
+                      activeIndex === index
+                        ? 'open max-h-96 opacity-100'
+                        : 'max-h-0 opacity-0'
+                    } bg-indigo-50 pl-4 text-indigo-800 text-sm leading-relaxed rounded-b-lg`}
                   >
-                    <div className="py-4">{item.answer}</div>
+                    <div className="py-4 pl-2">{item.answer}</div>
                   </div>
                 </li>
               ))}
