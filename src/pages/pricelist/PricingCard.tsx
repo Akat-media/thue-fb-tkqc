@@ -51,15 +51,15 @@ const PricingCard: React.FC<PricingCardProps> = ({
                 </div>
 
 
-                <div className="text-base font-medium text-gray-700 flex justify-between mb-10 mt-10">
+                <div className="text-base font-medium text-gray-700 flex gap-1 mb-10 mt-10 items-center">
                     {i18n.language === 'vi' ? (
-                        <div>Phí dịch vụ thuê</div>
+                        <div>Phí dịch vụ thuê:</div>
                     ) : (
                         <div>Rental service fee</div>
                     )}
 
                     { amount < 2000000000 && (
-                        <div>{percentage} %</div>
+                        <div className="font-bold text-lg text-green-500">{percentage}%</div>
                     )}
                 </div>
 

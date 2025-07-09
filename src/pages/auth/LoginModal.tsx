@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import AtomicSpinner from "atomic-spinner";
 import { Mail, Eye, EyeOff } from 'lucide-react';
+import {useTranslation} from "react-i18next";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -29,6 +30,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
+  const {t} = useTranslation();
+
   if (!isOpen) return null;
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -36,8 +39,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
     setLoading(true);
 
     const newErrors: { email?: string; password?: string } = {};
-    if (!email.trim()) newErrors.email = 'Vui lòng nhập email';
-    if (!password.trim()) newErrors.password = 'Vui lòng nhập mật khẩu';
+    if (!email.trim()) newErrors.email = t('modalHomepage.login.validateEmail');
+    if (!password.trim()) newErrors.password = t('modalHomepage.login.validatePassword');
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -64,7 +67,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
       }
     } catch (err: any) {
       toast.error(
-        err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại'
+        err.response?.data?.message || t('modalHomepage.login.error')
       );
     } finally {
       setLoading(false);
@@ -77,7 +80,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
     setLoading(true);
 
     const newErrors: { email?: string } = {};
-    if (!email.trim()) newErrors.email = 'Vui lòng nhập email';
+    if (!email.trim()) newErrors.email =  t('modalHomepage.login.validateEmail');
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -92,12 +95,12 @@ const LoginModal: React.FC<LoginModalProps> = ({
         baseURL: BaseUrl,
         data: { email },
       });
-      toast.success('Email đặt lại mật khẩu đã được gửi!');
+      toast.success(t('modalHomepage.login.toastSuccess'));
       setIsForgotPassword(false); // Quay lại form đăng nhập
       setEmail(''); // Xóa email sau khi gửi
     } catch (err: any) {
       toast.error(
-        err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại'
+        err.response?.data?.message || t('modalHomepage.login.error')
       );
     } finally {
       setLoading(false);
@@ -131,12 +134,13 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-2">
-            {isForgotPassword ? 'Quên mật khẩu' : 'Đăng nhập'}
+            {isForgotPassword ? t('modalHomepage.login.forgotPassword') : t('modalHomepage.login.title')}
           </h2>
           <p className="text-sm text-gray-500 mb-6">
             {isForgotPassword
-              ? 'Nhập email để nhận liên kết đặt lại mật khẩu'
-              : 'Chào mừng bạn quay lại với AKA Media'}
+              ? t('modalHomepage.login.subTitle2')
+              : t('modalHomepage.login.subTitle')
+            }
           </p>
 
           {/*<form onSubmit={handleSubmit} className="space-y-4">*/}
@@ -175,7 +179,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                   htmlFor="password"
                   className="block text-sm font-medium text-blue-600"
                 >
-                  Mật khẩu
+                  {t('modalHomepage.login.password')}
                 </label>
                 <div className="relative mt-1">
                   <input
@@ -208,7 +212,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
             <div className="text-right text-sm text-blue-600 hover:underline cursor-pointer">
               <span onClick={() => setIsForgotPassword(!isForgotPassword)}>
-                {isForgotPassword ? 'Quay lại đăng nhập' : 'Quên mật khẩu?'}
+                {isForgotPassword ? t('modalHomepage.login.backToLogin') : t('modalHomepage.login.forgotPassword')}
               </span>
             </div>
 
@@ -240,15 +244,15 @@ const LoginModal: React.FC<LoginModalProps> = ({
                   />
                 </svg>
               ) : isForgotPassword ? (
-                'Gửi yêu cầu'
+                t('modalHomepage.login.sendRequest')
               ) : (
-                'Đăng nhập'
+               t('modalHomepage.login.title')
               )}
             </button>
 
             {!isForgotPassword && (
               <div className="text-center text-sm mt-2">
-                Bạn chưa có tài khoản?{' '}
+                {t('modalHomepage.login.footer1')}{' '}
                 <span
                   onClick={() => {
                     if (onSwitchToRegister) {
@@ -260,7 +264,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                   }}
                   className="text-blue-600 hover:underline cursor-pointer"
                 >
-                  Tạo tài khoản ngay
+                  {t('modalHomepage.login.footer2')}
                 </span>
               </div>
             )}

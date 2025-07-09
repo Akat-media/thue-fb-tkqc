@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import React, { useState } from 'react';
+import { Mail, Eye, EyeOff } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useNotification } from '../../context/NotificationContext';
+// import { useNotification } from '../../context/NotificationContext';
 // import axios from "axios";
 import BaseHeader, { BaseUrl } from '../../api/BaseHeader';
 import AtomicSpinner from 'atomic-spinner';
 import { useUserStore } from '../../stores/useUserStore';
-import ForgotPasswordModal from './ForgotPasswordModal.tsx';
+// import ForgotPasswordModal from './ForgotPasswordModal.tsx';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import loginimg from '../../public/login.jpg';
@@ -78,24 +78,54 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: { email?: string } = {};
+    if (!email.trim()) {
+      newErrors.email = 'Vui lòng nhập email';
+      setErrors(newErrors);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await BaseHeader({
+        method: 'post',
+        url: '/forgot-password',
+        baseURL: BaseUrl,
+        data: { email },
+      });
+      toast.success('Email đặt lại mật khẩu đã được gửi!');
+      setShowForgotPassword(false); // Quay lại login
+      setEmail('');
+    } catch (err: any) {
+      toast.error(
+          err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: `url(${loginimg})` }}
     >
       <img
+        onClick={() => navigate('/')}
         src={logo1}
         alt="Logo"
-        className="absolute top-0 left-6 w-52 h-59 object-contain z-20 mt-6"
+        className="absolute top-0 left-6 w-52 h-59 object-contain z-20 mt-6 cursor-pointer"
       />
 
       <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-lg shadow-xl p-8 z-10">
         <div className="mb-6">
           <h1
             className="relative inline-block text-3xl font-bold text-[#0f172a] 
-    before:content-[''] before:absolute before:-right-3 before:-left-1 before:inset-x-0 before:bottom-0 before:h-1/2 
-    before:bg-gradient-to-r before:from-[#6cffd8] before:to-[#c1f4ff] 
-    before:-z-10"
+              before:content-[''] before:absolute before:-right-3 before:-left-1 before:inset-x-0 before:bottom-0 before:h-1/2
+              before:bg-gradient-to-r before:from-[#6cffd8] before:to-[#c1f4ff]
+              before:-z-10"
           >
             Đăng nhập
           </h1>
@@ -104,7 +134,11 @@ const LoginPage: React.FC = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form
+            onSubmit={showForgotPassword ? handleForgotPasswordSubmit : handleSubmit}
+            className="space-y-4"
+        >
+          {/*tai khoan field*/}
           <div>
             <label className="block text-sm font-semibold uppercase text-black mb-1">
               Tài khoản
@@ -124,6 +158,8 @@ const LoginPage: React.FC = () => {
             )}
           </div>
 
+          {/*mat khau field*/}
+          {!showForgotPassword && (
           <div>
             <label className="block text-sm font-semibold uppercase text-black mb-1">
               Mật khẩu
@@ -152,18 +188,32 @@ const LoginPage: React.FC = () => {
               <p className="text-sm text-red-500 mt-1">{errors.password}</p>
             )}
           </div>
+          )}
 
           <div className="text-sm text-left">
-            <Link to="#" className="text-[#42e1b6] hover:underline">
-              Quên mật khẩu?
-            </Link>
+            {!showForgotPassword ? (
+                <span
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-[#42e1b6] hover:underline cursor-pointer"
+                >
+                  Quên mật khẩu?
+                </span>
+              ) : (
+                <span
+                    onClick={() => setShowForgotPassword(false)}
+                    className="text-[#42e1b6] hover:underline cursor-pointer"
+                >
+                  Quay lại đăng nhập
+                </span>
+              )
+            }
           </div>
 
           <button
             type="submit"
             className="w-full py-2 bg-[#0a1f38] text-white rounded-full font-semibold hover:bg-[#062b57] transition"
           >
-            Đăng nhập
+            {showForgotPassword ? 'Gửi yêu cầu' : 'Đăng nhập'}
           </button>
         </form>
 

@@ -8,6 +8,9 @@ import AtomicSpinner from 'atomic-spinner';
 import { Mail, User, Phone, Eye, EyeOff } from 'lucide-react';
 import { useUserStore } from '../../stores/useUserStore.ts';
 import { useNavigate } from 'react-router-dom';
+import {usePageStore} from "../../stores/usePageStore.ts";
+import {useTranslation} from "react-i18next";
+
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -42,25 +45,31 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
   const navigate = useNavigate();
   const setUser = useUserStore((state) => state.setUser);
 
+  const {t} = useTranslation();
+
+  const { formatDateToVN } = usePageStore();
   if (!isOpen) return null;
 
   const validateForm = (): boolean => {
     const newErrors: typeof errors = {};
-    if (!name) newErrors.name = 'Họ tên là bắt buộc';
-    if (!email) newErrors.email = 'Email là bắt buộc';
+    if (!name) newErrors.name = t('modalHomepage.register.errorName');
+    if (!email) newErrors.email = t('modalHomepage.register.errorEmail');
     else if (!/\S+@\S+\.\S+/.test(email))
-      newErrors.email = 'Email không hợp lệ';
-    if (!phone) newErrors.phone = 'Số điện thoại là bắt buộc';
+      newErrors.email = t('modalHomepage.register.errorEmail2');
+    if (!phone) newErrors.phone = t('modalHomepage.register.errorPhone');
     else if (!/^[0-9]{10}$/.test(phone))
-      newErrors.phone = 'Số điện thoại phải có 10 chữ số';
-    if (!password) newErrors.password = 'Mật khẩu là bắt buộc';
+      newErrors.phone = t('modalHomepage.register.errorPhone2');
+    if (!password) newErrors.password = t('modalHomepage.register.errorPassword');
     else if (password.length < 6)
-      newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+      newErrors.password = t('modalHomepage.register.notePassword');
     if (password !== confirmPassword)
-      newErrors.confirmPassword = 'Mật khẩu xác nhận không khớp';
+      newErrors.confirmPassword = t('modalHomepage.register.errorConfirmPassword');
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  const now = new Date().toISOString();
+  const createdTime = formatDateToVN(now);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,6 +107,17 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
         localStorage.setItem('refresh_token', refresh_token);
         localStorage.setItem('user', JSON.stringify(userData));
         setUser(loginRes.data.data);
+
+        await BaseHeader({
+          method: 'post',
+          url: '/register-success',
+          baseURL: BaseUrl,
+          data: {
+            email: email,
+            createdTime: createdTime
+          }
+        })
+
         navigate('/');
 
         onClose();
@@ -106,7 +126,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           onRegisterSuccess();
         }
       } else {
-        toast.error(registerRes.data.message || 'Đăng ký thất bại');
+        toast.error(registerRes.data.message || t('modalHomepage.register.failedRegister'));
       }
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -114,14 +134,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
       if (error.response?.data?.message) {
         const errorMessage = error.response.data.message;
 
-        if (errorMessage === 'Email đã tồn tại') {
-          setErrors({ email: 'Email đã tồn tại. Vui lòng nhập email khác.' });
+        if (errorMessage ===  t('modalHomepage.register.existedEmail')) {
+          setErrors({ email: t('modalHomepage.register.existedEmail2')});
           setEmail('');
         } else {
-          toast.error(errorMessage || 'Đăng ký thất bại');
+          toast.error(errorMessage || t('modalHomepage.register.failedRegister'));
         }
       } else {
-        toast.error('Có lỗi xảy ra trong quá trình đăng ký');
+        toast.error(t('modalHomepage.register.errorCommon'));
       }
     } finally {
       setLoading(false);
@@ -148,10 +168,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-2xl font-semibold text-blue-600 mb-2">
-            Tạo Tài Khoản Mới
+            {t('modalHomepage.register.title')}
           </h2>
           <p className="text-sm text-gray-500 mb-6">
-            Đăng ký ngay để sử dụng các dịch vụ của AKAds.
+            {t('modalHomepage.register.subtitle')}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -160,7 +180,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 htmlFor="name"
                 className="block text-sm font-semibold text-blue-600"
               >
-                Họ tên <span className="text-red-500">(*)</span>
+                {t('modalHomepage.register.name')} <span className="text-red-500">(*)</span>
               </label>
               <div className="relative mt-1">
                 <input
@@ -168,7 +188,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="P Nguyễn"
+                  placeholder={t('modalHomepage.register.name')}
                   className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400 pr-10"
                 />
                 <User className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -206,7 +226,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 htmlFor="phone"
                 className="block text-sm font-semibold text-blue-600"
               >
-                Số điện thoại <span className="text-red-500">(*)</span>
+                {t('modalHomepage.register.phone')} <span className="text-red-500">(*)</span>
               </label>
               <div className="relative mt-1">
                 <input
@@ -229,7 +249,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 htmlFor="password"
                 className="block text-sm font-semibold text-blue-600"
               >
-                Mật khẩu <span className="text-red-500">(*)</span>
+                {t('modalHomepage.register.password')} <span className="text-red-500">(*)</span>
               </label>
               <div className="relative mt-1">
                 <input
@@ -258,7 +278,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 <p className="text-sm text-red-500 mt-1">{errors.password}</p>
               ) : (
                 <p className="text-xs text-gray-400 mt-1">
-                  Mật khẩu tối thiểu 6 ký tự.
+                  {t('modalHomepage.register.notePassword')}
                 </p>
               )}
             </div>
@@ -268,7 +288,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 htmlFor="confirmPassword"
                 className="block text-sm font-semibold text-blue-600"
               >
-                Xác nhận mật khẩu <span className="text-red-500">(*)</span>
+                {t('modalHomepage.register.confirmPassword')} <span className="text-red-500">(*)</span>
               </label>
               <div className="relative mt-1">
                 <input
@@ -300,7 +320,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               )}
               {!errors.confirmPassword && (
                 <p className="text-xs text-gray-400 mt-1">
-                  Nhập lại mật khẩu để xác nhận.
+                  {t('modalHomepage.register.notePassword2')}
                 </p>
               )}
             </div>
@@ -310,7 +330,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 htmlFor="referral_code"
                 className="block text-sm font-semibold text-blue-600"
               >
-                Nhập mã giới thiệu
+                {t('modalHomepage.register.codeIntroduce')}
               </label>
               <div className="relative mt-1">
                 <input
@@ -318,7 +338,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   id="referral_code"
                   value={referral_code}
                   onChange={(e) => setReferral_code(e.target.value)}
-                  placeholder="Nhập mã giới thiệu"
+                  placeholder= {t('modalHomepage.register.codeIntroduce')}
                   className="mt-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-400 pr-10"
                 />
               </div>
@@ -327,11 +347,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   {errors.referral_code}
                 </p>
               )}
-              {!errors.referral_code && (
-                <p className="text-xs text-gray-400 mt-1">
-                  Nhập lại mật khẩu để xác nhận.
-                </p>
-              )}
+              {/*{!errors.referral_code && (*/}
+              {/*  <p className="text-xs text-gray-400 mt-1">*/}
+              {/*    {t('modalHomepage.register.notePassword2')}*/}
+              {/*  </p>*/}
+              {/*)}*/}
             </div>
 
             <button
@@ -362,12 +382,12 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   />
                 </svg>
               ) : (
-                'Đăng ký'
+                  t('modalHomepage.register.buttonRegister')
               )}
             </button>
 
             <div className="text-center text-sm mt-2">
-              Đã có tài khoản?{' '}
+              {t('modalHomepage.register.hadAccount')}{' '}
               <span
                 onClick={() => {
                   if (onSwitchToLogin) {
@@ -378,7 +398,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 }}
                 className="text-blue-600 hover:underline cursor-pointer"
               >
-                Đăng nhập
+                 {t('modalHomepage.register.login')}
               </span>
             </div>
           </form>
