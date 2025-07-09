@@ -56,7 +56,7 @@ function AppRoutes() {
   const location = useLocation();
   const is404 = usePageStore((state) => state.is404);
   const hideNavbarRoutes = ['/', '/dashboard', '/login', '/register'];
-  const isHideNavbar = hideNavbarRoutes.includes(location.pathname);
+  const isHideNavbar = hideNavbarRoutes.includes(location.pathname) || is404;
 
   useEffect(() => {
     const savedLang = localStorage.getItem('languageChoose');
