@@ -342,7 +342,7 @@ const MarketplacePage: React.FC = () => {
     currency: t('marketplacePage.fields.currency'),
     name: t('marketplacePage.fields.name'),
     spend_cap: t('marketplacePage.fields.spendCap'),
-    owner: t('marketplacePage.fields.owner'),
+    end_advertiser_name: t('marketplacePage.fields.end_advertiser_name'),
     status_rented: t('marketplacePage.fields.statusRented'),
     spend_limit: t('marketplacePage.fields.spendLimit'),
     note_aka: t('marketplacePage.fields.noteAka'),

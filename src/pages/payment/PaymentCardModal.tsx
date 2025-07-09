@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ArrowLeft } from 'lucide-react';
+import { X, ArrowLeft, Eye, EyeOff} from 'lucide-react';
 import { useEffect } from 'react';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
@@ -23,6 +23,7 @@ const PaymentCardModal: React.FC<Props> = ({
   const [cvv, setCvv] = useState('');
   const [saveCard, setSaveCard] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -186,17 +187,30 @@ const PaymentCardModal: React.FC<Props> = ({
               <label className="block text-base font-medium text-gray-700 mb-1">
                 CVV <span className="text-red-500">*</span>
               </label>
-              <input
-                type="password"
-                value={cvv}
-                onChange={(e) => {
-                  const raw = e.target.value.replace(/\D/g, '').slice(0, 4);
-                  setCvv(raw);
-                }}
-                className="w-full border border-gray-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="•••"
-                inputMode="numeric"
-              />
+              <div className='relative'>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={cvv}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/\D/g, '').slice(0, 4);
+                    setCvv(raw);
+                  }}
+                  className="w-full border border-gray-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="•••"
+                  inputMode="numeric"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                >
+                  {showPassword ? (
+                    <Eye className="h-5 w-5" />
+                  ) : (
+                    <EyeOff className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
               {errors.cvv && (
                 <div className="text-red-500 text-xs mt-1">{errors.cvv}</div>
               )}

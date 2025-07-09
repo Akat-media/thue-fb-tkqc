@@ -43,6 +43,13 @@ import { useEffect } from 'react';
 import NotFoundPage from './pages/404/NotFoundPage.tsx';
 import {usePageStore} from "./stores/usePageStore.ts";
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [pathname]);
+  return null;
+};
 function AppRoutes() {
   const userobj = useUserStore((state) => state.user);
   const { i18n } = useTranslation();
@@ -50,13 +57,7 @@ function AppRoutes() {
   const is404 = usePageStore((state) => state.is404);
   const hideNavbarRoutes = ['/', '/dashboard', '/login', '/register'];
   const isHideNavbar = hideNavbarRoutes.includes(location.pathname) || is404;
-  const ScrollToTop = () => {
-    const { pathname } = useLocation();
-    useEffect(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, [pathname]);
-    return null;
-  };
+
   useEffect(() => {
     const savedLang = localStorage.getItem('languageChoose');
     if (savedLang && savedLang !== i18n.language) {
@@ -71,7 +72,7 @@ function AppRoutes() {
     <NotificationProvider>
       {!isHideNavbar && <Navbar />}
       <Layout role={userobj?.role}>
-        <ScrollToTop />
+        <ScrollToTop/>
         <Routes>
           {/* Route công khai: Không yêu cầu đăng nhập */}
           <Route path="/login" element={<LoginPage />} />

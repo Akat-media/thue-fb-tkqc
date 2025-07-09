@@ -66,7 +66,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     amount: number;
     percentage: number;
   } | null>(null);
-
+  const { fetchNotifications } = useNotificationStore();
   const isVisaAccount = account?.is_visa_account;
   const { user, fetchUser } = useUserStore();
 
@@ -203,7 +203,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         //   content: 'Tài khoản đã thuê thành công hãy khám phá các tính năng',
         //   type: 'success',
         // });
-        // await fetchNotifications(userParse.user_id || '');
+        await fetchNotifications(userParse.user_id || '');
         onClose();
         // toast.success('Thuê tài khoản thành công!');
       } else {
