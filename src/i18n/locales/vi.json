@@ -126,6 +126,48 @@
     "title3": "Tin Tưởng Và Lựa Chọn",
     "content": "Được phát triển bởi AKA Media – đơn vị tiên phong trong lĩnh vực quảng cáo số, AKAds cung cấp dịch vụ cho thuê tài khoản Facebook uy tín, tự hào được đồng hành cùng 5.000+ khách hàng trong suốt hơn 8 năm qua, mang đến giải pháp quảng cáo hiệu quả, ổn định và tối ưu chi phí."
   },
+  "modalHomepage": {
+    "login": {
+      "title": "Đăng nhập",
+      "subTitle": "Chào mừng bạn quay lại với AKA Media",
+      "subTitle2": "Nhập email để nhận liên kết đặt lại mật khẩu",
+      "password": "Mật khẩu",
+      "forgotPassword": "Quên mật khẩu?",
+      "footer1": "Bạn chưa có tài khoản?",
+      "footer2": "Tạo tài khoản ngay",
+      "validateEmail": "Vui lòng nhập email",
+      "validatePassword": "Vui lòng nhập mật khẩu",
+      "error": "Có lỗi xảy ra, vui lòng thử lại",
+      "toastSuccess": "Email đặt lại mật khẩu đã được gửi!",
+      "backToLogin": "Quay lại đăng nhập",
+      "sendRequest": "Gửi yêu cầu"
+    },
+    "register": {
+      "title": "Tạo Tài Khoản Mới",
+      "subtitle": "Đăng ký ngay để sử dụng các dịch vụ của AKAds.",
+      "name": "Họ tên",
+      "phone": "Số điện thoại",
+      "password": "Mật khẩu",
+      "confirmPassword": "Xác nhận mật khẩu",
+      "codeIntroduce": "Nhập mã giới thiệu",
+      "errorName": "Họ tên là bắt buộc",
+      "errorEmail": "Email là bắt buộc",
+      "errorEmail2": "Email không hợp lệ",
+      "errorPhone": "Số điện thoại là bắt buộc",
+      "errorPhone2": "Số điện thoại phải có 10 chữ số",
+      "errorPassword": "Mật khẩu là bắt buộc",
+      "notePassword": "Mật khẩu tối thiểu 6 ký tự.",
+      "notePassword2": "Nhập lại mật khẩu để xác nhận",
+      "errorConfirmPassword": "Mật khẩu xác nhận không khớp",
+      "buttonRegister": "Đăng ký",
+      "hadAccount": "Đã có tài khoản?",
+      "login": "Đăng nhập",
+      "failedRegister": "Đăng ký thất bại",
+      "existedEmail": "Email đã tồn tại",
+      "existedEmail2": "Email đã tồn tại. Vui lòng nhập email khác.",
+      "errorCommon": "Có lỗi xảy ra trong quá trình đăng ký"
+    }
+  },
   "supportPage": {
     "header": {
       "header1": "Trung tâm hỗ trợ",

@@ -126,6 +126,48 @@
     "title3": "Trust and Choice",
     "content": "Developed by AKA Media - a pioneer in the field of digital advertising, AKAds provides a reputable Facebook account rental service, proudly accompanying 5,000+ customers over the past 8 years, providing effective, stable and cost-optimized advertising solutions."
   },
+  "modalHomepage": {
+    "login": {
+      "title": "Log In",
+      "subTitle": "Welcome back to AKA Media",
+      "subTitle2": "Enter email to receive password reset link",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "footer1": "You do not have an account yet?",
+      "footer2": "Create account now",
+      "validateEmail": "Please enter email",
+      "validatePassword": "Please enter password",
+      "error": "An error occurred, please try again.",
+      "toastSuccess": "Password reset email has been sent!",
+      "backToLogin": "Back to login",
+      "sendRequest": "Send request"
+    },
+    "register": {
+      "title": "Create New Account",
+      "subtitle": "Sign up now to use AKAds services.",
+      "name": "Full Name",
+      "phone": "Phone",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "codeIntroduce": "Enter referral code",
+      "errorName": "Full name is required",
+      "errorEmail": "Email is required",
+      "errorEmail2": "Invalid email",
+      "errorPhone": "Phone is required",
+      "errorPhone2": "Phone number must be 10 digits",
+      "errorPassword": "Password is required",
+      "notePassword": "Password must be at least 6 characters.",
+      "notePassword2": "Re-enter password to confirm",
+      "errorConfirmPassword": "Confirmation password does not match",
+      "buttonRegister": "Register",
+      "hadAccount": "Already have an account?",
+      "login": "Log In",
+      "failedRegister": "Registration failed",
+      "existedEmail": "Existed email",
+      "existedEmail2": "Email already exists. Please enter another email.",
+      "errorCommon": "An error occurred during registration."
+    }
+  },
   "supportPage": {
     "header": {
       "header1": "Support Center",

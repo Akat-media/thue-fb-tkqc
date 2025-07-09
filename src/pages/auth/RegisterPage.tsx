@@ -5,10 +5,11 @@ import { useNotification } from '../../context/NotificationContext';
 import { BaseUrl } from '../../api/BaseHeader';
 import BaseHeader from '../../api/BaseHeader';
 import AtomicSpinner from 'atomic-spinner';
-import registerimg from '../../public/sand.jpg';
+// import registerimg from '../../public/sand.jpg';
 import axios from 'axios';
 import logo1 from '/public/logo.png';
 import loginimg from '../../public/login.jpg';
+import {usePageStore} from "../../stores/usePageStore.ts";
 
 const RegisterPage: React.FC = () => {
   // const [isOpen, setIsOpen] = useState(true);
@@ -31,6 +32,8 @@ const RegisterPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { addNotification } = useNotification();
   const navigate = useNavigate();
+
+  const { formatDateToVN } = usePageStore();
 
   const validateForm = (): boolean => {
     const newErrors: typeof errors = {};
@@ -68,6 +71,19 @@ const RegisterPage: React.FC = () => {
           code: referral_code ? referral_code : undefined,
         },
       });
+
+      const now = new Date().toISOString();
+      const createdTime = formatDateToVN(now);
+      await BaseHeader({
+        method: 'post',
+        url: '/register-success',
+        baseURL: BaseUrl,
+        data: {
+          email: email,
+          createdTime: createdTime
+        }
+      })
+
       if (registerRes.status === 200) {
         setIsLoading(false);
         addNotification(
@@ -125,9 +141,10 @@ const RegisterPage: React.FC = () => {
       style={{ backgroundImage: `url(${loginimg})` }}
     >
       <img
+        onClick={() => navigate('/')}
         src={logo1}
         alt="Logo"
-        className="absolute top-0 left-6 w-52 h-59 object-contain z-20 mt-6"
+        className="absolute top-0 left-6 w-52 h-59 object-contain z-20 mt-6 cursor-pointer"
       />
 
       <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-lg shadow-xl p-8 z-10">
