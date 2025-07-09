@@ -150,12 +150,10 @@ const PolicyManagement: React.FC = () => {
             </div>
           ) : (
             <>
-              {/* {editingPolicy ? (
+              {editingPolicy && editingIndex === -1 ? (
                 <div className="bg-white p-6 rounded-lg shadow-md mb-8">
                   <h3 className="text-lg text-blue-900 font-semibold mb-4">
-                    {editingPolicy.id
-                      ? 'Chỉnh sửa chính sách'
-                      : 'Thêm chính sách mới'}
+                    Thêm chính sách mới
                   </h3>
 
                   <div className="mb-4">
@@ -205,7 +203,7 @@ const PolicyManagement: React.FC = () => {
                     </Button>
                   </div>
                 </div>
-              ) : null} */}
+              ) : null}
 
               {policies.length === 0 ? (
                 <div className="bg-white p-8 rounded-lg shadow-md text-center">

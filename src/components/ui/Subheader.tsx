@@ -1,27 +1,33 @@
-import styled from "styled-components";
-import img from "../../assets/bg-money-info-mb.png";
-import avatar from "../../../public/avatar.jpg";
-import { Dispatch, SetStateAction } from "react";
-import { useUserStore } from "../../stores/useUserStore";
+import styled from 'styled-components';
+import img from '../../assets/bg-money-info-mb.png';
+import avatar from '../../../public/avatar.jpg';
+import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useUserStore } from '../../stores/useUserStore';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n/index.ts';
+
 interface Props {
   active: string;
   setActive: Dispatch<SetStateAction<string>>;
 }
+
 const Subheader = ({ active, setActive }: Props) => {
   const userobj = useUserStore((state) => state.user);
+  const { t } = useTranslation();
+
   return (
     <Container img={img}>
       <div className="bg-info mb-5 w-full justify-between rounded-lg p-2 sm:p-4 md:p-6 flex flex-col md:flex-row gap-2 md:gap-4">
         <div className="flex flex-col md:flex-row w-full md:w-auto">
           <a
             className="relative flex min-w-0 sm:min-w-[200px] md:min-w-[200px] flex-col justify-between"
-            href={userobj?.role === "admin" ? "/admin/profile" : "/profile"}
+            href={userobj?.role === 'admin' ? '/admin/profile' : '/profile'}
           >
             <div className="flex flex-row">
               <div className="flex flex-row">
                 <span
                   className="rounded-full ant-avatar ant-avatar-circle ant-avatar-icon shrink-1 !h-10 !w-10 sm:!h-[50px] sm:!w-[50px] md:!h-[60px] md:!w-[60px] !m-[5px] !text-[20px] sm:!text-[24px] md:!text-[28px] css-1k979oh"
-                  style={{ backgroundColor: "rgb(184, 184, 184)" }}
+                  style={{ backgroundColor: 'rgb(184, 184, 184)' }}
                 >
                   <img className="rounded-full" src={avatar} alt="avatar" />
                 </span>
@@ -100,7 +106,7 @@ const Subheader = ({ active, setActive }: Props) => {
             className="hidden md:block mx-2 md:mx-3 h-[50px] md:h-[60px] w-[1px]"
             style={{
               background:
-                "linear-gradient(90deg, rgb(1, 171, 77) 0%, rgb(1, 171, 77) 42.52%, rgb(1, 171, 77) 100%)",
+                'linear-gradient(90deg, rgb(1, 171, 77) 0%, rgb(1, 171, 77) 42.52%, rgb(1, 171, 77) 100%)',
             }}
           />
           <div className="text-secondv2-green1 text-[13px] sm:text-[15px] md:text-[16px] items-left justify-left flex min-w-[90px] sm:min-w-[120px] md:min-w-[150px] flex-col gap-y-1 md:gap-y-2 font-normal mt-2 md:mt-0">
@@ -118,21 +124,22 @@ const Subheader = ({ active, setActive }: Props) => {
                 />
               </svg>
               <span className="text-[#FFDA55] text-[15px] sm:text-[16px] md:text-[18px] font-medium leading-6">
-                Số dư
+                {i18n.language === 'en' ? 'Balance' : 'Số dư'}
               </span>
             </div>
             <strong className="text-[#FFDA55] text-[13px] sm:text-[15px] md:text-[16px] text-left font-bold leading-6">
-              {userobj?.points?.toLocaleString("vi-VN")} điểm
+              {userobj?.points?.toLocaleString('vi-VN')}{' '}
+              {i18n.language === 'en' ? 'points' : 'điểm'}
             </strong>
           </div>
         </div>
         <div className="flex gap-2 sm:gap-4 md:gap-4 overflow-visible">
           <a
             onClick={() => {
-              setActive("money");
+              setActive('money');
             }}
             className={`${
-              active === "money" ? "bg-[#FFDA55] " : "bg-white "
+              active === 'money' ? 'bg-[#FFDA55] ' : 'bg-white '
             }text-pri-darkest text-[12px] sm:text-[13px] md:text-[13px] border-right-border-pc 
             relative flex h-[40px] sm:h-[44px] md:h-[58px] min-w-[70px] sm:min-w-[80px] md:min-w-[80px] flex-col items-center rounded-lg
               py-1 font-bold leading-6`}
@@ -192,14 +199,14 @@ const Subheader = ({ active, setActive }: Props) => {
                 strokeLinejoin="round"
               />
             </svg>
-            Nạp tiền
+            {i18n.language === 'en' ? 'Money' : 'Nạp tiền'}
           </a>
           <a
             onClick={() => {
-              setActive("points");
+              setActive('points');
             }}
             className={`${
-              active === "points" ? "bg-[#FFDA55] " : "bg-white "
+              active === 'points' ? 'bg-[#FFDA55] ' : 'bg-white '
             }text-pri-darkest text-[12px] sm:text-[13px] md:text-[13px] border-right-border-pc 
                       relative flex h-[40px] sm:h-[44px] md:h-[58px] min-w-[70px] sm:min-w-[80px] md:min-w-[80px] flex-col items-center rounded-lg
                         py-1 font-bold leading-6`}
@@ -249,7 +256,7 @@ const Subheader = ({ active, setActive }: Props) => {
                 strokeLinejoin="round"
               />
             </svg>
-            Đổi điểm
+            {i18n.language === 'en' ? 'Points' : 'Đổi điểm'}
           </a>
         </div>
       </div>

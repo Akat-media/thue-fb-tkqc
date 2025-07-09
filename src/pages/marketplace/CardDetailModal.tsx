@@ -1,6 +1,6 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 import {
   User,
   CreditCard,
@@ -13,14 +13,15 @@ import {
   TrendingUp,
   Shield,
   AlertTriangle,
-} from "lucide-react"
-import { useEffect } from "react"
+} from 'lucide-react';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ModalProps {
-  isOpen: boolean
-  setIsAdDetailOpen: (open: boolean) => void
-  selectedAdAccountDetail: any
-  fieldNameMap: any
+  isOpen: boolean;
+  setIsAdDetailOpen: (open: boolean) => void;
+  selectedAdAccountDetail: any;
+  fieldNameMap: any;
 }
 
 const CardDetailModal: React.FC<ModalProps> = ({
@@ -29,6 +30,8 @@ const CardDetailModal: React.FC<ModalProps> = ({
   selectedAdAccountDetail,
   fieldNameMap,
 }) => {
+  const { t } = useTranslation();
+
   // Prevent scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -63,7 +66,7 @@ const CardDetailModal: React.FC<ModalProps> = ({
           </button>
           <h2 className="text-xl lg:text-2xl  font-bold flex items-center gap-3">
             <User className="w-6 h-6" />
-            Thông tin chi tiết tài khoản
+            {t('cardDetailModal.title')}
           </h2>
         </div>
 
@@ -77,7 +80,7 @@ const CardDetailModal: React.FC<ModalProps> = ({
             >
               <h3 className="text-lg font-semibold text-slate-600 mb-4 flex items-center gap-2">
                 <CreditCard className="w-5 h-5 text-slate-500" />
-                Thông tin cơ bản
+                {t('cardDetailModal.basicInfo')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {['account_id', 'name', 'account_status', 'active'].map(
@@ -87,9 +90,13 @@ const CardDetailModal: React.FC<ModalProps> = ({
 
                     if (field === 'account_status') {
                       displayValue =
-                        value === 1 ? 'Hoạt động' : 'Không hoạt động';
+                        value === 1
+                          ? t('cardDetailModal.accountStatus.active')
+                          : t('cardDetailModal.accountStatus.inactive');
                     } else if (field === 'active') {
-                      displayValue = value ? 'Có' : 'Không';
+                      displayValue = value
+                        ? t('cardDetailModal.yes')
+                        : t('cardDetailModal.no');
                     }
 
                     return (
@@ -153,7 +160,7 @@ const CardDetailModal: React.FC<ModalProps> = ({
             >
               <h3 className="text-lg font-semibold text-emerald-600 mb-4 flex items-center gap-2">
                 <Wallet className="w-5 h-5 text-emerald-500" />
-                Thông tin tài chính
+                {t('cardDetailModal.financialInfo')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {['amount_spent', 'balance', 'spend_cap', 'spend_limit'].map(
@@ -209,7 +216,7 @@ const CardDetailModal: React.FC<ModalProps> = ({
                         </div>
                         <p className="text-xl font-bold">
                           {field === 'spend_cap' && value === 0
-                            ? 'Không giới hạn'
+                            ? t('cardDetailModal.noLimit')
                             : formattedValue}
                         </p>
                       </div>
@@ -226,7 +233,7 @@ const CardDetailModal: React.FC<ModalProps> = ({
             >
               <h3 className="text-lg font-semibold text-slate-600 mb-4 flex items-center gap-2">
                 <FileText className="w-5 h-5 text-slate-500" />
-                Thông tin bổ sung
+                {t('cardDetailModal.additionalInfo')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {['currency', 'owner', 'status_rented', 'note_aka'].map(
@@ -268,6 +275,6 @@ const CardDetailModal: React.FC<ModalProps> = ({
       </div>
     </div>
   );
-}
+};
 
-export default CardDetailModal
+export default CardDetailModal;

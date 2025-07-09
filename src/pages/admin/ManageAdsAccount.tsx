@@ -1,3 +1,5 @@
+//Role Admin quản lý giao dịch
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { useOnOutsideClick } from '../../hook/useOutside';
 import { format } from 'date-fns';

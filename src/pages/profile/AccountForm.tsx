@@ -199,14 +199,14 @@ const AccountForm: React.FC = () => {
           register={register}
           error={errors.phone?.message}
         />
-        <FloatingInput
+        {/* <FloatingInput
           label="Phần trăm"
           name="percentage"
           type="number"
           register={register}
           error={errors.percentage?.message}
           readOnly={true}
-        />
+        /> */}
         <FloatingInput
           label="Điểm"
           name="points"
