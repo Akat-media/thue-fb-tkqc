@@ -40,14 +40,16 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
+import NotFoundPage from './pages/404/NotFoundPage.tsx';
+import {usePageStore} from "./stores/usePageStore.ts";
 
 function AppRoutes() {
   const userobj = useUserStore((state) => state.user);
   const { i18n } = useTranslation();
   const location = useLocation();
-  // Các route KHÔNG hiển thị Navbar
+  const is404 = usePageStore((state) => state.is404);
   const hideNavbarRoutes = ['/', '/dashboard', '/login', '/register'];
-  const isHideNavbar = hideNavbarRoutes.includes(location.pathname);
+  const isHideNavbar = hideNavbarRoutes.includes(location.pathname) || is404;
   const ScrollToTop = () => {
     const { pathname } = useLocation();
     useEffect(() => {
@@ -116,6 +118,7 @@ function AppRoutes() {
             <Route path="/ticket" element={<TicketPage />} />
             <Route path="/paypal-verify" element={<Paypal />} />
           </Route>
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Layout>
     </NotificationProvider>
@@ -132,4 +135,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

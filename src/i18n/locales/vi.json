@@ -232,5 +232,10 @@
       "successMessage2": "Yêu cầu hỗ trợ của bạn đã được gửi. Chúng tôi sẽ phản hồi trong thời gian sớm nhất.",
       "successMessage3": "Gửi yêu cầu khác"
     }
+  },
+  "404": {
+    "text": "Không tìm thấy trang",
+    "text2": "Xin lỗi trang của bạn chúng tôi không thể tìm thấy",
+    "text3": "Quay Lại"
   }
 }
