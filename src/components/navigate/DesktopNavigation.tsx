@@ -38,6 +38,9 @@ export default function DesktopNavigation({
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const navRef = useRef<HTMLDivElement>(null);
   const { openNotification, notificationsList, overlaySize } = useNotificationStore();
+  // Thêm ref cho phần tử active
+  const activeElementRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -53,8 +56,34 @@ export default function DesktopNavigation({
     };
   }, []);
   useEffect(() => {
+    const handleResize = () => {
+      updateIndicator();
+    };
     updateIndicator();
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, [activeItem]);
+
+  // ResizeObserver cho phần tử active
+  useEffect(() => {
+    // Cập nhật ref mỗi khi activeItem thay đổi
+    if (navRef.current) {
+      activeElementRef.current = navRef.current.querySelector(
+        `[data-key="${activeItem}"]`
+      ) as HTMLElement;
+    }
+    if (!activeElementRef.current) return;
+    const observer = new window.ResizeObserver(() => {
+      updateIndicator();
+    });
+    observer.observe(activeElementRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [activeItem, navRef.current]);
 
   const updateIndicator = () => {
     if (navRef.current) {
@@ -221,7 +250,6 @@ export default function DesktopNavigation({
               <div className="flex items-center justify-evenly relative z-10">
                 {NAV_ITEMS.map((item, index) => {
                   const isActive = activeItem === item.key;
-                  console.log('activeItem', activeItem);
                   return (
                     <Link
                       to={item.url}

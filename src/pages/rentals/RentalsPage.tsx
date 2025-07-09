@@ -372,19 +372,16 @@ const RentalsPage: React.FC = () => {
     }
   };
 
-  //an scroll
   useEffect(() => {
     if (showModal) {
-      document.body.classList.add('overflow-hidden');
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.classList.remove('overflow-hidden');
+      document.body.style.overflow = 'unset';
     }
-
     return () => {
-      document.body.classList.remove('overflow-hidden');
+      document.body.style.overflow = 'unset';
     };
   }, [showModal]);
-
   return (
     <>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -46,7 +46,8 @@ const Sidebar: React.FC<{
     location.pathname === '/add-account' ||
     location.pathname === '/admin/account' ||
     location.pathname === '/admin/policy' ||
-    location.pathname === '/admin/princing';
+    location.pathname === '/admin/princing' || 
+    location.pathname === '/admin/voucher'
   const [openAdsSubmenu, setOpenAdsSubmenu] = useState(isAdsMenuActive);
   const toggleProfileMenu = () => setOpenProfileMenu(!openProfileMenu);
 
