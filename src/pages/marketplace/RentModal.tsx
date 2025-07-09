@@ -353,9 +353,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
           </CardHeader>
           <CardContent>
             {isVisaAccount == null && (
-              <div className="p-4 text-red-600 bg-red-100 rounded-md text-sm">
-                Loại tài khoản không xác định. Vui lòng liên hệ quản trị viên để
-                được hỗ trợ.
+              <div className="p-4 text-green-600 bg-green-100 rounded-md text-sm mb-2">
+                Loại tài khoản này quý khách tự gắn thẻ vào tài khoản quảng cáo
               </div>
             )}
 
