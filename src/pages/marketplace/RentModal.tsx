@@ -69,7 +69,6 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
   const isVisaAccount = account?.is_visa_account;
   const { user, fetchUser } = useUserStore();
-  const {fetchNotifications , handleAddNotification} = useNotificationStore();
 
   const { innerBorderRef } = useOnOutsideClick(() => {
     if (isOpen) onClose();
@@ -198,15 +197,15 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
       if (response.status === 200 && response.data.success) {
         setSuccessRent(response.data.message);
-        await handleAddNotification({
-          user_id:  userParse.user_id || '', 
-          title: `Bạn đã thuê thành công tài khoản ${account?.name}`, 
-          content:"Tài khoản đã thuê thành công hãy khám phá các tính năng", 
-          type:"success", 
-        })
-        await fetchNotifications(userParse.user_id || '');
+        // await handleAddNotification({
+        //   user_id: userParse.user_id || '',
+        //   title: `Bạn đã thuê thành công tài khoản ${account?.name}`,
+        //   content: 'Tài khoản đã thuê thành công hãy khám phá các tính năng',
+        //   type: 'success',
+        // });
+        // await fetchNotifications(userParse.user_id || '');
         onClose();
-        toast.success('Thuê tài khoản thành công!');
+        // toast.success('Thuê tài khoản thành công!');
       } else {
         toast.error(response.data.message || 'Không thể thuê tài khoản.');
       }
@@ -263,7 +262,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     } else {
       setUserBmId('');
       setSelectedVoucher('');
-      setRequestedLimit(null)
+      setRequestedLimit(null);
     }
   }, [isOpen, isVisaAccount]);
 
@@ -406,7 +405,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     max={account.defaultLimit * 2}
                     step={50000}
                     value={requestedLimit === null ? '' : requestedLimit}
-                    placeholder='0 VNĐ'
+                    placeholder="0 VNĐ"
                     onChange={(e) => {
                       const value = e.target.value;
                       if (value === '') {
@@ -609,7 +608,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     </p>
                   )}
                   <p className="text-gray-500 mt-2 text-[16px] font-semibold">
-                    Phí dịch vụ: {' '}
+                    Phí dịch vụ:{' '}
                     <span className="text-blue-600">
                       {serviceFee.toLocaleString('vi-VN')} VNĐ
                     </span>
@@ -628,21 +627,21 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
             {user && (
               <div>
-                <div className='flex justify-between'>
-                <span className="text-[16px] sm:text-[18px] font-semibold ">
-                  Số dư:{' '}
-                </span>
-                <span
-                  className={`font-medium text-[18px] ${
-                    (user.points ?? 0) < totalBill
-                      ? 'text-red-600'
-                      : 'text-green-600'
-                  }`}
-                >
-                  {user.points != null
-                    ? user.points.toLocaleString('vi-VN') + ' VNĐ'
-                    : 'Đang tải...'}
-                </span>
+                <div className="flex justify-between">
+                  <span className="text-[16px] sm:text-[18px] font-semibold ">
+                    Số dư:{' '}
+                  </span>
+                  <span
+                    className={`font-medium text-[18px] ${
+                      (user.points ?? 0) < totalBill
+                        ? 'text-red-600'
+                        : 'text-green-600'
+                    }`}
+                  >
+                    {user.points != null
+                      ? user.points.toLocaleString('vi-VN') + ' VNĐ'
+                      : 'Đang tải...'}
+                  </span>
                 </div>
                 {(user.points ?? 0) < totalBill && (
                   <div className="mt-2 text-red-600">

@@ -353,8 +353,10 @@ const RentalsPage: React.FC = () => {
       });
 
       const { success, message } = response.data;
-      if (success) toast.success(message || 'Vô hiệu hóa thành công!');
-      else toast.error('Vô hiệu hóa thất bại!');
+      if (success) {
+        fetchRentals();
+        // toast.success('Vô hiệu hóa thành công!');
+      } else toast.error('Vô hiệu hóa thất bại!');
     } catch (error: any) {
       const errorMessage =
         error?.response?.data?.message ||
