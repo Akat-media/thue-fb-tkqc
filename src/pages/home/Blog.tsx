@@ -94,7 +94,7 @@ const Blog = () => {
     }, [articlesCount, newsArticles.length]);
 
     return (
-        <div className="py-8 md:py-12 md:pt-24 md:pb-16 bg-blue-50">
+        <div className="py-8 md:pb-16 bg-blue-50">
             <style>{`
                 .fade-transition {
                     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -116,7 +116,7 @@ const Blog = () => {
             `}</style>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex mb-8 gap-3 items-center">
+                <div className="flex mb-8 gap-3 ">
                     <div className="w-[107px] h-[52px] gap-[10px] rounded-[60px] border border-solid border-black p-[20px] flex flex-row items-center justify-between">
                         <div className="w-[12px] h-[12px] rounded-full bg-cyan-400 border-4 border-cyan-400"></div>
                         <div className="font-hubot font-normal md:text-[16px] text-[14px]">BLOG</div>
