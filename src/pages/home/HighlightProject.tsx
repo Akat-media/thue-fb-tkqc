@@ -5,7 +5,7 @@ const HighlightProject = () => {
     const { t } = useTranslation();
 
     return (
-        <div className="py-8 md:py-12 md:pt-24 md:pb-16 bg-[#F5FAFF]">
+        <div className="py-6 md:pb-16 bg-[#F5FAFF]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header section */}
                 <div className="flex flex-col md:flex-row md:justify-between mb-8 space-y-4 md:space-y-0">

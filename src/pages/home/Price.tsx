@@ -72,10 +72,10 @@ const Price = () => {
     ];
 
     return (
-        <div className="py-8 md:py-12 md:pt-24 md:pb-16 bg-[#F5FAFF]">
+        <div className="py-8 bg-[#F5FAFF]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header section */}
-                <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 space-y-4 md:space-y-0">
+                <div className="flex flex-col md:flex-row md:justify-between  mb-8 space-y-4 md:space-y-0">
                     <div className="inline-flex h-[52px] gap-[10px] rounded-[60px] border border-solid border-black p-[20px] items-center">
                         <div className="w-[12px] h-[12px] rounded-full bg-cyan-400 border-4 border-cyan-400"></div>
                         <div className="font-hubot font-normal text-[14px] md:text-[16px] whitespace-nowrap">
@@ -95,8 +95,8 @@ const Price = () => {
                 </div>
 
                 {/*slide*/}
-                <div className="slider-container  md:py-8 py-0">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-10 max-w-7xl mx-auto">
+                <div className="slider-container md:pt-8 py-0">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
                         {data.map((plan, index) => (
                             <PricingCardSecond
                                 key = {index}
