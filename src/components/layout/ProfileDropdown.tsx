@@ -23,7 +23,7 @@ export const ProfileDropdown: React.FC<{
               {user?.email || 'email@example.com'}
             </p>
             <p className="font-semibold text-green-600 mt-1">
-              {user?.points?.toLocaleString('vi-VN')} {t('profile.points')}
+              {user?.points?.toLocaleString('vi-VN')} {t('profile.menu.points')}
             </p>
           </div>
         </div>
@@ -36,7 +36,7 @@ export const ProfileDropdown: React.FC<{
               to="/profile"
               className="flex items-start justify-start py-2 min-w-36 text-sm text-gray-700 hover:bg-gray-100"
             >
-              <User className="mr-2 h-4 w-4" /> {t('profile.account')}
+              <User className="mr-2 h-4 w-4" /> {t('profile.menu.account')}
             </Link>
           ),
         },
@@ -47,7 +47,7 @@ export const ProfileDropdown: React.FC<{
               to="/ticket"
               className="flex items-center py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
-              <TicketPercent className="mr-2 h-4 w-4" /> {t('profile.voucher')}
+              <TicketPercent className="mr-2 h-4 w-4" /> {t('profile.menu.voucher')}
             </Link>
           ),
         },
@@ -58,7 +58,7 @@ export const ProfileDropdown: React.FC<{
               to="/payments"
               className="flex items-center py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
-              <CreditCard className="mr-2 h-4 w-4" /> {t('profile.deposit')}
+              <CreditCard className="mr-2 h-4 w-4" /> {t('profile.menu.deposit')}
             </Link>
           ),
         },

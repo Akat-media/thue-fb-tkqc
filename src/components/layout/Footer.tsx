@@ -53,6 +53,7 @@ const Footer: React.FC = () => {
                 <div className="font-hubot text-[20px] font-[700]">
                   {t('footer.serviceTitle')}
                 </div>
+                <div className="flex flex-col gap-2">
                 <a
                   href="/marketplace"
                   className="font-hubot font-[500] flex flex-row text-white px-2 pt-2 hover:underline"
@@ -97,11 +98,13 @@ const Footer: React.FC = () => {
                   />
                   {t('footer.services.accountManagement')}
                 </a>
+                </div>
               </div>
               <div className="md:pl-8 mb-5 md:mb-0">
                 <div className="font-hubot text-[20px] font-[700]">
                   {t('footer.supportTitle')}
                 </div>
+                <div className="flex flex-col gap-2">
                 <a
                   href="/support"
                   className="font-hubot font-[500] flex flex-row text-white px-2 pt-2 hover:underline"
@@ -135,6 +138,7 @@ const Footer: React.FC = () => {
                   />
                   {t('footer.support.privacy')}
                 </a>
+                </div>
               </div>
             </div>
           </div>

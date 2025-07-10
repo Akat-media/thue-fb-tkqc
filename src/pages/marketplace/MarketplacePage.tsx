@@ -527,6 +527,7 @@ const MarketplacePage: React.FC = () => {
             skipCardStep={selectedAccount?.is_visa_account === true}
             setRentMeta={setRentMeta}
             rentMeta={rentMeta}
+            handleCallAPiVisa={handleCallAPiVisa}
           />
         )}
 

@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { BaseUrl } from "../../api/BaseHeader";
 import BaseHeader from "../../api/BaseHeader";
 import { useUserStore } from "../../stores/useUserStore";
+import { useTranslation } from "react-i18next";
 
 const AccountSidebar: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -13,7 +14,7 @@ const AccountSidebar: React.FC = () => {
   useEffect(() => {
     updateAvatarFromStorage();
   }, []);
-
+  const { t } = useTranslation();
   const updateAvatarFromStorage = () => {
     try {
       const userStr = localStorage.getItem("user");
@@ -117,26 +118,26 @@ const AccountSidebar: React.FC = () => {
           />
         </div>
         <p className="text-sm text-center text-gray-500 mb-6">
-          Cho phép ảnh *.jpeg, *.jpg, *.png, *.gif <br />
-          Dung lượng tối đa 3 Mb
+          {t('profile.avatar.avatarHint1')} <br />
+          {t('profile.avatar.avatarHint2')}
         </p>
         <button
           className={`w-full ${
             isLoading
-              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-              : "bg-red-100 text-red-600 hover:bg-red-200"
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              : 'bg-red-100 text-red-600 hover:bg-red-200'
           } font-semibold py-2 px-4 rounded-lg transition`}
           onClick={handleButtonClick}
           type="button"
           disabled={isLoading}
         >
-          {isLoading ? "Đang xử lý..." : "Đổi ảnh đại diện"}
+          {isLoading ? t('profile.avatar.loading') : t('profile.avatar.changeAvatar')}
         </button>
         <input
           type="file"
           accept="image/*"
           ref={fileInputRef}
-          style={{ display: "none" }}
+          style={{ display: 'none' }}
           onChange={handleFileChange}
         />
       </div>

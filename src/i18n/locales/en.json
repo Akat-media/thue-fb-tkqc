@@ -11,10 +11,90 @@
     "logout": "Logout"
   },
   "profile": {
-    "points": "points",
-    "account": "Account",
-    "voucher": "Voucher",
-    "deposit": "Deposit"
+    "menu": {
+      "home": "Home",
+      "points": "Points",
+      "account": "Account",
+      "voucher": "Voucher",
+      "deposit": "Deposit",
+      "info": "General Info",
+      "changePassword": "Change Password",
+      "giveHistory": "Point Giving History",
+      "receiveHistory": "Point Receiving History"
+    },
+    "form": {
+      "info": "Information",
+      "username": "Username",
+      "email": "Email",
+      "phone": "Phone number",
+      "points": "Points",
+      "referralCode": "Referral Code",
+      "copy": "Copy",
+      "saveChanges": "Save changes"
+    },
+    "avatar": {
+      "avatarHint1": "Allowed image types: *.jpeg, *.jpg, *.png, *.gif",
+      "avatarHint2": "Maximum file size: 3 Mb",
+      "changeAvatar": "Change avatar",
+      "loading": "Processing..."
+    },
+    "history": {
+      "username": "Sender",
+      "email": "Sender Email",
+      "points": "Points",
+      "toUser": "Recipient",
+      "toUserEmail": "Recipient Email",
+      "accountType": "Account Type",
+      "account": {
+        "main": "Main",
+        "sub": "Sub"
+      },
+      "mainAccount": "Main Account",
+      "subAccount": "Sub Account"
+    },
+    "givePointModal": {
+      "title": "Give Points",
+      "okText": "Confirm",
+      "cancelText": "Cancel",
+      "rule":"The point must be the positive number",
+      "placeholder": "Enter points"
+    },
+    "changeTypeAccount": {
+      "title": "Confirm Account Type Change",
+      "okText": "Confirm",
+      "cancelText": "Cancel",
+      "question": "Which account type do you want to switch to?",
+      "placeholder": "Select account type",
+      "main": "Main Account (MAIN)",
+      "sub": "Sub Account (SUB)"
+    },
+    "button": {
+      "givePoint": "Give points",
+      "changeType": "Change account type"
+    },
+    "password": {
+      "old": "Old Password",
+      "new": "New Password",
+      "confirm": "Confirm New Password",
+      "placeholder": {
+        "old": "Old Password",
+        "new": "New Password",
+        "confirm": "Confirm New Password"
+      },
+      "button": "Save Changes",
+      "validate": {
+        "oldRequired": "Old password is required",
+        "newMin": "New password must be at least 6 characters",
+        "confirmMismatch": "Passwords do not match",
+        "sameAsOld": "New password must not be the same as old password"
+      },
+      "toast": {
+        "noUserId": "User ID not found in localStorage!",
+        "success": "Password updated successfully!",
+        "defaultError": "An error occurred while updating the password!",
+        "wrongPassword": "Incorrect current password"
+      }
+    }
   },
   "nav": {
     "home": "Home",
@@ -541,10 +621,54 @@
       "items": "items"
     }
   },
+  "rentModal": {
+    "title": "Rent account",
+    "infoAlert": "You will attach the card to the ad account yourself.",
+    "accountLabel": "Account:",
+    "bmIdLabel": "Your BM ID",
+    "bmIdPlaceholder": "Example: 123456789",
+    "bmIdError": "BM ID must be a valid ID and cannot be empty",
+    "bmIdHelper": "BM ID is needed for access permission",
+    "limitLabel": "Requested spending limit (VND)",
+    "limitPlaceholder": "0 VND",
+    "limitError": "Amount must be greater than 10,000 VND",
+    "limitHelper": "Amount must be greater than 10,000 VND",
+    "limitDisplay": "Limit:",
+    "rentalLabel": "Rental period (7-31 days)",
+    "rentalError": "Rental period must be between 7 and 31 days.",
+    "rentalSelectError": "Please select a rental period.",
+    "paymentMethodLabel": "Select payment method",
+    "voucherLabel": "Select voucher",
+    "noVoucher": "-- Do not use voucher --",
+    "paymentDetails": "Payment details",
+    "serviceNote": "* Service fees are based on account limits. Refer to pricing or support for more info.",
+    "limitFee": "Limit increase fee",
+    "voucherDiscount": "Voucher discount:",
+    "serviceFee": "Service fee:",
+    "totalPayment": "Total payment:",
+    "userBalance": "Balance:",
+    "notEnoughBalance": "Insufficient balance to rent this account. Please top up.",
+    "cancel": "Cancel",
+    "confirm": "Confirm rental"
+  },
+  "notificationSidebar": {
+    "title": "Notifications",
+    "count": "{{count}} notifications",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "No notifications",
+    "noNotificationsDesc": "New notifications will appear here",
+    "markRead": "Mark as read",
+    "delete": "Delete",
+    "deleting": "Deleting..."
+  },
   "common": {
     "sort": {
       "asc": "ASC",
       "desc": "DESC"
+    },
+    "button":{
+      "confirm": "Xác nhận",
+      "cancel": "Hủy"
     }
   }
 }

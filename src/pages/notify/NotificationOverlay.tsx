@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Bell, X, CheckCircle, Settings, User, AlertCircle, Gift } from 'lucide-react';
 import { Notification, useNotificationStore } from '../../stores/notificationStore';
+import { useTranslation } from 'react-i18next';
 
 const NotificationOverlay: React.FC = () => {
   const {
@@ -11,6 +12,7 @@ const NotificationOverlay: React.FC = () => {
     handleDeletedNotification,
     closeNotification,
   } = useNotificationStore();
+  const { t } = useTranslation();
   const user = localStorage.getItem('user');
   // State to track notifications being deleted for animation
   const [deletingNotifications, setDeletingNotifications] = useState<Set<string>>(new Set());
@@ -162,20 +164,24 @@ const NotificationOverlay: React.FC = () => {
                 <Bell className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
                 <div>
                   <h2 className="text-lg sm:text-xl font-semibold">
-                    Thông báo
+                    {t('notificationSidebar.title')}
                   </h2>
                   <p className="text-blue-100 text-xs sm:text-sm">
-                    {notificationsList.length} thông báo
+                    {t('notificationSidebar.count', {
+                      count: notificationsList.length,
+                    })}
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-1 sm:space-x-2">
                 {unreadCount > 0 && (
                   <button
-                    onClick={() => markAllAsRead(JSON.parse(user || '').user_id)}
+                    onClick={() =>
+                      markAllAsRead(JSON.parse(user || '').user_id)
+                    }
                     className="bg-white bg-opacity-20 hover:bg-opacity-30 px-2 py-1 sm:px-3 sm:py-1 rounded-lg text-xs sm:text-sm transition-colors duration-200"
                   >
-                    Đánh dấu tất cả đã đọc
+                    {t('notificationSidebar.markAllRead')}
                   </button>
                 )}
                 <button
@@ -192,18 +198,20 @@ const NotificationOverlay: React.FC = () => {
                 <div className="flex flex-col items-center justify-center h-64 text-gray-500">
                   <Bell className="w-10 h-10 sm:w-12 sm:h-12 mb-4 opacity-50" />
                   <p className="text-base sm:text-lg font-medium">
-                    Không có thông báo nào
+                    {t('notificationSidebar.noNotifications')}
                   </p>
                   <p className="text-xs sm:text-sm">
-                    Các thông báo mới sẽ xuất hiện ở đây
+                    {t('notificationSidebar.noNotificationsDesc')}
                   </p>
                 </div>
               ) : (
                 <div className="p-3 sm:p-4 space-y-2 sm:space-y-3 h-[calc(100vh-75px)] md:h-[calc(100vh-100px)] overflow-y-auto">
                   {notificationsData.map((notification, index) => {
                     const style = getNotificationStyle(notification.type);
-                    const isDeleting = deletingNotifications.has(notification.id);
-                    
+                    const isDeleting = deletingNotifications.has(
+                      notification.id
+                    );
+
                     return (
                       <div
                         key={notification.id}
@@ -255,7 +263,7 @@ const NotificationOverlay: React.FC = () => {
                                       }
                                       className="text-xs text-blue-600 hover:text-blue-800 font-medium"
                                     >
-                                      Đánh dấu đã đọc
+                                      {t('notificationSidebar.markRead')}
                                     </button>
                                   )}
                                   {notification.is_read && (
@@ -270,7 +278,9 @@ const NotificationOverlay: React.FC = () => {
                                           : ''
                                       }`}
                                     >
-                                      {isDeleting ? 'Đang xóa...' : 'Xóa'}
+                                      {isDeleting
+                                        ? t('notificationSidebar.deleting')
+                                        : t('notificationSidebar.delete')}
                                     </button>
                                   )}
                                 </div>
@@ -289,43 +299,43 @@ const NotificationOverlay: React.FC = () => {
       )}
 
       <style>{`
-                @keyframes slideInRight {
-                  from {
-                    opacity: 0;
-                    transform: translateX(30px);
-                  }
-                  to {
-                    opacity: 1;
-                    transform: translateX(0);
-                  }
-                }
-                
-                .notification-deleting {
-                  animation: deleteNotification 0.3s ease-out forwards !important;
-                }
-                
-                @keyframes deleteNotification {
-                  0% {
-                    opacity: 1;
-                    transform: translateX(0) scale(1);
-                    max-height: 200px;
-                    margin-bottom: 12px;
-                  }
-                  50% {
-                    opacity: 0.5;
-                    transform: translateX(-20px) scale(0.95);
-                    max-height: 100px;
-                    margin-bottom: 6px;
-                  }
-                  100% {
-                    opacity: 0;
-                    transform: translateX(-100px) scale(0.8);
-                    max-height: 0;
-                    margin-bottom: 0;
-                    padding: 0;
-                  }
-                }
-            `}</style>
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .notification-deleting {
+      animation: deleteNotification 0.3s ease-out forwards !important;
+    }
+
+    @keyframes deleteNotification {
+      0% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+        max-height: 200px;
+        margin-bottom: 12px;
+      }
+      50% {
+        opacity: 0.5;
+        transform: translateX(-20px) scale(0.95);
+        max-height: 100px;
+        margin-bottom: 6px;
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-100px) scale(0.8);
+        max-height: 0;
+        margin-bottom: 0;
+        padding: 0;
+      }
+    }
+  `}</style>
     </>
   );
 };

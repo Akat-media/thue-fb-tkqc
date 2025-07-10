@@ -11,10 +11,90 @@
     "logout": "Đăng xuất"
   },
   "profile": {
-    "points": "Điểm",
-    "account": "Tài khoản",
-    "voucher": "Voucher",
-    "deposit": "Nạp tiền"
+    "menu": {
+      "home": "Trang chủ",
+      "points": "Điểm",
+      "account": "Tài khoản",
+      "voucher": "Voucher",
+      "deposit": "Nạp tiền",
+      "info": "Thông tin chung",
+      "changePassword": "Đổi mật khẩu",
+      "giveHistory": "Lịch sử tặng điểm",
+      "receiveHistory": "Lịch sử nhận điểm"
+    },
+    "form": {
+      "info": "Thông tin",
+      "username": "Tên người dùng",
+      "email": "Email",
+      "phone": "Số điện thoại",
+      "points": "Điểm",
+      "referralCode": "Mã giới thiệu",
+      "copy": "Sao chép",
+      "saveChanges": "Lưu thay đổi"
+    },
+    "avatar": {
+      "avatarHint1": "Cho phép ảnh *.jpeg, *.jpg, *.png, *.gif",
+      "avatarHint2": "Dung lượng tối đa 3 Mb",
+      "changeAvatar": "Đổi ảnh đại diện",
+      "loading": "Đang xử lý..."
+    },
+    "history": {
+      "username": "Người gửi",
+      "email": "Email người gửi",
+      "points": "Số điểm",
+      "toUser": "Người nhận",
+      "toUserEmail": "Email người nhận",
+      "accountType": "Loại tài khoản",
+      "account": {
+        "main": "Chính",
+        "sub": "Phụ"
+      },
+      "mainAccount": "Tài khoản chính",
+      "subAccount": "Tài khoản phụ"
+    },
+    "givePointModal": {
+      "title": "Tặng điểm",
+      "okText": "Xác nhận",
+      "cancelText": "Hủy",
+      "rule":"Điểm phải là số dương",
+      "placeholder": "Nhập số điểm"
+    },
+    "changeTypeAccount": {
+      "title": "Xác nhận đổi tài khoản",
+      "okText": "Xác nhận",
+      "cancelText": "Hủy",
+      "question": "Bạn có muốn đổi sang loại tài khoản nào?",
+      "placeholder": "Chọn loại tài khoản",
+      "main": "Tài khoản chính (MAIN)",
+      "sub": "Tài khoản phụ (SUB)"
+    },
+    "button": {
+      "givePoint": "Tặng điểm",
+      "changeType": "Đổi loại tài khoản"
+    },
+    "password": {
+      "old": "Mật khẩu cũ",
+      "new": "Mật khẩu mới",
+      "confirm": "Nhập lại mật khẩu mới",
+      "placeholder": {
+        "old": "Mật khẩu cũ",
+        "new": "Mật khẩu mới",
+        "confirm": "Xác nhận mật khẩu mới"
+      },
+      "button": "Lưu thay đổi",
+      "validate": {
+        "oldRequired": "Mật khẩu cũ không được để trống",
+        "newMin": "Mật khẩu mới phải có ít nhất 6 ký tự",
+        "confirmMismatch": "Mật khẩu xác nhận không khớp",
+        "sameAsOld": "Mật khẩu mới không được trùng với mật khẩu cũ"
+      },
+      "toast": {
+        "noUserId": "Không tìm thấy ID người dùng trong localStorage!",
+        "success": "Cập nhật mật khẩu thành công!",
+        "defaultError": "Có lỗi xảy ra khi cập nhật mật khẩu!",
+        "wrongPassword": "Nhập sai mật khẩu hiện tại"
+      }
+    }
   },
   "nav": {
     "home": "Trang chủ",
@@ -541,10 +621,54 @@
       "items": "mục"
     }
   },
+  "rentModal": {
+    "title": "Thuê tài khoản",
+    "infoAlert": "Loại tài khoản này quý khách tự gắn thẻ vào tài khoản quảng cáo",
+    "accountLabel": "Tài khoản:",
+    "bmIdLabel": "BM ID của bạn",
+    "bmIdPlaceholder": "Ví dụ: 123456789",
+    "bmIdError": "BM ID phải là chuỗi ID và không được để trống",
+    "bmIdHelper": "BM ID để chúng tôi cấp quyền truy cập",
+    "limitLabel": "Hạn mức chi tiêu yêu cầu (VNĐ)",
+    "limitPlaceholder": "0 VNĐ",
+    "limitError": "Số tiền phải lớn hơn 10.000 VNĐ",
+    "limitHelper": "Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ",
+    "limitDisplay": "Hạn mức:",
+    "rentalLabel": "Thời gian thuê (7-31 ngày)",
+    "rentalError": "Thời gian thuê phải từ 7 đến 31 ngày.",
+    "rentalSelectError": "Vui lòng chọn thời gian thuê.",
+    "paymentMethodLabel": "Chọn hình thức thanh toán",
+    "voucherLabel": "Chọn voucher",
+    "noVoucher": "-- Không sử dụng voucher --",
+    "paymentDetails": "Chi tiết thanh toán",
+    "serviceNote": "* Phí dịch vụ được tính dựa trên giới hạn chi tiêu của tài khoản. Vui lòng tham khảo bảng giá hoặc liên hệ hỗ trợ.",
+    "limitFee": "Phí tăng limit",
+    "voucherDiscount": "Giảm giá từ voucher:",
+    "serviceFee": "Phí dịch vụ:",
+    "totalPayment": "Tổng thanh toán:",
+    "userBalance": "Số dư:",
+    "notEnoughBalance": "Số dư không đủ để thuê tài khoản này. Vui lòng nạp thêm tiền.",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận thuê"
+  },
+  "notificationSidebar": {
+    "title": "Thông báo",
+    "count": "{{count}} thông báo",
+    "markAllRead": "Đánh dấu tất cả đã đọc",
+    "noNotifications": "Không có thông báo nào",
+    "noNotificationsDesc": "Các thông báo mới sẽ xuất hiện ở đây",
+    "markRead": "Đánh dấu đã đọc",
+    "delete": "Xóa",
+    "deleting": "Đang xóa..."
+  },
   "common": {
     "sort": {
       "asc": "Tăng dần",
       "desc": "Giảm dần"
+    },
+    "button":{
+      "confirm": "Xác nhận",
+      "cancel": "Hủy"
     }
   }
 }
