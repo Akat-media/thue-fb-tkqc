@@ -10,6 +10,8 @@ import axios from 'axios';
 import logo1 from '/public/logo.png';
 import loginimg from '../../public/login.jpg';
 import {usePageStore} from "../../stores/usePageStore.ts";
+import {useTranslation} from "react-i18next";
+import {toast} from "react-toastify";
 
 const RegisterPage: React.FC = () => {
   // const [isOpen, setIsOpen] = useState(true);
@@ -34,21 +36,22 @@ const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
 
   const { formatDateToVN } = usePageStore();
+  const {t} = useTranslation();
 
   const validateForm = (): boolean => {
     const newErrors: typeof errors = {};
-    if (!name) newErrors.name = 'Họ tên là bắt buộc';
-    if (!email) newErrors.email = 'Email là bắt buộc';
+    if (!name) newErrors.name = t('modalHomepage.register.errorName')
+    if (!email) newErrors.email = t('modalHomepage.register.errorEmail')
     else if (!/\S+@\S+\.\S+/.test(email))
-      newErrors.email = 'Email không hợp lệ';
-    if (!phone) newErrors.phone = 'Số điện thoại là bắt buộc';
+      newErrors.email = t('modalHomepage.register.errorEmail2')
+    if (!phone) newErrors.phone = t('modalHomepage.register.errorPhone')
     else if (!/^[0-9]{10}$/.test(phone))
-      newErrors.phone = 'Số điện thoại phải có 10 chữ số';
-    if (!password) newErrors.password = 'Mật khẩu là bắt buộc';
+      newErrors.phone = t('modalHomepage.register.errorPhone2')
+    if (!password) newErrors.password = t('modalHomepage.register.errorPassword')
     else if (password.length < 6)
-      newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+      newErrors.password = t('modalHomepage.register.notePassword')
     if (password !== confirmPassword)
-      newErrors.confirmPassword = 'Mật khẩu xác nhận không khớp';
+      newErrors.confirmPassword = t('modalHomepage.register.errorConfirmPassword')
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -87,10 +90,11 @@ const RegisterPage: React.FC = () => {
       if (registerRes.status === 200) {
         setIsLoading(false);
         addNotification(
-          'Đăng ký thành công',
-          'Tài khoản của bạn đã được tạo!',
+          t('registerPage.successRegister'),
+          t('registerPage.successRegister2'),
           'success'
         );
+        // toast.success(t('registerPage.successRegister'))
         const loginRes = await axios.post(
           '/login',
           {
@@ -107,24 +111,27 @@ const RegisterPage: React.FC = () => {
         localStorage.setItem('user', JSON.stringify(loginRes.data.data));
       } else {
         setIsLoading(false);
-        addNotification('Đăng ký thất bại', registerRes.data.message, 'error');
+        addNotification(t('modalHomepage.register.failedRegister'), registerRes.data.message, 'error');
+        toast.error("error")
       }
     } catch (error: any) {
       console.error('Registration error:', error);
 
       if (error.response?.data?.message) {
         const errorMessage = error.response.data.message;
+        toast.error(t('modalHomepage.register.existedEmail'));
 
-        if (errorMessage === 'Email đã tồn tại') {
-          setErrors({ email: 'Email đã tồn tại. Vui lòng nhập email khác.' });
+        if (errorMessage === t('modalHomepage.register.existedEmail')) {
+          setErrors({ email: t('modalHomepage.register.existedEmail2')});
           setEmail('');
         } else {
-          addNotification('Đăng ký thất bại', errorMessage, 'error');
+          addNotification(t('modalHomepage.register.failedRegister'), errorMessage, 'error');
         }
       } else {
+        toast.error(t('modalHomepage.register.failedRegister'));
         addNotification(
-          'Đăng ký thất bại',
-          'Có lỗi xảy ra trong quá trình đăng ký',
+          t('modalHomepage.register.failedRegister'),
+          t('modalHomepage.register.errorCommon'),
           'error'
         );
       }
@@ -150,24 +157,24 @@ const RegisterPage: React.FC = () => {
       <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-lg shadow-xl p-8 z-10">
         <div className="mb-6">
           <h1 className="relative inline-block text-3xl font-bold text-[#0f172a] before:content-[''] before:absolute before:-right-3 before:-left-1 before:inset-x-0 before:bottom-0 before:h-1/2 before:bg-gradient-to-r before:from-[#6cffd8] before:to-[#c1f4ff] before:-z-10">
-            Tạo Tài Khoản Mới
+            {t('modalHomepage.register.title')}
           </h1>
           <p className="text-sm font-thin text-gray-800 mt-1">
-            Đăng ký ngay để sử dụng các dịch vụ của AKAds
+            {t('modalHomepage.register.subtitle')}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-semibold uppercase text-black mb-1">
-              Họ tên
+              {t('modalHomepage.register.name')}
             </label>
             <div className="relative">
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Họ tên"
+                placeholder= {t('modalHomepage.register.name')}
                 className="w-full px-4 py-3 border border-black rounded-md focus:outline-none focus:border-[#f2f2f2] pr-10 text-base"
               />
               <User className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -198,14 +205,14 @@ const RegisterPage: React.FC = () => {
 
           <div>
             <label className="block text-sm font-semibold uppercase text-black mb-1">
-              Số điện thoại
+              {t('modalHomepage.register.phone')}
             </label>
             <div className="relative">
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="Số điện thoại"
+                placeholder= {t('modalHomepage.register.phone')}
                 className="w-full px-4 py-3 border border-black rounded-md focus:outline-none focus:border-[#f2f2f2] pr-10 text-base"
               />
               <Phone className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -217,14 +224,14 @@ const RegisterPage: React.FC = () => {
 
           <div>
             <label className="block text-sm font-semibold uppercase text-black mb-1">
-              Mật khẩu
+              {t('modalHomepage.register.password')}
             </label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Mật khẩu"
+                placeholder= "••••••••"
                 className="w-full px-4 py-3 border border-black rounded-md focus:outline-none focus:border-[#f2f2f2] pr-10 text-base"
               />
               <button
@@ -246,14 +253,14 @@ const RegisterPage: React.FC = () => {
 
           <div>
             <label className="block text-sm font-semibold uppercase text-black mb-1">
-              Xác nhận mật khẩu
+              {t('modalHomepage.register.confirmPassword')}
             </label>
             <div className="relative">
               <input
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Xác nhận mật khẩu"
+                placeholder="••••••••"
                 className="w-full px-4 py-3 border border-black rounded-md focus:outline-none focus:border-[#f2f2f2] pr-10 text-base"
               />
               <button
@@ -276,14 +283,14 @@ const RegisterPage: React.FC = () => {
           </div>
           <div>
             <label className="block text-sm font-semibold uppercase text-black mb-1">
-              Nhập mã giới thiệu
+              {t('modalHomepage.register.codeIntroduce')}
             </label>
             <div className="relative">
               <input
                 type="text"
                 value={referral_code}
                 onChange={(e) => setReferral_code(e.target.value)}
-                placeholder="Nhập mã giới thiệu"
+                placeholder={t('modalHomepage.register.codeIntroduce')}
                 className="w-full px-4 py-3 border border-black rounded-md focus:outline-none focus:border-[#f2f2f2] pr-10 text-base"
               />
               <Bookmark className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -294,19 +301,19 @@ const RegisterPage: React.FC = () => {
             type="submit"
             className="w-full py-2 bg-[#0a1f38] text-white rounded-full font-semibold hover:bg-[#062b57] transition"
           >
-            Đăng ký
+            {t('modalHomepage.register.buttonRegister')}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-800">
-          Đã có tài khoản?{' '}
+          {t('modalHomepage.register.hadAccount')}{' '}
           <Link to="/login" className="text-[#42e1b6] hover:underline">
-            Đăng nhập
+            {t('modalHomepage.register.login')}
           </Link>
         </p>
 
         <p className="mt-6 text-center text-base text-gray-500">
-          © AKA Media, 2025. Bảo lưu mọi quyền.
+          {t('loginPage.allRightReserved')}
         </p>
       </div>
 
