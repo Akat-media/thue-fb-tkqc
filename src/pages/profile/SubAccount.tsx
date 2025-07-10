@@ -5,6 +5,7 @@ import { useUserStore } from '../../stores/useUserStore';
 import { z } from 'zod';
 import BaseHeader from '../../api/BaseHeader';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 const { Option } = Select;
 
 interface DataType {
@@ -16,6 +17,7 @@ interface DataType {
 }
 const SubAccount = () => {
   const { user, fetchUser } = useUserStore();
+  const { t } = useTranslation();
   const [data, setData] = useState<any>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenV2, setIsModalOpenV2] = useState(false);
@@ -26,7 +28,7 @@ const SubAccount = () => {
 
   const pointSchema = z.object({
     point: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-      message: 'Điểm phải là số dương',
+      message: t('profile.givePointModal.rule'),
     }),
   });
   const showModal = (record: any) => {
@@ -145,40 +147,41 @@ const SubAccount = () => {
   }, [user]);
   const columns: TableProps<DataType>['columns'] = [
     {
-      title: 'Username',
+      title: t('profile.form.username'),
       dataIndex: 'username',
       key: 'username',
       render: (text) => <a>{text}</a>,
     },
     {
-      title: 'Email',
+      title: t('profile.form.email'),
       dataIndex: 'email',
       key: 'email',
     },
     {
-      title: 'Points',
+      title: t('profile.form.points'),
       dataIndex: 'points',
       key: 'points',
-      render: (_, { points }) => {
-        console.log(points);
-        return Number(points).toLocaleString('vi-VN');
-      },
+      render: (_, { points }) => Number(points).toLocaleString('vi-VN'),
     },
     {
-      title: 'Loại tài khoản',
+      title: t('profile.history.accountType'),
       key: 'account_type',
       dataIndex: 'account_type',
       render: (_, { account_type }) => {
-        const color = account_type == 'MAIN' ? 'green' : 'geekblue';
+        const color = account_type === 'MAIN' ? 'green' : 'geekblue';
         return (
           <Tag color={color} key={account_type}>
-            {account_type.toUpperCase()}
+            {t(
+              account_type === 'MAIN'
+                ? 'profile.history.account.main'
+                : 'profile.history.account.sub'
+            )}
           </Tag>
         );
       },
     },
     {
-      title: 'Action',
+      title: t('profile.menu.account'),
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
@@ -191,7 +194,7 @@ const SubAccount = () => {
                 onClick={() => showModal(record)}
                 style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
               >
-                Tặng điểm
+                {t('profile.button.givePoint')}
               </Button>
               <Button
                 size="large"
@@ -204,30 +207,34 @@ const SubAccount = () => {
                   borderColor: '#1890ff',
                 }}
               >
-                Đổi loại tài khoản
+                {t('profile.button.changeType')}
               </Button>
             </>
           )}
         </Space>
       ),
     },
-  ];
+  ];  
   return (
     <div>
       {user?.account_type == 'MAIN' ? (
-        <h3 className="text-[20px] font-semibold">Sub Account</h3>
+        <h3 className="text-[20px] font-semibold">
+          {t('profile.history.subAccount')}
+        </h3>
       ) : (
-        <h3 className="text-[20px] font-semibold">Main Account</h3>
+        <h3 className="text-[20px] font-semibold">
+          {t('profile.history.mainAccount')}
+        </h3>
       )}
       <Table<DataType> columns={columns} dataSource={data} />
       <Modal
         centered
-        title="Tặng điểm"
+        title={t('profile.givePointModal.title')}
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-        okText="Xác nhận"
-        cancelText="Hủy"
+        okText={t('profile.givePointModal.okText')}
+        cancelText={t('profile.givePointModal.cancelText')}
       >
         <Form.Item
           validateStatus={pointError ? 'error' : ''}
@@ -236,7 +243,7 @@ const SubAccount = () => {
           <Input
             className="py-2"
             type="number"
-            placeholder="Nhập số điểm"
+            placeholder={t('profile.givePointModal.placeholder')}
             value={pointValue}
             onChange={(e) => {
               setPointValue(e.target.value);
@@ -253,23 +260,23 @@ const SubAccount = () => {
       </Modal>
       <Modal
         centered
-        title="Xác nhận đổi tài khoản"
+        title={t('profile.changeTypeAccount.title')}
         open={isModalOpenV2}
         onOk={handleOkVerify}
         onCancel={handleCancelVerify}
-        okText="Xác nhận"
-        cancelText="Hủy"
+        okText={t('profile.changeTypeAccount.okText')}
+        cancelText={t('profile.changeTypeAccount.cancelText')}
       >
-        <p className="pb-4">Bạn có muốn đổi sang loại tài khoản nào?</p>
+        <p className="pb-4">{t('profile.changeTypeAccount.question')}</p>
         <Select
           size="large"
           style={{ width: '100%' }}
-          placeholder="Chọn loại tài khoản"
+          placeholder={t('profile.changeTypeAccount.placeholder')}
           value={accountType}
           onChange={(value) => setAccountType(value)}
         >
-          <Option value="MAIN">Tài khoản chính (MAIN)</Option>
-          <Option value="SUB">Tài khoản phụ (SUB)</Option>
+          <Option value="MAIN">{t('profile.changeTypeAccount.main')}</Option>
+          <Option value="SUB">{t('profile.changeTypeAccount.sub')}</Option>
         </Select>
       </Modal>
     </div>

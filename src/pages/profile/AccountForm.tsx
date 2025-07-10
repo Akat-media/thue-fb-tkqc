@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useUserStore } from '../../stores/useUserStore.ts';
 import { message, Tooltip } from 'antd';
 import { Copy } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Định nghĩa schema validate với zod
 const userSchema = z.object({
@@ -85,6 +86,7 @@ const FloatingInput = ({
 
 const AccountForm: React.FC = () => {
   const { user, setUser } = useUserStore();
+  const { t } = useTranslation();
   // Khởi tạo react-hook-form với zod resolver
   const {
     register,
@@ -175,40 +177,32 @@ const AccountForm: React.FC = () => {
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-md flex-1 font-roboto">
-      <h3 className="text-[20px] font-semibold">Thông tin</h3>
+      <h3 className="text-[20px] font-semibold">{t('profile.form.info')}</h3>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-1 md:grid-cols-2 gap-x-6"
       >
         <FloatingInput
-          label="Tên người dùng"
+          label={t('profile.form.username')}
           name="username"
           register={register}
           error={errors.username?.message}
         />
         <FloatingInput
-          label="Email"
+          label={t('profile.form.email')}
           name="email"
           type="email"
           register={register}
           error={errors.email?.message}
         />
         <FloatingInput
-          label="Số điện thoại"
+          label={t('profile.form.phone')}
           name="phone"
           register={register}
           error={errors.phone?.message}
         />
-        {/* <FloatingInput
-          label="Phần trăm"
-          name="percentage"
-          type="number"
-          register={register}
-          error={errors.percentage?.message}
-          readOnly={true}
-        /> */}
         <FloatingInput
-          label="Điểm"
+          label={t('profile.form.points')}
           name="points"
           type="number"
           register={register}
@@ -217,13 +211,13 @@ const AccountForm: React.FC = () => {
         />
         <div className="relative">
           <FloatingInput
-            label="Mã giới thiệu"
+            label={t('profile.form.referralCode')}
             name="code"
             register={register}
             error={errors.code?.message}
             readOnly={true}
           />
-          <Tooltip title="Sao chép" className="absolute top-[50%] right-[10px]">
+          <Tooltip title={t('profile.form.copy')} className="absolute top-[50%] right-[10px]">
             <Copy
               style={{ cursor: 'pointer', fontSize: 10 }}
               onClick={handleCopy}
@@ -235,7 +229,7 @@ const AccountForm: React.FC = () => {
             type="submit"
             className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition"
           >
-            Lưu thay đổi
+            {t('profile.form.saveChanges')}
           </button>
         </div>
       </form>

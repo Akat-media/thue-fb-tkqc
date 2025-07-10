@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import AccountSidebar from './AccountSidebar';
 import AccountForm from './AccountForm';
 import ChangePasswordForm from './ChangePasswordForm.tsx';
@@ -12,20 +13,21 @@ const AccountPage: React.FC = () => {
     'account' | 'password' | 'history' | 'retrieve'
   >('account');
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="p-8 space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold">Tài khoản</h2>
+        <h2 className="text-2xl font-semibold">{t('profile.menu.account')}</h2>
         <nav className="text-sm text-gray-500 mt-1">
           <button
             className="hover:underline text-gray-500"
             onClick={() => navigate('/')}
             type="button"
           >
-            Trang chủ
+            {t('profile.menu.home')}
           </button>
-          &nbsp;&gt;&nbsp;Tài khoản
+          &nbsp;&gt;&nbsp;{t('profile.menu.account')}
         </nav>
       </div>
 
@@ -38,7 +40,7 @@ const AccountPage: React.FC = () => {
           }`}
           onClick={() => setActiveTab('account')}
         >
-          Thông tin chung
+          {t('profile.menu.info')}
         </button>
         <button
           className={`pb-1 font-semibold ${
@@ -48,7 +50,7 @@ const AccountPage: React.FC = () => {
           }`}
           onClick={() => setActiveTab('password')}
         >
-          Đổi mật khẩu
+          {t('profile.menu.changePassword')}
         </button>
         <button
           className={`pb-1 font-semibold ${
@@ -58,7 +60,7 @@ const AccountPage: React.FC = () => {
           }`}
           onClick={() => setActiveTab('history')}
         >
-          Lịch sử tặng điểm
+          {t('profile.menu.giveHistory')}
         </button>
         <button
           className={`pb-1 font-semibold ${
@@ -68,7 +70,7 @@ const AccountPage: React.FC = () => {
           }`}
           onClick={() => setActiveTab('retrieve')}
         >
-          Lịch sử nhận điểm
+          {t('profile.menu.receiveHistory')}
         </button>
       </div>
 

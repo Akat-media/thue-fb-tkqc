@@ -2,39 +2,40 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import BaseHeader, { BaseUrl } from '../../api/BaseHeader.ts';
+import BaseHeader from '../../api/BaseHeader.ts';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { useUserStore } from '../../stores/useUserStore';
+import { useTranslation } from 'react-i18next';
 
 interface User {
   id?: string;
   password?: string;
 }
 
-const schema = z
-  .object({
-    oldPassword: z.string().min(1, 'Mật khẩu cũ không được để trống'),
-    newPassword: z.string().min(6, 'Mật khẩu mới phải có ít nhất 6 ký tự'),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Mật khẩu xác nhận không khớp',
-    path: ['confirmPassword'],
-  })
-  .refine((data) => data.oldPassword !== data.newPassword, {
-    message: 'Mật khẩu mới không được trùng với mật khẩu cũ',
-    path: ['newPassword'],
-  });
-
-type ChangePasswordData = z.infer<typeof schema>;
-
 const ChangePasswordForm: React.FC = () => {
+  const { t } = useTranslation();
   const user = localStorage.getItem('user');
   const initialUser: User =
     typeof user === 'string' ? JSON.parse(user).user : {};
   const { fetchUser } = useUserStore();
+
+  const schema = z
+    .object({
+      oldPassword: z.string().min(1, t('profile.password.validate.oldRequired')),
+      newPassword: z.string().min(6, t('profile.password.validate.newMin')),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t('profile.password.validate.confirmMismatch'),
+      path: ['confirmPassword'],
+    })
+    .refine((data) => data.oldPassword !== data.newPassword, {
+      message: t('profile.password.validate.sameAsOld'),
+      path: ['newPassword'],
+    });
+
+  type ChangePasswordData = z.infer<typeof schema>;
 
   const {
     register,
@@ -55,10 +56,7 @@ const ChangePasswordForm: React.FC = () => {
 
   const onSubmit = async (data: ChangePasswordData) => {
     if (!initialUser.id) {
-      toast.error('Không tìm thấy ID người dùng trong localStorage!', {
-        position: 'top-right',
-        autoClose: 3000,
-      });
+      toast.error(t('profile.password.toast.noUserId'), { position: 'top-right', autoClose: 3000 });
       return;
     }
 
@@ -73,23 +71,25 @@ const ChangePasswordForm: React.FC = () => {
       });
 
       if (response?.data?.success) {
-        toast.success('Cập nhật mật khẩu thành công!', {
+        toast.success(t('profile.password.toast.success'), {
           position: 'top-right',
           autoClose: 3000,
         });
+
         const stored = localStorage.getItem('user');
         if (stored) {
           const parsed = JSON.parse(stored);
           parsed.user.password = data.newPassword;
           localStorage.setItem('user', JSON.stringify(parsed));
         }
+
         await fetchUser();
       } else {
         let apiMsg = response?.data?.message;
         if (apiMsg === 'Refresh token không được để trống') {
-          apiMsg = 'Nhập sai mật khẩu hiện tại';
+          apiMsg = t('profile.password.toast.wrongPassword');
         }
-        toast.error(apiMsg || 'Có lỗi xảy ra khi cập nhật mật khẩu!', {
+        toast.error(apiMsg || t('profile.password.toast.defaultError'), {
           position: 'top-right',
           autoClose: 3000,
         });
@@ -97,17 +97,16 @@ const ChangePasswordForm: React.FC = () => {
     } catch (error: any) {
       let apiMessage = error?.response?.data?.message;
       if (apiMessage === 'Refresh token không được để trống') {
-        apiMessage = 'Nhập sai mật khẩu hiện tại';
+        apiMessage = t('profile.password.toast.wrongPassword');
       }
-      toast.error(apiMessage || 'Có lỗi xảy ra khi cập nhật mật khẩu!', {
+      toast.error(apiMessage || t('profile.password.toast.defaultError'), {
         position: 'top-right',
         autoClose: 3000,
       });
     }
   };
 
-  const eyeIcon = (visible: boolean) =>
-    visible ? <FiEyeOff size={20} /> : <FiEye size={20} />;
+  const eyeIcon = (visible: boolean) => (visible ? <FiEyeOff size={20} /> : <FiEye size={20} />);
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md max-w-xl mx-auto">
@@ -115,81 +114,75 @@ const ChangePasswordForm: React.FC = () => {
         {/* Old Password */}
         <div className="mb-6">
           <label className="block mb-1 font-medium" htmlFor="oldPassword">
-            Mật khẩu cũ
+            {t('profile.password.old')}
           </label>
           <div className="relative">
             <input
               type={showOld ? 'text' : 'password'}
-              placeholder="Mật khẩu cũ"
+              placeholder={t('profile.password.placeholder.old')}
               {...register('oldPassword')}
               className="w-full h-12 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               type="button"
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 flex items-center justify-center"
+              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
               onClick={() => setShowOld((prev) => !prev)}
             >
               {eyeIcon(showOld)}
             </button>
           </div>
           {errors.oldPassword && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.oldPassword.message}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.oldPassword.message}</p>
           )}
         </div>
 
         {/* New Password */}
         <div className="mb-6">
-          <label className="block mb-1 font-medium" htmlFor="oldPassword">
-            Mật khẩu mới
+          <label className="block mb-1 font-medium" htmlFor="newPassword">
+            {t('profile.password.new')}
           </label>
           <div className="relative">
             <input
               type={showNew ? 'text' : 'password'}
-              placeholder="Mật khẩu mới"
+              placeholder={t('profile.password.placeholder.new')}
               {...register('newPassword')}
               className="w-full h-12 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               type="button"
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 flex items-center justify-center"
+              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
               onClick={() => setShowNew((prev) => !prev)}
             >
               {eyeIcon(showNew)}
             </button>
           </div>
           {errors.newPassword && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.newPassword.message}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.newPassword.message}</p>
           )}
         </div>
 
         {/* Confirm Password */}
         <div className="mb-6">
-          <label className="block mb-1 font-medium" htmlFor="oldPassword">
-            Nhập lại mật khẩu mới
+          <label className="block mb-1 font-medium" htmlFor="confirmPassword">
+            {t('profile.password.confirm')}
           </label>
           <div className="relative">
             <input
               type={showConfirm ? 'text' : 'password'}
-              placeholder="Xác nhận mật khẩu mới"
+              placeholder={t('profile.password.placeholder.confirm')}
               {...register('confirmPassword')}
               className="w-full h-12 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               type="button"
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 flex items-center justify-center"
+              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
               onClick={() => setShowConfirm((prev) => !prev)}
             >
               {eyeIcon(showConfirm)}
             </button>
           </div>
           {errors.confirmPassword && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.confirmPassword.message}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
           )}
         </div>
 
@@ -198,7 +191,7 @@ const ChangePasswordForm: React.FC = () => {
             type="submit"
             className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition"
           >
-            Lưu thay đổi
+            {t('profile.password.button')}
           </button>
         </div>
       </form>

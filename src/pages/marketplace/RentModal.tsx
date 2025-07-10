@@ -22,6 +22,7 @@ import { format, parseISO } from 'date-fns';
 import { Form, Modal, Select } from 'antd';
 import styled from 'styled-components';
 import { useNotificationStore } from '../../stores/notificationStore';
+import { useTranslation } from 'react-i18next';
 
 interface RentModalProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ interface RentModalProps {
   openCardModal?: () => void;
   setRentMeta?: (meta: any) => void;
   rentMeta?: any;
+  handleCallAPiVisa:() => void
 }
 const dataCurrency = [
   { id: 'vnd', name: 'VND' },
@@ -47,7 +49,9 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     openCardModal,
     setRentMeta,
     rentMeta,
+    handleCallAPiVisa
   } = props;
+  const { t } = useTranslation();
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
   const [userBmId, setUserBmId] = useState('');
@@ -197,13 +201,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
       if (response.status === 200 && response.data.success) {
         setSuccessRent(response.data.message);
-        // await handleAddNotification({
-        //   user_id: userParse.user_id || '',
-        //   title: `Bạn đã thuê thành công tài khoản ${account?.name}`,
-        //   content: 'Tài khoản đã thuê thành công hãy khám phá các tính năng',
-        //   type: 'success',
-        // });
         await fetchNotifications(userParse.user_id || '');
+        await handleCallAPiVisa()
         onClose();
         // toast.success('Thuê tài khoản thành công!');
       } else {
@@ -349,12 +348,12 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       >
         <Card>
           <CardHeader className="relative">
-            <CardTitle className="text-[26px]">Thuê tài khoản</CardTitle>
+            <CardTitle className="text-[26px]">{t('rentModal.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             {isVisaAccount == null && (
               <div className="p-4 text-green-600 bg-green-100 rounded-md text-sm mb-2">
-                Loại tài khoản này quý khách tự gắn thẻ vào tài khoản quảng cáo
+                {t('rentModal.infoAlert')}
               </div>
             )}
 
@@ -365,7 +364,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 </div>
                 <div className="ml-3">
                   <h3 className="!text-[16px] text-sm font-medium text-blue-800">
-                    Tài khoản: <strong>{account.name}</strong>
+                  {t('rentModal.accountLabel')} <strong>{account.name}</strong>
                   </h3>
                 </div>
               </div>
@@ -375,20 +374,20 @@ const RentModal: React.FC<RentModalProps> = (props) => {
               <div>
                 <Input
                   id="userBmId"
-                  label="BM ID của bạn"
+                  label={t('rentModal.bmIdLabel')}
                   type="number"
-                  placeholder="Ví dụ: 123456789"
+                  placeholder={t('rentModal.bmIdPlaceholder')}
                   value={userBmId}
                   onChange={(e) => setUserBmId(e.target.value)}
                   error={
                     !isValidBmId
-                      ? 'BM ID phải là chuỗi ID và không được để trống'
+                      ? t('rentModal.bmIdError')
                       : ''
                   }
                   helperText={
                     !isValidBmId
-                      ? 'BM ID phải là số nguyên dương và không được để trống'
-                      : 'BM ID để chúng tôi cấp quyền truy cập'
+                      ? t('rentModal.bmIdError')
+                      : t('rentModal.bmIdHelper')
                   }
                   onWheel={(e) => e.currentTarget.blur()}
                   className="font-semibold w-full mt-1 px-3 py-3 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
@@ -398,7 +397,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 <div>
                   <Input
                     id="requestedLimit"
-                    label="Hạn mức chi tiêu yêu cầu (VNĐ)"
+                    label={t('rentModal.limitLabel')}
                     type="number"
                     min={account.defaultLimit / 2}
                     max={account.defaultLimit * 2}
@@ -432,7 +431,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                       ) {
                         setErrors((prev) => ({
                           ...prev,
-                          limit: 'Số tiền phải lớn hơn 10.000 VNĐ',
+                          limit: t('rentModal.limitError'),
                         }));
                       } else {
                         setErrors((prev) => ({
@@ -443,19 +442,19 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     }}
                     error={
                       !isValidLimit
-                        ? 'Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ'
+                        ? t('rentModal.limitHelper')
                         : ''
                     }
                     helperText={
                       !isValidLimit
-                        ? 'Số tiền phải lớn hơn 10.000 VNĐ'
+                        ? t('rentModal.limitHelper')
                         : undefined
                     }
                     fullWidth
                     className="font-semibold w-full mt-1 px-3 py-3 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
                   />
                   <div className="text-sm text-gray-500 mt-1 pl-2">
-                    Hạn mức:{' '}
+                    {t('rentModal.limitDisplay')}{' '}
                     {requestedLimit !== null && !isNaN(requestedLimit)
                       ? requestedLimit.toLocaleString('vi-VN')
                       : '—'}{' '}
@@ -470,13 +469,13 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                       className="w-full py-2"
                       type="rangeDate"
                       name="rentalRange"
-                      label="Thời gian thuê (7-31 ngày)"
+                      label={t('rentModal.rentalLabel')}
                       format="YYYY-MM-DD"
                       value={rentalRange as any}
                       onChange={(value: any) => {
                         if (!Array.isArray(value) || value.length < 2) {
                           setRentalRange(null);
-                          setRentalRangeError('Vui lòng chọn thời gian thuê.');
+                          setRentalRangeError(t('rentModal.rentalSelectError'));
                           return;
                         }
 
@@ -492,7 +491,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
                         if (days < 7 || days > 31) {
                           setRentalRangeError(
-                            'Thời gian thuê phải từ 7 đến 31 ngày.'
+                            t('rentModal.rentalError')
                           );
                           setRentalRange(null);
                           return;
@@ -526,7 +525,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   id="voucherSelect"
                   className="!text-[16px] text-sm font-semibold text-gray-700 mb-1"
                 >
-                  Chọn hình thức thanh toán
+                  {t('rentModal.paymentMethodLabel')}
                 </label>
                 <select
                   id="voucherSelect"
@@ -548,7 +547,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   id="voucherSelect"
                   className="!text-[16px] text-sm font-semibold text-gray-700 mb-1"
                 >
-                  Chọn voucher
+                  {t('rentModal.voucherLabel')}
                 </label>
                 <select
                   id="voucherSelect"
@@ -557,7 +556,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   onChange={(e) => setSelectedVoucher(e.target.value)}
                 >
                   <option className="text-gray-700 font-sans" value="">
-                    -- Không sử dụng voucher --
+                    {t('rentModal.noVoucher')}
                   </option>
                   {dataVoucher.map((item, index) => {
                     const checkExpored = isVoucherExpired(
@@ -582,32 +581,32 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
             <div className="py-4 rounded-md">
               <h4 className="text-sm text-gray-900 !text-[16px] font-semibold">
-                Chi tiết thanh toán
+                {t('rentModal.paymentDetails')}
               </h4>
               <p className="text-sm text-gray-500 mt-1 italic">
-                * Phí dịch vụ được tính dựa trên giới hạn chi tiêu của tài
-                khoản. Vui lòng tham khảo bảng giá hoặc liên hệ hỗ trợ.
+                {t('rentModal.serviceNote')}
               </p>
 
               <div className="mt-2 space-y-1">
                 {requestedLimit !== null &&
                   requestedLimit > account.defaultLimit && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Phí tăng limit</span>
+                      <span className="text-gray-500">{t('rentModal.limitFee')}
+                      </span>
                       <span className="text-gray-900 font-medium"></span>
                     </div>
                   )}
                 <div className="text-sm">
                   {selectedVoucher && (
                     <p className="text-gray-500 text-[16px] font-semibold">
-                      Giảm giá từ voucher:{' '}
+                      {t('rentModal.voucherDiscount')}{' '}
                       <span className="text-[#DC2625]">
                         - {discountAmount.toLocaleString('vi-VN')} VNĐ
                       </span>
                     </p>
                   )}
                   <p className="text-gray-500 mt-2 text-[16px] font-semibold">
-                    Phí dịch vụ:{' '}
+                  {t('rentModal.serviceFee')}{' '}
                     <span className="text-blue-600">
                       {serviceFee.toLocaleString('vi-VN')} VNĐ
                     </span>
@@ -615,7 +614,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 </div>
                 <div className="border-t border-gray-200 pt-2">
                   <div className="flex justify-between text-[17px] sm:text-[20px] font-semibold">
-                    <span className="text-gray-900">Tổng thanh toán:</span>
+                    <span className="text-gray-900">{t('rentModal.totalPayment')}</span>
                     <span className="text-blue-600 text-end text-nowrap">
                       {totalBill.toLocaleString('vi-VN')} VNĐ
                     </span>
@@ -628,7 +627,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
               <div>
                 <div className="flex justify-between">
                   <span className="text-[16px] sm:text-[18px] font-semibold ">
-                    Số dư:{' '}
+                  {t('rentModal.userBalance')}{' '}
                   </span>
                   <span
                     className={`font-medium text-[18px] ${
@@ -644,8 +643,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 </div>
                 {(user.points ?? 0) < totalBill && (
                   <div className="mt-2 text-red-600">
-                    Số dư không đủ để thuê tài khoản này. Vui lòng nạp thêm
-                    tiền.
+                    {t('rentModal.notEnoughBalance')}
                   </div>
                 )}
               </div>
@@ -661,7 +659,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
               }}
               disabled={isLoading}
             >
-              Hủy
+              {t('common.button.cancel')}
             </Button>
             <Button
               onClick={(e) => {
@@ -691,7 +689,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   : ''
               }
             >
-              Xác nhận thuê
+              {t('rentModal.confirm')}
             </Button>
           </CardFooter>
         </Card>
