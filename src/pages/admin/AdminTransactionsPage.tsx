@@ -461,8 +461,8 @@ const AdminTransactionsPage: React.FC = () => {
         method: 'get',
         params: {
           user_id: userParse?.user_id,
-          page: currentPage,
-          pageSize: pageSize,
+          page: currentPagePoint,
+          pageSize: pageSizePoint,
           ...(searchQuery && { query: searchQuery.trim() }),
         },
       });
@@ -481,7 +481,7 @@ const AdminTransactionsPage: React.FC = () => {
     if (active === 'points') {
       hanleTransactionPoint();
     }
-  }, [active, currentPage, pageSize]);
+  }, [active, currentPage, pageSize, currentPagePoint]);
 
   useEffect(() => {
     if (active === 'money') {
@@ -1073,10 +1073,10 @@ const AdminTransactionsPage: React.FC = () => {
               <Pagination
                 total={totalPoints}
                 onChange={handleChangePoint}
-                // current={currentPagePoint}
-                // pageSize={pageSizePoint}
-                current={currentPage}
-                pageSize={pageSize}
+                current={currentPagePoint}
+                pageSize={pageSizePoint}
+                // current={currentPage}
+                // pageSize={pageSize}
               />
             </div>
           )}
