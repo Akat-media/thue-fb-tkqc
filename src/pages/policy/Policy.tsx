@@ -30,7 +30,7 @@ const Policy: React.FC = () => {
       const response = await BaseHeader({
         method: 'get',
         url: 'policies',
-        // params: { lang: i18n.language },
+        params: { lang: i18n.language },
       });
       setPolicies(response.data.data || []);
       // setOpenSections(response.data.data?.[0] || []);

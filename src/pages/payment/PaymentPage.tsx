@@ -256,10 +256,10 @@ const PaymentPage: React.FC = () => {
                     ? 'border-blue-600 ring-2 ring-blue-400'
                     : 'border-gray-300'
                 }`}
-                onClick={() => {
-                  setCurrencyTab('USD');
-                  setIsCurrencyModalOpen(false);
-                }}
+                // onClick={() => {
+                //   setCurrencyTab('USD');
+                //   setIsCurrencyModalOpen(false);
+                // }}
               >
                 <div className="flex items-center space-x-3">
                   <div

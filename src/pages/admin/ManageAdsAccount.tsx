@@ -360,6 +360,13 @@ const ManageAdsAccount: React.FC = () => {
       minWidth: '80px',
     },
     {
+      key: 'user_id',
+      label: 'User ID',
+      icon: <User className="w-4 h-4 text-gray-500" />,
+      sortKey: 'user_id',
+      minWidth: '100px',
+    },
+    {
       key: 'points_used',
       label: 'Số điểm đã đổi',
       icon: <CircleDollarSign className="w-4 h-4 text-gray-500" />,
@@ -453,12 +460,11 @@ const ManageAdsAccount: React.FC = () => {
   const hanleTransactionPoint = async (searchQuery = '') => {
     try {
       const response = await BaseHeader({
-        url: '/points-used',
+        url: '/points-used-all',
         method: 'get',
         params: {
-          user_id: userParse?.user_id,
-          page: currentPage,
-          pageSize: pageSize,
+          page: currentPagePoint,
+          pageSize: pageSizePoint,
           ...(searchQuery && { query: searchQuery.trim() }),
         },
       });
@@ -477,7 +483,7 @@ const ManageAdsAccount: React.FC = () => {
     if (active === 'points') {
       hanleTransactionPoint();
     }
-  }, [active, currentPage, pageSize]);
+  }, [active, currentPage, pageSize, currentPagePoint, pageSizePoint]);
 
   useEffect(() => {
     if (active === 'money') {
@@ -924,6 +930,19 @@ const ManageAdsAccount: React.FC = () => {
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                          activeCell === `${item.id}-user_id`
+                            ? 'bg-green-100'
+                            : ''
+                        }`}
+                        onClick={() => {
+                          setActiveCell(`${item.id}-user_id`);
+                          setActiveRow(null);
+                        }}
+                      >
+                        {item.user_id}
+                      </td>
+                      <td
+                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-accountName`
                             ? 'bg-green-100'
                             : ''
@@ -1047,10 +1066,8 @@ const ManageAdsAccount: React.FC = () => {
               <Pagination
                 total={totalPoints}
                 onChange={handleChangePoint}
-                // current={currentPagePoint}
-                // pageSize={pageSizePoint}
-                current={currentPage}
-                pageSize={pageSize}
+                current={currentPagePoint}
+                pageSize={pageSizePoint}
               />
             </div>
           )}
