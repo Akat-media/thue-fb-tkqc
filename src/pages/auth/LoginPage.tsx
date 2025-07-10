@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import loginimg from '../../public/login.jpg';
 import axios from 'axios';
 import logo1 from '/public/logo.png';
+import { useTranslation } from 'react-i18next';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -24,17 +25,19 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
+  const {t} = useTranslation();
+
   const validateForm = (): boolean => {
     const newErrors: { email?: string; password?: string } = {};
     if (!email) {
-      newErrors.email = 'Email là bắt buộc';
+      newErrors.email = t('modalHomepage.register.errorEmail');
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email không hợp lệ';
+      newErrors.email = t('modalHomepage.register.errorEmail2');
     }
     if (!password) {
-      newErrors.password = 'Mật khẩu là bắt buộc';
+      newErrors.password = t('modalHomepage.register.errorPassword');
     } else if (password.length < 6) {
-      newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+      newErrors.password = t('modalHomepage.register.notePassword');
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -64,14 +67,14 @@ const LoginPage: React.FC = () => {
         localStorage.setItem('access_token', res.data.data.access_token);
         localStorage.setItem('refresh_token', res.data.data.refresh_token);
         localStorage.setItem('user', JSON.stringify(res.data.data));
-        toast.success('Đăng nhập thành công!');
+        toast.success(t('loginPage.successLogin'));
       } else {
         setIsLoading(false);
         toast.error(res.data.message);
       }
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại'
+        error.response?.data?.message || t('modalHomepage.login.error')
       );
     } finally {
       setIsLoading(false);
@@ -82,7 +85,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     const newErrors: { email?: string } = {};
     if (!email.trim()) {
-      newErrors.email = 'Vui lòng nhập email';
+      newErrors.email = t('modalHomepage.login.validateEmail');
       setErrors(newErrors);
       return;
     }
@@ -95,12 +98,12 @@ const LoginPage: React.FC = () => {
         baseURL: BaseUrl,
         data: { email },
       });
-      toast.success('Email đặt lại mật khẩu đã được gửi!');
+      toast.success(t('modalHomepage.login.toastSuccess'));
       setShowForgotPassword(false); // Quay lại login
       setEmail('');
     } catch (err: any) {
       toast.error(
-          err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại'
+          err.response?.data?.message || t('modalHomepage.login.error')
       );
     } finally {
       setIsLoading(false);
@@ -127,10 +130,10 @@ const LoginPage: React.FC = () => {
               before:bg-gradient-to-r before:from-[#6cffd8] before:to-[#c1f4ff]
               before:-z-10"
           >
-            Đăng nhập
+            {t('modalHomepage.login.title')}
           </h1>
           <p className="text-sm font-thin text-gray-800 mt-1">
-            Chào mừng bạn quay lại với AKAds
+            {t('modalHomepage.login.subTitle')}
           </p>
         </div>
 
@@ -141,7 +144,7 @@ const LoginPage: React.FC = () => {
           {/*tai khoan field*/}
           <div>
             <label className="block text-sm font-semibold uppercase text-black mb-1">
-              Tài khoản
+              {t('loginPage.account')}
             </label>
             <div className="relative">
               <input
@@ -162,7 +165,7 @@ const LoginPage: React.FC = () => {
           {!showForgotPassword && (
           <div>
             <label className="block text-sm font-semibold uppercase text-black mb-1">
-              Mật khẩu
+              {t('modalHomepage.register.password')}
             </label>
             <div className="relative">
               <input
@@ -196,14 +199,14 @@ const LoginPage: React.FC = () => {
                     onClick={() => setShowForgotPassword(true)}
                     className="text-[#42e1b6] hover:underline cursor-pointer"
                 >
-                  Quên mật khẩu?
+                  {t('modalHomepage.login.forgotPassword')}
                 </span>
               ) : (
                 <span
                     onClick={() => setShowForgotPassword(false)}
                     className="text-[#42e1b6] hover:underline cursor-pointer"
                 >
-                  Quay lại đăng nhập
+                   {t('modalHomepage.login.backToLogin')}
                 </span>
               )
             }
@@ -213,19 +216,19 @@ const LoginPage: React.FC = () => {
             type="submit"
             className="w-full py-2 bg-[#0a1f38] text-white rounded-full font-semibold hover:bg-[#062b57] transition"
           >
-            {showForgotPassword ? 'Gửi yêu cầu' : 'Đăng nhập'}
+            {showForgotPassword ?  t('modalHomepage.login.sendRequest') : t('modalHomepage.login.title')}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-800">
-          Chưa có tài khoản?{' '}
+          {t('modalHomepage.login.footer1')}{' '}
           <Link to="/register" className="text-[#42e1b6] hover:underline">
-            Đăng ký ngay
+            {t('loginPage.registerNow')}
           </Link>
         </p>
 
         <p className="mt-6 text-center text-base text-gray-500">
-          © AKA Media, 2025. Bảo lưu mọi quyền.
+          {t('loginPage.allRightReserved')}
         </p>
       </div>
 

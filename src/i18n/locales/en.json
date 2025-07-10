@@ -248,6 +248,15 @@
       "errorCommon": "An error occurred during registration."
     }
   },
+  "loginPage": {
+    "successLogin": "Login successful",
+    "account": "Account",
+    "registerNow": "Register now",
+    "allRightReserved": "© AKA Media, 2025. All rights reserved."
+  },
+  "registerPage": {
+    "successRegister": "Registration successful. Your account has been created!"
+  },
   "supportPage": {
     "header": {
       "header1": "Support Center",

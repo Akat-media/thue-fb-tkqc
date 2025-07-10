@@ -248,6 +248,15 @@
       "errorCommon": "Có lỗi xảy ra trong quá trình đăng ký"
     }
   },
+  "loginPage": {
+    "successLogin": "Đăng nhập thành công!",
+    "account": "Tài khoản",
+    "registerNow": "Đăng ký ngay",
+    "allRightReserved": "© AKA Media, 2025. Bảo lưu mọi quyền."
+  },
+  "registerPage": {
+    "successRegister": "Đăng ký thành công. Tài khoản của bạn đã được tạo!"
+  },
   "supportPage": {
     "header": {
       "header1": "Trung tâm hỗ trợ",
