@@ -56,7 +56,7 @@
       "title": "Give Points",
       "okText": "Confirm",
       "cancelText": "Cancel",
-      "rule":"The point must be the positive number",
+      "rule": "The point must be the positive number",
       "placeholder": "Enter points"
     },
     "changeTypeAccount": {
@@ -675,9 +675,9 @@
       "asc": "ASC",
       "desc": "DESC"
     },
-    "button":{
-      "confirm": "Xác nhận",
-      "cancel": "Hủy"
+    "button": {
+      "confirm": "Confirm",
+      "cancel": "Cancel"
     }
   }
 }

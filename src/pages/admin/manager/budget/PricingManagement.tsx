@@ -83,26 +83,33 @@ const PricingManagement: React.FC = () => {
                     <p className="text-sm text-gray-600 mb-2">
                       Thời gian:{' '}
                       <span className="font-medium">
-                        {budget.start_date?.slice(0, 10)} /{' '}
-                        {budget.end_date?.slice(0, 10)}
+                        {budget.start_date
+                          ? dayjs(budget.start_date).format('YYYY-MM-DD')
+                          : ''}{' '}
+                        /{' '}
+                        {budget.end_date
+                          ? dayjs(budget.end_date).format('YYYY-MM-DD')
+                          : ''}
                       </span>
                     </p>
                     <p className="text-sm text-gray-600 mb-2">
                       Phần trăm:{' '}
-                      <span className="font-medium">{budget.percentage}%</span>
+                      <span className="font-medium">
+                        {(budget.amount >= 2000000000 &&
+                          budget.currency === 'VND') ||
+                        (budget.amount >= 100000 && budget.currency === 'USD')
+                          ? 'Liên hệ'
+                          : `${budget.percentage}%`}
+                      </span>
                     </p>
 
                     <p className="text-sm text-gray-600 mb-2">
                       Phụ đề:{' '}
-                      <span className="font-medium">
-                        {budget.subtitle}
-                      </span>
+                      <span className="font-medium">{budget.subtitle}</span>
                     </p>
                     <p className="text-sm text-gray-600 mb-2">
                       Tổng quan:{' '}
-                      <span className="font-medium">
-                        {budget.overview}
-                      </span>
+                      <span className="font-medium">{budget.overview}</span>
                     </p>
 
                     <ul className="list-disc list-inside text-gray-700 space-y-1">
@@ -117,127 +124,127 @@ const PricingManagement: React.FC = () => {
           )}
 
           {isOpenModal && (
-          <Modal
-            open={isOpenModal}
-            onCancel={() => {
-              form.resetFields();
-              setIsOpenModal(false);
-            }}
-            title={
-              form.getFieldValue('id')
-                ? 'Chỉnh sửa gói giá'
-                : 'Thêm gói giá mới'
-            }
-            footer={null}
-            destroyOnHidden
-            style={{
-              padding: 0,
-              top: 40,
-              marginBottom: 40,
-            }}
-            styles={{
-              body: {
-                maxHeight: 'calc(100vh - 160px)',
-                overflowY: 'auto', // cuộn bên trong modal
-                paddingRight: 16,
-              },
-            }}
-          >
-            <Form
-              layout="vertical"
-              form={form}
-              onFinish={handleSave}
-              initialValues={{ currency: 'VND' }}
+            <Modal
+              open={isOpenModal}
+              onCancel={() => {
+                form.resetFields();
+                setIsOpenModal(false);
+              }}
+              title={
+                form.getFieldValue('id')
+                  ? 'Chỉnh sửa gói giá'
+                  : 'Thêm gói giá mới'
+              }
+              footer={null}
+              destroyOnHidden
+              style={{
+                padding: 0,
+                top: 40,
+                marginBottom: 40,
+              }}
+              styles={{
+                body: {
+                  maxHeight: 'calc(100vh - 160px)',
+                  overflowY: 'auto', // cuộn bên trong modal
+                  paddingRight: 16,
+                },
+              }}
             >
-              <FieldForm
-                type="input"
-                name="name"
-                label="Tiêu đề"
-                required
-                placeholder="Nhập tên ngân sách"
-              />
-              <FieldForm
-                type="input"
-                inputType="number"
-                name="amount"
-                label="Giá tiền"
-                required
-                placeholder="0"
-              />
-              <FieldForm
-                type="input"
-                name="currency"
-                label="Đơn vị tiền tệ"
-                placeholder="VND"
-                required
-              />
-              <FieldForm
-                type="input"
-                name="percentage"
-                label="Phần trăm (%) chiết khấu thêm"
-                placeholder="Nhập phần trăm (%)"
-                inputType="number"
-                min={0}
-                max={100}
-              />
-              <FieldForm
-                type="textarea"
-                name="description"
-                label="Mô tả"
-                required
-                placeholder="Mỗi dòng là một mô tả"
-                style={{ height: 120 }}
-              />
-              <FieldForm
+              <Form
+                layout="vertical"
+                form={form}
+                onFinish={handleSave}
+                initialValues={{ currency: 'VND' }}
+              >
+                <FieldForm
+                  type="input"
+                  name="name"
+                  label="Tiêu đề"
+                  required
+                  placeholder="Nhập tên ngân sách"
+                />
+                <FieldForm
+                  type="input"
+                  inputType="number"
+                  name="amount"
+                  label="Giá tiền"
+                  required
+                  placeholder="0"
+                />
+                <FieldForm
+                  type="input"
+                  name="currency"
+                  label="Đơn vị tiền tệ"
+                  placeholder="VND"
+                  required
+                />
+                <FieldForm
+                  type="input"
+                  name="percentage"
+                  label="Phần trăm (%) chiết khấu thêm"
+                  placeholder="Nhập phần trăm (%)"
+                  inputType="number"
+                  min={0}
+                  max={100}
+                />
+                <FieldForm
+                  type="textarea"
+                  name="description"
+                  label="Mô tả"
+                  required
+                  placeholder="Mỗi dòng là một mô tả"
+                  style={{ height: 120 }}
+                />
+                <FieldForm
                   type="input"
                   name="subtitle"
                   label="Phụ đề"
                   required
                   placeholder=""
-              />
-              <FieldForm
+                />
+                <FieldForm
                   type="textarea"
                   name="overview"
                   label="Tổng quan"
                   required
                   placeholder=""
                   style={{ height: 70 }}
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <FieldForm
-                  type="date"
-                  name="start_date"
-                  label="Ngày bắt đầu"
-                  required
                 />
-                <FieldForm
-                  type="date"
-                  name="end_date"
-                  label="Ngày kết thúc"
-                  required
-                  disabledDate={(current: Dayjs | null) =>
-                    current && current < dayjs().startOf('day')
-                  }
-                />
-              </div>
-              
-              <FieldForm type="hidden" name="id" label={''} />
-              <div className="flex justify-end space-x-2 mt-4">
-                <Button
-                  onClick={() => {
-                    form.resetFields();
-                    setIsOpenModal(false);
-                  }}
-                >
-                  Hủy
-                </Button>
-                <Button type="primary" htmlType="submit">
-                  Lưu
-                </Button>
-              </div>
-            </Form>
-          </Modal>
-           )}
+                <div className="grid grid-cols-2 gap-4">
+                  <FieldForm
+                    type="date"
+                    name="start_date"
+                    label="Ngày bắt đầu"
+                    required
+                  />
+                  <FieldForm
+                    type="date"
+                    name="end_date"
+                    label="Ngày kết thúc"
+                    required
+                    disabledDate={(current: Dayjs | null) =>
+                      current && current < dayjs().startOf('day')
+                    }
+                  />
+                </div>
+
+                <FieldForm type="hidden" name="id" label={''} />
+                <div className="flex justify-end space-x-2 mt-4">
+                  <Button
+                    onClick={() => {
+                      form.resetFields();
+                      setIsOpenModal(false);
+                    }}
+                  >
+                    Hủy
+                  </Button>
+                  <Button type="primary" htmlType="submit">
+                    Lưu
+                  </Button>
+                </div>
+              </Form>
+            </Modal>
+          )}
         </main>
       </div>
     </>
