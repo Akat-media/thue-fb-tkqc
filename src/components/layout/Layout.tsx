@@ -4,6 +4,7 @@ import Footer from './Footer';
 import NotificationOverlay from '../../pages/notify/NotificationOverlay';
 import { Outlet } from 'react-router-dom';
 import { usePageStore } from '../../stores/usePageStore';
+import FloatingButtons from '../../pages/buttons/FloatingButtons';
 
 const Layout = ({
   children,
@@ -49,6 +50,9 @@ const Layout = ({
       {/*<Navbar />*/}
       <main className="flex-grow pl-0 w-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
         {children}
+
+        {/*buttons  */}
+        <FloatingButtons />
       </main>
       <NotificationOverlay />
       <Footer />
