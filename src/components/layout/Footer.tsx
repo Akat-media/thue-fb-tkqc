@@ -39,10 +39,18 @@ const Footer: React.FC = () => {
                 </div>
 
                 <div className="flex flex-row items-center py-3 gap-2 pl-14">
-                  <img src="/homepage/footer/fb.png" alt="facebook" />
-                  <img src="/homepage/footer/zalo.png" alt="zalo" />
-                  <img src="/homepage/footer/youtube.png" alt="youtube" />
-                  <img src="/homepage/footer/insta.png" alt="instagram" />
+                  <a href="https://www.facebook.com/akamedia.giaiphapso" target="_blank" rel="noopener noreferrer">
+                    <img className="cursor-pointer" src="/homepage/footer/fb.png" alt="facebook" />
+                  </a>
+                  <a href="https://zalo.me/0385958416" target="_blank" rel="noopener noreferrer">
+                    <img className="cursor-pointer" src="/homepage/footer/zalo.png" alt="zalo" />
+                  </a>
+                  <a>
+                    <img className="cursor-pointer" src="/homepage/footer/youtube.png" alt="youtube" />
+                  </a>
+                  <a>
+                    <img className="cursor-pointer" src="/homepage/footer/insta.png" alt="instagram" />
+                  </a>
                 </div>
               </div>
             </div>

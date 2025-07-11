@@ -115,9 +115,12 @@ function AppRoutes() {
             />
             <Route path="/admin/account" element={<Account />} />
             <Route path="/create-bot" element={<CreateBotPage />} />
-            <Route path="/create-request" element={<RequestForm />} />
-            <Route path="/support" element={<ListSupport />} />
-            <Route path="/support/:id" element={<SupportTicketDetail />} />
+            <Route path="/support">
+              <Route index element={<ListSupport />} />
+              <Route path="create" element={<RequestForm />} />
+              <Route path=":id" element={<SupportTicketDetail />} />
+            </Route>
+
             <Route path="/ticket" element={<TicketPage />} />
             <Route path="/paypal-verify" element={<Paypal />} />
           </Route>

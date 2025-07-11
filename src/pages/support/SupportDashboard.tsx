@@ -261,7 +261,9 @@ const SupportDashboard: React.FC = () => {
     ).padStart(2, '0')}/${date.getFullYear()}`;
   };
 
-  const createRequest = () => navigate('/create-request');
+  const createRequest = () => {
+    navigate('/support/create')
+  };
 
   const getStatusConfig = (status: string) => {
     const configs = {
