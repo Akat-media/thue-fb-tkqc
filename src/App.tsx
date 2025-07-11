@@ -42,6 +42,7 @@ import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import NotFoundPage from './pages/404/NotFoundPage.tsx';
 import {usePageStore} from "./stores/usePageStore.ts";
+import PopupWelcome from './components/layout/PopupWelcome.tsx';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -70,6 +71,7 @@ function AppRoutes() {
   }, []);
   return (
     <NotificationProvider>
+      <PopupWelcome/>
       {!isHideNavbar && <Navbar />}
       <Layout role={userobj?.role}>
         <ScrollToTop/>
