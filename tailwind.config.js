@@ -7,7 +7,7 @@ export default {
         'spin-slow': 'spin 240s linear infinite',
         'background-slow': 'bgMove 20s ease-in-out infinite',
         float: 'float 3s ease-in-out infinite',
-        scroll: 'scroll 30s linear infinite',
+        scroll: 'scroll 50s linear infinite',
       },
       keyframes: {
         bgMove: {

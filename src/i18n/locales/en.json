@@ -116,7 +116,7 @@
   "whyChoose": {
     "button": "WHY CHOOSE AKA ADS?",
     "headingLine1": "Stable account",
-    "highlight": "boost sales",
+    "highlight": "Boost sales",
     "headingLine2": "effectively"
   },
   "strongAccount": {
@@ -151,8 +151,8 @@
     "descLine2": "Automatically processes transactions, fully secure,<br/> no disruptions."
   },
   "blog": {
-    "titleLine1": "Stay Updated with the Latest News",
-    "titleLine2": "From <span>Markets & Platforms</span>"
+    "titleLine1": "Stay updated with the latest news",
+    "titleLine2": "<span>Markets & Platforms</span>"
   },
   "news": {
     "1": {
@@ -195,15 +195,15 @@
   },
   "price": {
     "title": "SERVICE QUOTE",
-    "title2": "Account Rental Package",
+    "title2": "Account rental package",
     "title3": "Advertisement",
     "fee": "Service fee",
     "rent": "Rent now"
   },
   "highlightProject": {
     "title": "HIGHLIGHT PROJECT",
-    "title2": "Thousands of Businesses",
-    "title3": "Trust and Choice",
+    "title2": "Thousands of businesses",
+    "title3": "Trust and choice",
     "content": "Developed by AKA Media - a pioneer in the field of digital advertising, AKAds provides a reputable Facebook account rental service, proudly accompanying 5,000+ customers over the past 8 years, providing effective, stable and cost-optimized advertising solutions."
   },
   "modalHomepage": {

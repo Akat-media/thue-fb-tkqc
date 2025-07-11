@@ -266,7 +266,7 @@ const SupportTicketDetail: React.FC = () => {
                                 <div>
                                     <p className="text-sm text-gray-600 mb-2">{t('supportPageDetail.main.description')}</p>
                                     <div className="bg-gray-50 p-4 rounded-lg">
-                                        <p className="text-sm text-gray-900 leading-relaxed">{data.content}</p>
+                                        <p className="text-sm text-gray-900 leading-relaxed break-words whitespace-pre-line">{data.content}</p>
                                     </div>
                                 </div>
                                 {data.attachments.length > 0 && (
@@ -279,7 +279,7 @@ const SupportTicketDetail: React.FC = () => {
                                             {data.attachments.map((file, index) => (
                                                 <div key={index} className="flex items-center p-2 bg-gray-50 rounded-lg">
                                                     <Paperclip className="w-4 h-4 mr-2 text-gray-500" />
-                                                    <span className="text-sm text-gray-700">{file}</span>
+                                                    <span className="text-sm text-gray-700 max-w-[280px] break-words">{file}</span>
                                                 </div>
                                             ))}
                                         </div>

@@ -102,7 +102,7 @@ export default function DesktopNavigation({
 
   // Helper: map pathname to NAV_ITEMS key
   const getKeyFromPath = (path: string) => {
-    const found = NAV_ITEMS.find((item) => item.url === path);
+    const found = NAV_ITEMS.find((item) => path.startsWith(item.url));
     return found ? found.key : 'home';
   };
 

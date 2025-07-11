@@ -325,7 +325,10 @@ const Sidebar: React.FC<{
       <div className="space-y-2 mt-6">
         <Link
           to="/admin/settings"
-          className="flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300"
+          className={clsx(
+              'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+              location.pathname === '/admin/settings' && 'bg-white font-semibold'
+          )}
         >
           <div className="w-12 flex justify-center">
             <Settings className="w-5 h-5" />
@@ -340,8 +343,11 @@ const Sidebar: React.FC<{
           </span>
         </Link>
         <Link
-          to="/admin/support"
-          className="flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300"
+            to="/admin/support"
+            className={clsx(
+                'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+                location.pathname === '/admin/support' && 'bg-white font-semibold'
+            )}
         >
           <div className="w-12 flex justify-center">
             <HelpCircle className="w-5 h-5" />

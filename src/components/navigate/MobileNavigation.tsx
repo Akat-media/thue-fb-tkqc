@@ -138,7 +138,7 @@ export default function MobileNavigation({
                 }
                 setMobileNavOpen(false);
               };
-              const isActive = location.pathname === item.url;
+              const isActive = location.pathname.startsWith(item.url);
               return (
                 <Link
                   key={item.key}
