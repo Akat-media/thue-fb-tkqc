@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
       'process.env': env,
     },
     server: {
-      allowedHosts: ['ashley-immigrants-closed-alpine.trycloudflare.com'],
+      allowedHosts: ['tradition-rating-manufacturing-nova.trycloudflare.com'],
     },
   };
 });
