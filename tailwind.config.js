@@ -8,6 +8,9 @@ export default {
         'background-slow': 'bgMove 20s ease-in-out infinite',
         float: 'float 3s ease-in-out infinite',
         scroll: 'scroll 50s linear infinite',
+        // zoomIn: 'zoomIn 0.5s ease-out forwards',
+        zoomIn: 'zoomIn 1s both',
+        // pulseRing: 'pulseRing 1.5s infinite',
       },
       keyframes: {
         bgMove: {
@@ -26,6 +29,20 @@ export default {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        zoomIn: {
+          '0%': {
+            transform: 'scale(0.5)',
+            opacity: '0',
+          },
+          '100%': {
+            transform: 'scale(1)',
+            opacity: '1',
+          },
+        // pulseRing: {
+        //   '0%': { transform: 'scale(0.9)', opacity: '0.7' },
+        //   '70%': { transform: 'scale(1.5)', opacity: '0' },
+        //   '100%': { transform: 'scale(1.5)', opacity: '0' },
+        // },
       },
       fontFamily: {
         work: ['"Work Sans"', 'sans-serif'],
@@ -50,10 +67,11 @@ export default {
       },
       screens: {
         customScreen: '1510px',
-      },
+      }
     },
   },
   plugins: [
     // require('tailwind-scrollbar'),
   ],
-};
+}
+}

@@ -62,7 +62,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
     if (!inputValue.trim()) return;
 
     // Add user message
-    addMessage(inputValue, 'user');
+    // addMessage(inputValue, 'user');
     setInputValue('');
     try {
       const res = await BaseHeader({
@@ -73,6 +73,28 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
           user_id: user?.id,
         },
       });
+      const newMsg = res.data.data;
+      console.log('Server response:', newMsg);
+
+      const messageForMessageView = {
+        ...newMsg,
+        chat_id: newMsg.chat_id,
+        sender: {
+          id: user?.id,
+          username: user?.username,
+          role: user?.role,
+        }
+      };
+
+      console.log('📤 EMITTING - messageForMessageView:', messageForMessageView);
+
+      if (socket.connected) {
+        // truyen su kien send_message den server socket.ts (line 46)
+        socket.emit('send_message', { message: messageForMessageView });
+      } else {
+        console.warn('Socket chưa kết nối!');
+      }
+
     } catch (error) {
       console.log(error);
     }
@@ -148,8 +170,8 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
       socket.off('connect');
       socket.off('new_message');
     };
-  }, []);
-  console.log('messages', messages);
+  }, [user?.id]);
+  // console.log('messages', messages);
   return (
     <div
       className={`fixed bottom-28 right-8 w-80 bg-white shadow-2xl rounded-2xl overflow-hidden z-50 transition-all duration-300 ${
@@ -182,9 +204,9 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
 
       {/* Messages */}
       <div className="h-80 overflow-y-auto p-4 space-y-4 bg-gray-50">
-        {messages.map((message) => (
+        {messages.map((message,index) => (
           <div
-            key={message.id}
+            key={`${message.id}-${index}`}
             className={`flex ${
               message.sender === 'user' ? 'justify-end' : 'justify-start'
             }`}
