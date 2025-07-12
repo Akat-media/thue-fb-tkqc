@@ -20,5 +20,5 @@ export const usePageStore = create<PageState>((set) => ({
         const year = vnDate.getUTCFullYear();
 
         return `${hours}:${minutes} ${day}/${month}/${year}`;
-    }
+    },
 }));

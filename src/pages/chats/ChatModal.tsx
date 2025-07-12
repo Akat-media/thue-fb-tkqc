@@ -9,6 +9,9 @@ interface Message {
   text: string;
   sender: 'user' | 'bot';
   timestamp: Date;
+  idUser: string;
+  nameUser: string;
+  roleUser: string;
 }
 
 interface ChatModalProps {
@@ -62,7 +65,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
     if (!inputValue.trim()) return;
 
     // Add user message
-    addMessage(inputValue, 'user');
+    // addMessage(inputValue, 'user');
     setInputValue('');
     try {
       const res = await BaseHeader({
@@ -103,6 +106,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
           user_id: JSON.parse(localStorage.getItem('user') || '').user_id,
         },
       });
+      // console.log("res now: ", res)
       if (res.status === 200) {
         const formattedMessages: Message[] = res.data.data.map((msg: any) => ({
           id: msg.id,
@@ -132,7 +136,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
 
     socket.on('new_message', (data) => {
       console.log('new_message success event received:', data);
-      const { message } = data;
+      const { message, sender } = data;
       const senderType = message.sender_id === user?.id ? 'user' : 'bot';
 
       const newMsg: Message = {
@@ -140,6 +144,9 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
         text: message.content,
         sender: senderType,
         timestamp: new Date(message.created_at),
+        idUser: sender.id,
+        nameUser: sender.username,
+        roleUser: sender.role,
       };
       setMessages((prev) => [...prev, newMsg]);
     });
@@ -148,8 +155,9 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
       socket.off('connect');
       socket.off('new_message');
     };
-  }, []);
-  console.log('messages', messages);
+  }, [user?.id]);
+  // console.log('messages client: ', messages);
+
   return (
     <div
       className={`fixed bottom-28 right-8 w-80 bg-white shadow-2xl rounded-2xl overflow-hidden z-50 transition-all duration-300 ${
@@ -182,9 +190,9 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
 
       {/* Messages */}
       <div className="h-80 overflow-y-auto p-4 space-y-4 bg-gray-50">
-        {messages.map((message) => (
+        {messages.map((message,index) => (
           <div
-            key={message.id}
+            key={`${message.id}-${index}`}
             className={`flex ${
               message.sender === 'user' ? 'justify-end' : 'justify-start'
             }`}

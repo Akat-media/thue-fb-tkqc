@@ -19,6 +19,7 @@ import {
   Settings,
   TicketPercent,
   QrCode,
+  Mail
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
@@ -360,6 +361,25 @@ const Sidebar: React.FC<{
             )}
           >
             Hỗ Trợ
+          </span>
+        </Link>
+        <Link
+            to="/admin/messages"
+            className={clsx(
+                'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+                location.pathname === '/admin/messages' && 'bg-white font-semibold'
+            )}
+        >
+          <div className="w-12 flex justify-center">
+            <Mail className="w-5 h-5" />
+          </div>
+          <span
+              className={clsx(
+                  'transition-all whitespace-nowrap overflow-hidden duration-300',
+                  isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+              )}
+          >
+            Tin nhắn
           </span>
         </Link>
 
