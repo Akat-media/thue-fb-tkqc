@@ -670,14 +670,42 @@
     "delete": "Delete",
     "deleting": "Deleting..."
   },
+  "payment_modal": {
+    "title": "Add Payment Card",
+    "card_name": "Cardholder Name",
+    "card_name_placeholder": "NGUYEN VAN ANH",
+    "card_number": "Card Number",
+    "card_number_placeholder": "1234 5678 9012 3456",
+    "expiry": "MM/YY",
+    "cvv": "CVV",
+    "terms": "I agree to the terms and policies",
+    "save": "Save",
+    "errors": {
+      "card_name_required": "Please enter the cardholder name.",
+      "card_name_invalid": "Name must contain only letters and spaces.",
+      "card_name_max": "Cardholder name must not exceed 40 characters.",
+      "card_number_required": "Please enter the card number.",
+      "card_number_invalid": "Card number must be 16 digits.",
+      "expiry_required": "Please enter expiry date.",
+      "expiry_invalid": "Enter a valid format MM/YY (e.g., 12/25).",
+      "cvv_required": "Please enter CVV.",
+      "cvv_invalid": "CVV must be 3 or 4 digits.",
+      "agree_terms": "Please agree to the terms."
+    }
+  },
   "common": {
     "sort": {
       "asc": "ASC",
       "desc": "DESC"
     },
-    "button": {
+    "button":{
       "confirm": "Confirm",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "close": "Close"
+    },
+    "noti":{
+      "success": "Success",
+      "error": "Failed"
     }
   }
 }

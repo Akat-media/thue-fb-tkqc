@@ -670,6 +670,29 @@
     "delete": "Xóa",
     "deleting": "Đang xóa..."
   },
+  "payment_modal": {
+    "title": "Thêm thẻ thanh toán",
+    "card_name": "Tên trên thẻ",
+    "card_name_placeholder": "NGUYEN VAN ANH",
+    "card_number": "Số thẻ",
+    "card_number_placeholder": "1234 5678 9012 3456",
+    "expiry": "MM/YY",
+    "cvv": "CVV",
+    "terms": "Tôi đồng ý với các điều khoản và chính sách",
+    "save": "Lưu",
+    "errors": {
+      "card_name_required": "Vui lòng nhập tên trên thẻ.",
+      "card_name_invalid": "Tên chỉ được chứa chữ cái và khoảng trắng giữa các từ.",
+      "card_name_max": "Tên trên thẻ không được dài quá 40 ký tự.",
+      "card_number_required": "Vui lòng nhập số thẻ.",
+      "card_number_invalid": "Số thẻ phải gồm 16 chữ số.",
+      "expiry_required": "Vui lòng nhập ngày hết hạn.",
+      "expiry_invalid": "Vui lòng nhập đúng định dạng MM/YY (ví dụ: 12/25).",
+      "cvv_required": "Vui lòng nhập CVV.",
+      "cvv_invalid": "CVV phải gồm 3 hoặc 4 chữ số.",
+      "agree_terms": "Vui lòng lựa chọn đồng ý với các điều khoản."
+    }
+  },
   "common": {
     "sort": {
       "asc": "Tăng dần",
@@ -677,7 +700,12 @@
     },
     "button":{
       "confirm": "Xác nhận",
-      "cancel": "Hủy"
+      "cancel": "Hủy",
+      "close": "Đóng"
+    },
+    "noti":{
+      "success": "Thành công",
+      "error": "Thất bại"
     }
   }
 }

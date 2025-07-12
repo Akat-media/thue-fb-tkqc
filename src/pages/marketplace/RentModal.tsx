@@ -23,6 +23,7 @@ import { Form, Modal, Select } from 'antd';
 import styled from 'styled-components';
 import { useNotificationStore } from '../../stores/notificationStore';
 import { useTranslation } from 'react-i18next';
+import { usePreventScroll } from '../../hook/usePreventScroll';
 
 interface RentModalProps {
   isOpen: boolean;
@@ -73,7 +74,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const { fetchNotifications } = useNotificationStore();
   const isVisaAccount = account?.is_visa_account;
   const { user, fetchUser } = useUserStore();
-
+  usePreventScroll(isOpen)
   const { innerBorderRef } = useOnOutsideClick(() => {
     if (isOpen) onClose();
   });
@@ -270,23 +271,6 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       setRequestedLimit(null);
     }
   }, [isOpen, isVisaAccount]);
-
-  useEffect(() => {
-    if (isOpen) {
-      // Chặn scroll khi modal mở
-      document.body.style.overflow = 'hidden';
-      document.body.style.paddingRight = '15px'; // Bù trừ scrollbar width
-    } else {
-      // Khôi phục scroll khi modal đóng
-      document.body.style.overflow = 'unset';
-      document.body.style.paddingRight = '0px';
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-      document.body.style.paddingRight = '0px';
-    };
-  }, [isOpen]);
 
   const fetchCookies = async () => {
     try {

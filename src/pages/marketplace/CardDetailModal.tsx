@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePreventScroll } from '../../hook/usePreventScroll';
 
 interface ModalProps {
   isOpen: boolean;
@@ -31,22 +32,7 @@ const CardDetailModal: React.FC<ModalProps> = ({
   fieldNameMap,
 }) => {
   const { t } = useTranslation();
-
-  // Prevent scrolling when modal is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
-
-  if (!isOpen) {
-    return null;
-  }
+  usePreventScroll(isOpen)
   return (
     <div
       onClick={() => setIsAdDetailOpen(false)}
