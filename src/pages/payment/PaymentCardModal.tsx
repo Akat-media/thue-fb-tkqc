@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { X, ArrowLeft, Eye, EyeOff} from 'lucide-react';
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { X, Eye, EyeOff } from 'lucide-react';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { usePreventScroll } from '../../hook/usePreventScroll';
 
 interface Props {
   isOpen: boolean;
@@ -17,6 +18,9 @@ const PaymentCardModal: React.FC<Props> = ({
   onSave,
   onBackToRentModal,
 }) => {
+  const { t } = useTranslation();
+  usePreventScroll(isOpen);
+
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [expiry, setExpiry] = useState('');
@@ -45,39 +49,38 @@ const PaymentCardModal: React.FC<Props> = ({
     const newErrors: { [key: string]: string } = {};
 
     if (!cardName.trim()) {
-      newErrors.cardName = 'Vui lòng nhập tên trên thẻ.';
+      newErrors.cardName = 'card_name_required';
     } else if (!/^[A-Za-zÀ-ỹ]+(\s[A-Za-zÀ-ỹ]+)*$/.test(cardName.trim())) {
-      newErrors.cardName =
-        'Tên chỉ được chứa chữ cái và khoảng trắng giữa các từ.';
+      newErrors.cardName = 'card_name_invalid';
     } else if (cardName.trim().length > 40) {
-      newErrors.cardName = 'Tên trên thẻ không được dài quá 40 ký tự.';
+      newErrors.cardName = 'card_name_max';
     }
+
     if (!cardNumber.trim()) {
-      newErrors.cardNumber = 'Vui lòng nhập số thẻ.';
+      newErrors.cardNumber = 'card_number_required';
     } else if (!/^\d{16}$/.test(cardNumber.replace(/\s/g, ''))) {
-      newErrors.cardNumber = 'Số thẻ phải gồm 16 chữ số.';
+      newErrors.cardNumber = 'card_number_invalid';
     }
+
     if (!expiry.trim()) {
-      newErrors.expiry = 'Vui lòng nhập ngày hết hạn.';
+      newErrors.expiry = 'expiry_required';
     } else {
       const expiryRegex = /^(0[1-9]|1[0-2])\/(\d{2})$/;
       const match = expiry.match(expiryRegex);
       if (!match) {
-        newErrors.expiry = 'Vui lòng nhập đúng định dạng MM/YY (ví dụ: 12/25).';
-      } else {
-        const [_, mm, yy] = match;
-        if (isNaN(parseInt(mm)) || isNaN(parseInt(yy))) {
-          newErrors.expiry = 'MM và YY phải là số hợp lệ.';
-        }
+        newErrors.expiry = 'expiry_invalid';
       }
     }
+
     if (!cvv.trim()) {
-      newErrors.cvv = 'Vui lòng nhập CVV.';
+      newErrors.cvv = 'cvv_required';
     } else if (!/^\d{3,4}$/.test(cvv)) {
-      newErrors.cvv = 'CVV phải gồm 3 hoặc 4 chữ số.';
+      newErrors.cvv = 'cvv_invalid';
     }
-    if (!agreeTerms)
-      newErrors.agreeTerms = 'Vui lòng lựa chọn đồng ý với các điều khoản.';
+
+    if (!agreeTerms) {
+      newErrors.agreeTerms = 'agree_terms';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -93,9 +96,8 @@ const PaymentCardModal: React.FC<Props> = ({
       <div className="bg-white w-full max-w-xl rounded-2xl p-8 relative shadow-2xl">
         <div className="flex items-center justify-between mb-6 relative">
           <h2 className="text-xl sm:text-2xl font-semibold text-blue-950 text-center flex-grow">
-            Thêm thẻ thanh toán
+            {t('payment_modal.title')}
           </h2>
-
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-black absolute right-0"
@@ -107,24 +109,26 @@ const PaymentCardModal: React.FC<Props> = ({
         <div className="space-y-6">
           <div>
             <label className="block text-lg font-medium text-gray-700 mb-1">
-              Tên trên thẻ <span className="text-red-500">*</span>
+              {t('payment_modal.card_name')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={cardName}
               onChange={(e) => setCardName(e.target.value.toUpperCase())}
               className="w-full border border-gray-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="NGUYEN VAN ANH"
+              placeholder={t('payment_modal.card_name_placeholder')}
             />
             {errors.cardName && (
-              <div className="text-red-500 text-xs mt-1">{errors.cardName}</div>
+              <div className="text-red-500 text-xs mt-1">
+                {t(`payment_modal.errors.${errors.cardName}`)}
+              </div>
             )}
           </div>
 
           <div>
             <label className="block text-lg font-medium text-gray-700 mb-1 flex items-center justify-between">
               <span>
-                Số thẻ <span className="text-red-500">*</span>
+                {t('payment_modal.card_number')} <span className="text-red-500">*</span>
               </span>
               <span className="space-x-1">
                 <img
@@ -148,13 +152,13 @@ const PaymentCardModal: React.FC<Props> = ({
                 setCardNumber(formatted);
               }}
               className="w-full border border-gray-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="1234 5678 9012 3456"
+              placeholder={t('payment_modal.card_number_placeholder')}
               inputMode="numeric"
               maxLength={19}
             />
             {errors.cardNumber && (
               <div className="text-red-500 text-xs mt-1">
-                {errors.cardNumber}
+                {t(`payment_modal.errors.${errors.cardNumber}`)}
               </div>
             )}
           </div>
@@ -162,7 +166,7 @@ const PaymentCardModal: React.FC<Props> = ({
           <div className="flex gap-6">
             <div className="flex-1">
               <label className="block text-base font-medium text-gray-700 mb-1">
-                MM/YY <span className="text-red-500">*</span>
+                {t('payment_modal.expiry')} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -175,19 +179,21 @@ const PaymentCardModal: React.FC<Props> = ({
                   setExpiry(raw);
                 }}
                 className="w-full border border-gray-300 rounded-xl px-3 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="12/25"
+                placeholder="MM/YY"
                 maxLength={5}
               />
-
               {errors.expiry && (
-                <div className="text-red-500 text-xs mt-1">{errors.expiry}</div>
+                <div className="text-red-500 text-xs mt-1">
+                  {t(`payment_modal.errors.${errors.expiry}`)}
+                </div>
               )}
             </div>
+
             <div className="flex-1">
               <label className="block text-base font-medium text-gray-700 mb-1">
-                CVV <span className="text-red-500">*</span>
+                {t('payment_modal.cvv')} <span className="text-red-500">*</span>
               </label>
-              <div className='relative'>
+              <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={cvv}
@@ -204,15 +210,13 @@ const PaymentCardModal: React.FC<Props> = ({
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                 >
-                  {showPassword ? (
-                    <Eye className="h-5 w-5" />
-                  ) : (
-                    <EyeOff className="h-5 w-5" />
-                  )}
+                  {showPassword ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                 </button>
               </div>
               {errors.cvv && (
-                <div className="text-red-500 text-xs mt-1">{errors.cvv}</div>
+                <div className="text-red-500 text-xs mt-1">
+                  {t(`payment_modal.errors.${errors.cvv}`)}
+                </div>
               )}
             </div>
           </div>
@@ -223,21 +227,25 @@ const PaymentCardModal: React.FC<Props> = ({
               checked={agreeTerms}
               onChange={(e) => setAgreeTerms(e.target.checked)}
             />
-            <Link to={'/policy'} className="text-base text-blue-600 underline">
-              Tôi đồng ý với các điều khoản và chính sách
-              <span className="text-red-500">*</span>
+            <Link to="/policy" className="text-base text-blue-600 underline">
+              {t('payment_modal.terms')} <span className="text-red-500">*</span>
             </Link>
           </div>
           {errors.agreeTerms && (
-            <div className="text-red-500 text-xs mt-1">{errors.agreeTerms}</div>
+            <div className="text-red-500 text-xs mt-1">
+              {t(`payment_modal.errors.${errors.agreeTerms}`)}
+            </div>
           )}
+
           <Button
             type="primary"
             onClick={handleSubmit}
             disabled={!agreeTerms}
-            className='w-full text-white rounded-xl mt-2 p-4'
+            className="w-full text-white rounded-xl mt-2 p-4"
           >
-            <p className='flex justify-center items-center w-full h-full p-3 font-semibold'>Lưu</p>
+            <p className="flex justify-center items-center w-full h-full p-3 font-semibold">
+              {t('payment_modal.save')}
+            </p>
           </Button>
         </div>
       </div>

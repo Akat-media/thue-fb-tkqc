@@ -19,6 +19,7 @@ import { useSearchParams } from 'react-router-dom';
 import _ from 'lodash';
 import CardDetailModal from './CardDetailModal';
 import { useTranslation } from 'react-i18next';
+import { usePreventScroll } from '../../hook/usePreventScroll';
 
 interface BM {
   id: string;
@@ -77,7 +78,8 @@ const MarketplacePage: React.FC = () => {
     pageSize: pageSizeSimple,
     handleChange: handleChangeSimple,
   } = usePagination(urlPageSimple, 6);
-
+  usePreventScroll(successRent)
+  
   const handleCallAPiVisaRent = async () => {
     try {
       const [rentedRes] = await Promise.all([
@@ -534,7 +536,7 @@ const MarketplacePage: React.FC = () => {
         {successRent && (
           <NotiSuccess
             onClose={() => setSuccessRent('')}
-            message={'Vui lòng đợi giây lát để hệ thống setup'}
+            message={t('rentalsPage.notifications.setupInProgress')}
           />
         )}
 
