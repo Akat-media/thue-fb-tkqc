@@ -43,6 +43,7 @@ import { useEffect } from 'react';
 import NotFoundPage from './pages/404/NotFoundPage.tsx';
 import {usePageStore} from "./stores/usePageStore.ts";
 import PopupWelcome from './components/layout/PopupWelcome.tsx';
+import ChatLayout from "./pages/admin/chats/ChatLayout.tsx";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -109,6 +110,7 @@ function AppRoutes() {
             <Route path="/admin/rentals" element={<RentalsManagement />} />
             <Route path="/admin/voucher" element={<VoucherManager />} />
             <Route path="/admin/settings" element={<SettingsPage />} />
+            <Route path="/admin/messages" element={<ChatLayout />} />
             <Route
               path="/admin/notifications"
               element={<NotificationOverlay />}
