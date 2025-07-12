@@ -49,11 +49,9 @@ const useManagerBudget = ({ form }: UseManagerBudgetProps) => {
       amount: Number(data.amount),
       percentage: Number(data.percentage),
       start_date: data.start_date
-        ? dayjs(data.start_date).startOf('day').toDate().toISOString()
+        ? dayjs(data.start_date).format('YYYY-MM-DD')
         : '',
-      end_date: data.end_date
-        ? dayjs(data.end_date).startOf('day').toDate().toISOString()
-        : '',
+      end_date: data.end_date ? dayjs(data.end_date).format('YYYY-MM-DD') : '',
       description:
         typeof data.description === 'string'
           ? data.description.split('\n')

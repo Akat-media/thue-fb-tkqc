@@ -251,11 +251,13 @@ const PaymentPage: React.FC = () => {
                 />
               </div>
               <div
-                className={`flex items-center justify-between border rounded-lg p-3 cursor-pointer shadow-sm hover:shadow-md transition ${
-                  currencyTab === 'USD'
-                    ? 'border-blue-600 ring-2 ring-blue-400'
-                    : 'border-gray-300'
-                }`}
+                className="flex items-center justify-between border rounded-lg p-3 shadow-sm opacity-50 cursor-not-allowed"
+
+                // className={`flex items-center justify-between border rounded-lg p-3 cursor-pointer shadow-sm hover:shadow-md transition ${
+                //   currencyTab === 'USD'
+                //     ? 'border-blue-600 ring-2 ring-blue-400'
+                //     : 'border-gray-300'
+                // }`}
                 // onClick={() => {
                 //   setCurrencyTab('USD');
                 //   setIsCurrencyModalOpen(false);
@@ -273,9 +275,14 @@ const PaymentPage: React.FC = () => {
                       <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
                     )}
                   </div>
-                  <span className="font-medium text-gray-800">
-                    USD (PayPal)
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="font-medium text-gray-800">
+                      USD (PayPal)
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      Coming soon...
+                    </span>
+                  </div>
                 </div>
                 <img
                   src="https://www.paypalobjects.com/webstatic/icon/pp258.png"

@@ -33,7 +33,7 @@ interface RentModalProps {
   openCardModal?: () => void;
   setRentMeta?: (meta: any) => void;
   rentMeta?: any;
-  handleCallAPiVisa:() => void
+  handleCallAPiVisa: () => void;
 }
 const dataCurrency = [
   { id: 'vnd', name: 'VND' },
@@ -49,7 +49,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     openCardModal,
     setRentMeta,
     rentMeta,
-    handleCallAPiVisa
+    handleCallAPiVisa,
   } = props;
   const { t } = useTranslation();
   const objetUser = localStorage.getItem('user');
@@ -202,14 +202,20 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       if (response.status === 200 && response.data.success) {
         setSuccessRent(response.data.message);
         await fetchNotifications(userParse.user_id || '');
-        await handleCallAPiVisa()
+        await handleCallAPiVisa();
         onClose();
         // toast.success('Thuê tài khoản thành công!');
       } else {
-        toast.error(response.data.message || 'Không thể thuê tài khoản.');
+        toast.error(
+          response.data.message ||
+            t('rentModal.cannotRent', 'Cannot rent account.')
+        );
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Lỗi khi thuê tài khoản.');
+      toast.error(
+        error?.response?.data?.message ||
+          t('rentModal.rentError', 'Error when renting account.')
+      );
     } finally {
       setIsLoading(false);
     }
@@ -348,7 +354,9 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       >
         <Card>
           <CardHeader className="relative">
-            <CardTitle className="text-[26px]">{t('rentModal.title')}</CardTitle>
+            <CardTitle className="text-[26px]">
+              {t('rentModal.title')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {isVisaAccount == null && (
@@ -364,7 +372,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 </div>
                 <div className="ml-3">
                   <h3 className="!text-[16px] text-sm font-medium text-blue-800">
-                  {t('rentModal.accountLabel')} <strong>{account.name}</strong>
+                    {t('rentModal.accountLabel')}{' '}
+                    <strong>{account.name}</strong>
                   </h3>
                 </div>
               </div>
@@ -379,11 +388,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   placeholder={t('rentModal.bmIdPlaceholder')}
                   value={userBmId}
                   onChange={(e) => setUserBmId(e.target.value)}
-                  error={
-                    !isValidBmId
-                      ? t('rentModal.bmIdError')
-                      : ''
-                  }
+                  error={!isValidBmId ? t('rentModal.bmIdError') : ''}
                   helperText={
                     !isValidBmId
                       ? t('rentModal.bmIdError')
@@ -440,15 +445,9 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                         }));
                       }
                     }}
-                    error={
-                      !isValidLimit
-                        ? t('rentModal.limitHelper')
-                        : ''
-                    }
+                    error={!isValidLimit ? t('rentModal.limitHelper') : ''}
                     helperText={
-                      !isValidLimit
-                        ? t('rentModal.limitHelper')
-                        : undefined
+                      !isValidLimit ? t('rentModal.limitHelper') : undefined
                     }
                     fullWidth
                     className="font-semibold w-full mt-1 px-3 py-3 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
@@ -490,9 +489,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                           ) + 1;
 
                         if (days < 7 || days > 31) {
-                          setRentalRangeError(
-                            t('rentModal.rentalError')
-                          );
+                          setRentalRangeError(t('rentModal.rentalError'));
                           setRentalRange(null);
                           return;
                         }
@@ -591,7 +588,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 {requestedLimit !== null &&
                   requestedLimit > account.defaultLimit && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">{t('rentModal.limitFee')}
+                      <span className="text-gray-500">
+                        {t('rentModal.limitFee')}
                       </span>
                       <span className="text-gray-900 font-medium"></span>
                     </div>
@@ -606,7 +604,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                     </p>
                   )}
                   <p className="text-gray-500 mt-2 text-[16px] font-semibold">
-                  {t('rentModal.serviceFee')}{' '}
+                    {t('rentModal.serviceFee')}{' '}
                     <span className="text-blue-600">
                       {serviceFee.toLocaleString('vi-VN')} VNĐ
                     </span>
@@ -614,7 +612,9 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 </div>
                 <div className="border-t border-gray-200 pt-2">
                   <div className="flex justify-between text-[17px] sm:text-[20px] font-semibold">
-                    <span className="text-gray-900">{t('rentModal.totalPayment')}</span>
+                    <span className="text-gray-900">
+                      {t('rentModal.totalPayment')}
+                    </span>
                     <span className="text-blue-600 text-end text-nowrap">
                       {totalBill.toLocaleString('vi-VN')} VNĐ
                     </span>
@@ -627,7 +627,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
               <div>
                 <div className="flex justify-between">
                   <span className="text-[16px] sm:text-[18px] font-semibold ">
-                  {t('rentModal.userBalance')}{' '}
+                    {t('rentModal.userBalance')}{' '}
                   </span>
                   <span
                     className={`font-medium text-[18px] ${
