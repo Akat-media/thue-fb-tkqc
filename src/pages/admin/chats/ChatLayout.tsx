@@ -55,6 +55,7 @@ const ChatLayout: React.FC = () => {
     const [showSidebar, setShowSidebar] = useState(false);
     const [data, setData] = useState<ChatMember[]>([]);
     const [selectedUser, setSelectedUser] = useState<User>();
+    const [chatId, setChatId] = useState<string | undefined>();
 
     const {user} = useUserStore();
     const { formatDateToVN } = usePageStore();
@@ -137,51 +138,28 @@ const ChatLayout: React.FC = () => {
         scrollToBottom();
     }, [messages, isTyping]);
 
-    const chatLists = [
-        {
-            name: "AKA Media",
-            time: "15h30",
-            messages: "Chúng tôi có nhiều case study thành công 123",
-            colorText: "text-white",
-            bg: "bg-gradient-to-br from-blue-500 to-purple-600"
-        },
-        {
-            name: "Marketing team",
-            time: "16h30",
-            messages: "Báo cáo kết quả campaign tuần này 456",
-            colorText: "text-black",
-            bg: "bg-gray-300"
-
-        },
-        {
-            name: "Design team",
-            time: "14h30",
-            messages: "Đã upload mockup mới",
-            colorText: "text-white",
-            bg: "bg-green-400"
-        }
-    ]
-
-
     const handleSelectUser = (chatMember: ChatMember) => {
         setSelectedUser(chatMember.user);
+        setChatId(chatMember.chat_id);
     };
 
     useEffect(() => {
         console.log("selectedUser",selectedUser)
-    }, [selectedUser]);
+        console.log("chatId",chatId)
+    }, [selectedUser,chatId]);
 
     useEffect(() => {
         if (data.length > 0 && !selectedUser) {
             setSelectedUser(data[0].user); // user gần nhất đã chat
+            setChatId(data[0].chat_id);
         }
-    }, [data, selectedUser]);
+    }, [data, selectedUser, chatId]);
 
     return (
-        <div className="flex flex-col md:flex-row h-screen bg-gray-50">
+        <div className="flex flex-col md:flex-row bg-gray-50 h-screen overflow-hidden">
 
             {/* left sidebar desktop */}
-            <div className="hidden md:flex w-full md:w-80 bg-white border-r flex-col">
+            <div className="hidden md:flex w-full md:w-80 bg-white border-r flex-col h-full">
                 <div className="p-4 border-b">
                     <div className="flex items-center justify-between mb-4">
                         <h1 className="text-2xl font-bold text-gray-900">Đoạn chat</h1>
@@ -221,17 +199,21 @@ const ChatLayout: React.FC = () => {
                             >
                                 <div className="flex items-center gap-3">
                                     <div className="relative">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                            A
-                                        </div>
-                                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>
+                                        {/*<div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">*/}
+                                        {/*    A*/}
+                                        {/*</div>*/}
+                                        {/*<div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>*/}
+                                        <img src="/avatar.jpg" alt="akamedia" className="h-12 w-12 rounded-full object-cover border shrink-0" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center justify-between">
                                             <h3 className="font-semibold text-gray-900 truncate">{item.user.username}</h3>
-                                            <span className="text-xs text-gray-500">{formatDateToVN(item.chat.messages[0]?.created_at)}</span>
+                                            <span className="text-xs text-gray-500">
+                                                {formatDateToVN(item.chat.messages[item.chat.messages.length-1].created_at)}
+                                            </span>
                                         </div>
-                                        <p className="text-sm text-gray-600 truncate">{item.chat.messages[0]?.content}</p>
+                                        <p className="text-sm text-gray-600 truncate">{item.chat.messages[item.chat.messages.length - 1].content}</p>
+
                                     </div>
                                 </div>
                             </div>
@@ -251,7 +233,7 @@ const ChatLayout: React.FC = () => {
             <div
                 className={`fixed inset-y-0 left-0 z-50 bg-white w-4/5 max-w-xs border-r flex flex-col transition-transform duration-300 transform md:hidden ${
                     showSidebar ? 'translate-x-0' : '-translate-x-full'
-                }`}
+                } h-full`}
             >
                 {/* Header sidebar mobile */}
                 <div className="flex justify-between items-center p-4 border-b">
@@ -293,34 +275,39 @@ const ChatLayout: React.FC = () => {
 
             {/* CENTER - Main Chat Area */}
             {selectedUser && (
-                <div className="flex-1 overflow-y-auto p-4">
+                <div className="flex-1 flex-col">
                     {selectedUser && user?.id && (
-                        <div className="flex-1 overflow-y-auto p-4">
-                            <MessageView
-                                user={selectedUser}
-                                messages={
-                                    data.find(d => d.user.id === selectedUser.id)?.chat.messages || []
-                                }
-                                currentUserId={user?.id}
-                            />
+                        <div className="flex-1 flex flex-col h-full">
+                            <div className="flex-1 overflow-hidden m-4">
+                                <div className="h-full overflow-auto px-6 max-h-screen">
+                                    <MessageView
+                                        user={selectedUser}
+                                        messages={
+                                            data.find(d => d.user.id === selectedUser.id)?.chat.messages || []
+                                        }
+                                        chatId={chatId}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
             )}
 
             {/* RIGHT SIDEBAR - Chat Info Panel */}
-            <div className="hidden md:flex w-full md:w-80 bg-white border-l flex-col">
+            <div className="hidden md:flex w-full md:w-80 bg-white border-l flex-col h-full">
             {/* Profile Section */}
-                <div className="p-6 text-center border-b">
+                <div className="p-4 text-center border-b">
                     <div className="relative inline-block mb-4">
-                        <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl">
-                            A
-                        </div>
-                        <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+                        {/*<div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl">*/}
+                        {/*    A*/}
+                        {/*</div>*/}
+                        {/*<div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>*/}
+                        <img src="/akamedia.png" alt="akamedia" className=" rounded-full object-cover  shrink-0" />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-1">AKA Media</h3>
-                    <p className="text-sm text-gray-600 mb-2">Agency truyền thông</p>
-                    <p className="text-sm text-green-600">Đang hoạt động</p>
+                    {/*<h3 className="text-xl font-semibold text-gray-900 mb-1">AKA Media</h3>*/}
+                    {/*<p className="text-sm text-gray-600 mb-2">Agency truyền thông</p>*/}
+                    {/*<p className="text-sm text-green-600">Đang hoạt động</p>*/}
                 </div>
 
                 {/* Info Details */}
