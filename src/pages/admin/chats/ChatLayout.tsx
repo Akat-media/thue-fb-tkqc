@@ -1,5 +1,42 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {ArrowLeft, TicketPercent} from "lucide-react";
+import {ArrowLeft} from "lucide-react";
+import BaseHeader from "../../../api/BaseHeader.ts";
+import {useUserStore} from "../../../stores/useUserStore.ts";
+import {usePageStore} from "../../../stores/usePageStore.ts";
+import MessageView from './MessageView.tsx';
+
+type Message = {
+    id: string;
+    content: string;
+    chat_id: string;
+    created_at: string;
+    sender_id: string;
+    sender: {
+        id: string;
+        username: string;
+        role: string;
+    };
+};
+
+type User = {
+    id: string;
+    name: string;
+    email: string;
+    username: string;
+};
+
+type Chat = {
+    id?: string;
+    messages: Message[];
+};
+
+type ChatMember = {
+    id: string;
+    chat_id: string;
+    user_id: string;
+    user: User;
+    chat: Chat;
+};
 
 const ChatLayout: React.FC = () => {
     const [messages, setMessages] = useState([
@@ -16,14 +53,15 @@ const ChatLayout: React.FC = () => {
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [showSidebar, setShowSidebar] = useState(false);
+    const [data, setData] = useState<ChatMember[]>([]);
+    const [selectedUser, setSelectedUser] = useState<User>();
+
+    const {user} = useUserStore();
+    const { formatDateToVN } = usePageStore();
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages, isTyping]);
 
     const handleSendMessage = () => {
         if (newMessage.trim()) {
@@ -73,6 +111,32 @@ const ChatLayout: React.FC = () => {
         }
     };
 
+    const fetchData = async () => {
+        try {
+            if (!user?.id) return;
+            const response = await BaseHeader({
+                method: 'get',
+                url: `users-chatted/${user.id}`,
+            });
+            console.log("res: ",response.data.data);
+            // return
+            setData(response.data.data)
+        } catch (err: any) {
+            console.error('Lỗi khi fetch data:', err.message);
+        }
+    }
+    useEffect(() => {
+        fetchData()
+    }, [user?.id]);
+
+    useEffect(() => {
+        console.log("data: ",data)
+    }, [data]);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, isTyping]);
+
     const chatLists = [
         {
             name: "AKA Media",
@@ -80,8 +144,6 @@ const ChatLayout: React.FC = () => {
             messages: "Chúng tôi có nhiều case study thành công 123",
             colorText: "text-white",
             bg: "bg-gradient-to-br from-blue-500 to-purple-600"
-
-
         },
         {
             name: "Marketing team",
@@ -100,16 +162,26 @@ const ChatLayout: React.FC = () => {
         }
     ]
 
+
+    const handleSelectUser = (chatMember: ChatMember) => {
+        setSelectedUser(chatMember.user);
+    };
+
     useEffect(() => {
-        console.log("messagesEndRef",messagesEndRef)
-    }, [messagesEndRef]);
+        console.log("selectedUser",selectedUser)
+    }, [selectedUser]);
+
+    useEffect(() => {
+        if (data.length > 0 && !selectedUser) {
+            setSelectedUser(data[0].user); // user gần nhất đã chat
+        }
+    }, [data, selectedUser]);
 
     return (
         <div className="flex flex-col md:flex-row h-screen bg-gray-50">
 
             {/* left sidebar desktop */}
             <div className="hidden md:flex w-full md:w-80 bg-white border-r flex-col">
-            {/* Sidebar Header */}
                 <div className="p-4 border-b">
                     <div className="flex items-center justify-between mb-4">
                         <h1 className="text-2xl font-bold text-gray-900">Đoạn chat</h1>
@@ -140,53 +212,31 @@ const ChatLayout: React.FC = () => {
 
                 {/* Chat List */}
                 <div className="flex-1 overflow-y-auto">
-                    <div className="hover:bg-gray-50 px-4 py-3 cursor-pointer bg-blue-50 border-r-2 border-blue-500">
-                        <div className="flex items-center gap-3">
-                            <div className="relative">
-                                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                    A
+                    {
+                        data.map((item,index) => (
+                            <div
+                                key={index}
+                                className="hover:bg-gray-50 px-4 py-3 cursor-pointer bg-blue-50 border-r-2 border-blue-500"
+                                onClick={() => handleSelectUser(item)}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="relative">
+                                        <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                            A
+                                        </div>
+                                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="font-semibold text-gray-900 truncate">{item.user.username}</h3>
+                                            <span className="text-xs text-gray-500">{formatDateToVN(item.chat.messages[0]?.created_at)}</span>
+                                        </div>
+                                        <p className="text-sm text-gray-600 truncate">{item.chat.messages[0]?.content}</p>
+                                    </div>
                                 </div>
-                                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="font-semibold text-gray-900 truncate">AKA Media</h3>
-                                    <span className="text-xs text-gray-500">14:38</span>
-                                </div>
-                                <p className="text-sm text-gray-600 truncate">Chúng tôi có nhiều case study thành công...</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="hover:bg-gray-50 px-4 py-3 cursor-pointer">
-                        <div className="flex items-center gap-3">
-                            <div className="w-14 h-14 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold text-lg">
-                                M
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="font-semibold text-gray-900 truncate">Marketing Team</h3>
-                                    <span className="text-xs text-gray-500">10:30</span>
-                                </div>
-                                <p className="text-sm text-gray-600 truncate">Báo cáo kết quả campaign tuần này</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="hover:bg-gray-50 px-4 py-3 cursor-pointer">
-                        <div className="flex items-center gap-3">
-                            <div className="w-14 h-14 bg-green-400 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                D
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="font-semibold text-gray-900 truncate">Design Team</h3>
-                                    <span className="text-xs text-gray-500">Hôm qua</span>
-                                </div>
-                                <p className="text-sm text-gray-600 truncate">Đã upload mockup mới</p>
-                            </div>
-                        </div>
-                    </div>
+                        ))
+                    }
                 </div>
             </div>
 
@@ -217,185 +267,46 @@ const ChatLayout: React.FC = () => {
                 {/* Chat List */}
                 <div className="flex-1 overflow-y-auto">
                     {
-                      chatLists.map((item,index) => (
-                          <div key={index} className="hover:bg-gray-50 px-4 py-3 cursor-pointer bg-blue-50 border-r-2 border-blue-500">
-                              <div className="flex items-center gap-3">
-                                  <div className="relative">
-                                      <div className={`w-14 h-14 ${item.bg} ${item.colorText}  rounded-full flex items-center justify-center  font-bold text-lg`}>
-                                          A
-                                      </div>
-                                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                      <div className="flex items-center justify-between">
-                                          <h3 className="font-semibold text-gray-900 truncate">{item.name}</h3>
-                                          <span className="text-xs text-gray-500">{item.time}</span>
-                                      </div>
-                                      <p className="text-sm text-gray-600 truncate">{item.messages}</p>
-                                  </div>
-                              </div>
-                          </div>
-                      ))
+                        data.map((item,index) => (
+                            <div key={index} className="hover:bg-gray-50 px-4 py-3 cursor-pointer bg-blue-50 border-r-2 border-blue-500">
+                                <div className="flex items-center gap-3">
+                                    <div className="relative">
+                                        <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                            A
+                                        </div>
+                                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="font-semibold text-gray-900 truncate">{item.user.username}</h3>
+                                            <span className="text-xs text-gray-500">{formatDateToVN(item.chat.messages[0]?.created_at)}</span>
+                                        </div>
+                                        <p className="text-sm text-gray-600 truncate">{item.chat.messages[0]?.content}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
                     }
-
-
-
-
-                    {/*<div className="hover:bg-gray-50 px-4 py-3 cursor-pointer">*/}
-                    {/*    <div className="flex items-center gap-3">*/}
-                    {/*        <div className="w-14 h-14 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold text-lg">*/}
-                    {/*            M*/}
-                    {/*        </div>*/}
-                    {/*        <div className="flex-1 min-w-0">*/}
-                    {/*            <div className="flex items-center justify-between">*/}
-                    {/*                <h3 className="font-semibold text-gray-900 truncate">Marketing Team</h3>*/}
-                    {/*                <span className="text-xs text-gray-500">10:30</span>*/}
-                    {/*            </div>*/}
-                    {/*            <p className="text-sm text-gray-600 truncate">Báo cáo kết quả campaign tuần này</p>*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-
-                    {/*<div className="hover:bg-gray-50 px-4 py-3 cursor-pointer">*/}
-                    {/*    <div className="flex items-center gap-3">*/}
-                    {/*        <div className="w-14 h-14 bg-green-400 rounded-full flex items-center justify-center text-white font-bold text-lg">*/}
-                    {/*            D*/}
-                    {/*        </div>*/}
-                    {/*        <div className="flex-1 min-w-0">*/}
-                    {/*            <div className="flex items-center justify-between">*/}
-                    {/*                <h3 className="font-semibold text-gray-900 truncate">Design Team</h3>*/}
-                    {/*                <span className="text-xs text-gray-500">Hôm qua</span>*/}
-                    {/*            </div>*/}
-                    {/*            <p className="text-sm text-gray-600 truncate">Đã upload mockup mới</p>*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
                 </div>
             </div>
 
 
             {/* CENTER - Main Chat Area */}
-            <div className="flex-1 flex flex-col bg-white w-full">
-                {/* Chat Header */}
-                <div className="bg-white border-b px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-
-                        {/*mobile sidebar*/}
-                        <div className="md:hidden">
-                            <button
-                                className="p-2 rounded-full bg-gray-200 text-blue-500"
-                                onClick={() => setShowSidebar(true)}
-                            >
-                                <ArrowLeft  className="h-4 w-4 " />
-                            </button>
-                        </div>
-
-                        <div className="relative">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                                A
-                            </div>
-                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
-                        </div>
-                        <div>
-                            <h2 className="font-semibold text-gray-900">AKA Media</h2>
-                            <p className="text-sm text-green-600">Đang hoạt động</p>
-                        </div>
-                    </div>
-                    {/*<div className="flex items-center gap-4">*/}
-                    {/*    <button className="p-2 rounded-full hover:bg-gray-100 text-blue-500">*/}
-                    {/*        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">*/}
-                    {/*            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>*/}
-                    {/*        </svg>*/}
-                    {/*    </button>*/}
-                    {/*    <button className="p-2 rounded-full hover:bg-gray-100 text-blue-500">*/}
-                    {/*        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">*/}
-                    {/*            <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/>*/}
-                    {/*        </svg>*/}
-                    {/*    </button>*/}
-                    {/*</div>*/}
-                </div>
-
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto px-6 py-4">
-                    {messages.map((message) => (
-                        <div key={message.id} className={`flex items-start gap-2 mb-4 ${message.isOwn ? 'justify-end' : 'justify-start'}`}>
-                            {!message.isOwn && (
-                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                                    A
-                                </div>
-                            )}
-                            <div className={`max-w-md px-4 py-2 rounded-2xl ${
-                                message.isOwn
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-100 text-gray-800'
-                            }`}>
-                                <p className="text-sm leading-relaxed">{message.content}</p>
-                                <p className={`text-xs mt-1 ${
-                                    message.isOwn ? 'text-blue-100' : 'text-gray-500'
-                                }`}>
-                                    {message.time}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-
-                    {isTyping && (
-                        <div className="flex items-start gap-2 mb-4">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                                A
-                            </div>
-                            <div className="bg-gray-100 px-4 py-2 rounded-2xl">
-                                <div className="flex gap-1">
-                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    <div ref={messagesEndRef} />
-                </div>
-
-                {/* Input Area */}
-                <div className="bg-white border-t px-6 py-4">
-                    <div className="flex items-end gap-3">
-                        <button className="p-2 rounded-full hover:bg-gray-100 text-blue-500 flex-shrink-0">
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd"/>
-                            </svg>
-                        </button>
-                        <button className="p-2 rounded-full hover:bg-gray-100 text-blue-500 flex-shrink-0">
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
-                            </svg>
-                        </button>
-                        <div className="flex-1 bg-gray-100 rounded-full px-4 py-2 min-h-10 max-h-32 overflow-y-auto">
-                            <textarea
-                                value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                onKeyPress={handleKeyPress}
-                                placeholder="Nhập tin nhắn..."
-                                className="w-full bg-transparent text-gray-800 placeholder-gray-500 resize-none outline-none text-sm"
-                                rows={1}
+            {selectedUser && (
+                <div className="flex-1 overflow-y-auto p-4">
+                    {selectedUser && user?.id && (
+                        <div className="flex-1 overflow-y-auto p-4">
+                            <MessageView
+                                user={selectedUser}
+                                messages={
+                                    data.find(d => d.user.id === selectedUser.id)?.chat.messages || []
+                                }
+                                currentUserId={user?.id}
                             />
                         </div>
-                        {/*<button className="p-2 rounded-full hover:bg-gray-100 text-blue-500 flex-shrink-0">*/}
-                        {/*    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">*/}
-                        {/*        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"/>*/}
-                        {/*    </svg>*/}
-                        {/*</button>*/}
-                        <button
-                            onClick={handleSendMessage}
-                            className="p-2 rounded-full hover:bg-blue-50 text-blue-500 flex-shrink-0"
-                        >
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
-                            </svg>
-                        </button>
-                    </div>
+                    )}
                 </div>
-            </div>
+            )}
 
             {/* RIGHT SIDEBAR - Chat Info Panel */}
             <div className="hidden md:flex w-full md:w-80 bg-white border-l flex-col">
@@ -425,7 +336,7 @@ const ChatLayout: React.FC = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900">contact@akamedia.vn</p>
+                                    <p className="text-sm font-medium text-gray-900">cskh@akamedia.vn</p>
                                     <p className="text-xs text-gray-500">Email</p>
                                 </div>
                             </div>
@@ -450,7 +361,7 @@ const ChatLayout: React.FC = () => {
                                 <p className="text-sm text-blue-800">Facebook Ads</p>
                             </div>
                             <div className="bg-green-50 px-3 py-2 rounded-lg">
-                                <p className="text-sm text-green-800">Google Ads</p>
+                                <p className="text-sm text-green-800">Tiktok Ads</p>
                             </div>
                             <div className="bg-purple-50 px-3 py-2 rounded-lg">
                                 <p className="text-sm text-purple-800">Content Marketing</p>

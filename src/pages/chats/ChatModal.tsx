@@ -149,7 +149,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
       socket.off('new_message');
     };
   }, []);
-  console.log('messages', messages);
+  // console.log('messages', messages);
   return (
     <div
       className={`fixed bottom-28 right-8 w-80 bg-white shadow-2xl rounded-2xl overflow-hidden z-50 transition-all duration-300 ${
