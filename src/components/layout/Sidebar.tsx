@@ -18,6 +18,7 @@ import {
   TrendingUp,
   Settings,
   TicketPercent,
+  QrCode,
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
@@ -46,8 +47,8 @@ const Sidebar: React.FC<{
     location.pathname === '/add-account' ||
     location.pathname === '/admin/account' ||
     location.pathname === '/admin/policy' ||
-    location.pathname === '/admin/princing' || 
-    location.pathname === '/admin/voucher'
+    location.pathname === '/admin/princing' ||
+    location.pathname === '/admin/voucher';
   const [openAdsSubmenu, setOpenAdsSubmenu] = useState(isAdsMenuActive);
   const toggleProfileMenu = () => setOpenProfileMenu(!openProfileMenu);
 
@@ -61,7 +62,7 @@ const Sidebar: React.FC<{
     },
     { label: 'Nạp tiền', icon: CircleDollarSign, path: '/payments' },
     { label: 'Quản lý bot', icon: Bot, path: '/create-bot' },
-    // { label: "QR Here", icon: QrCode, path: "/deposit" },
+    { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
     // { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     // { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
   ];
@@ -326,8 +327,8 @@ const Sidebar: React.FC<{
         <Link
           to="/admin/settings"
           className={clsx(
-              'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-              location.pathname === '/admin/settings' && 'bg-white font-semibold'
+            'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+            location.pathname === '/admin/settings' && 'bg-white font-semibold'
           )}
         >
           <div className="w-12 flex justify-center">
@@ -343,11 +344,11 @@ const Sidebar: React.FC<{
           </span>
         </Link>
         <Link
-            to="/admin/support"
-            className={clsx(
-                'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-                location.pathname === '/admin/support' && 'bg-white font-semibold'
-            )}
+          to="/admin/support"
+          className={clsx(
+            'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+            location.pathname === '/admin/support' && 'bg-white font-semibold'
+          )}
         >
           <div className="w-12 flex justify-center">
             <HelpCircle className="w-5 h-5" />
