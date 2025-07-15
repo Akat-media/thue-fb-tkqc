@@ -323,31 +323,31 @@ const AdminTransactionsPage: React.FC = () => {
     },
   ];
   const headersPoints = [
-    {
-      key: 'checkbox',
-      render: () => (
-        <th className="px-2 py-3 text-center min-w-[50px] border border-gray-200">
-          <label className="relative inline-flex items-center justify-center cursor-pointer w-4 h-4">
-            <input
-              type="checkbox"
-              checked={
-                selectedIds.length === sortedData.length &&
-                selectedIds.length > 0
-              }
-              onChange={(e) => {
-                const newSelected = e.target.checked
-                  ? sortedData.map((i) => i.id)
-                  : [];
-                setSelectedIds(newSelected);
-                setHighlightedRows(newSelected);
-              }}
-              className="sr-only peer"
-            />
-            <div className="w-4 h-4 rounded border border-gray-300 bg-white peer-checked:bg-[#78bb07] peer-checked:border-[#78bb07] after:content-['✔'] after:absolute after:left-[2px] after:top-[-1px] after:text-white after:text-xs after:font-bold peer-checked:after:block after:hidden"></div>
-          </label>
-        </th>
-      ),
-    },
+    // {
+    //   key: 'checkbox',
+    //   render: () => (
+    //     <th className="px-2 py-3 text-center min-w-[50px] border border-gray-200">
+    //       <label className="relative inline-flex items-center justify-center cursor-pointer w-4 h-4">
+    //         <input
+    //           type="checkbox"
+    //           checked={
+    //             selectedIds.length === sortedData.length &&
+    //             selectedIds.length > 0
+    //           }
+    //           onChange={(e) => {
+    //             const newSelected = e.target.checked
+    //               ? sortedData.map((i) => i.id)
+    //               : [];
+    //             setSelectedIds(newSelected);
+    //             setHighlightedRows(newSelected);
+    //           }}
+    //           className="sr-only peer"
+    //         />
+    //         <div className="w-4 h-4 rounded border border-gray-300 bg-white peer-checked:bg-[#78bb07] peer-checked:border-[#78bb07] after:content-['✔'] after:absolute after:left-[2px] after:top-[-1px] after:text-white after:text-xs after:font-bold peer-checked:after:block after:hidden"></div>
+    //       </label>
+    //     </th>
+    //   ),
+    // },
     // {
     //   key: 'edit',
     //   render: () => (
@@ -365,42 +365,42 @@ const AdminTransactionsPage: React.FC = () => {
     },
     {
       key: 'points_used',
-      label: 'Số điểm đã đổi',
+      label: t('transaction.tableHeaders.points'),
       icon: <CircleDollarSign className="w-4 h-4 text-gray-500" />,
       sortKey: 'points_used',
       minWidth: '160px',
     },
     {
       key: 'service_type',
-      label: 'Loại dịch vụ',
+      label: t('transaction.tableHeaders.service'),
       icon: <BadgeCheck className="w-4 h-4 text-gray-500" />,
       sortKey: 'service_type',
       minWidth: '160px',
     },
     {
       key: 'target_account',
-      label: 'Tài khoản facebook',
+      label: t('transaction.tableHeaders.account'),
       icon: <Scale className="w-4 h-4 text-gray-500" />,
       sortKey: 'target_account',
       minWidth: '120px',
     },
     {
       key: 'status',
-      label: 'Trạng thái',
+      label: t('transaction.tableHeaders.status'),
       icon: <Briefcase className="w-4 h-4 text-gray-500" />,
       sortKey: 'status',
       minWidth: '120px',
     },
     {
       key: 'created_at',
-      label: 'Ngày tạo',
+      label: t('transaction.tableHeaders.createdAt'),
       icon: <AlarmClockPlus className="w-4 h-4 text-gray-500" />,
       sortKey: 'created_at',
       minWidth: '150px',
     },
     {
       key: 'description',
-      label: 'Mô tả',
+      label: t('transaction.tableHeaders.description'),
       icon: <ALargeSmall className="w-4 h-4 text-gray-500" />,
       sortKey: 'description',
       minWidth: '240px',
@@ -827,7 +827,7 @@ const AdminTransactionsPage: React.FC = () => {
           <Subheader active={active} setActive={setActive} />
           <div className="flex items-end justify-between mb-4">
             <h1 className="text-1xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate mt-1">
-              Quản lý giao dịch đổi điểm
+            {t('transaction.title')}
             </h1>
           </div>
 
@@ -835,7 +835,7 @@ const AdminTransactionsPage: React.FC = () => {
             <div className="relative w-full md:min-w-[430px] max-w-fit flex gap-2">
               <input
                 type="text"
-                placeholder="Tìm kiếm theo ID, Tài Khoản"
+                placeholder={t('transaction.searchPlaceholder')}
                 className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
                 value={query}
                 onChange={handleSearch}
@@ -848,7 +848,7 @@ const AdminTransactionsPage: React.FC = () => {
                   debounceSearch(query);
                 }}
               >
-                Tìm kiếm
+                {t('transaction.searchButton')}
               </Button>
             </div>
             {userParse?.user?.role === 'admin' && (
@@ -859,7 +859,7 @@ const AdminTransactionsPage: React.FC = () => {
                 >
                   <div className="flex items-center gap-2">
                     <RefreshCcw className="w-4 h-4" />
-                    Đồng Bộ Tài Khoản
+                    {t('transaction.syncButton')}
                   </div>
                 </button>
               </div>
@@ -912,7 +912,7 @@ const AdminTransactionsPage: React.FC = () => {
                           : 'hover:bg-gray-50'
                       }`}
                     >
-                      <td className="px-4 py-3 text-center border border-gray-100">
+                      {/* <td className="px-4 py-3 text-center border border-gray-100">
                         <label className="relative inline-flex items-center justify-center cursor-pointer w-4 h-4">
                           <input
                             type="checkbox"
@@ -922,7 +922,7 @@ const AdminTransactionsPage: React.FC = () => {
                           />
                           <div className="w-4 h-4 rounded border border-gray-300 bg-white peer-checked:bg-[#78bb07] peer-checked:border-[#78bb07] after:content-['✔'] after:absolute after:left-[2px] after:top-[-1px] after:text-white after:text-xs after:font-bold peer-checked:after:block after:hidden"></div>
                         </label>
-                      </td>
+                      </td> */}
 
                       {/* <td className="px-4 py-2 text-center border border-gray-100">
                         <button
