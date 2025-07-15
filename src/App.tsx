@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import HomePage from './pages/HomePage';
@@ -41,13 +46,14 @@ import 'aos/dist/aos.css';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import NotFoundPage from './pages/404/NotFoundPage.tsx';
-import {usePageStore} from "./stores/usePageStore.ts";
+import { usePageStore } from './stores/usePageStore.ts';
 import PopupWelcome from './components/layout/PopupWelcome.tsx';
+import CashBackManagement from './pages/admin/CashBackManagement.tsx';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [pathname]);
   return null;
 };
@@ -71,10 +77,10 @@ function AppRoutes() {
   }, []);
   return (
     <NotificationProvider>
-      <PopupWelcome/>
+      <PopupWelcome />
       {!isHideNavbar && <Navbar />}
       <Layout role={userobj?.role}>
-        <ScrollToTop/>
+        <ScrollToTop />
         <Routes>
           {/* Route công khai: Không yêu cầu đăng nhập */}
           <Route path="/login" element={<LoginPage />} />
@@ -92,10 +98,7 @@ function AppRoutes() {
             <Route path="/rentals" element={<RentalsPage />} />
             <Route path="/payments" element={<PaymentPage />} />
             <Route path="/deposit" element={<PaymentForm />} />
-            <Route
-              path="/adsaccountmanager"
-              element={<ManageAdsAccount />}
-            />
+            <Route path="/adsaccountmanager" element={<ManageAdsAccount />} />
             <Route
               path="/admintransaction"
               element={<AdminTransactionsPage />}
@@ -115,6 +118,7 @@ function AppRoutes() {
             />
             <Route path="/admin/account" element={<Account />} />
             <Route path="/create-bot" element={<CreateBotPage />} />
+            <Route path="/admin-cashback" element={<CashBackManagement />} />
             <Route path="/support">
               <Route index element={<ListSupport />} />
               <Route path="create" element={<RequestForm />} />
