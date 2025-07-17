@@ -693,6 +693,35 @@
       "agree_terms": "Vui lòng lựa chọn đồng ý với các điều khoản."
     }
   },
+  "payment_method": {
+    "title": "Chọn phương thức thanh toán",
+    "vnd": "VNĐ (Internet Banking)",
+    "usd": "USD (PayPal)",
+    "visa": "Visa",
+    "mastercard": "MasterCard",
+    "coming_soon": "Sắp ra mắt...",
+    "bank_icon_alt": "Biểu tượng ngân hàng",
+    "paypal_icon_alt": "Biểu tượng PayPal",
+    "visa_icon_alt": "Biểu tượng Visa",
+    "mastercard_icon_alt": "Biểu tượng MasterCard",
+    "developing": "Chức năng này đang được phát triển"
+  },
+  "transaction": {
+    "title": "Quản lý giao dịch đổi điểm",
+    "searchPlaceholder": "Tìm kiếm theo ID, Tài Khoản",
+    "searchButton": "Tìm kiếm",
+    "syncButton": "Đồng Bộ Tài Khoản",
+    "detailsTitle": "Chi tiết tài khoản",
+    "tableHeaders": {
+      "id": "ID",
+      "points": "Điểm sử dụng",
+      "service": "Dịch vụ",
+      "account": "Tài khoản nhận",
+      "status": "Trạng thái",
+      "createdAt": "Ngày tạo",
+      "description": "Mô tả"
+    }
+  },
   "common": {
     "sort": {
       "asc": "Tăng dần",

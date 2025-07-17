@@ -213,10 +213,11 @@ const PaymentPage: React.FC = () => {
               <X size={20} />
             </button>
             <h2 className="text-xl font-semibold text-gray-800 mb-5 text-center">
-              Select Payment Method
+              {t('payment_method.title')}
             </h2>
 
             <div className="space-y-3">
+              {/* VNĐ */}
               <div
                 className={`flex items-center justify-between border rounded-lg p-3 cursor-pointer shadow-sm hover:shadow-md transition ${
                   currencyTab === 'VND'
@@ -241,28 +242,18 @@ const PaymentPage: React.FC = () => {
                     )}
                   </div>
                   <span className="font-medium text-gray-800">
-                    VNĐ (Internet Banking)
+                    {t('payment_method.vnd')}
                   </span>
                 </div>
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/3128/3128313.png"
-                  alt="Bank icon"
+                  alt={t('payment_method.bank_icon_alt')}
                   className="h-6"
                 />
               </div>
-              <div
-                className="flex items-center justify-between border rounded-lg p-3 shadow-sm opacity-50 cursor-not-allowed"
 
-                // className={`flex items-center justify-between border rounded-lg p-3 cursor-pointer shadow-sm hover:shadow-md transition ${
-                //   currencyTab === 'USD'
-                //     ? 'border-blue-600 ring-2 ring-blue-400'
-                //     : 'border-gray-300'
-                // }`}
-                // onClick={() => {
-                //   setCurrencyTab('USD');
-                //   setIsCurrencyModalOpen(false);
-                // }}
-              >
+              {/* USD (PayPal) - Disabled */}
+              <div className="flex items-center justify-between border rounded-lg p-3 shadow-sm opacity-50 cursor-not-allowed">
                 <div className="flex items-center space-x-3">
                   <div
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
@@ -277,58 +268,68 @@ const PaymentPage: React.FC = () => {
                   </div>
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-800">
-                      USD (PayPal)
+                      {t('payment_method.usd')}
                     </span>
                     <span className="text-xs text-gray-500">
-                      Coming soon...
+                      {t('payment_method.coming_soon')}
                     </span>
                   </div>
                 </div>
                 <img
                   src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
-                  alt="PayPal"
+                  alt={t('payment_method.paypal_icon_alt')}
                   className="h-6"
                 />
               </div>
-              <div className="flex items-center justify-between border rounded-lg p-3 shadow-sm opacity-50 cursor-not-allowed">
-                <div className="flex items-center space-x-3">
-                  <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
-                  <div className="flex flex-col">
-                    <span className="font-medium text-gray-800">Visa</span>
-                    <span className="text-xs text-gray-500">
-                      Coming soon...
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"
-                  alt="Visa"
-                  className="h-3"
-                />
-              </div>
-              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-                Chức năng này đang được phát triển
-              </div>
+
+              {/* Visa - Disabled */}
               <div className="flex items-center justify-between border rounded-lg p-3 shadow-sm opacity-50 cursor-not-allowed">
                 <div className="flex items-center space-x-3">
                   <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-800">
-                      MasterCard
+                      {t('payment_method.visa')}
                     </span>
                     <span className="text-xs text-gray-500">
-                      Coming soon...
+                      {t('payment_method.coming_soon')}
+                    </span>
+                  </div>
+                </div>
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"
+                  alt={t('payment_method.visa_icon_alt')}
+                  className="h-3"
+                />
+              </div>
+
+              {/* Tooltip Visa */}
+              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
+                {t('payment_method.developing')}
+              </div>
+
+              {/* MasterCard - Disabled */}
+              <div className="flex items-center justify-between border rounded-lg p-3 shadow-sm opacity-50 cursor-not-allowed">
+                <div className="flex items-center space-x-3">
+                  <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
+                  <div className="flex flex-col">
+                    <span className="font-medium text-gray-800">
+                      {t('payment_method.mastercard')}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {t('payment_method.coming_soon')}
                     </span>
                   </div>
                 </div>
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png"
-                  alt="MasterCard"
+                  alt={t('payment_method.mastercard_icon_alt')}
                   className="h-6"
                 />
               </div>
+
+              {/* Tooltip MasterCard */}
               <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-                Chức năng này đang được phát triển
+                {t('payment_method.developing')}
               </div>
             </div>
           </div>

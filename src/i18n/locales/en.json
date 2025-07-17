@@ -693,6 +693,35 @@
       "agree_terms": "Please agree to the terms."
     }
   },
+  "payment_method": {
+    "title": "Select Payment Method",
+    "vnd": "VND (Internet Banking)",
+    "usd": "USD (PayPal)",
+    "visa": "Visa",
+    "mastercard": "MasterCard",
+    "coming_soon": "Coming soon...",
+    "bank_icon_alt": "Bank icon",
+    "paypal_icon_alt": "PayPal icon",
+    "visa_icon_alt": "Visa icon",
+    "mastercard_icon_alt": "MasterCard icon",
+    "developing": "This feature is under development"
+  },
+  "transaction": {
+    "title": "Point Exchange Transaction Management",
+    "searchPlaceholder": "Search by ID, Account",
+    "searchButton": "Search",
+    "syncButton": "Sync Account",
+    "detailsTitle": "Account Details",
+    "tableHeaders": {
+      "id": "ID",
+      "points": "Points Used",
+      "service": "Service Type",
+      "account": "Target Account",
+      "status": "Status",
+      "createdAt": "Created At",
+      "description": "Description"
+    }
+  },
   "common": {
     "sort": {
       "asc": "ASC",
