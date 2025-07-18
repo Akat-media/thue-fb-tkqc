@@ -68,27 +68,19 @@ const FloatingButtons: React.FC = () => {
             </style>
 
             <div className="fixed bottom-6 right-6 z-50">
-                <div className="flex flex-col space-y-7 ">
+                <div className="flex flex-col space-y-3 ">
                     {/* Facebook Button */}
-                    <div className="relative">
-                        {/* Pulse effect outer */}
-                        <div className="absolute inset-0 w-14 h-14  rounded-full border-2 bg-white pulse-animation"></div>
-
-                        {/* Zoom in border circle */}
-                        {/*<div className="absolute inset-0 w-14 h-14 rounded-full border-2 border-blue-500 zoom-in-animation"></div>*/}
-
-                        <button
-                            onClick={openFacebook}
-                            className="relative w-14 h-14   rounded-full shadow-lg hover:scale-110 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group border"
-                            title="Facebook"
-                        >
-                            <img
-                                src="/buttons/fanpage.svg"
-                                alt="Facebook"
-                                className="w-10 h-10 object-contain"
-                            />
-                        </button>
-                    </div>
+                    <button
+                        onClick={openFacebook}
+                        className="w-14 h-14 bg-white text-white rounded-full shadow-lg hover:scale-110 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group border "
+                        title="Facebook"
+                    >
+                        <img
+                            src="/buttons/fanpage.svg"
+                            alt="Facebook"
+                            className="w-10 h-10 object-contain"
+                        />
+                    </button>
 
                     {/* Zalo Button */}
                     <button

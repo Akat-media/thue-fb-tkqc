@@ -35,6 +35,9 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
       text: 'Em Minh Thư AKA Media chào anh/chị ạ. Anh/chị cần em tư vấn gì không ạ',
       sender: 'bot',
       timestamp: new Date(),
+      idUser: '1',
+      nameUser: 'minh thu aka',
+      roleUser: 'user'
     },
   ]);
 
@@ -65,7 +68,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
     if (!inputValue.trim()) return;
 
     // Add user message
-    // addMessage(inputValue, 'user');
+    addMessage(inputValue, 'user');
     setInputValue('');
     try {
       const res = await BaseHeader({
@@ -76,6 +79,15 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
           user_id: user?.id,
         },
       });
+      if (res.data && res.data.messageId) {
+        setMessages(prev =>
+            prev.map(msg =>
+                msg.text === inputValue && msg.sender === 'user'
+                    ? { ...msg, id: res.data.messageId }
+                    : msg
+            )
+        );
+      }
     } catch (error) {
       console.log(error);
     }
@@ -97,7 +109,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
       minute: '2-digit',
     });
   };
-  const hanleCallList = async () => {
+  const handleCallList = async () => {
     try {
       const res = await BaseHeader({
         method: 'get',
@@ -125,19 +137,25 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
     }
   };
   useEffect(() => {
-    hanleCallList();
-  }, []);
+    if (user?.id) {
+      handleCallList();
+    }
+  }, [user?.id]);
 
   useEffect(() => {
     socket.on('connect', () => {
       console.log('Socket connected:', socket.id);
-      socket.emit('joinRoom');
+      socket.emit('joinRoom', { userId: user?.id });
     });
 
     socket.on('new_message', (data) => {
       console.log('new_message success event received:', data);
       const { message, sender } = data;
       const senderType = message.sender_id === user?.id ? 'user' : 'bot';
+
+      if (message.sender_id === user?.id) {
+        return;
+      }
 
       const newMsg: Message = {
         id: message.id,
@@ -148,7 +166,11 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
         nameUser: sender.username,
         roleUser: sender.role,
       };
-      setMessages((prev) => [...prev, newMsg]);
+      setMessages((prev) => {
+        const exists = prev.some(msg => msg.id === newMsg.id);
+        if (exists) return prev;
+        return [...prev, newMsg];
+      });
     });
 
     return () => {
