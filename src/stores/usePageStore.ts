@@ -10,8 +10,15 @@ export const usePageStore = create<PageState>((set) => ({
     is404: false,
     setIs404: (val) => set({ is404: val }),
 
-    formatDateToVN: (isoString: string) => {
+    formatDateToVN: (isoString: string | null | undefined) => {
+        if (!isoString || isoString.trim() === '') {
+            return '';
+        }
         const date = new Date(isoString);
+        if (isNaN(date.getTime())) {
+            return '';
+        }
+
         const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
         const hours = vnDate.getUTCHours().toString().padStart(2, '0');
         const minutes = vnDate.getUTCMinutes().toString().padStart(2, '0');
