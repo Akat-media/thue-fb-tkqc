@@ -55,7 +55,8 @@ const SupportDashboard: React.FC = () => {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [faq, setFaq] = useState<FAQItem[]>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [pageSize, setPageSize] = useState(6);
   const { t } = useTranslation();
 
   const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -160,7 +161,7 @@ const SupportDashboard: React.FC = () => {
 
         const newData = response.data.data.data;
         const totalRecords = response.data.data.pagination.totalRecords;
-
+        setTotalRecords(totalRecords);
         if (isLoadMore) {
           setData((prev) => [...prev, ...newData]);
         } else {
@@ -262,7 +263,7 @@ const SupportDashboard: React.FC = () => {
   };
 
   const createRequest = () => {
-    navigate('/support/create')
+    navigate('/support/create');
   };
 
   const getStatusConfig = (status: string) => {
@@ -392,7 +393,7 @@ const SupportDashboard: React.FC = () => {
               </div>
               <button
                 onClick={createRequest}
-                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="flex items-center gap-2 bg-[#193250] hover:bg-[#1F3E68] text-[#24F9FB] px-6 py-3 rounded-full font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <Plus className="w-5 h-5" />
                 {t('supportPage.filter.search.create')}
@@ -413,93 +414,75 @@ const SupportDashboard: React.FC = () => {
                 return (
                   <div
                     key={request.id}
-                    className="animate-fadeIn group bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:shadow-xl hover:border-blue-200/50 transition-all duration-300 cursor-pointer"
+                    className="bg-white shadow-md rounded-2xl p-5 border border-gray-100 hover:shadow-lg transition-all space-y-4"
                   >
-                    {/* Header */}
-                    <div className="relative flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
-                          {/*<User className="w-5 h-5 text-blue-600" />*/}
-                          <img
-                            src="/avatar.jpg"
-                            alt="Avatar"
-                            className="w-full h-full object-cover rounded-full"
-                          />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900 text-sm">
-                            {request.full_name}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {request.email}
-                          </p>
-                        </div>
+                    {/* Tiêu đề + trạng thái + ngày */}
+                    <div className="flex justify-between items-start">
+                      <div className="text-lg font-semibold text-gray-900 line-clamp-1">
+                        {request.title}
                       </div>
-                      <button
-                        onClick={() => toggleMenu(request.id)} // Toggle menu cho card cụ thể
-                        className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-100 rounded-lg transition-all"
-                      >
-                        <MoreVertical className="w-4 h-4 text-gray-400" />
-                      </button>
-                      {/* Dropdown menu */}
-                      {openMenuId === request.id && (
-                        <div className="dropdown-menu absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                          <button
-                            onClick={() => {
-                              setShowDeleteModal(true);
-                              setDeleteTargetId(request.id);
-                            }}
-                            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                            {t('supportPage.hadData.deleteRequest')}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="mb-4">
-                      <div className="flex justify-between items-center gap-2 mb-2">
-                        <h3 className="items-center font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                          {request.title}
-                        </h3>
-                        <div className="flex items-center gap-1">
-                          <span className="text-xs text-gray-500 capitalize">
-                            {getPriorityLabel(request.priority)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                        {request.content}
-                      </p>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                      <div className="flex items-center gap-4">
+                      <div className="flex flex-col items-end gap-2">
                         <div
-                          className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}
+                          className={`text-xs px-3 py-1 rounded-full font-medium ${
+                            getStatusConfig(request.status).bg
+                          } ${getStatusConfig(request.status).text}`}
                         >
-                          <StatusIcon className="w-3 h-3" />
-                          {statusConfig.label}
+                          {getStatusConfig(request.status).label}
                         </div>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <Clock className="w-3 h-3" />
+                        <div className="text-xs text-gray-500 flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
                           {formatTimestampToDate(request.updated_at)}
                         </div>
-                        <button
-                          onClick={() => navigate(`/support/${request.id}`)}
-                          className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-all"
-                        >
-                          <Eye className="w-3 h-3" />
-                          {t('supportPage.hadData.seeDetail')}
-                        </button>
                       </div>
+                    </div>
+
+                    {/* Thông tin chi tiết */}
+                    <div className="text-sm space-y-1">
+                      <div>
+                        <span className="font-medium">Danh mục:</span>{' '}
+                        <span className="text-gray-700">
+                          {request.category}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">Mức độ ưu tiên:</span>
+                        <span
+                          className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                            request.priority === 'low'
+                              ? 'bg-green-100 text-green-600'
+                              : request.priority === 'medium'
+                              ? 'bg-[#D6F0FF] text-[#007B9E]'
+                              : request.priority === 'high'
+                              ? 'bg-purple-100 text-purple-600'
+                              : request.priority === 'urgent'
+                              ? 'bg-red-100 text-red-600'
+                              : 'bg-gray-100 text-gray-500'
+                          }`}
+                        >
+                          {getPriorityLabel(request.priority)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="font-medium">Email:</span>{' '}
+                        <span className="text-gray-700">{request.email}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">Nội dung:</span>
+                        <div className="bg-gray-100 rounded-lg p-3 mt-1 text-sm text-gray-800 overflow-hidden text-ellipsis whitespace-nowrap">
+                          {request.content}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Nút xem chi tiết */}
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => navigate(`/support/${request.id}`)}
+                        className="inline-flex items-center px-4 py-2 text-sm font-medium text-cyan-600 border border-cyan-400 rounded-full hover:bg-cyan-50 transition-all"
+                      >
+                        {t('supportPage.hadData.seeDetail')}
+                        <Eye className="w-4 h-4 ml-2" />
+                      </button>
                     </div>
                   </div>
                 );
@@ -546,7 +529,7 @@ const SupportDashboard: React.FC = () => {
               </p>
               <button
                 onClick={createRequest}
-                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl mx-auto"
+                className="flex items-center gap-2 bg-[#193250] hover:bg-[#1F3E68] text-[#24F9FB] px-6 py-3 rounded-full font-medium transition-all duration-200 shadow-lg hover:shadow-xl mx-auto"
               >
                 <Plus className="w-5 h-5" />
                 {t('supportPage.main.main3')}
@@ -556,16 +539,35 @@ const SupportDashboard: React.FC = () => {
           </div>
         )}
         {hasMore && (
-          <div className="text-center mt-6">
-            <button
-              onClick={handleLoadMore}
-              disabled={loading}
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all disabled:opacity-50"
-            >
-              {loading
-                ? t('supportPage.hadData.loading')
-                : t('supportPage.hadData.loadMore')}
-            </button>
+          <div className="flex items-center justify-between text-sm text-gray-500 mb-2 mt-5">
+            <p>
+              Hiển thị {(page - 1) * pageSize + data.length} trong tổng số{' '}
+              {totalRecords} kết quả
+            </p>
+
+            <div className="flex space-x-2">
+              {[...Array(Math.ceil(totalRecords / pageSize)).keys()].map(
+                (i) => {
+                  const pageNum = i + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => {
+                        setPage(pageNum);
+                        fetchData(pageNum, false, searchQuery, statusFilter);
+                      }}
+                      className={`w-10 h-10 flex items-center justify-center rounded-full border text-sm font-medium transition ${
+                        page === pageNum
+                          ? 'bg-[#193250] text-[#24F9FB] border-[#24F9FB]'
+                          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                }
+              )}
+            </div>
           </div>
         )}
 

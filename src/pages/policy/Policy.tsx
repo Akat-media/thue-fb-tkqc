@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import BaseHeader from '../../api/BaseHeader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n/index.ts';
@@ -12,12 +11,51 @@ interface PolicySection {
   updated_at: string;
 }
 
+interface SubSection {
+  id: string;
+  title: string;
+  content: string;
+}
+
+const parseMessage = (message: string): SubSection[] => {
+  const lines = message
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean);
+  const result: SubSection[] = [];
+  let current: SubSection | null = null;
+  let counter = 1;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const match = line.match(/^(\d+\.\d+)\.?\s*(.*)/);
+
+    if (match) {
+      if (current) result.push(current);
+      current = { id: match[1], title: match[2], content: '' };
+    } else {
+      const next = lines[i + 1];
+      const isTitleBlock =
+        !next || (/^[A-Z\u00C0-\u1EF9]/.test(line) && /^[a-z0-9]/i.test(next));
+
+      if (!current || match === null) {
+        if (isTitleBlock) {
+          if (current) result.push(current);
+          current = { id: `${counter++}`, title: line, content: '' };
+        } else if (current) {
+          current.content += (current.content ? '\n' : '') + line;
+        }
+      }
+    }
+  }
+  if (current) result.push(current);
+  return result;
+};
+
 const Policy: React.FC = () => {
-  const [openSections, setOpenSections] = React.useState<
-    Record<number, boolean>
-  >({});
   const [policies, setPolicies] = useState<PolicySection[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(0);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -33,108 +71,72 @@ const Policy: React.FC = () => {
         params: { lang: i18n.language },
       });
       setPolicies(response.data.data || []);
-      // setOpenSections(response.data.data?.[0] || []);
     } catch (error) {
       console.error('Error fetching policies:', error);
-      setPolicies([
-        {
-          id: '1',
-          title: 'Điều Khoản Sử Dụng',
-          message:
-            'Người dùng phải từ 18 tuổi trở lên để sử dụng dịch vụ của AKA MEDIA.\nMọi hành vi vi phạm pháp luật hoặc gây hại đến hệ thống sẽ bị cấm và có thể dẫn đến khóa tài khoản.\nAKA MEDIA có quyền thay đổi điều khoản mà không cần thông báo trước.\nNgười dùng chịu trách nhiệm bảo mật thông tin tài khoản của mình.',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          title: 'Chính Sách Bảo Mật',
-          message:
-            'Chúng tôi thu thập thông tin cá nhân (tên, email, số điện thoại) để cung cấp dịch vụ và cải thiện trải nghiệm người dùng.\nThông tin của bạn sẽ không được chia sẻ với bên thứ ba mà không có sự đồng ý, trừ khi có yêu cầu từ cơ quan pháp luật.\nChúng tôi sử dụng công nghệ mã hóa để bảo vệ dữ liệu người dùng.\nNgười dùng có quyền yêu cầu xóa dữ liệu cá nhân của mình bằng cách liên hệ qua support@akamedia.com.',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: '3',
-          title: 'Chính Sách Thanh Toán',
-          message:
-            'Mọi giao dịch thanh toán phải được thực hiện qua các phương thức được AKA MEDIA hỗ trợ.\nKhông hoàn tiền cho các giao dịch đã hoàn tất, trừ khi có lỗi từ phía hệ thống.\nThời gian xử lý giao dịch có thể mất từ 1-3 ngày làm việc.\nNgười dùng cần cung cấp thông tin chính xác để tránh sai sót trong quá trình thanh toán.',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ]);
+      setPolicies([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const toggleSection = (index: any) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
-  };
-
-  console.log(openSections);
   return (
-    <>
-      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-sky-200 to-cyan-100">
-        {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-blue-900 sm:text-4xl">
-              {i18n.language === 'en'
-                ? 'Policies and Terms'
-                : 'Chính Sách và Điều Khoản'}
-            </h2>
-            <p className="mt-4 text-lg text-blue-900">
-              {i18n.language === 'en'
-                ? 'Please read the policies below carefully to understand your rights and responsibilities when using AKA MEDIA services.'
-                : 'Vui lòng đọc kỹ các chính sách dưới đây để hiểu rõ quyền lợi và trách nhiệm khi sử dụng dịch vụ của AKA MEDIA.'}
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-100 to-cyan-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-4xl font-bold text-center text-blue-900 mb-6">
+          {i18n.language === 'en'
+            ? 'Policies and Terms'
+            : 'Chính Sách và Điều Khoản'}
+        </h2>
 
-          {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-          ) : (
-            <div className="space-y-6">
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        ) : (
+          <>
+            {/* heat */}
+            <div className="flex border-b border-blue-200 overflow-x-auto whitespace-nowrap rounded-t-xl bg-white shadow-sm">
               {policies.map((policy, index) => (
-                <div
+                <button
                   key={policy.id}
-                  className="bg-white rounded-lg shadow-xl overflow-hidden"
+                  onClick={() => setActiveIndex(index)}
+                  className={`px-6 py-4 text-base font-bold transition-colors min-w-max rounded-t-lg ${
+                    activeIndex === index
+                      ? 'text-blue-900 bg-gradient-to-r from-[#09FFCD] to-[#0AEEFE]'
+                      : 'text-gray-600 hover:text-[#1e3a8a]'
+                  }`}
                 >
-                  <button
-                    onClick={() => toggleSection(index)}
-                    className="w-full flex justify-between items-center px-6 py-4 bg-gradient-to-r from-white to-blue-100 text-left text-lg font-semibold text-blue-900 hover:bg-gray-100 transition-colors"
-                  >
-                    <span>{policy.title}</span>
-                    {openSections[index] ? (
-                      <ChevronUp className="w-5 h-5 text-gray-600 transition-transform duration-1000" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-600 transition-transform duration-1000" />
-                    )}
-                  </button>
-                  <div
-                    className={`overflow-hidden transition-all duration-1000 ease-in-out ${
-                      openSections[index]
-                        ? 'opacity-100 overflow-y-auto'
-                        : 'max-h-0 opacity-0'
-                    }`}
-                  >
-                    <div className="px-6 py-4 bg-white">
-                      <div className="text-gray-700 whitespace-pre-wrap">
-                        {policy.message}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  {policy.title}
+                </button>
               ))}
             </div>
-          )}
-        </main>
+
+            {/* ndung */}
+            <div className="bg-white shadow-xl rounded-b-xl p-6 mt-0">
+              {policies[activeIndex] && (
+                <div className="space-y-6">
+                  {parseMessage(policies[activeIndex].message).map((sec) => (
+                    <div key={sec.id} className="flex items-center gap-4">
+                      <div className="w-10 h-10 flex-shrink-0 rounded-full bg-blue-100 text-blue-900 flex items-center justify-center font-bold text-sm">
+                        {sec.id}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-700 mb-1 leading-snug">
+                          {sec.title}
+                        </p>
+                        <p className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">
+                          {sec.content}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -15,7 +15,7 @@ import { useUserStore } from '../../stores/useUserStore.ts';
 // import axios from "axios";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 // interface FormData {
 //     fullName: string;
@@ -84,27 +84,30 @@ const RequestForm: React.FC = () => {
     },
   });
 
-  const departments = React.useMemo(() => [
-    { value: '', label: t("createRequest.form.department2") },
-    { value: 'tech', label: t("createRequest.form.department3")},
-    { value: 'sales', label: t("createRequest.form.department4") },
-    { value: 'hr', label: t("createRequest.form.department5") },
-  ], [t]);
+  const departments = React.useMemo(
+    () => [
+      { value: '', label: t('createRequest.form.department2') },
+      { value: 'tech', label: t('createRequest.form.department3') },
+      { value: 'sales', label: t('createRequest.form.department4') },
+      { value: 'hr', label: t('createRequest.form.department5') },
+    ],
+    [t]
+  );
 
   const priorities = [
-    { value: '', label: t("createRequest.form.priority1b") },
-    { value: 'low', label: t("createRequest.form.priority2") },
-    { value: 'medium', label: t("createRequest.form.priority3") },
-    { value: 'high', label: t("createRequest.form.priority4") },
-    { value: 'urgent', label: t("createRequest.form.priority5") },
+    { value: '', label: t('createRequest.form.priority1b') },
+    { value: 'low', label: t('createRequest.form.priority2') },
+    { value: 'medium', label: t('createRequest.form.priority3') },
+    { value: 'high', label: t('createRequest.form.priority4') },
+    { value: 'urgent', label: t('createRequest.form.priority5') },
   ];
 
   const categories = [
-    { value: '', label: t("createRequest.form.category2") },
-    { value: 'account', label: t("createRequest.form.category3") },
-    { value: 'pay', label: t("createRequest.form.category4") },
-    { value: 'recover', label: t("createRequest.form.category5") },
-    { value: 'other', label: t("createRequest.form.category6") },
+    { value: '', label: t('createRequest.form.category2') },
+    { value: 'account', label: t('createRequest.form.category3') },
+    { value: 'pay', label: t('createRequest.form.category4') },
+    { value: 'recover', label: t('createRequest.form.category5') },
+    { value: 'other', label: t('createRequest.form.category6') },
   ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,17 +124,17 @@ const RequestForm: React.FC = () => {
     const validFiles = files.filter((file) => {
       if (file.size > maxSize) {
         alert(
-            t('createRequest.form.fileTooLarge', {
-              fileName: file.name,
-            })
+          t('createRequest.form.fileTooLarge', {
+            fileName: file.name,
+          })
         );
         return false;
       }
       if (!allowedTypes.includes(file.type)) {
         alert(
-            t('createRequest.form.fileNotSupport', {
-              fileName: file.name,
-            })
+          t('createRequest.form.fileNotSupport', {
+            fileName: file.name,
+          })
         );
         return false;
       }
@@ -157,7 +160,6 @@ const RequestForm: React.FC = () => {
   }
   const now = new Date().toISOString();
   const formattedNow = formatDateToVN(now);
-
 
   const onSubmit: SubmitHandler<SupportRequestFormData> = async (data) => {
     setIsSubmitting(true);
@@ -212,9 +214,7 @@ const RequestForm: React.FC = () => {
         mailResponse.status === 200 &&
         supportResponse.data.data !== null
       ) {
-        toast.success(
-            t('createRequest.form.successToast')
-        );
+        toast.success(t('createRequest.form.successToast'));
         setSubmitSuccess(true);
         setAttachments([]);
         reset();
@@ -263,12 +263,14 @@ const RequestForm: React.FC = () => {
           <p className="text-gray-600 mb-6">
             {t('createRequest.form.successMessage2')}
           </p>
-          <button
-            onClick={() => setSubmitSuccess(false)}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            {t('createRequest.form.successMessage3')}
-          </button>
+          <div className="flex justify-center">
+            <button
+              onClick={() => setSubmitSuccess(false)}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              {t('createRequest.form.successMessage3')}
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -305,35 +307,29 @@ const RequestForm: React.FC = () => {
 
           <div className="container mx-auto px-6 py-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Họ và tên */}
-              <div>
-                <label
-                  htmlFor="fullName"
-                  className="block text-sm font-semibold text-gray-700 mb-2"
-                >
-                  {t('createRequest.form.name')} <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="fullName"
-                  {...register('fullName')}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                    errors.fullName
-                      ? 'border-red-500 bg-red-50'
-                      : 'border-gray-300'
-                  }`}
-                  placeholder={t('createRequest.form.name2')}
-                />
-                {errors.fullName && (
-                  <div className="flex items-center mt-2 text-red-600 text-sm">
-                    <AlertCircle className="w-4 h-4 mr-1" />
-                    {errors.fullName.message}
-                  </div>
-                )}
-              </div>
-
-              {/* Email và Số điện thoại */}
+              {/* Họ và tên + Email */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor="fullName"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    {t('createRequest.form.name')}{' '}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="fullName"
+                    {...register('fullName')}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                      errors.fullName
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-300'
+                    }`}
+                    placeholder={t('createRequest.form.name2')}
+                  />
+                </div>
+
                 <div>
                   <label
                     htmlFor="email"
@@ -352,20 +348,18 @@ const RequestForm: React.FC = () => {
                     }`}
                     placeholder="your@email.com"
                   />
-                  {errors.email && (
-                    <div className="flex items-center mt-2 text-red-600 text-sm">
-                      <AlertCircle className="w-4 h-4 mr-1" />
-                      {errors.email.message}
-                    </div>
-                  )}
                 </div>
+              </div>
 
+              {/* Số điện thoại + Bộ phận */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label
                     htmlFor="phone"
                     className="block text-sm font-semibold text-gray-700 mb-2"
                   >
-                    {t('createRequest.form.phone')} <span className="text-red-500">*</span>
+                    {t('createRequest.form.phone')}{' '}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="tel"
@@ -376,43 +370,8 @@ const RequestForm: React.FC = () => {
                         ? 'border-red-500 bg-red-50'
                         : 'border-gray-300'
                     }`}
-                    placeholder="0123456789"
+                    placeholder="0923456789"
                   />
-                  {errors.phone && (
-                    <div className="flex items-center mt-2 text-red-600 text-sm">
-                      <AlertCircle className="w-4 h-4 mr-1" />
-                      {errors.phone.message}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Tiêu đề và Bộ phận */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="title"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    {t('createRequest.form.title')} <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    {...register('title')}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                      errors.title
-                        ? 'border-red-500 bg-red-50'
-                        : 'border-gray-300'
-                    }`}
-                    placeholder={t('createRequest.form.title2')}
-                  />
-                  {errors.title && (
-                    <div className="flex items-center mt-2 text-red-600 text-sm">
-                      <AlertCircle className="w-4 h-4 mr-1" />
-                      {errors.title.message}
-                    </div>
-                  )}
                 </div>
 
                 <div>
@@ -420,120 +379,110 @@ const RequestForm: React.FC = () => {
                     htmlFor="department"
                     className="block text-sm font-semibold text-gray-700 mb-2"
                   >
-                    {t('createRequest.form.department')} <span className="text-red-500">*</span>
+                    {t('createRequest.form.department')}{' '}
+                    <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative">
-                    <select
-                      id="department"
-                      {...register('department')}
-                      className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                        errors.department
-                          ? 'border-red-500 bg-red-50'
-                          : 'border-gray-300'
-                      }`}
-                    >
-                      {departments.map((dept) => (
-                        <option key={dept.value} value={dept.value}>
-                          {dept.label}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500">
-                      <ChevronDown className="w-4 h-4" />
-                    </div>
-                  </div>
-
-                  {errors.department && (
-                    <div className="flex items-center mt-2 text-red-600 text-sm">
-                      <AlertCircle className="w-4 h-4 mr-1" />
-                      {errors.department.message}
-                    </div>
-                  )}
+                  <select
+                    id="department"
+                    {...register('department')}
+                    className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                      errors.department
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-300'
+                    }`}
+                  >
+                    {departments.map((dept) => (
+                      <option key={dept.value} value={dept.value}>
+                        {dept.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
-              {/*muc do va the loai*/}
+              {/* Danh mục + Mức độ ưu tiên */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="priority"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    {t('createRequest.form.priority')} <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="priority"
-                      {...register('priority')}
-                      className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                        errors.priority
-                          ? 'border-red-500 bg-red-50'
-                          : 'border-gray-300'
-                      }`}
-                    >
-                      {priorities.map((item) => (
-                        <option key={item.value} value={item.value}>
-                          {item.label}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500">
-                      <ChevronDown className="w-4 h-4" />
-                    </div>
-                  </div>
-
-                  {errors.priority && (
-                    <div className="flex items-center mt-2 text-red-600 text-sm">
-                      <AlertCircle className="w-4 h-4 mr-1" />
-                      {errors.priority.message}
-                    </div>
-                  )}
-                </div>
-
                 <div>
                   <label
                     htmlFor="category"
                     className="block text-sm font-semibold text-gray-700 mb-2"
                   >
-                    {t('createRequest.form.category')} <span className="text-red-500">*</span>
+                    {t('createRequest.form.category')}{' '}
+                    <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative">
-                    <select
-                      id="category"
-                      {...register('category')}
-                      className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                        errors.category
-                          ? 'border-red-500 bg-red-50'
-                          : 'border-gray-300'
-                      }`}
-                    >
-                      {categories.map((item) => (
-                        <option key={item.value} value={item.value}>
-                          {item.label}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500">
-                      <ChevronDown className="w-4 h-4" />
-                    </div>
-                  </div>
-
-                  {errors.category && (
-                    <div className="flex items-center mt-2 text-red-600 text-sm">
-                      <AlertCircle className="w-4 h-4 mr-1" />
-                      {errors.category.message}
-                    </div>
-                  )}
+                  <select
+                    id="category"
+                    {...register('category')}
+                    className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                      errors.category
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-300'
+                    }`}
+                  >
+                    {categories.map((item) => (
+                      <option key={item.value} value={item.value}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
+                <div>
+                  <label
+                    htmlFor="priority"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    {t('createRequest.form.priority')}{' '}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="priority"
+                    {...register('priority')}
+                    className={`appearance-none w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                      errors.priority
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-300'
+                    }`}
+                  >
+                    {priorities.map((item) => (
+                      <option key={item.value} value={item.value}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Tiêu đề */}
+              <div>
+                <label
+                  htmlFor="title"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  {t('createRequest.form.title')}{' '}
+                  <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  {...register('title')}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                    errors.title
+                      ? 'border-red-500 bg-red-50'
+                      : 'border-gray-300'
+                  }`}
+                  placeholder={t('createRequest.form.title2')}
+                />
               </div>
 
               {/* Nội dung */}
               <div>
                 <label
                   htmlFor="content"
-                  className="block text-sm font-semibold text-gray-700 mb-2"
+                  className="block text-sm font-semibold text-gray-600 mb-2"
                 >
-                  {t('createRequest.form.content')} <span className="text-red-500">*</span>
+                  {t('createRequest.form.content')}{' '}
+                  <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   id="content"
@@ -554,7 +503,7 @@ const RequestForm: React.FC = () => {
                     </div>
                   ) : (
                     <span className="text-sm text-gray-500">
-                     {t('createRequest.form.content3')}
+                      {t('createRequest.form.content3')}
                     </span>
                   )}
                 </div>
@@ -562,7 +511,7 @@ const RequestForm: React.FC = () => {
 
               {/* Đính kèm tệp */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-600 mb-2">
                   {t('createRequest.form.upload')}
                 </label>
 
@@ -598,17 +547,17 @@ const RequestForm: React.FC = () => {
                     const validFiles = files.filter((file) => {
                       if (file.size > maxSize) {
                         alert(
-                            t('createRequest.form.fileTooLarge', {
-                              fileName: file.name,
-                            })
+                          t('createRequest.form.fileTooLarge', {
+                            fileName: file.name,
+                          })
                         );
                         return false;
                       }
                       if (!allowedTypes.includes(file.type)) {
                         alert(
-                            t('createRequest.form.fileNotSupport', {
-                              fileName: file.name,
-                            })
+                          t('createRequest.form.fileNotSupport', {
+                            fileName: file.name,
+                          })
                         );
                         return false;
                       }
@@ -635,10 +584,12 @@ const RequestForm: React.FC = () => {
                   />
                   <label
                     htmlFor="fileInput"
-                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
+                    className="inline-flex items-center justify-between border border-cyan-400 text-gray-700 text-sm font-medium px-4 py-2 rounded-full cursor-pointer transition-all hover:bg-cyan-100"
                   >
-                    <Upload className="w-4 h-4 mr-2" />
-                    {t('createRequest.form.chooseFile')}
+                    <span>{t('createRequest.form.chooseFile')}</span>
+                    <span className="ml-3 w-6 h-6 flex items-center justify-center rounded-full bg-gray-600 text-white">
+                      <Upload className="w-4 h-4" />
+                    </span>
                   </label>
                 </div>
 
@@ -681,7 +632,7 @@ const RequestForm: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 focus:ring-4 focus:ring-blue-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="w-full bg-[#193250] hover:bg-[#1F3E68] text-[#24F9FB] py-3 px-6 rounded-full font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
