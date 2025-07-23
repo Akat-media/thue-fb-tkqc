@@ -56,7 +56,7 @@
       "title": "Tặng điểm",
       "okText": "Xác nhận",
       "cancelText": "Hủy",
-      "rule":"Điểm phải là số dương",
+      "rule": "Điểm phải là số dương",
       "placeholder": "Nhập số điểm"
     },
     "changeTypeAccount": {
@@ -374,9 +374,10 @@
     "syncAccounts": "Đồng Bộ Tài Khoản",
     "createBM": "Tạo tài khoản BM",
     "bmList": "Danh sách BM",
-    "adAccountsWithCard": "TKQC Đã gắn thẻ",
-    "adAccountsWithoutCard": "TKQC Chưa gắn thẻ",
-    "rentedAccounts": "TKQC Đang thuê",
+    "adAccountsWithCard": "Tài khoản gắn thẻ",
+    "adAccountsWithoutCard": "Tài khoản chưa gắn thẻ",
+    "adAccounts": "Tất cả tài khoản",
+    "rentedAccounts": "Tài khoản đang thuê",
     "noAccountsWithoutCard": "Không có tài khoản nào chưa gắn thẻ.",
     "noRentedAccounts": "Không có tài khoản nào đang được thuê.",
     "fields": {
@@ -425,25 +426,27 @@
     "available": "Có sẵn",
     "rented": "Đã thuê",
     "unavailable": "Không khả dụng",
-    "adAccountType": "Loại TKQC",
+    "adAccountType": "Loại tài khoản",
     "withCard": "Đã gắn thẻ",
     "withoutCard": "Chưa gắn thẻ",
     "accountNumber": "Số tài khoản",
     "noCardInfo": "Chưa có thông tin thẻ",
     "spendLimit": "Giới hạn chi",
     "noLimit": "Không giới hạn",
-    "highQualityAccount": "TKQC BM chất lượng cao, đã verify danh tính",
+    "highQualityAccount": "Tài khoản BM chất lượng cao, đã verify danh tính",
     "rentNow": "Thuê ngay",
     "viewDetails": "Xem chi tiết"
   },
   "filter": {
-    "priceRange": "Khoảng giá",
+    "priceRange": "Khoảng giới hạn chi tiêu",
     "accountType": "Loại tài khoản",
     "withCard": "Đã gắn thẻ",
     "withoutCard": "Chưa gắn thẻ",
     "noLimit": "Không giới hạn",
     "close": "Đóng",
-    "viewResults": "Xem kết quả"
+    "viewResults": "Xem kết quả",
+    "minimum": "Tối thiểu",
+    "maximum": "Tối đa"
   },
   "rentalsPage": {
     "title": "Tài khoản đang thuê",
@@ -727,12 +730,12 @@
       "asc": "Tăng dần",
       "desc": "Giảm dần"
     },
-    "button":{
+    "button": {
       "confirm": "Xác nhận",
       "cancel": "Hủy",
       "close": "Đóng"
     },
-    "noti":{
+    "noti": {
       "success": "Thành công",
       "error": "Thất bại"
     }

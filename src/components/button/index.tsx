@@ -3,7 +3,7 @@ import { ChevronDown, Filter } from 'lucide-react';
 import styled from 'styled-components';
 import NotiDropdown from '../icons/NotiDropdown';
 import { useOnOutsideClick } from '../../hook/useOutside';
-import { Slider } from 'antd';
+import { Checkbox, Slider } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 type ButtonCmpProps = {
@@ -71,21 +71,27 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
 
     setRange(newRange);
   };
-
+  const onChange = (e: any) => {
+    console.log(`checked = ${e.target.checked}`);
+  };
   return (
     <ButtonStyle className="relative">
       <button
         type="button"
-        className={`h-[42px] px-3 sm:px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center ${className}`}
+        className={`h-[54px] min-w-[120px] px-3 sm:px-4 
+           rounded-full shadow-sm text-sm font-medium text-gray-700
+            bg-white hover:bg-gray-50 focus:outline-none focus:ring-2
+            focus:ring-offset-2 focus:ring-blue-500 flex items-center gap-1
+            justify-center btn ${className}`}
         onClick={(e) => {
           toggleDropdown();
         }}
       >
-        {icon}
-        <span className="ml-2 hidden whitespace-nowrap lg:inline">
+        <span className="ml-2 hidden whitespace-nowrap lg:inline text-[16px] font-semibold">
           {buttonLabel}
         </span>
-        {beforeIcon}
+        {icon}
+        {/* {beforeIcon} */}
       </button>
 
       {/* Dropdown chỉ hiển thị khi có beforeIcon */}
@@ -96,11 +102,27 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
         >
           {type === 'money' && (
             <div>
-              <p className="price-title mb-3">{t('filter.priceRange')}</p>
+              <div className="flex justify-between items-center">
+                <p className="price-title mb-3 text-[24px] font-semibold">
+                  {t('filter.priceRange')}
+                </p>
+                <Checkbox
+                  className="text-[16px] font-medium"
+                  onChange={onChange}
+                >
+                  {t('filter.noLimit')}
+                </Checkbox>
+              </div>
               <div className="input-price ">
                 <div className="price-filter ">
                   <div className="price-input-group">
                     <div className="input-wrapper">
+                      <label
+                        className="mb-3 text-[14px] font-semibold text-[#B4B4B4]"
+                        htmlFor="min-price"
+                      >
+                        {t('filter.minimum')}
+                      </label>
                       <input
                         id="min-price"
                         type="text"
@@ -111,9 +133,15 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
                       />
                     </div>
                   </div>
-                  -
+                  {/* - */}
                   <div className="price-input-group">
                     <div className="input-wrapper">
+                      <label
+                        className="mb-2 text-[14px] font-semibold text-[#B4B4B4]"
+                        htmlFor="min-price"
+                      >
+                        {t('filter.maximum')}
+                      </label>
                       <input
                         id="max-price"
                         type="text"
@@ -140,7 +168,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
               />
             </div>
           )}
-          <p className="price-title mb-3">{t('filter.accountType')}</p>
+          {/* <p className="price-title mb-3">{t('filter.accountType')}</p>
           <ul>
             {filterItems.map((item) => (
               <li key={item.id}>
@@ -159,7 +187,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
                 </button>
               </li>
             ))}
-          </ul>
+          </ul> */}
 
           <div className="btn-filter-group show flex justify-between gap-[20px] mt-4">
             <button
@@ -188,6 +216,32 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
 };
 
 const ButtonStyle = styled.div`
+  .btn {
+    position: relative;
+    background: white;
+    border-radius: 9999px; /* full rounded */
+    padding: 2px;
+    z-index: 0;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    padding: 1px; /* thickness của border */
+    border-radius: 9999px;
+    background: linear-gradient(
+      84.75deg,
+      #07ffc9 1.75%,
+      #29fbfb 51.57%,
+      #00eaff 86.96%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
   .list-filter-child {
     background: #fff;
     border: 1px solid #eee;
@@ -199,7 +253,7 @@ const ButtonStyle = styled.div`
     opacity: 0;
     padding: 16px;
     position: absolute;
-    top: 46px;
+    top: 64px;
     transition: 0.5s;
     width: calc(100vw - 20px);
     z-index: -1;
@@ -261,21 +315,24 @@ const ButtonStyle = styled.div`
     background: #f7f7f8;
   }
   .button.submit {
-    background: #d70018;
-    border-color: #d70018;
+    background: #193250;
+    border-color: #193250;
     color: #fff;
   }
   .button.submit:hover {
-    background: #901;
+    background: #456993;
   }
   .price-filter {
     align-items: center;
     background-color: #fff;
     border-radius: 8px;
     display: flex;
-    gap: 8px;
+    gap: 20px;
     margin-top: 8px;
     justify-content: space-between;
+    .price-input-group {
+      width: calc(50% - 5px);
+    }
   }
   .price-input {
     border: 1px solid #cfcfd3;
@@ -290,10 +347,22 @@ const ButtonStyle = styled.div`
   }
   .ant-slider-track {
     background-color: #d70018;
+    background: linear-gradient(
+      84.75deg,
+      #07ffc9 1.75%,
+      #29fbfb 51.57%,
+      #00eaff 86.96%
+    );
     height: 8px;
   }
   .ant-slider-track:hover {
     background-color: #d70018;
+    background: linear-gradient(
+      84.75deg,
+      #07ffc9 1.75%,
+      #29fbfb 51.57%,
+      #00eaff 86.96%
+    );
   }
   .ant-slider-handle::after,
   .ant-slider-handle::before {
