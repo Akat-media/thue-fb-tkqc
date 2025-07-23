@@ -49,7 +49,7 @@ import NotFoundPage from './pages/404/NotFoundPage.tsx';
 import { usePageStore } from './stores/usePageStore.ts';
 import PopupWelcome from './components/layout/PopupWelcome.tsx';
 import ChatLayout from "./pages/admin/chats/ChatLayout.tsx";
-import CashBackManagement from './pages/admin/CashBackManagement.tsx';
+import CashBackManagement from './pages/admin/cashback/CashBackManagement.tsx';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
