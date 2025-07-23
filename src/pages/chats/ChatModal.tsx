@@ -9,9 +9,9 @@ interface Message {
   text: string;
   sender: 'user' | 'bot';
   timestamp: Date;
-  idUser: string;
-  nameUser: string;
-  roleUser: string;
+  idUser?: string;
+  nameUser?: string;
+  roleUser?: string;
 }
 
 interface ChatModalProps {
@@ -37,7 +37,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
       timestamp: new Date(),
       idUser: '1',
       nameUser: 'minh thu aka',
-      roleUser: 'user'
+      roleUser: 'user',
     },
   ]);
 
@@ -80,12 +80,12 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
         },
       });
       if (res.data && res.data.messageId) {
-        setMessages(prev =>
-            prev.map(msg =>
-                msg.text === inputValue && msg.sender === 'user'
-                    ? { ...msg, id: res.data.messageId }
-                    : msg
-            )
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.text === inputValue && msg.sender === 'user'
+              ? { ...msg, id: res.data.messageId }
+              : msg
+          )
         );
       }
     } catch (error) {
@@ -167,7 +167,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
         roleUser: sender.role,
       };
       setMessages((prev) => {
-        const exists = prev.some(msg => msg.id === newMsg.id);
+        const exists = prev.some((msg) => msg.id === newMsg.id);
         if (exists) return prev;
         return [...prev, newMsg];
       });
@@ -212,7 +212,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose }) => {
 
       {/* Messages */}
       <div className="h-80 overflow-y-auto p-4 space-y-4 bg-gray-50">
-        {messages.map((message,index) => (
+        {messages.map((message, index) => (
           <div
             key={`${message.id}-${index}`}
             className={`flex ${

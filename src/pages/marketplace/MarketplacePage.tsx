@@ -20,6 +20,7 @@ import _ from 'lodash';
 import CardDetailModal from './CardDetailModal';
 import { useTranslation } from 'react-i18next';
 import { usePreventScroll } from '../../hook/usePreventScroll';
+import BreadCumbsCmp from '../../components/breadCumbs';
 
 interface BM {
   id: string;
@@ -56,12 +57,14 @@ const MarketplacePage: React.FC = () => {
   const [rentMeta, setRentMeta] = useState<any>(null);
   const [rentedAccounts, setRentedAccounts] = useState<any[]>([]);
   const [visaAccount, setVisaAccount] = useState<any[]>([]);
+  const [allAccount, setAllAccount] = useState<any[]>([]);
   const [simpleAccount, setSimpleAccount] = useState<any[]>([]);
   const [selectedAdAccountDetail, setSelectedAdAccountDetail] =
     useState<any>(null);
   const [isAdDetailOpen, setIsAdDetailOpen] = useState(false);
   const [total, setTotal] = useState<any>(0);
   const [totalVisa, setTotalVisa] = useState<any>(0);
+  const [totalAll, setTotalAll] = useState<any>(0);
   const [dataQuery, setDataQuery] = useState<any>({
     pageSize: 6,
     page: 1,
@@ -72,14 +75,20 @@ const MarketplacePage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const urlPage = parseInt(searchParams.get('page') || '1', 10);
   const urlPageSimple = parseInt(searchParams.get('pageSizeSimple') || '1', 10);
+  const [activeTab, setActiveTab] = useState<string>('all');
   const { currentPage, pageSize, handleChange } = usePagination(urlPage, 6);
+  const {
+    currentPage: currentPageAll,
+    pageSize: pageSizeAll,
+    handleChange: handleChangeAll,
+  } = usePagination(urlPage, 6);
   const {
     currentPage: currentPageSimple,
     pageSize: pageSizeSimple,
     handleChange: handleChangeSimple,
   } = usePagination(urlPageSimple, 6);
-  usePreventScroll(successRent)
-  
+  usePreventScroll(successRent);
+
   const handleCallAPiVisaRent = async () => {
     try {
       const [rentedRes] = await Promise.all([
@@ -98,8 +107,8 @@ const MarketplacePage: React.FC = () => {
       ...dataQuery,
       page: currentPage,
       pageSizeSimple: currentPageSimple,
-      is_ads_visa: data?.selectedItems.includes('1') ? '1' : null,
-      is_ads_simple: data?.selectedItems.includes('2') ? '1' : null,
+      // is_ads_visa: data?.selectedItems.includes('1') ? '1' : null,
+      // is_ads_simple: data?.selectedItems.includes('2') ? '1' : null,
       from: data?.range?.[0],
       to: data?.range?.[1],
     });
@@ -152,6 +161,28 @@ const MarketplacePage: React.FC = () => {
       toast.error(t('marketplacePage.errors.fetchAdAccounts'));
     }
   };
+  const handleCallAPiAll = async () => {
+    try {
+      const [Res] = await Promise.all([
+        BaseHeader({
+          method: 'get',
+          url: 'ad-accounts',
+          params: {
+            page: currentPageAll,
+            pageSize: pageSizeAll,
+            from: searchParams.get('from') || 0,
+            to: searchParams.get('to') || 10000000000,
+          },
+        }),
+      ]);
+      const Accounts = Res.data.data.data || [];
+      setAllAccount(Accounts);
+      setTotalAll(Res.data.data.count || 0);
+    } catch (error) {
+      console.error('Error fetching ad accounts:', error);
+      toast.error(t('marketplacePage.errors.fetchAdAccounts'));
+    }
+  };
   useEffect(() => {
     if (!isAdmin) {
       const queryString = qs.stringify({
@@ -184,12 +215,29 @@ const MarketplacePage: React.FC = () => {
     }
   }, [isAdmin]);
   useEffect(() => {
-    if (!isAdmin) {
+    if (!isAdmin && activeTab === 'all') {
+      handleCallAPiAll();
+    }
+  }, [
+    isAdmin,
+    currentPageAll,
+    searchParams.get('from'),
+    searchParams.get('to'),
+    activeTab,
+  ]);
+  useEffect(() => {
+    if (!isAdmin && activeTab === 'visa') {
       handleCallAPiVisa();
     }
-  }, [isAdmin, currentPage, searchParams.get('from'), searchParams.get('to')]);
+  }, [
+    isAdmin,
+    currentPage,
+    searchParams.get('from'),
+    searchParams.get('to'),
+    activeTab,
+  ]);
   useEffect(() => {
-    if (!isAdmin) {
+    if (!isAdmin && activeTab === 'simple') {
       handleCallAPiSimple();
     }
   }, [
@@ -197,6 +245,7 @@ const MarketplacePage: React.FC = () => {
     currentPageSimple,
     searchParams.get('from'),
     searchParams.get('to'),
+    activeTab,
   ]);
 
   const handleRentClick = (account: any) => {
@@ -350,6 +399,17 @@ const MarketplacePage: React.FC = () => {
     note_aka: t('marketplacePage.fields.noteAka'),
     active: t('marketplacePage.fields.active'),
   };
+  const tabs = [
+    { key: 'all', label: t('marketplacePage.adAccounts') },
+    {
+      key: 'visa',
+      label: t('marketplacePage.adAccountsWithCard'),
+    },
+    {
+      key: 'simple',
+      label: t('marketplacePage.adAccountsWithoutCard'),
+    },
+  ];
 
   return (
     <>
@@ -361,14 +421,15 @@ const MarketplacePage: React.FC = () => {
             </h2>
           </div>
         </div>
-
+        <div className="flex gap-8 mt-4">
+          <BreadCumbsCmp
+            tabs={tabs}
+            setActiveTab={setActiveTab}
+            activeTab={activeTab}
+          />
+          <ButtonCmp onClick={hanleSearch} />
+        </div>
         <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between">
-          <div className="w-full lg:w-1/2 flex items-center gap-2">
-            <div className="flex gap-3 flex-1">
-              <ButtonCmp onClick={hanleSearch} />
-            </div>
-          </div>
-
           <div className="mt-3 md:mt-0 flex items-center gap-3">
             {isAdmin && (
               <button
@@ -419,7 +480,38 @@ const MarketplacePage: React.FC = () => {
         )}
 
         {/* Ad Accounts Section */}
-        {searchParams.get('is_ads_visa') == '1' && (
+        {activeTab === 'all' && (
+          <>
+            <h3 className="text-2xl font-bold text-gray-600 mb-4 mt-6">
+              {t('marketplacePage.adAccounts')}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {allAccount.map((account: any) => (
+                <AdAccountCard
+                  key={account.id}
+                  account={account}
+                  onRentClick={() => handleRentClick(account)}
+                  isAdmin={isAdmin}
+                  onViewDetail={(acc) => {
+                    setSelectedAdAccountDetail(acc);
+                    setIsAdDetailOpen(true);
+                  }}
+                />
+              ))}
+            </div>
+            {Boolean(totalAll) && (
+              <div className="mt-8 mb-4">
+                <Pagination
+                  total={totalAll}
+                  onChange={handleChangeAll}
+                  current={currentPageAll}
+                  pageSize={pageSizeAll}
+                />
+              </div>
+            )}
+          </>
+        )}
+        {activeTab === 'visa' && searchParams.get('is_ads_visa') == '1' && (
           <>
             <h3 className="text-2xl font-bold text-gray-600 mb-4 mt-6">
               {t('marketplacePage.adAccountsWithCard')}
@@ -451,7 +543,7 @@ const MarketplacePage: React.FC = () => {
           </>
         )}
 
-        {searchParams.get('is_ads_simple') == '1' && (
+        {activeTab === 'simple' && searchParams.get('is_ads_simple') == '1' && (
           <>
             <h3 className="text-2xl font-bold text-red-500 my-4 mt-6">
               {t('marketplacePage.adAccountsWithoutCard')}
