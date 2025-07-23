@@ -19,6 +19,7 @@ import {
   MoreVertical,
   ArrowUp,
   ArrowDown,
+  Copy,
   User,
 } from 'lucide-react';
 import Subheader from '../../components/ui/Subheader';
@@ -296,7 +297,7 @@ const AdminTransactionsPage: React.FC = () => {
     {
       key: 'type',
       label: i18n.language === 'en' ? 'Type' : 'Loại',
-      icon: <AlarmClockPlus className="w-4 h-4 text-gray-500" />,
+      icon: <BadgeInfo className="w-4 h-4 text-gray-500" />,
       sortKey: 'type',
       minWidth: '100px',
     },
@@ -307,13 +308,13 @@ const AdminTransactionsPage: React.FC = () => {
       sortKey: 'short_code',
       minWidth: '140px',
     },
-    {
-      key: 'transactionID',
-      label: i18n.language === 'en' ? 'Transaction ID' : 'TransactionID',
-      icon: <Pen className="w-4 h-4 text-gray-500" />,
-      sortKey: 'transactionID',
-      minWidth: '140px',
-    },
+    // {
+    //   key: 'transactionID',
+    //   label: i18n.language === 'en' ? 'Transaction ID' : 'TransactionID',
+    //   icon: <Pen className="w-4 h-4 text-gray-500" />,
+    //   sortKey: 'transactionID',
+    //   minWidth: '140px',
+    // },
     {
       key: 'description',
       label: i18n.language === 'en' ? 'Description' : 'Mô tả',
@@ -742,7 +743,7 @@ const AdminTransactionsPage: React.FC = () => {
                         {item?.type}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-[#f5f5ff] cursor-pointer ${
                           activeCell === `${item.id}-createdAt`
                             ? 'bg-green-100'
                             : ''
@@ -752,18 +753,22 @@ const AdminTransactionsPage: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {item?.short_code}
-                      </td>
-                      <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
-                          activeCell === `${item.id}-note` ? 'bg-green-100' : ''
-                        }`}
-                        onClick={() => {
-                          setActiveCell(`${item.id}-note`);
-                          setActiveRow(null);
-                        }}
-                      >
-                        {item?.transactionID}
+                        <div className="flex items-center justify-center gap-2">
+                          <span>{item?.short_code}</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(
+                                item?.short_code || ''
+                              );
+                              toast.success('Đã sao chép Short Code!');
+                            }}
+                            title="Copy"
+                            className="hover:text-blue-500 transition"
+                          >
+                            <Copy className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
@@ -827,7 +832,7 @@ const AdminTransactionsPage: React.FC = () => {
           <Subheader active={active} setActive={setActive} />
           <div className="flex items-end justify-between mb-4">
             <h1 className="text-1xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate mt-1">
-            {t('transaction.title')}
+              {t('transaction.title')}
             </h1>
           </div>
 

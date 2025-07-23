@@ -19,6 +19,8 @@ import {
   ArrowUp,
   ArrowDown,
   User,
+  Check,
+  Copy,
 } from 'lucide-react';
 import Subheader from '../../components/ui/Subheader';
 import Button from '../../components/ui/Button';
@@ -493,6 +495,38 @@ const ManageAdsAccount: React.FC = () => {
     }
   }, [transactions, transactionPoints, active]);
 
+  const getStatusConfig = (status: string) => {
+    const configs = {
+      pending: {
+        bg: 'bg-yellow-100',
+        text: 'text-yellow-600',
+        label: 'Đang chờ xử lý',
+      },
+      'in-progress': {
+        bg: 'bg-blue-100',
+        text: 'text-blue-600',
+        label: 'Đang xử lý',
+      },
+      success: {
+        bg: 'bg-green-100',
+        text: 'text-green-600',
+        label: 'Thành công',
+      },
+      closed: {
+        bg: 'bg-gray-100',
+        text: 'text-gray-600',
+        label: 'Đã đóng',
+      },
+    };
+    return (
+      configs[status as keyof typeof configs] || {
+        bg: 'bg-gray-100',
+        text: 'text-gray-600',
+        label: status || 'Không xác định',
+      }
+    );
+  };
+
   return (
     <>
       {active === 'money' && (
@@ -680,18 +714,24 @@ const ManageAdsAccount: React.FC = () => {
                         {item?.bank}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
-                          activeCell === `${item.id}-total`
-                            ? 'bg-green-100'
-                            : ''
-                        }`}
+                        className={`px-4 py-2 text-center border border-[#f5f5ff] cursor-pointer`}
                         onClick={() => {
-                          setActiveCell(`${item.id}-total`);
+                          setActiveCell(`${item.id}-status`);
                           setActiveRow(null);
                         }}
                       >
-                        {item?.status}
+                        {(() => {
+                          const config = getStatusConfig(item.status);
+                          return (
+                            <span
+                              className={`text-xs px-3 py-1 rounded-full font-medium ${config.bg} ${config.text}`}
+                            >
+                              {config.label}
+                            </span>
+                          );
+                        })()}
                       </td>
+
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-business`
@@ -725,7 +765,7 @@ const ManageAdsAccount: React.FC = () => {
                         {item?.type}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-[#f5f5ff] cursor-pointer ${
                           activeCell === `${item.id}-createdAt`
                             ? 'bg-green-100'
                             : ''
@@ -735,8 +775,24 @@ const ManageAdsAccount: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {item?.short_code}
+                        <div className="flex items-center justify-center gap-2">
+                          <span>{item?.short_code}</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(
+                                item?.short_code || ''
+                              );
+                              toast.success('Đã sao chép Short Code!');
+                            }}
+                            title="Copy"
+                            className="hover:text-blue-500 transition"
+                          >
+                            <Copy className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
+
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
                           activeCell === `${item.id}-note` ? 'bg-green-100' : ''
