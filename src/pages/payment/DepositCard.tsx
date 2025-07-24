@@ -100,7 +100,7 @@ const DepositCard: React.FC<DepositCardProps> = (
                             className="w-[224px] bg-[#06203F] text-cyan-300 rounded-full py-3 font-semibold hover:bg-[#0a2c57] transition"
                             onClick={handleDeposit}
                         >
-                            {t('paymentPage.depositSuccess')}
+                            {t('paymentPage.createDepositOrder')}
                         </button>
                     </div>
                 </div>
