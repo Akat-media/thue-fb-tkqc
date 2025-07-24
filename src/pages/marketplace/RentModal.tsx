@@ -1,30 +1,56 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { X, AlertCircle } from 'lucide-react';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '../../components/ui/Card';
-import { useNotification } from '../../context/NotificationContext';
+import React, { useState, useEffect, useRef } from 'react';
 import BaseHeader from '../../api/BaseHeader';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useUserStore } from '../../stores/useUserStore';
-import FieldForm, { OptionType } from '../../components/form/FieldForm';
 import { useOnOutsideClick } from '../../hook/useOutside';
-import dayjs from 'dayjs';
 import { VoucherData } from '../profile/Ticket';
-import { format, parseISO } from 'date-fns';
-import { Form, Modal, Select } from 'antd';
+import { addDays } from 'date-fns';
+import { Modal } from 'antd';
 import styled from 'styled-components';
 import { useNotificationStore } from '../../stores/notificationStore';
 import { useTranslation } from 'react-i18next';
 import { usePreventScroll } from '../../hook/usePreventScroll';
+import './index.css';
+import url3 from '../../assets/Badge (1).svg';
+import url4 from '../../assets/calendar.svg';
+import url5 from '../../assets/Icon.svg';
+import url6 from '../../assets/Icon (1).svg';
+import bg from '../../assets/bg (1).svg';
+import { z } from 'zod';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { useNavigate } from 'react-router-dom';
 
+const schema = z.object({
+  bmId: z
+    .string()
+    .min(1, 'BM ID phải là chuỗi ID và không được để trống')
+    .regex(/^\d+$/, 'BM ID phải là chuỗi số'),
+  spendLimit: z
+    .number({ invalid_type_error: 'Hạn mức chi tiêu phải là số' })
+    .gt(10000, 'Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ'),
+  voucher: z.string().optional(),
+  dateRange: z
+    .object({
+      from: z.date(),
+      to: z.date(),
+    })
+    .refine(
+      ({ from, to }) => {
+        const diff = (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24);
+        return diff >= 7 && diff <= 30;
+      },
+      {
+        message: 'Khoảng thời gian phải từ 7 đến 30 ngày',
+        path: ['to'],
+      }
+    ),
+});
+
+type FormData = z.infer<typeof schema>;
 interface RentModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -52,18 +78,11 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     rentMeta,
     handleCallAPiVisa,
   } = props;
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
-  const [userBmId, setUserBmId] = useState('');
-  const [requestedLimit, setRequestedLimit] = useState<number | null>(null);
-  const [errors, setErrors] = useState<{ bmId?: string; limit?: string }>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [cookies, setCookies] = useState<any[]>([]);
   const [selectedCookieId, setSelectedCookieId] = useState<any>('');
-  const [isLoadingCookies, setIsLoadingCookies] = useState(false);
-  const [rentalRange, setRentalRange] = useState<any>(null);
-  const [rentalRangeError, setRentalRangeError] = useState<string | null>(null);
   const [dataVoucher, setDataVoucher] = useState<VoucherData[]>([]);
   const [selectedVoucher, setSelectedVoucher] = useState('');
   const [selectedCurrend, setSelectedCurrend] = useState('vnd');
@@ -72,220 +91,49 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     percentage: number;
   } | null>(null);
   const { fetchNotifications } = useNotificationStore();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+    trigger,
+    watch,
+    control,
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      bmId: '',
+      spendLimit: 10000000,
+      voucher: '',
+      dateRange: { from: new Date(), to: addDays(new Date(), 30) },
+    },
+    mode: 'onChange',
+  });
   const isVisaAccount = account?.is_visa_account;
   const { user, fetchUser } = useUserStore();
-  usePreventScroll(isOpen)
+  usePreventScroll(isOpen);
   const { innerBorderRef } = useOnOutsideClick(() => {
     if (isOpen) onClose();
   });
 
-  const calculateTotalPrice = () => {
-    if (requestedLimit === null || isNaN(requestedLimit)) return 0;
-    return requestedLimit + requestedLimit * 0.1;
-  };
-
-  const selectedVoucherData = dataVoucher.find(
-    (item) => item.voucher_id === selectedVoucher
-  );
-
-  const discountAmount = (() => {
-    if (!selectedVoucherData || !selectedVoucherData.voucher) return 0;
-    const { type, discount } = selectedVoucherData.voucher;
-    if (type === 'fixed') return discount;
-    if (type === 'percentage' && requestedLimit)
-      return Math.floor((requestedLimit * discount) / 100);
-    return 0;
-  })();
-
-  // Phí dịch vụ
-  const serviceFee = useMemo(() => {
-    if (isVisaAccount) {
-      const limit = Number(requestedLimit || 0);
-      if (limit === 0) return 0;
-      if (limit < 500_000_000) return Math.floor(limit * 0.04);
-      if (limit < 1_000_000_000) return Math.floor(limit * 0.03);
-      return Math.floor(limit * 0.02);
-    }
-
-    const spendCap = Number(account?.spend_cap || 0);
-    const budgetAmount = Number(budgetData?.amount || 0);
-    const apiPercentage = Number(budgetData?.percentage || 0);
-
-    if (!budgetData || !budgetAmount || typeof apiPercentage !== 'number') {
-      const fallbackPercent = spendCap < 500000000 ? 0.05 : 0.04;
-      return Math.floor(spendCap * fallbackPercent);
-    }
-
-    const feePercent = spendCap < 500000000 ? 0.05 : apiPercentage;
-
-    return Math.floor(spendCap * feePercent);
-  }, [requestedLimit, account?.spend_cap, isVisaAccount, budgetData]);
-
-  const totalBill = useMemo(() => {
-    if (isVisaAccount) {
-      const basePrice = requestedLimit || 0;
-      return basePrice + serviceFee - discountAmount;
-    }
-
-    return serviceFee - discountAmount;
-  }, [requestedLimit, serviceFee, discountAmount, isVisaAccount]);
-
-  const handleSubmit = async () => {
-    if (!isVisaAccount) {
-      if (!rentalRange) {
-        setRentalRangeError('Vui lòng chọn thời gian thuê.');
-        return;
-      }
-
-      const { start, end } = rentalRange;
-      const msPerDay = 1000 * 60 * 60 * 24;
-      const days = Math.round((end.getTime() - start.getTime()) / msPerDay) + 1;
-
-      if (days < 7 || days > 31) {
-        setRentalRangeError('Thời gian thuê phải từ 7 đến 31 ngày.');
-        return;
-      }
-    }
-
-    if (
-      isVisaAccount &&
-      (requestedLimit === null ||
-        isNaN(requestedLimit) ||
-        requestedLimit <= 10000)
-    ) {
-      setErrors((prev) => ({
-        ...prev,
-        limit: 'Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ',
-      }));
-      return;
-    }
-
-    if (!isVisaAccount) {
-      setRentMeta?.({
-        bm_origin: account?.owner || '',
-        ads_name: account?.name || '',
-        bm_id: userBmId || '',
-        ads_account_id: account?.account_id || '',
-        amountPoint: totalBill,
-        bot_id: selectedCookieId || '',
-        voucher_id: selectedVoucher || '',
-        start_date: [rentalRange.start],
-        end_date: [rentalRange.end],
-        currency: selectedCurrend,
-      });
-      onClose();
-      openCardModal?.();
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-
-      const payload = {
-        bm_origin: account?.owner || '',
-        ads_name: account?.name || '',
-        bm_id: userBmId || '',
-        ads_account_id: account?.account_id || '',
-        user_id: userParse.user_id || '',
-        amountPoint: totalBill,
-        voucher_id: selectedVoucher || '',
-        bot_id: selectedCookieId || null,
-        // bot_id: "b7e55204-8952-4258-9a79-6425f2bbfe33",
-        currency: selectedCurrend,
-      };
-
-      const response = await BaseHeader({
-        url: 'points-used',
-        method: 'post',
-        data: payload,
-      });
-
-      if (response.status === 200 && response.data.success) {
-        setSuccessRent(response.data.message);
-        await fetchNotifications(userParse.user_id || '');
-        await handleCallAPiVisa();
-        onClose();
-        // toast.success('Thuê tài khoản thành công!');
-      } else {
-        toast.error(
-          response.data.message ||
-            t('rentModal.cannotRent', 'Cannot rent account.')
-        );
-      }
-    } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message ||
-          t('rentModal.rentError', 'Error when renting account.')
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    const fetchBudget = async () => {
-      try {
-        const res = await BaseHeader({
-          method: 'get',
-          url: 'budget',
-        });
-        const data = res?.data;
-        if (
-          data &&
-          typeof data.amount === 'number' &&
-          typeof data.percentage === 'number'
-        ) {
-          setBudgetData({ amount: data.amount, percentage: data.percentage });
-        }
-      } catch (error) {
-        console.error('Lỗi khi gọi API ngân sách:', error);
-      }
-    };
-
     if (isOpen) {
       fetchCookies();
       fetchData();
       fetchUser();
-      if (!isVisaAccount) {
-        fetchBudget();
-      }
-
-      if (
-        typeof rentMeta === 'object' &&
-        rentMeta?.rentalRange &&
-        Array.isArray(rentMeta.rentalRange) &&
-        rentMeta.rentalRange.length === 2
-      ) {
-        const [startRaw, endRaw] = rentMeta.rentalRange;
-        const start = dayjs(startRaw);
-        const end = dayjs(endRaw);
-
-        if (start.isValid() && end.isValid()) {
-          setRentalRange([start.toDate(), end.toDate()]);
-          setRentalRangeError(null);
-        }
-      }
-    } else {
-      setUserBmId('');
-      setSelectedVoucher('');
-      setRequestedLimit(null);
     }
   }, [isOpen, isVisaAccount]);
 
   const fetchCookies = async () => {
     try {
-      setIsLoadingCookies(true);
       const response = await BaseHeader({
         method: 'get',
         url: 'cookies',
         params: {},
       });
-      setCookies(response.data.data || []);
       setSelectedCookieId(response.data.data?.[0]?.id);
     } catch (error) {
       console.error('Error fetching cookies:', error);
-    } finally {
-      setIsLoadingCookies(false);
     }
   };
   const fetchData = async () => {
@@ -300,26 +148,50 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       console.log('error', error);
     }
   };
-  const isValidBmId = /^[0-9]+$/.test(userBmId) && userBmId.trim() !== '';
-  const isValidLimit =
-    requestedLimit !== null &&
-    Number.isInteger(requestedLimit) &&
-    requestedLimit > 10000;
-  const isValid = isValidBmId && isValidLimit;
-  const isValidRentalRange = rentalRange !== null && rentalRangeError === null;
-  const isVoucherExpired = (expiresAt: string) => {
-    const currentTime = new Date();
-    const expiryTime = new Date(expiresAt);
-    return expiryTime < currentTime;
-  };
-
   const handleOk = () => {
     onClose();
   };
-
   const handleCancel = () => {
     onClose();
+    reset();
   };
+
+  useEffect(() => {
+    trigger();
+  }, [trigger]);
+
+  const onSubmit = async (data: FormData) => {
+    console.log('Submitted data:', data);
+    const payload = {
+      bm_origin: account?.owner || '',
+      ads_name: account?.name || '',
+      bm_id: data.bmId || '',
+      ads_account_id: account?.account_id || '',
+      user_id: userParse.user_id || '',
+      amountPoint:
+        data.spendLimit +
+        Number(watch('spendLimit') || 0) * (user?.percentage || 0),
+      voucher_id: data.voucher || '',
+      bot_id: selectedCookieId || null,
+      currency: selectedCurrend,
+    };
+    try {
+      const response = await BaseHeader({
+        url: 'points-used',
+        method: 'post',
+        data: payload,
+      });
+      if (response.data.success) {
+        setSuccessRent(response.data.data);
+        onClose();
+        reset();
+      }
+    } catch (error) {
+      console.log('Error submitting form:', error);
+      toast.error('Đã có lỗi xảy ra, vui lòng thử lại sau');
+    }
+  };
+  const datePickerRef = useRef<any>(null);
 
   if (!isOpen) return null;
   return (
@@ -330,353 +202,226 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       onCancel={handleCancel}
       footer={null} // <-- Tắt cả hai nút OK và Cancel
       centered
-      className="z-[1000000000]"
+      width={896}
+      className="z-[1000000000] p-0"
     >
       <Main
         ref={innerBorderRef}
-        className="inline-block align-bottom rounded-lg text-left overflow-hidden  transform transition-all sm:my-2 sm:align-middle sm:max-w-lg sm:w-full"
+        className="relative inline-block align-bottom rounded-lg 
+        text-left overflow-hidden  transform transition-all 
+         p-[30px] w-full"
       >
-        <Card>
-          <CardHeader className="relative">
-            <CardTitle className="text-[26px]">
-              {t('rentModal.title')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isVisaAccount == null && (
-              <div className="p-4 text-green-600 bg-green-100 rounded-md text-sm mb-2">
-                {t('rentModal.infoAlert')}
-              </div>
-            )}
-
-            <div className="bg-blue-50 p-4 rounded-md">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <AlertCircle className="h-5 w-5 text-blue-400" />
-                </div>
-                <div className="ml-3">
-                  <h3 className="!text-[16px] text-sm font-medium text-blue-800">
-                    {t('rentModal.accountLabel')}{' '}
-                    <strong>{account.name}</strong>
-                  </h3>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4 mt-4">
-              <div>
-                <Input
-                  id="userBmId"
-                  label={t('rentModal.bmIdLabel')}
-                  type="number"
-                  placeholder={t('rentModal.bmIdPlaceholder')}
-                  value={userBmId}
-                  onChange={(e) => setUserBmId(e.target.value)}
-                  error={!isValidBmId ? t('rentModal.bmIdError') : ''}
-                  helperText={
-                    !isValidBmId
-                      ? t('rentModal.bmIdError')
-                      : t('rentModal.bmIdHelper')
-                  }
-                  onWheel={(e) => e.currentTarget.blur()}
-                  className="font-semibold w-full mt-1 px-3 py-3 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-full z-10 relative"
+        >
+          <div className="flex flex-col">
+            <h3 className="text-[24px] font-medium text-[#6B7280]">
+              Thuê tài khoản
+            </h3>
+            <h1 className="flex gap-2">
+              <div className="text-[42px] font-semibold">{account?.name}</div>
+              <img src={url3} alt="Xem chi tiết" />
+            </h1>
+          </div>
+          <main className="flex items-stretch w-full justify-between">
+            {/* phần left */}
+            <div className="w-[48%] bg-white p-[24px] rounded-[16px]">
+              <div className={`${!errors.bmId ? 'mb-3' : ''}`}>
+                <label className="block mb-[8px] font-medium text-[14px] uppercase text-[#6B7280]">
+                  ID BM
+                </label>
+                <input
+                  type="text"
+                  {...register('bmId')}
+                  placeholder="Nhập ID BM của bạn"
+                  className="w-full  px-3 py-3 text-[16px] rounded-[8px] border-[1.5px] border-[#CBCDD2]"
                 />
-              </div>
-              {isVisaAccount === true && (
-                <div>
-                  <Input
-                    id="requestedLimit"
-                    label={t('rentModal.limitLabel')}
-                    type="number"
-                    min={account.defaultLimit / 2}
-                    max={account.defaultLimit * 2}
-                    step={50000}
-                    value={requestedLimit === null ? '' : requestedLimit}
-                    placeholder="0 VNĐ"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value === '') {
-                        setRequestedLimit(null);
-                        setErrors((prev) => ({
-                          ...prev,
-                          limit: undefined,
-                        }));
-                        return;
-                      }
-                      const num = parseInt(value, 10);
-                      if (!isNaN(num) && num >= 0) {
-                        setRequestedLimit(num);
-                        setErrors((prev) => ({
-                          ...prev,
-                          limit: undefined,
-                        }));
-                      }
-                    }}
-                    onBlur={() => {
-                      if (
-                        requestedLimit === null ||
-                        !Number.isInteger(requestedLimit) ||
-                        requestedLimit <= 10000
-                      ) {
-                        setErrors((prev) => ({
-                          ...prev,
-                          limit: t('rentModal.limitError'),
-                        }));
-                      } else {
-                        setErrors((prev) => ({
-                          ...prev,
-                          limit: undefined,
-                        }));
-                      }
-                    }}
-                    error={!isValidLimit ? t('rentModal.limitHelper') : ''}
-                    helperText={
-                      !isValidLimit ? t('rentModal.limitHelper') : undefined
-                    }
-                    fullWidth
-                    className="font-semibold w-full mt-1 px-3 py-3 border border-gray-300 rounded focus:outline-none focus:border-[#0167F8]"
-                  />
-                  <div className="text-sm text-gray-500 mt-1 pl-2">
-                    {t('rentModal.limitDisplay')}{' '}
-                    {requestedLimit !== null && !isNaN(requestedLimit)
-                      ? requestedLimit.toLocaleString('vi-VN')
-                      : '—'}{' '}
-                    VNĐ
-                  </div>
-                </div>
-              )}
-              {!isVisaAccount && (
-                <div className="w-full">
-                  <Form layout="vertical" className="w-full">
-                    <FieldForm
-                      className="w-full py-2"
-                      type="rangeDate"
-                      name="rentalRange"
-                      label={t('rentModal.rentalLabel')}
-                      format="YYYY-MM-DD"
-                      value={rentalRange as any}
-                      onChange={(value: any) => {
-                        if (!Array.isArray(value) || value.length < 2) {
-                          setRentalRange(null);
-                          setRentalRangeError(t('rentModal.rentalSelectError'));
-                          return;
-                        }
-
-                        const [start, end] = value;
-                        const startDate = start.toDate();
-                        const endDate = end.toDate();
-
-                        const msPerDay = 1000 * 60 * 60 * 24;
-                        const days =
-                          Math.round(
-                            (endDate.getTime() - startDate.getTime()) / msPerDay
-                          ) + 1;
-
-                        if (days < 7 || days > 31) {
-                          setRentalRangeError(t('rentModal.rentalError'));
-                          setRentalRange(null);
-                          return;
-                        }
-
-                        setRentalRange({ start: startDate, end: endDate });
-                        setRentalRangeError(null);
-                      }}
-                      disabledDate={(current: any) => {
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const maxEnd = new Date(today);
-                        maxEnd.setDate(maxEnd.getDate() + 30);
-
-                        return (
-                          current.toDate() < today || current.toDate() > maxEnd
-                        );
-                      }}
-                    />
-
-                    {rentalRangeError && (
-                      <div className="text-red-500 text-sm mt-1">
-                        {rentalRangeError}
-                      </div>
-                    )}
-                  </Form>
-                </div>
-              )}
-              <div>
-                <label
-                  id="voucherSelect"
-                  className="!text-[16px] text-sm font-semibold text-gray-700 mb-1"
-                >
-                  {t('rentModal.paymentMethodLabel')}
-                </label>
-                <select
-                  id="voucherSelect"
-                  className="w-full px-3 py-3 border border-gray-300 rounded text-sm"
-                  value={selectedCurrend}
-                  onChange={(e) => setSelectedCurrend(e.target.value)}
-                >
-                  {dataCurrency.map((item, index) => {
-                    return (
-                      <option key={index} value={item.id}>
-                        {item.name}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-              <div>
-                <label
-                  id="voucherSelect"
-                  className="!text-[16px] text-sm font-semibold text-gray-700 mb-1"
-                >
-                  {t('rentModal.voucherLabel')}
-                </label>
-                <select
-                  id="voucherSelect"
-                  className="w-full px-3 py-3 border border-gray-300 rounded text-sm"
-                  value={selectedVoucher}
-                  onChange={(e) => setSelectedVoucher(e.target.value)}
-                >
-                  <option className="text-gray-700 font-sans" value="">
-                    {t('rentModal.noVoucher')}
-                  </option>
-                  {dataVoucher.map((item, index) => {
-                    const checkExpored = isVoucherExpired(
-                      item.voucher.expires_at
-                    );
-                    if (!checkExpored) {
-                      return (
-                        <option key={index} value={String(item.voucher_id)}>
-                          {item.voucher.name} (x{item.quantity}) - (
-                          {format(
-                            parseISO(item.voucher.expires_at),
-                            'dd/MM/yyyy'
-                          )}
-                          )
-                        </option>
-                      );
-                    }
-                  })}
-                </select>
-              </div>
-            </div>
-
-            <div className="py-4 rounded-md">
-              <h4 className="text-sm text-gray-900 !text-[16px] font-semibold">
-                {t('rentModal.paymentDetails')}
-              </h4>
-              <p className="text-sm text-gray-500 mt-1 italic">
-                {t('rentModal.serviceNote')}
-              </p>
-
-              <div className="mt-2 space-y-1">
-                {requestedLimit !== null &&
-                  requestedLimit > account.defaultLimit && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">
-                        {t('rentModal.limitFee')}
-                      </span>
-                      <span className="text-gray-900 font-medium"></span>
-                    </div>
-                  )}
-                <div className="text-sm">
-                  {selectedVoucher && (
-                    <p className="text-gray-500 text-[16px] font-semibold">
-                      {t('rentModal.voucherDiscount')}{' '}
-                      <span className="text-[#DC2625]">
-                        - {discountAmount.toLocaleString('vi-VN')} VNĐ
-                      </span>
-                    </p>
-                  )}
-                  <p className="text-gray-500 mt-2 text-[16px] font-semibold">
-                    {t('rentModal.serviceFee')}{' '}
-                    <span className="text-blue-600">
-                      {serviceFee.toLocaleString('vi-VN')} VNĐ
-                    </span>
+                {errors.bmId && (
+                  <p className="text-red-600 text-sm mt-1 italic text-right py-[8px]">
+                    {errors.bmId.message}
                   </p>
-                </div>
-                <div className="border-t border-gray-200 pt-2">
-                  <div className="flex justify-between text-[17px] sm:text-[20px] font-semibold">
-                    <span className="text-gray-900">
-                      {t('rentModal.totalPayment')}
-                    </span>
-                    <span className="text-blue-600 text-end text-nowrap">
-                      {totalBill.toLocaleString('vi-VN')} VNĐ
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {user && (
-              <div>
-                <div className="flex justify-between">
-                  <span className="text-[16px] sm:text-[18px] font-semibold ">
-                    {t('rentModal.userBalance')}{' '}
-                  </span>
-                  <span
-                    className={`font-medium text-[18px] ${
-                      (user.points ?? 0) < totalBill
-                        ? 'text-red-600'
-                        : 'text-green-600'
-                    }`}
-                  >
-                    {user.points != null
-                      ? user.points.toLocaleString('vi-VN') + ' VNĐ'
-                      : 'Đang tải...'}
-                  </span>
-                </div>
-                {(user.points ?? 0) < totalBill && (
-                  <div className="mt-2 text-red-600">
-                    {t('rentModal.notEnoughBalance')}
-                  </div>
                 )}
               </div>
-            )}
-          </CardContent>
-          <CardFooter className="flex justify-end space-x-3 border-t">
-            <Button
-              variant="outline"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onClose();
-              }}
-              disabled={isLoading}
+              <div className={`${!errors.spendLimit ? 'mb-3' : ''}`}>
+                <label className="block mb-[8px] font-medium text-[14px] uppercase text-[#6B7280]">
+                  Hạn mức chi tiêu yêu cầu (VNĐ)
+                </label>
+                <Controller
+                  name="spendLimit"
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={
+                        field.value
+                          ? Number(
+                              field.value.toString().replace(/\D/g, '')
+                            ).toLocaleString('vi-VN')
+                          : ''
+                      }
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/\D/g, '');
+                        field.onChange(raw ? Number(raw) : undefined);
+                      }}
+                      placeholder="Nhập hạn mức chi tiêu"
+                      className="w-full px-3 py-3 text-[16px] rounded-[8px] border-[1.5px] border-[#CBCDD2]"
+                    />
+                  )}
+                />
+                {errors.spendLimit && (
+                  <p className="text-red-600 text-sm mt-1 italic text-right py-[8px]">
+                    {errors.spendLimit.message}
+                  </p>
+                )}
+              </div>
+              <div className={`${!errors.dateRange ? 'mb-3' : ''}  relative`}>
+                <label className="block mb-2 font-medium text-sm text-gray-600 uppercase">
+                  Khoảng thời gian chạy
+                </label>
+                <Controller
+                  control={control}
+                  name="dateRange"
+                  render={({ field }) => (
+                    <DatePicker
+                      ref={datePickerRef}
+                      selectsRange
+                      startDate={field.value.from}
+                      endDate={field.value.to}
+                      onChange={(dates) => {
+                        const [start, end] = dates;
+                        field.onChange({ from: start, to: end });
+                      }}
+                      minDate={new Date()}
+                      maxDate={addDays(new Date(), 30)}
+                      dateFormat="dd/MM/yyyy"
+                      className="w-full px-3 py-3 text-[16px] rounded-[8px] border-[1.5px] border-[#CBCDD2]"
+                      placeholderText="Chọn khoảng thời gian"
+                    />
+                  )}
+                />
+                <img
+                  onClick={() => {
+                    if (datePickerRef.current) {
+                      datePickerRef?.current?.setOpen(true);
+                    }
+                  }}
+                  className="absolute right-[10px] top-[40px] cursor-pointer"
+                  src={url4}
+                  alt="url4"
+                />
+                {errors.dateRange?.to && (
+                  <p className="text-red-600 text-sm mt-1 italic text-right py-[8px]">
+                    {errors.dateRange.to.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block mb-[8px] font-medium text-[14px] uppercase text-[#6B7280]">
+                  Áp dụng voucher
+                </label>
+                <select
+                  {...register('voucher')}
+                  className="w-full  px-3 py-3 text-[16px] rounded-[8px] border-[1.5px] border-[#CBCDD2]"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Chọn voucher
+                  </option>
+                  <option value="voucher10k">Giảm 10.000 VNĐ</option>
+                </select>
+              </div>
+            </div>
+            {/* phần right */}
+            <div className="w-[48%] bg-white p-[24px] rounded-[16px]">
+              <h4 className="block mb-[18px] font-medium text-[14px] uppercase text-[#6B7280]">
+                CHI TIẾT THANH TOÁN
+              </h4>
+              <div className="p-[12px] customer-point flex items-center gap-2 mb-8">
+                <img src={url5} alt="url5" />
+                <div className="flex flex-col">
+                  <span className="text-[16px] font-semibold text-[#6B7280]">
+                    Số dư ví AKA Ads:
+                  </span>
+                  <span className="text-[16px] font-semibold  text-[#193250]">
+                    {user?.points?.toLocaleString('vi-VN') || '0'} point
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between flex-wrap mb-2 text-[16px] text-[#6B7280]">
+                <span>Hạn mức chi tiêu yêu cầu:</span>
+                <span>
+                  {Number(watch('spendLimit') || 0).toLocaleString('vi-VN')}{' '}
+                  point
+                </span>
+              </div>
+              <div className="flex justify-between flex-wrap mb-2 text-[16px] text-[#6B7280]">
+                <span>Phí dịch vụ:</span>
+                <span>
+                  {(
+                    Number(watch('spendLimit') || 0) * (user?.percentage || 0)
+                  ).toLocaleString('vi-VN')}{' '}
+                  point
+                </span>
+              </div>
+              <div className="flex justify-between flex-wrap mb-2 text-[16px] text-[#6B7280]">
+                <span>Voucher giảm giá:</span>
+                <span className="text-green-600">0</span>
+              </div>
+              <div className="flex justify-between font-semibold mt-2 mb-[25px] text-[18px] text-[#193250]">
+                <span>Tổng thanh toán:</span>
+                <span>
+                  {(
+                    Number(watch('spendLimit') || 0) +
+                    Number(watch('spendLimit') || 0) * (user?.percentage || 0)
+                  ).toLocaleString('vi-VN')}{' '}
+                  point
+                </span>
+              </div>
+              <div className="flex gap-1 rounded-[12px] bg-[#F4F6F8] p-2">
+                <div className="w-[12px] mt-1">
+                  <img src={url6} alt="url6" />
+                </div>
+                <p className="w-[calc(100%-12px)] text-[16px] text-[#6B7280]">
+                  Phí dịch vụ được tính dựa trên giới hạn chi tiêu của tài
+                  khoản. Vui lòng tham khảo{' '}
+                  <span
+                    onClick={() => navigate('/price')}
+                    className="underline text-[#2AA6FF]"
+                  >
+                    Bảng giá
+                  </span>{' '}
+                  hoặc liên hệ{' '}
+                  <span
+                    onClick={() => navigate('/support')}
+                    className="underline text-[#2AA6FF]"
+                  >
+                    Hỗ trợ
+                  </span>
+                  .
+                </p>
+              </div>
+            </div>
+          </main>
+
+          <div className="flex justify-between mt-[28px]">
+            <button type="submit" className="btn-close">
+              Hủy
+            </button>
+            <button
+              data-text="Xác nhận thuê"
+              type="submit"
+              className={`btn-submit ${
+                !isValid ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              disabled={!isValid}
             >
-              {t('common.button.cancel')}
-            </Button>
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleSubmit();
-              }}
-              isLoading={isLoading}
-              disabled={
-                !!(
-                  isLoading ||
-                  !isValidBmId ||
-                  (isVisaAccount && !isValidLimit) ||
-                  (!isVisaAccount && !isValidRentalRange) ||
-                  (user && (user.points ?? 0) < totalBill)
-                )
-              }
-              className={
-                // eslint-disable-next-line no-extra-boolean-cast
-                !!(
-                  !isValidBmId ||
-                  (isVisaAccount && !isValidLimit) ||
-                  (!isVisaAccount && !isValidRentalRange) ||
-                  (user && (user.points ?? 0) < totalBill)
-                )
-                  ? 'hover:bg-gray-300 bg-gray-300 cursor-not-allowed'
-                  : ''
-              }
-            >
-              {t('rentModal.confirm')}
-            </Button>
-          </CardFooter>
-        </Card>
+              Xác nhận thuê
+            </button>
+          </div>
+        </form>
+        <img className="absolute left-0 bottom-0" src={bg} alt="bg" />
       </Main>
     </Modal>
   );
@@ -686,6 +431,81 @@ const Main = styled.div`
   input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+  background: #f5faff;
+  .react-datepicker-wrapper {
+    width: 100%;
+  }
+  .btn-submit {
+    padding: 12px 30px;
+    z-index: 0;
+    font-weight: 600;
+    background-color: #000; /* nền đen */
+    position: relative;
+    color: transparent;
+    border-radius: 50px;
+    display: inline-block;
+    overflow: hidden;
+    font-size: 16px;
+  }
+  .btn-submit:hover {
+    background-color: #2f2e2e;
+  }
+
+  .btn-submit::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(
+      84.75deg,
+      #07ffe6 1.75%,
+      #29fbfb 51.57%,
+      #00eaff 86.96%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 30px;
+  }
+  .customer-point {
+    background: linear-gradient(90deg, #e1fffe 0%, #f4fffd 100%);
+    border: 1px solid #9afffa;
+    border-radius: 12px;
+  }
+  .btn-close {
+    position: relative;
+    background: white;
+    border-radius: 9999px; /* full rounded */
+    padding: 12px 30px;
+    z-index: 0;
+    font-weight: 600;
+    color: #6e7382;
+    font-size: 16px;
+  }
+
+  .btn-close::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    padding: 1px; /* thickness của border */
+    border-radius: 9999px;
+    background: linear-gradient(
+      84.75deg,
+      #07ffc9 1.75%,
+      #29fbfb 51.57%,
+      #00eaff 86.96%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
   }
 `;
 export default RentModal;

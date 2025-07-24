@@ -19,7 +19,7 @@ const BreadCumbsCmp: React.FC<BreadCumbsCmpProps> = ({
 }) => {
   return (
     <BreadCumbs>
-      <div className="breadcumbs-container">
+      <div className="breadcumbs-container overflow-x-auto">
         {tabs.map(({ key, label }) => {
           const isActive = activeTab === key;
           return (
