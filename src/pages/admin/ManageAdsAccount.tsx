@@ -597,8 +597,8 @@ const ManageAdsAccount: React.FC = () => {
                     type="text"
                     value={query}
                     onChange={handleSearch}
-                    placeholder="Tìm kiếm theo Short Code…"
-                    className="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-[250px]"
+                    placeholder="Tìm kiếm theo Short Code"
+                    className="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-[320px]"
                   />
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                     <Search className="w-4 h-4" />
@@ -994,7 +994,7 @@ const ManageAdsAccount: React.FC = () => {
                     value={query}
                     onChange={handleSearch}
                     placeholder="Tìm kiếm theo User, ID Tài khoản"
-                    className="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-[250px]"
+                    className="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-[320px]"
                   />
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                     <Search className="w-4 h-4" />
