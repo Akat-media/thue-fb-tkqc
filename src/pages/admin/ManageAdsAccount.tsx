@@ -608,7 +608,7 @@ const ManageAdsAccount: React.FC = () => {
               <div className="relative">
                 <button
                   onClick={() => setShowFilter(!showFilter)}
-                  className="flex items-center gap-2 px-4 py-2 border border-cyan-400 text-gray-700 rounded-full hover:bg-cyan-50 transition"
+                  className="flex items-center gap-2 px-4 py-2 border border-[#12FEDA] text-gray-700 rounded-full hover:bg-cyan-300 transition"
                 >
                   Bộ lọc
                   <Filter className="w-4 h-4 text-gray-600" />

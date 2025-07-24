@@ -614,7 +614,7 @@ const AdminTransactionsPage: React.FC = () => {
                     value={query}
                     onChange={handleSearch}
                     placeholder="Tìm kiếm theo Short Code…"
-                    className="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-[250px]"
+                    className="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-[320px]"
                   />
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                     <Search className="w-4 h-4" />
@@ -624,7 +624,7 @@ const AdminTransactionsPage: React.FC = () => {
               <div className="relative">
                 <button
                   onClick={() => setShowFilter(!showFilter)}
-                  className="flex items-center gap-2 px-4 py-2 border border-cyan-400 text-gray-700 rounded-full hover:bg-cyan-50 transition"
+                  className="flex items-center gap-2 px-4 py-2 border border-[#12FEDA] text-gray-700 rounded-full hover:bg-cyan-300 transition"
                 >
                   Bộ lọc
                   <Filter className="w-4 h-4 text-gray-600" />
@@ -1013,22 +1013,13 @@ const AdminTransactionsPage: React.FC = () => {
                     value={query}
                     onChange={handleSearch}
                     placeholder="Tìm kiếm…"
-                    className="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-[250px]"
+                    className="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-[320px]"
                   />
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                     <Search className="w-4 h-4" />
                   </span>
                 </div>
               </div>
-
-              {/* Nút bộ lọc */}
-              {/* <button
-                onClick={() => setShowFilter(!showFilter)}
-                className="flex items-center gap-2 px-4 py-2 border border-cyan-400 text-gray-700 rounded-full hover:bg-cyan-50 transition"
-              >
-                Bộ lọc
-                <Filter className="w-4 h-4 text-gray-600" />
-              </button> */}
             </div>
             {userParse?.user?.role === 'admin' && (
               <div className="flex items-center gap-1">
@@ -1091,7 +1082,7 @@ const AdminTransactionsPage: React.FC = () => {
                           : 'hover:bg-gray-50'
                       }`}
                     >
-                      {/* <td className="px-4 py-3 text-center border border-gray-100">
+                      <td className="px-4 py-3 text-center border border-gray-100">
                         <label className="relative inline-flex items-center justify-center cursor-pointer w-4 h-4">
                           <input
                             type="checkbox"
@@ -1101,7 +1092,7 @@ const AdminTransactionsPage: React.FC = () => {
                           />
                           <div className="w-4 h-4 rounded border border-gray-300 bg-white peer-checked:bg-[#78bb07] peer-checked:border-[#78bb07] after:content-['✔'] after:absolute after:left-[2px] after:top-[-1px] after:text-white after:text-xs after:font-bold peer-checked:after:block after:hidden"></div>
                         </label>
-                      </td> */}
+                      </td>
 
                       {/* <td className="px-4 py-2 text-center border border-gray-100">
                         <button
