@@ -45,6 +45,7 @@ const FloatingInput = ({
   register,
   error,
   readOnly = false,
+  suffix,
 }: {
   label: string;
   name: keyof UserFormData;
@@ -52,6 +53,7 @@ const FloatingInput = ({
   register: any;
   error?: string;
   readOnly?: boolean;
+  suffix?: string;
 }) => {
   return (
     <div className="relative mt-6">
@@ -79,6 +81,11 @@ const FloatingInput = ({
                     }
                 `}
       />
+      {suffix && (
+        <span className="absolute right-3 top-[50%] transform -translate-y-1/2 text-gray-900 text-sm font-medium pointer-events-none ml-1">
+          {suffix}
+        </span>
+      )}
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   );
@@ -100,7 +107,7 @@ const AccountForm: React.FC = () => {
       username: user?.username || '',
       email: user?.email || '',
       phone: user?.phone || '',
-      percentage: user?.percentage || 0,
+      percentage: user?.percentage ? user.percentage * 100 : 0,
       points: user?.points || 0,
       code: user?.referral_code || '',
     },
@@ -117,7 +124,7 @@ const AccountForm: React.FC = () => {
         username: user.username || '',
         email: user.email || '',
         phone: user.phone || '',
-        percentage: user.percentage || 0,
+        percentage: user?.percentage ? user.percentage * 100 : 0,
         points: user.points || 0,
         code: user?.referral_code || '',
       });
@@ -223,6 +230,17 @@ const AccountForm: React.FC = () => {
               onClick={handleCopy}
             />
           </Tooltip>
+        </div>
+
+        <div className="relative">
+          <FloatingInput
+              label={t('profile.form.percentage')}
+              name="percentage"
+              register={register}
+              error={errors.percentage?.message}
+              readOnly={true}
+              // suffix="%"
+          />
         </div>
         <div className="md:col-span-2 flex justify-end mt-4">
           <button

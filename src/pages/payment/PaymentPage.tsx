@@ -23,14 +23,18 @@ import { useUserStore } from '../../stores/useUserStore';
 import axios from 'axios';
 import { useOnOutsideClick } from '../../hook/useOutside';
 import { useTranslation } from 'react-i18next';
+import PaymentDropdown from './PaymentDropdown';
+import Deposit from "./Deposit.tsx";
+import DepositCard from './DepositCard.tsx';
+import {toast} from "react-toastify";
 
 const PaymentPage: React.FC = () => {
   const { t } = useTranslation();
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
   const [activeTab, setActiveTab] = useState('deposit');
-  const [selectedAmount, setSelectedAmount] = useState(500000);
-  const [customAmount, setCustomAmount] = useState<string>('500000');
+  const [selectedAmount, setSelectedAmount] = useState(1000000);
+  const [customAmount, setCustomAmount] = useState<string>('1000000');
   const [isLoading, setIsLoading] = useState(false);
   const userStore = useUserStore((state) => state.user);
   const { addNotification } = useNotification();
@@ -44,8 +48,15 @@ const PaymentPage: React.FC = () => {
   >(null);
   const { user, fetchUser } = useUserStore();
   const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(true);
-  const [currencyTab, setCurrencyTab] = useState<'VND' | 'USD' | null>(null);
+  const [currencyTab, setCurrencyTab] = useState<'VND' | 'USD' | null>('VND');
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('VND');
+  const [showInfo, setShowInfo] = useState(false);
+
+  const handleChange = (event:any) => {
+    setSelectedOption(event.target.value);
+    setCurrencyTab(event.target.value)
+  };
 
   const { innerBorderRef } = useOnOutsideClick(() => {
     setIsCurrencyModalOpen(false);
@@ -87,16 +98,13 @@ const PaymentPage: React.FC = () => {
 
   const handleDeposit = async () => {
     const amount = customAmount ? parseInt(customAmount) : selectedAmount;
-    if (isNaN(amount) || amount <= 0) {
-      addNotification(
-        t('paymentPage.error'),
-        t('paymentPage.enterValidAmount'),
-        'error'
-      );
+    if (isNaN(amount) || amount <= 0 || amount % 1000000 !== 0) {
+      toast.error(t('paymentPage.enterValidAmount'))
       return;
     }
     const shortCode = await hanleCalTransaction(amount);
     setIsLoading(true);
+    setShowInfo(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       addNotification(
@@ -200,138 +208,74 @@ const PaymentPage: React.FC = () => {
 
   return (
     <div className="container mx-auto">
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Hubot+Sans:ital,wght@0,200..900;1,200..900&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+          .font-mona {
+            font-family: 'Mona Sans', sans-serif;
+          }
+        `}
+      </style>
       {isCurrencyModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center">
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center ">
           <div
             ref={innerBorderRef}
-            className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-sm relative"
+            className="flex flex-col bg-[#F5FAFF] rounded-xl p-6 shadow-2xl w-full max-w-max sm:max-w-[452px] relative"
           >
             <button
               onClick={() => setIsCurrencyModalOpen(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition-colors"
+              className="flex justify-end text-gray-500 hover:text-gray-800 transition-colors"
             >
               <X size={20} />
             </button>
-            <h2 className="text-xl font-semibold text-gray-800 mb-5 text-center">
+            <h2 className="font-mona text-[24px] leading-[33.6px] font-semibold text-[#6B7280] text-center">
               {t('payment_method.title')}
             </h2>
 
-            <div className="space-y-3">
-              {/* VNĐ */}
-              <div
-                className={`flex items-center justify-between border rounded-lg p-3 cursor-pointer shadow-sm hover:shadow-md transition ${
-                  currencyTab === 'VND'
-                    ? 'border-blue-600 ring-2 ring-blue-400'
-                    : 'border-gray-300'
-                }`}
-                onClick={() => {
-                  setCurrencyTab('VND');
-                  setIsCurrencyModalOpen(false);
-                }}
-              >
-                <div className="flex items-center space-x-3">
-                  <div
-                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      currencyTab === 'VND'
-                        ? 'border-blue-600'
-                        : 'border-gray-400'
-                    }`}
-                  >
-                    {currencyTab === 'VND' && (
-                      <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
-                    )}
-                  </div>
-                  <span className="font-medium text-gray-800">
-                    {t('payment_method.vnd')}
-                  </span>
-                </div>
-                <img
-                  src="https://cdn-icons-png.flaticon.com/512/3128/3128313.png"
-                  alt={t('payment_method.bank_icon_alt')}
-                  className="h-6"
-                />
+            <div className="my-[32px] max-w-[289px] w-full mx-auto">
+              <div className="flex flex-row justify-between mb-[36px]">
+                <label className="flex items-center">
+                  <input
+                      type="radio"
+                      name="money"
+                      value="VND"
+                      checked={selectedOption === 'VND'}
+                      onChange={handleChange}
+                      className="mr-2"
+                  />
+                  <span className="font-mona text-[18px] font-medium leading-[25.2px] text-[#6E7382]">VNĐ</span>
+                </label>
+
+                <label className="flex items-center">
+                  <input
+                      type="radio"
+                      name="money"
+                      value="USD"
+                      checked={selectedOption === 'USD'}
+                      onChange={handleChange}
+                      className="mr-2"
+                      disabled
+                  />
+                  <span className="font-mona text-[18px] font-medium leading-[25.2px] text-[#6E7382]">USD</span>
+                </label>
               </div>
 
-              {/* USD (PayPal) - Disabled */}
-              <div className="flex items-center justify-between border rounded-lg p-3 shadow-sm opacity-50 cursor-not-allowed">
-                <div className="flex items-center space-x-3">
-                  <div
-                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      currencyTab === 'USD'
-                        ? 'border-blue-600'
-                        : 'border-gray-400'
-                    }`}
-                  >
-                    {currencyTab === 'USD' && (
-                      <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
-                    )}
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-medium text-gray-800">
-                      {t('payment_method.usd')}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {t('payment_method.coming_soon')}
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
-                  alt={t('payment_method.paypal_icon_alt')}
-                  className="h-6"
-                />
-              </div>
-
-              {/* Visa - Disabled */}
-              <div className="flex items-center justify-between border rounded-lg p-3 shadow-sm opacity-50 cursor-not-allowed">
-                <div className="flex items-center space-x-3">
-                  <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
-                  <div className="flex flex-col">
-                    <span className="font-medium text-gray-800">
-                      {t('payment_method.visa')}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {t('payment_method.coming_soon')}
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"
-                  alt={t('payment_method.visa_icon_alt')}
-                  className="h-3"
-                />
-              </div>
-
-              {/* Tooltip Visa */}
-              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-                {t('payment_method.developing')}
-              </div>
-
-              {/* MasterCard - Disabled */}
-              <div className="flex items-center justify-between border rounded-lg p-3 shadow-sm opacity-50 cursor-not-allowed">
-                <div className="flex items-center space-x-3">
-                  <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
-                  <div className="flex flex-col">
-                    <span className="font-medium text-gray-800">
-                      {t('payment_method.mastercard')}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {t('payment_method.coming_soon')}
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png"
-                  alt={t('payment_method.mastercard_icon_alt')}
-                  className="h-6"
-                />
-              </div>
-
-              {/* Tooltip MasterCard */}
-              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-                {t('payment_method.developing')}
-              </div>
+              <PaymentDropdown />
             </div>
+
+            <div className="mx-auto">
+              <button
+                  className="bg-[#193250] border rounded-full w-[200px] h-[64px]"
+                  onClick={() => {
+                    setIsCurrencyModalOpen(false);
+                    setActiveTab('deposit');
+                  }}
+              >
+                <span className="text-cyan-300 font-mona font-semibold text-[20px]">{t('paymentPage.confirm')}</span>
+              </button>
+            </div>
+
           </div>
         </div>
       )}
@@ -388,350 +332,15 @@ const PaymentPage: React.FC = () => {
 
         <div className="mt-6">
           {activeTab === 'deposit' && currencyTab === 'VND' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle className="text-xl sm:text-2xl font-semibold">
-                    {t('paymentPage.depositToSystem')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div className="col-span-2 sm:col-span-3">
-                      <label className="block text-lg font-medium text-gray-700 mb-3">
-                        {t('paymentPage.enterAmount')} 👇
-                      </label>
-                      <div className="mt-2">
-                        <div className="relative">
-                          <input
-                            type="text"
-                            inputMode="numeric"
-                            className={`shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full h-12 px-4 pr-16 sm:text-sm rounded-md ${
-                              customAmount &&
-                              (parseInt(customAmount) <= 50000 ||
-                                parseInt(customAmount) % 1000 !== 0)
-                                ? 'border-red-500'
-                                : 'border border-gray-300'
-                            }`}
-                            placeholder={t('paymentPage.enterAmount')}
-                            value={
-                              customAmount
-                                ? parseInt(customAmount).toLocaleString('vi-VN')
-                                : ''
-                            }
-                            onChange={(e) => {
-                              const raw = e.target.value.replace(/[^0-9]/g, '');
-                              setCustomAmount(raw);
-                              setSelectedAmount(parseInt(raw) || 0);
-                              setShowQRCode(false);
-                            }}
-                            min="50000"
-                            step="1000"
-                          />
-                          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">
-                            VNĐ
-                          </span>
-                        </div>
-
-                        {customAmount &&
-                          (parseInt(customAmount) <= 50000 ||
-                            parseInt(customAmount) % 1000 !== 0) && (
-                            <p className="text-red-500 text-xs mt-1">
-                              {t('paymentPage.amountValidation')}
-                            </p>
-                          )}
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-lg font-medium text-gray-700 mb-3">
-                        {t('paymentPage.selectDenomination')}
-                      </label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-3">
-                        {[
-                          500000, 1000000, 2000000, 3000000, 5000000, 10000000,
-                        ].map((amount) => (
-                          <button
-                            key={amount}
-                            type="button"
-                            className={`${
-                              selectedAmount === amount
-                                ? 'bg-blue-50 border-blue-500 text-blue-600'
-                                : 'bg-white border-gray-300 text-gray-700'
-                            } border rounded-md py-2 px-1 md:px-3 text-sm font-medium 
-                            ${
-                              parseInt(customAmount) === amount
-                                ? 'ring-2 ring-blue-500 ring-opacity-50'
-                                : ''
-                            }
-                            hover:bg-blue-50 hover:border-blue-300 transition-colors`}
-                            onClick={() => {
-                              setSelectedAmount(amount);
-                              setCustomAmount(amount.toString());
-                              setShowQRCode(false);
-                            }}
-                          >
-                            {amount.toLocaleString('vi-VN')} VNĐ
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="rounded-md bg-blue-50 p-3 md:p-4">
-                      <div className="flex">
-                        <div className="flex-shrink-0">
-                          <Landmark
-                            className="h-5 w-5 text-blue-400"
-                            aria-hidden="true"
-                          />
-                        </div>
-                        <div className="ml-3 w-full">
-                          <h3 className="text-sm font-medium text-blue-800 mb-2">
-                            {t('paymentPage.transferInfo')}
-                          </h3>
-                          <div className="text-sm text-blue-700 space-y-2 grid grid-cols-[1fr,auto] gap-x-2">
-                            <span className="self-center">
-                              {t('paymentPage.bank')}:
-                            </span>
-                            <div className="flex justify-end items-center min-w-0">
-                              <span className="font-medium truncate max-w-[100px] overflow-hidden inline-block align-middle">
-                                ACB Bank
-                              </span>
-                              <button
-                                onClick={() => handleCopyClick('ACB Bank')}
-                                className="ml-2 text-blue-500 hover:text-blue-700"
-                              >
-                                <Copy className="h-4 w-4" />
-                              </button>
-                            </div>
-
-                            <span className="self-center">
-                              {t('paymentPage.accountNumber')}:
-                            </span>
-                            <div className="flex justify-end items-center min-w-0">
-                              <span className="font-medium truncate max-w-[100px] overflow-hidden inline-block align-middle">
-                                20478471
-                              </span>
-                              <button
-                                onClick={() => handleCopyClick('20478471')}
-                                className="ml-2 text-blue-500 hover:text-blue-700"
-                              >
-                                <Copy className="h-4 w-4" />
-                              </button>
-                            </div>
-
-                            <span className="self-center">
-                              {t('paymentPage.accountName')}:
-                            </span>
-                            <div className="flex justify-end items-center min-w-0">
-                              <span className="font-medium truncate max-w-[100px] overflow-hidden inline-block align-middle">
-                                Duy Nam
-                              </span>
-                              <button
-                                onClick={() => handleCopyClick('Duy Nam')}
-                                className="ml-2 text-blue-500 hover:text-blue-700"
-                              >
-                                <Copy className="h-4 w-4" />
-                              </button>
-                            </div>
-
-                            <span className="self-center">
-                              {t('paymentPage.transferContent')}:
-                            </span>
-                            <div className="flex justify-end items-center min-w-0">
-                              <span className="font-medium truncate max-w-[100px] overflow-hidden inline-block align-middle">
-                                {shortCode}
-                              </span>
-                              <button
-                                onClick={() => handleCopyClick(shortCode)}
-                                className="ml-2 text-blue-500 hover:text-blue-700"
-                              >
-                                <Copy className="h-4 w-4" />
-                              </button>
-                            </div>
-
-                            <span className="self-center">
-                              {t('paymentPage.amount')}:
-                            </span>
-                            <div className="flex justify-end items-center min-w-0">
-                              <span className="font-medium truncate max-w-[160px] overflow-hidden inline-block align-middle">
-                                {(customAmount
-                                  ? parseInt(customAmount)
-                                  : selectedAmount
-                                ).toLocaleString('vi-VN')}{' '}
-                                VNĐ
-                              </span>
-                              <button
-                                onClick={() =>
-                                  handleCopyClick(
-                                    `${
-                                      customAmount
-                                        ? parseInt(customAmount)
-                                        : selectedAmount
-                                    }`
-                                  )
-                                }
-                                className="ml-2 text-blue-500 hover:text-blue-700"
-                              >
-                                <Copy className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-2">
-                      <Button
-                        fullWidth
-                        onClick={handleDeposit}
-                        isLoading={isLoading}
-                        disabled={
-                          isLoading ||
-                          !customAmount ||
-                          parseInt(customAmount) < 50000 ||
-                          parseInt(customAmount) % 1000 !== 0
-                        }
-                        className={
-                          !customAmount ||
-                          parseInt(customAmount) < 50000 ||
-                          parseInt(customAmount) % 1000 !== 0
-                            ? 'bg-gray-300 cursor-not-allowed'
-                            : ''
-                        }
-                        title={
-                          !customAmount ||
-                          parseInt(customAmount) < 50000 ||
-                          parseInt(customAmount) % 1000 !== 0
-                            ? t('paymentPage.amountMustBeAtLeast')
-                            : ''
-                        }
-                      >
-                        {t('paymentPage.createDepositOrder')}
-                      </Button>
-                      <p className="mt-2 text-xs text-gray-500 text-center">
-                        {t('paymentPage.automaticDepositNote')}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle className="text-xl sm:text-2xl font-semibold">
-                    {showQRCode
-                      ? t('paymentPage.qrCode')
-                      : t('paymentPage.depositInstructions')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex items-center justify-center">
-                  {isShowingQR ? (
-                    <div className="flex justify-center items-center w-full h-full min-h-[300px] md:min-h-[350px] lg:min-h-[400px]">
-                      <div className="flex flex-col items-center text-sm text-gray-500">
-                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-transparent mb-3"></div>
-                        <p>{t('paymentPage.generatingQR')}</p>
-                      </div>
-                    </div>
-                  ) : showQRCode ? (
-                    <div className="flex items-center justify-center w-full">
-                      <div className="flex flex-col items-center text-sm text-gray-700 space-y-6 text-center">
-                        {qrImageUrl && (
-                          <img
-                            src={qrImageUrl}
-                            alt="QR Code"
-                            className="w-64 h-64 object-contain border p-2 rounded-lg shadow-sm"
-                          />
-                        )}
-                        <p className="text-sm text-gray-600 max-w-xs">
-                          {t('paymentPage.scanQRInstructions')}
-                        </p>
-                        <div className="space-y-1">
-                          <p className="text-sm text-red-500 font-semibold">
-                            {t('paymentPage.qrExpires')}:{' '}
-                            {Math.floor(countdown / 60)}:
-                            {(countdown % 60).toString().padStart(2, '0')}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="flex">
-                        <div className="flex-shrink-0">
-                          <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
-                            1
-                          </div>
-                        </div>
-                        <div className="ml-4">
-                          <h4 className="text-sm font-medium text-gray-900">
-                            {t('paymentPage.step1Title')}
-                          </h4>
-                          <p className="mt-1 text-sm text-gray-500">
-                            {t('paymentPage.step1Description')}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex">
-                        <div className="flex-shrink-0">
-                          <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
-                            2
-                          </div>
-                        </div>
-                        <div className="ml-4">
-                          <h4 className="text-sm font-medium text-gray-900">
-                            {t('paymentPage.step2Title')}
-                          </h4>
-                          <p className="mt-1 text-sm text-gray-500">
-                            {t('paymentPage.step2Description')}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex">
-                        <div className="flex-shrink-0">
-                          <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
-                            3
-                          </div>
-                        </div>
-                        <div className="ml-4">
-                          <h4 className="text-sm font-medium text-gray-900">
-                            {t('paymentPage.step3Title')}
-                          </h4>
-                          <p className="mt-1 text-sm text-gray-500">
-                            {t('paymentPage.step3Description')}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex">
-                        <div className="flex-shrink-0">
-                          <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600">
-                            4
-                          </div>
-                        </div>
-                        <div className="ml-4">
-                          <h4 className="text-sm font-medium text-gray-900">
-                            {t('paymentPage.step4Title')}
-                          </h4>
-                          <p className="mt-1 text-sm text-gray-500">
-                            {t('paymentPage.step4Description')}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex">
-                        <Button
-                          onClick={() => setIsCurrencyModalOpen(true)}
-                          className="mt-6 w-full py-3 rounded-md text-lg font-semibold text-white bg-orange-400 hover:bg-orange-600 transition"
-                        >
-                          {t('paymentPage.changePaymentMethod')}
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+              <DepositCard
+                  handleDeposit={handleDeposit}
+                  showInfo={showInfo}
+                  backInfo={()=>setShowInfo(false)}
+                  customAmount={customAmount}
+                  setCustomAmount={setCustomAmount}
+                  qrImageUrl = {qrImageUrl}
+                  countdown = {countdown}
+              />
           )}
 
           {activeTab === 'deposit' && currencyTab === 'USD' && (
@@ -888,8 +497,15 @@ const PaymentPage: React.FC = () => {
               </Card>
             </div>
           )}
+
+          {activeTab === 'deposit' && !currencyTab && (
+              <div className="text-center text-gray-500">
+                Vui lòng chọn đơn vị tiền tệ (VND hoặc USD) để tiếp tục.
+              </div>
+          )}
         </div>
       </div>
+
       {paymentStatus && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">

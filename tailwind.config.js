@@ -9,7 +9,7 @@ export default {
         float: 'float 3s ease-in-out infinite',
         scroll: 'scroll 50s linear infinite',
         // zoomIn: 'zoomIn 0.5s ease-out forwards',
-        // zoomIn: 'zoomIn 1s both',
+        zoomIn: 'zoomIn 1s both',
         // pulseRing: 'pulseRing 1.5s infinite',
       },
       keyframes: {
