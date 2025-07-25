@@ -1,24 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Clock,
-  AlertTriangle,
-  RefreshCw,
-  Lightbulb,
-  Calendar,
-  DollarSign,
-  Wallet,
-  XCircle,
-  CreditCard,
-  Check,
-  X,
-} from 'lucide-react';
+import { X } from 'lucide-react';
 import Button from '../../components/ui/Button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '../../components/ui/Card';
 import { Rental } from '../../types';
 import url from '../../assets/bg.svg';
 import BaseHeader from '../../api/BaseHeader';
@@ -28,6 +10,9 @@ import { Pagination } from 'antd';
 import { NotiError, NotiSuccess } from '../../components/noti';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import BreadCumbsCmp from '../../components/breadCumbs';
+import { useNavigate } from 'react-router-dom';
+import AccountCard from './AccountCard';
 
 interface AdAccountDetail {
   id: string;
@@ -57,33 +42,46 @@ interface AdAccountDetail {
   spend_limit: number;
   note_aka: string;
 }
+const mapApiStatus = (
+  status: string
+): 'process' | 'success' | 'faild' | 'complete_remove' | 'all' => {
+  switch (status) {
+    case 'process':
+      return 'process';
+    case 'success':
+      return 'success';
+    case 'faild':
+      return 'faild';
+    case 'complete_remove':
+      return 'complete_remove';
+    default:
+      return 'process';
+  }
+};
 
-interface AdsRental {
-  id: string;
-  bm_id: string;
-  bm_origin: string;
-  ads_account_id: string;
-  user_id: string;
-  status: string;
-  status_partner: number;
-  status_limit_spend: number;
-  status_dischard_limit_spend: number | null;
-  status_dischard_partner: number | null;
-  created_at: string;
-  updated_at: string;
-  accounts: any;
-  bot_id: any;
-}
+const formatDate = (date: Date) => {
+  return new Intl.DateTimeFormat('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Ho_Chi_Minh',
+  }).format(date);
+};
 
 const RentalsPage: React.FC = () => {
   const { t } = useTranslation();
+
+  const navigate = useNavigate();
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
-  const [rentals, setRentals] = useState<(Rental & { adAccount: any })[]>([]);
-  const [activeTab, setActiveTab] = useState<
-    'process' | 'success' | 'faild' | 'complete_remove' | 'all'
-  >('all');
-  const [loading, setLoading] = useState<boolean>(true);
+  const [rentals, setRentals] = useState<
+    (Rental & { adAccount: any; bm_id: any })[]
+  >([]);
+  const [activeTab, setActiveTab] = useState<any>('all');
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedRental, setSelectedRental] = useState<
     (Rental & { adAccount: any }) | null
   >(null);
@@ -92,9 +90,10 @@ const RentalsPage: React.FC = () => {
     useState<AdAccountDetail | null>(null);
   const [loadingDetail, setLoadingDetail] = useState<boolean>(false);
   const [totalAccounts, setTotalAccounts] = useState<number>(0);
-  const [showCreateAdAccountModal, setShowCreateAdAccountModal] =
-    useState(false);
   const [successRent, setSuccessRent] = useState<any>(null);
+  const userString = localStorage.getItem('user');
+  const userInfo = userString ? JSON.parse(userString) : null;
+  const userId = userInfo?.user_id || userInfo?.user?.id || '';
 
   const { innerBorderRef } = useOnOutsideClick(() => {
     setShowModal(false);
@@ -102,14 +101,6 @@ const RentalsPage: React.FC = () => {
 
   const { currentPage, pageSize, handleChange, setCurrentPage, setPageSize } =
     usePagination(1, 10);
-
-  useEffect(() => {
-    fetchRentals();
-  }, [currentPage, pageSize, activeTab]);
-
-  useEffect(() => {
-    console.log('Active tab changed to:', activeTab);
-  }, [activeTab]);
 
   const fetchAdAccountDetail = async (accountId: string) => {
     try {
@@ -163,14 +154,6 @@ const RentalsPage: React.FC = () => {
 
   const fetchRentals = async () => {
     try {
-      setLoading(true);
-      setRentals([]); // reset dữ liệu cũ
-
-      const userString = localStorage.getItem('user');
-      const userInfo = userString ? JSON.parse(userString) : null;
-      const userId = userInfo?.user_id || userInfo?.user?.id || '';
-      const isAdmin = userInfo?.user?.role === 'admin';
-
       const response = await BaseHeader({
         method: 'get',
         url: 'ads-rent-accounts',
@@ -182,158 +165,16 @@ const RentalsPage: React.FC = () => {
         },
       });
 
-      const total = response.data.total || response.data.meta?.total || 0;
-      setTotalAccounts(total);
-
-      const rawData = Array.isArray(response.data)
-        ? response.data
-        : response.data.data || [];
-
-      if (rawData.length === 0) {
-        setRentals([]);
-        return;
-      }
-
-      const formatted = rawData.map((item: any) => {
-        const acc = item.accounts || {};
-        return {
-          id: item.id || `act-${item.ads_account_id}`,
-          userId: item.user_id || 'Unknown',
-          adAccountId: item.ads_account_id,
-          userBmId: item.bm_id || 'Không tìm thấy BM ID',
-          startDate: new Date(
-            acc.created_time || item.created_at || Date.now()
-          ),
-          endDate: new Date(item.updated_at || Date.now()),
-          requestedLimit: parseInt(acc.spend_cap) || acc.spend_limit || 0,
-          totalPrice: 1500000,
-          spentBudget: parseInt(acc.amount_spent) || 0,
-          status: mapApiStatus(item.status_rented || item.status),
-          // createdAt: new Date(
-          //   acc.created_time || item.created_at || Date.now()
-          // ),
-          createdAt: new Date(item.created_at || Date.now()),
-          status_dischard_limit_spend: item.status_dischard_limit_spend,
-          status_dischard_partner: item.status_dischard_partner,
-          status_limit_spend: item.status_limit_spend || 0,
-          status_partner: item.status_partner || 0,
-          bm_origin: item.bm_origin,
-          bot_id: item.bot_id,
-          adAccount: {
-            id: acc.account_id,
-            name: acc.name || `Account ${acc.account_id}`,
-            bmId: acc.business?.id || '',
-            bmName: acc.business?.name || `Business Manager`,
-            bmType: acc.is_personal === 1 ? 'personal' : 'business',
-            accountType: acc.funding_source_details?.display_string?.includes(
-              'VISA'
-            )
-              ? 'visa'
-              : 'other',
-            defaultLimit:
-              parseInt(acc.spend_limit) || parseInt(acc.spend_cap) || 5000000,
-            pricePerDay: 200000,
-            remainingBudget: parseInt(acc.balance) || 0,
-            includesAdAccount: true,
-            status: acc.account_status === 1 ? 'active' : 'available',
-            currency: acc.currency || 'VND',
-            is_sefl_used_visa: item?.is_sefl_used_visa,
-          },
-        };
-      });
-
-      // Lọc lại theo tab hiện tại
-      const filteredByTab = formatted.filter((item: any) => {
-        if (activeTab === 'all') return true;
-        return item.status === activeTab;
-      });
-
-      setRentals(filteredByTab);
-
-      setRentals(filteredByTab);
+      setRentals(response?.data?.data);
     } catch (error) {
       console.error('Error fetching rentals:', error);
       setRentals([]);
       setTotalAccounts(0);
-    } finally {
-      setLoading(false);
     }
   };
-
-  const mapApiStatus = (
-    status: string
-  ): 'process' | 'success' | 'faild' | 'complete_remove' | 'all' => {
-    switch (status) {
-      case 'process':
-        return 'process';
-      case 'success':
-        return 'success';
-      case 'faild':
-        return 'faild';
-      case 'complete_remove':
-        return 'complete_remove';
-      default:
-        return 'process';
-    }
-  };
-
-  // const filteredRentals = rentals.filter((rental) => {
-  //   if (activeTab === 'all') return true;
-  //   if (userParse?.user?.role === 'admin' && activeTab === 'active') {
-  //     return rental.status === 'available'; // Đoạn ni hiển thị tài khoản "available" cho tab "active" với admin
-  //   }
-  //   return rental.status === activeTab;
-  // });
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-      timeZone: 'Asia/Ho_Chi_Minh',
-    }).format(date);
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'process':
-        return (
-          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-yellow-100 text-yellow-700 border border-yellow-200">
-            <Clock className="h-3 w-3 mr-1" />{' '}
-            {t('rentalsPage.status.processing')}
-          </span>
-        );
-      case 'success':
-        return (
-          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-green-100 text-green-700 border border-green-200">
-            <Check className="h-3 w-3 mr-1" /> {t('rentalsPage.status.success')}
-          </span>
-        );
-      case 'faild':
-        return (
-          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-red-100 text-red-700 border border-red-200">
-            <AlertTriangle className="h-3 w-3 mr-1" />{' '}
-            {t('rentalsPage.status.failed')}
-          </span>
-        );
-      case 'complete_remove':
-        return (
-          <span className="min-w-[110px] justify-center inline-flex items-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 bg-purple-200 text-purple-800 border border-purple-200">
-            <Clock className="h-3 w-3 mr-1" />{' '}
-            {t('rentalsPage.status.completed')}
-          </span>
-        );
-      default:
-        return (
-          <span className="min-w-[80px] inline-flex items-center justify-center px-3 py-[6px] rounded-full text-xs font-medium gap-1 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 bg-gray-100 text-gray-800">
-            {status}
-          </span>
-        );
-    }
-  };
+  useEffect(() => {
+    fetchRentals();
+  }, [currentPage, pageSize, activeTab]);
 
   const handleCardClick = async (rental: Rental & { adAccount: any }) => {
     setSelectedRental(rental);
@@ -350,11 +191,10 @@ const RentalsPage: React.FC = () => {
         params: {
           id: account?.id || '',
           bm_origin: account?.bm_origin || '',
-          ads_name: account?.adAccount?.name || '',
-          bm_id: account?.userBmId || '',
-          ads_account_id: account?.adAccountId || '',
+          ads_name: account?.ad_account?.name || '',
+          bm_id: account?.bm_id || '',
+          ads_account_id: account?.ads_account_id || '',
           user_id: userParse.user_id || '',
-          amountPoint: account?.adAccount?.defaultLimit || '',
           bot_id: account?.bot_id || '',
         },
       });
@@ -362,7 +202,7 @@ const RentalsPage: React.FC = () => {
       const { success, message } = response.data;
       if (success) {
         fetchRentals();
-        // toast.success('Vô hiệu hóa thành công!');
+        fetchRentals();
       } else toast.error('Vô hiệu hóa thất bại!');
     } catch (error: any) {
       const errorMessage =
@@ -382,6 +222,26 @@ const RentalsPage: React.FC = () => {
       document.body.style.overflow = 'unset';
     };
   }, [showModal]);
+
+  const tabs = [
+    { key: 'process', label: t('rentalsPage.tabs.processing') },
+    {
+      key: 'success',
+      label: t('rentalsPage.tabs.success'),
+    },
+    {
+      key: 'faild',
+      label: t('rentalsPage.tabs.failed'),
+    },
+    {
+      key: 'complete_remove',
+      label: t('rentalsPage.tabs.completed'),
+    },
+    {
+      key: 'all',
+      label: t('rentalsPage.tabs.all'),
+    },
+  ];
   return (
     <>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -394,56 +254,13 @@ const RentalsPage: React.FC = () => {
         </div>
 
         <div className="mt-6">
-          <div className="sm:hidden">
-            <select
-              id="tabs"
-              name="tabs"
-              className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-              value={activeTab}
-              onChange={(e) =>
-                setActiveTab(
-                  e.target.value as 'process' | 'success' | 'faild' | 'all'
-                )
-              }
-            >
-              <option value="process">
-                {t('rentalsPage.tabs.processing')}
-              </option>
-              <option value="success">{t('rentalsPage.tabs.success')}</option>
-              <option value="faild">{t('rentalsPage.tabs.failed')}</option>
-              <option value="complete_remove">
-                {t('rentalsPage.tabs.completed')}
-              </option>
-              <option value="all">{t('rentalsPage.tabs.all')}</option>
-            </select>
-          </div>
-          <div className="hidden sm:block">
+          <div className="sm:block">
             <div className="border-b border-gray-200">
-              <nav className="-mb-px flex space-x-6" aria-label="Tabs">
-                {['process', 'success', 'faild', 'complete_remove', 'all'].map(
-                  (tab) => (
-                    <button
-                      key={tab}
-                      className={`${
-                        activeTab === tab
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-blue-600 hover:border-gray-300'
-                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                      onClick={() => setActiveTab(tab as any)}
-                    >
-                      {
-                        {
-                          process: t('rentalsPage.tabs.processing'),
-                          success: t('rentalsPage.tabs.success'),
-                          faild: t('rentalsPage.tabs.failed'),
-                          complete_remove: t('rentalsPage.tabs.completed'),
-                          all: t('rentalsPage.tabs.all'),
-                        }[tab]
-                      }
-                    </button>
-                  )
-                )}
-              </nav>
+              <BreadCumbsCmp
+                tabs={tabs}
+                setActiveTab={setActiveTab}
+                activeTab={activeTab}
+              />
             </div>
           </div>
         </div>
@@ -453,9 +270,9 @@ const RentalsPage: React.FC = () => {
             <div className="text-center py-12">
               <p className="text-gray-500">{t('rentalsPage.loading')}</p>
             </div>
-          ) : rentals.length > 0 ? (
+          ) : rentals?.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {rentals.map((rental) => {
+              {/* {rentals?.map((rental) => {
                 return (
                   <Card
                     key={rental.userBmId}
@@ -465,7 +282,7 @@ const RentalsPage: React.FC = () => {
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <CardTitle className="text-[22px]">
-                          {rental.adAccount.name}
+                          {rental?.adAccount?.name}
                         </CardTitle>
                         {getStatusBadge(rental.status)}
                       </div>
@@ -626,7 +443,15 @@ const RentalsPage: React.FC = () => {
                     </div>
                   </Card>
                 );
-              })}
+              })} */}
+              {rentals.map((rental) => (
+                <AccountCard
+                  key={rental?.bm_id}
+                  data={rental}
+                  onClick={() => handleCardClick(rental)}
+                  hanleCancel={() => hanleCancel(rental)}
+                />
+              ))}
             </div>
           ) : (
             <div className="text-center py-12">
@@ -637,10 +462,7 @@ const RentalsPage: React.FC = () => {
                   ? t('rentalsPage.emptyState.success')
                   : t('rentalsPage.emptyState.all')}
               </p>
-              <Button
-                className="mt-4"
-                onClick={() => (window.location.href = '/marketplace')}
-              >
+              <Button className="mt-4" onClick={() => navigate('/marketplace')}>
                 {t('rentalsPage.buttons.rentNow')}
               </Button>
             </div>
