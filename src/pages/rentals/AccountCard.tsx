@@ -1,6 +1,7 @@
 import React from 'react';
 import url from '../../assets/Badge.svg';
 import { Clock, AlertTriangle, Check, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 interface AccountCardProps {
   data: any;
   onClick?: () => void;
@@ -23,6 +24,7 @@ const AccountCard: React.FC<AccountCardProps> = ({
   onClick,
   hanleCancel,
 }) => {
+  const navigate = useNavigate();
   const { bm_id, date, status, ad_account, start_date, end_date } = data;
   const { name, spend_limit, amount_spent } = ad_account;
   const isProcessing = status === 'Đang xử lý';
@@ -130,14 +132,17 @@ const AccountCard: React.FC<AccountCardProps> = ({
 
       <div className="mt-4 flex justify-between items-center gap-3">
         <>
-          <button
-            onClick={hanleCancel}
-            className="flex-1 border border-[#10b981] text-[#10b981] 
+          {status === 'success' && (
+            <button
+              onClick={hanleCancel}
+              className="flex-1 border border-[#10b981] text-[#10b981] 
           rounded-full px-3 py-3 text-sm font-medium hover:bg-[#f0fdf4] transition"
-          >
-            Hủy giao dịch
-          </button>
+            >
+              Hủy giao dịch
+            </button>
+          )}
           <button
+            onClick={() => navigate('/support')}
             className="flex-1 bg-[#111827] text-white rounded-full 
           px-3 py-3 text-sm font-medium hover:bg-[#1f2937] transition"
           >

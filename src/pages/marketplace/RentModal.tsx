@@ -24,33 +24,6 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 
-const schema = z.object({
-  bmId: z
-    .string()
-    .min(1, 'BM ID phải là chuỗi ID và không được để trống')
-    .regex(/^\d+$/, 'BM ID phải là chuỗi số'),
-  spendLimit: z
-    .number({ invalid_type_error: 'Hạn mức chi tiêu phải là số' })
-    .gt(10000, 'Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ'),
-  voucher: z.string().optional(),
-  dateRange: z
-    .object({
-      from: z.date(),
-      to: z.date(),
-    })
-    .refine(
-      ({ from, to }) => {
-        const diff = (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24);
-        return diff >= 7 && diff <= 30;
-      },
-      {
-        message: 'Khoảng thời gian phải từ 7 đến 30 ngày',
-        path: ['to'],
-      }
-    ),
-});
-
-type FormData = z.infer<typeof schema>;
 interface RentModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -90,6 +63,40 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     amount: number;
     percentage: number;
   } | null>(null);
+  const { user, fetchUser } = useUserStore();
+
+  const schema = z.object({
+    bmId: z
+      .string()
+      .min(1, 'BM ID phải là chuỗi ID và không được để trống')
+      .regex(/^\d+$/, 'BM ID phải là chuỗi số'),
+    spendLimit: z
+      .number({ invalid_type_error: 'Hạn mức chi tiêu phải là số' })
+      .gt(10000, 'Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ')
+      .max(user?.points || 0, {
+        message: `Hạn mức không được vượt quá số dư (${user?.points?.toLocaleString(
+          'vi-VN'
+        )} point)`,
+      }),
+    voucher: z.string().optional(),
+    dateRange: z
+      .object({
+        from: z.date(),
+        to: z.date(),
+      })
+      .refine(
+        ({ from, to }) => {
+          const diff = (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24);
+          return diff >= 7 && diff <= 30;
+        },
+        {
+          message: 'Khoảng thời gian phải từ 7 đến 30 ngày',
+          path: ['to'],
+        }
+      ),
+  });
+
+  type FormData = z.infer<typeof schema>;
   const { fetchNotifications } = useNotificationStore();
   const {
     register,
@@ -110,7 +117,6 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     mode: 'onChange',
   });
   const isVisaAccount = account?.is_visa_account;
-  const { user, fetchUser } = useUserStore();
   usePreventScroll(isOpen);
   const { innerBorderRef } = useOnOutsideClick(() => {
     if (isOpen) onClose();
@@ -151,9 +157,9 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const handleOk = () => {
     onClose();
   };
-  const handleCancel = () => {
+  const handleCancel = async () => {
     onClose();
-    reset();
+    await reset();
   };
 
   useEffect(() => {
@@ -184,7 +190,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       if (response.data.success) {
         setSuccessRent(response.data.data);
         onClose();
-        reset();
+        await reset();
       }
     } catch (error) {
       console.log('Error submitting form:', error);
@@ -238,7 +244,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   className="w-full  px-3 py-3 text-[16px] rounded-[8px] border-[1.5px] border-[#CBCDD2]"
                 />
                 {errors.bmId && (
-                  <p className="text-red-600 text-sm mt-1 italic text-right py-[8px]">
+                  <p className="text-red-600 text-sm mt-1 italic  py-[8px]">
                     {errors.bmId.message}
                   </p>
                 )}
@@ -271,7 +277,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   )}
                 />
                 {errors.spendLimit && (
-                  <p className="text-red-600 text-sm mt-1 italic text-right py-[8px]">
+                  <p className="text-red-600 text-sm mt-1 italic  py-[8px]">
                     {errors.spendLimit.message}
                   </p>
                 )}
@@ -312,7 +318,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   alt="url4"
                 />
                 {errors.dateRange?.to && (
-                  <p className="text-red-600 text-sm mt-1 italic text-right py-[8px]">
+                  <p className="text-red-600 text-sm mt-1 italic  py-[8px]">
                     {errors.dateRange.to.message}
                   </p>
                 )}
@@ -329,7 +335,6 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   <option value="" disabled>
                     Chọn voucher
                   </option>
-                  <option value="voucher10k">Giảm 10.000 VNĐ</option>
                 </select>
               </div>
             </div>

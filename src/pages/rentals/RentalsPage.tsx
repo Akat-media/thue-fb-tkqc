@@ -77,7 +77,9 @@ const RentalsPage: React.FC = () => {
   const navigate = useNavigate();
   const objetUser = localStorage.getItem('user');
   const userParse = JSON.parse(objetUser || '{}');
-  const [rentals, setRentals] = useState<(Rental & { adAccount: any })[]>([]);
+  const [rentals, setRentals] = useState<
+    (Rental & { adAccount: any; bm_id: any })[]
+  >([]);
   const [activeTab, setActiveTab] = useState<any>('all');
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRental, setSelectedRental] = useState<
@@ -189,17 +191,17 @@ const RentalsPage: React.FC = () => {
         params: {
           id: account?.id || '',
           bm_origin: account?.bm_origin || '',
-          ads_name: account?.adAccount?.name || '',
-          bm_id: account?.userBmId || '',
-          ads_account_id: account?.adAccountId || '',
+          ads_name: account?.ad_account?.name || '',
+          bm_id: account?.bm_id || '',
+          ads_account_id: account?.ads_account_id || '',
           user_id: userParse.user_id || '',
-          amountPoint: account?.adAccount?.defaultLimit || '',
           bot_id: account?.bot_id || '',
         },
       });
 
       const { success, message } = response.data;
       if (success) {
+        fetchRentals();
         fetchRentals();
       } else toast.error('Vô hiệu hóa thất bại!');
     } catch (error: any) {
@@ -444,7 +446,7 @@ const RentalsPage: React.FC = () => {
               })} */}
               {rentals.map((rental) => (
                 <AccountCard
-                  key={rental.userBmId}
+                  key={rental?.bm_id}
                   data={rental}
                   onClick={() => handleCardClick(rental)}
                   hanleCancel={() => hanleCancel(rental)}
