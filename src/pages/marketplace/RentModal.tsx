@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useUserStore } from '../../stores/useUserStore';
 import { useOnOutsideClick } from '../../hook/useOutside';
 import { VoucherData } from '../profile/Ticket';
-import { addDays } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { Modal } from 'antd';
 import styled from 'styled-components';
 import { useNotificationStore } from '../../stores/notificationStore';
@@ -168,6 +168,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
   const onSubmit = async (data: FormData) => {
     console.log('Submitted data:', data);
+    const startDate = format(data.dateRange.from, 'dd/MM/yyyy HH:mm:ss');
+    const endDate = format(data.dateRange.to, 'dd/MM/yyyy HH:mm:ss');
     const payload = {
       bm_origin: account?.owner || '',
       ads_name: account?.name || '',
@@ -180,6 +182,8 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       voucher_id: data.voucher || '',
       bot_id: selectedCookieId || null,
       currency: selectedCurrend,
+      start_date: startDate,
+      end_date: endDate,
     };
     try {
       const response = await BaseHeader({

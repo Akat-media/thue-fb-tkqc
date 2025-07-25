@@ -25,7 +25,7 @@ const AccountCard: React.FC<AccountCardProps> = ({
   hanleCancel,
 }) => {
   const navigate = useNavigate();
-  const { bm_id, date, status, ad_account, start_date, end_date } = data;
+  const { bm_id, status, ad_account, start_date, end_date } = data;
   const { name, spend_limit, amount_spent } = ad_account;
   const isProcessing = status === 'Đang xử lý';
   const statusConfig: Record<
@@ -89,13 +89,13 @@ const AccountCard: React.FC<AccountCardProps> = ({
           <span className="font-medium text-gray-600">
             {'Thời gian bắt đầu thuê'}:
           </span>
-          <span>{date}</span>
+          <span>{start_date}</span>
         </p>
         <p className="flex justify-between mb-2 text-[16px]">
           <span className="font-medium text-gray-600">
             {'Thời gian kết thúc thuê'}:
           </span>
-          <span>{date}</span>
+          <span>{end_date}</span>
         </p>
         <p className="flex justify-between mb-3 text-[16px]">
           <span className="font-medium text-gray-600">Giới hạn chi tiêu:</span>
@@ -138,7 +138,7 @@ const AccountCard: React.FC<AccountCardProps> = ({
               className="flex-1 border border-[#10b981] text-[#10b981] 
           rounded-full px-3 py-3 text-sm font-medium hover:bg-[#f0fdf4] transition"
             >
-              Hủy giao dịch
+              Hủy tài khoản thuê
             </button>
           )}
           <button
