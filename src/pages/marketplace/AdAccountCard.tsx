@@ -107,9 +107,16 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
           <CardContent className="flex-grow relative z-10">
             <div className="flex justify-between items-start">
               <Tooltip title={account?.name} placement="top">
-                <h3 className="flex items-center gap-2 text-[22px] font-semibold text-gray-900 line-clamp-2 overflow-hidden text-ellipsis leading-tight max-w-[200px] cursor-pointer">
-                  {account?.name} <img src={url3} alt="url3" />
-                </h3>
+                <div className="flex items-center gap-2 cursor-pointer">
+                  <span className="text-[22px] font-semibold text-gray-900 truncate max-w-[200px]">
+                    {account?.name}
+                  </span>
+                  <img
+                    src={url3}
+                    alt="url3"
+                    className="h-7 w-7 flex-shrink-0"
+                  />
+                </div>
               </Tooltip>
               <div>
                 <img
@@ -119,6 +126,7 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
                   }}
                   src={url2}
                   alt="Xem chi tiết"
+                  className="h-5 w-5 cursor-pointer"
                 />
               </div>
             </div>
