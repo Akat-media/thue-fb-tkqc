@@ -44,12 +44,13 @@ import Paypal from './pages/paypal/index.tsx';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import NotFoundPage from './pages/404/NotFoundPage.tsx';
 import { usePageStore } from './stores/usePageStore.ts';
 import PopupWelcome from './components/layout/PopupWelcome.tsx';
 import ChatLayout from "./pages/admin/chats/ChatLayout.tsx";
 import CashBackManagement from './pages/admin/cashback/CashBackManagement.tsx';
+import AtomicSpinner from "atomic-spinner";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -59,7 +60,11 @@ const ScrollToTop = () => {
   return null;
 };
 function AppRoutes() {
+  const [isInitialized, setIsInitialized] = useState(false);
+
   const userobj = useUserStore((state) => state.user);
+  const { setUser } = useUserStore();
+
   const { i18n } = useTranslation();
   const location = useLocation();
   const is404 = usePageStore((state) => state.is404);
@@ -76,6 +81,22 @@ function AppRoutes() {
       once: false,
     });
   }, []);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setUser(parsed.user);
+    }
+    setIsInitialized(true);
+  }, []);
+
+  if (!isInitialized) return (
+      <div className="fixed inset-0 z-[9999] backdrop-blur-sm bg-white/60 flex items-center justify-center">
+        <AtomicSpinner atomSize={200} nucleusParticleFillColor="#ffffff" />
+      </div>
+  );
+
   return (
     <NotificationProvider>
       <PopupWelcome />
@@ -97,7 +118,7 @@ function AppRoutes() {
           <Route element={<ProtectedRoute />}>
             <Route path="/add-account" element={<AddAccountPage />} />
             <Route path="/rentals" element={<RentalsPage />} />
-            <Route path="/payments" element={<PaymentPage />} />
+            <Route path="/payments/" element={<PaymentPage />} />
             <Route path="/deposit" element={<PaymentForm />} />
             <Route path="/adsaccountmanager" element={<ManageAdsAccount />} />
             <Route

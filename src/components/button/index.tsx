@@ -13,6 +13,7 @@ type ButtonCmpProps = {
   type?: string;
   icon?: React.ReactNode;
   beforeIcon?: React.ReactNode;
+  overrideClass?: string;
 };
 
 const ButtonCmp: React.FC<ButtonCmpProps> = ({
@@ -22,6 +23,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
   icon = <Filter className="h-5 w-5 text-gray-400" />,
   beforeIcon = <ChevronDown />,
   type = 'money',
+  overrideClass = '',
 }) => {
   const { t, i18n } = useTranslation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -82,7 +84,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
            rounded-full shadow-sm text-sm font-medium text-gray-700
             bg-white hover:bg-gray-50 focus:outline-none focus:ring-2
             focus:ring-offset-2 focus:ring-blue-500 flex items-center gap-1
-            justify-center btn ${className}`}
+            justify-center btn ${className} ${overrideClass} `}
         onClick={(e) => {
           toggleDropdown();
         }}
@@ -103,11 +105,11 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
           {type === 'money' && (
             <div>
               <div className="flex justify-between items-center">
-                <p className="price-title mb-3 text-[24px] font-semibold">
+                <p className="price-title sm:mb-3 mb-0 sm:text-[24px] text-[18px] font-semibold">
                   {t('filter.priceRange')}
                 </p>
                 <Checkbox
-                  className="text-[16px] font-medium"
+                  className="text-[15px] font-medium"
                   onChange={onChange}
                 >
                   {t('filter.noLimit')}
@@ -369,6 +371,18 @@ const ButtonStyle = styled.div`
     width: 13px;
     height: 13px;
   }
+  
+  @media (max-width: 640px) {
+    // can giua dropdown
+    .list-filter-child {
+      transform: translateX(-76%) !important;
+    }
+    // mui ten tro xuong
+    .list-filter-child.active:after {  
+      display: none !important; 
+    }
+  }
+
 `;
 
 export default ButtonCmp;

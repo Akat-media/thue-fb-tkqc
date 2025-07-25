@@ -416,22 +416,32 @@ const MarketplacePage: React.FC = () => {
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8 py-8 container mx-auto">
-        <div className="md:flex md:items-center md:justify-between">
-          <div className="flex-1 min-w-0">
+        <div className="flex flex-row items-center justify-between ">
+          <div>
             <h2 className="text-2xl font-semibold leading-7 text-blue-900 sm:text-3xl sm:truncate">
               {t('marketplacePage.title')}
             </h2>
           </div>
+
+          <div className="sm:hidden flex">
+            <ButtonCmp
+                onClick={hanleSearch}
+                overrideClass="h-[40px] min-w-[90px]"
+            />
+          </div>
         </div>
-        <div className="flex gap-8 mt-4">
+        <div className="block sm:flex gap-8 mt-4">
           <BreadCumbsCmp
             tabs={tabs}
             setActiveTab={setActiveTab}
             activeTab={activeTab}
           />
-          <ButtonCmp onClick={hanleSearch} />
+          <ButtonCmp
+              onClick={hanleSearch}
+              className="hidden sm:flex"
+          />
         </div>
-        <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between">
+        <div className="sm:mt-6 mt-0 flex flex-col md:flex-row md:items-center md:justify-between">
           <div className="mt-3 md:mt-0 flex items-center gap-3">
             {isAdmin && (
               <button
@@ -488,9 +498,9 @@ const MarketplacePage: React.FC = () => {
               {t('marketplacePage.adAccounts')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {allAccount.map((account: any) => (
+              {allAccount.map((account: any, index) => (
                 <AdAccountCard
-                  key={account.id}
+                  key={`${account.id}-${index}`}
                   account={account}
                   onRentClick={() => handleRentClick(account)}
                   isAdmin={isAdmin}
@@ -519,9 +529,9 @@ const MarketplacePage: React.FC = () => {
               {t('marketplacePage.adAccountsWithCard')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {visaAccount.map((account: any) => (
+              {visaAccount.map((account: any, index) => (
                 <AdAccountCard
-                  key={account.id}
+                  key={`${account.id}-${index}`}
                   account={account}
                   onRentClick={() => handleRentClick(account)}
                   isAdmin={isAdmin}
@@ -553,9 +563,9 @@ const MarketplacePage: React.FC = () => {
             {simpleAccount.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {simpleAccount.map((account: any) => (
+                  {simpleAccount.map((account: any, index) => (
                     <AdAccountCard
-                      key={account.id}
+                      key={`${account.id}-${index}`}
                       account={account}
                       onRentClick={() => handleRentClick(account)}
                       isAdmin={isAdmin}
@@ -592,9 +602,9 @@ const MarketplacePage: React.FC = () => {
             </h3>
             {rentedAccounts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {rentedAccounts.map((account: any) => (
+                {rentedAccounts.map((account: any, index) => (
                   <AdAccountCard
-                    key={account.id}
+                    key={`${account.id}-${index}`}
                     account={account}
                     onRentClick={() => handleRentClick(account)}
                     isAdmin={isAdmin}

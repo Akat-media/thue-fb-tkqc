@@ -7,6 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 // import AtomicSpinner from "atomic-spinner";
 import { Mail, Eye, EyeOff } from 'lucide-react';
 import {useTranslation} from "react-i18next";
+import {useUserStore} from "../../stores/useUserStore.ts";
+import {useNavigate} from "react-router-dom";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -31,6 +33,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const {t} = useTranslation();
+  const { setUser } = useUserStore();
+  const navigate = useNavigate();
 
   if (!isOpen) return null;
 
@@ -62,9 +66,12 @@ const LoginModal: React.FC<LoginModalProps> = ({
       localStorage.setItem('user', JSON.stringify(userData));
       onClose();
 
-      if (onLoginSuccess) {
-        onLoginSuccess();
-      }
+      setUser(res.data.data.user);
+      navigate('/');
+
+      // if (onLoginSuccess) {
+      //   onLoginSuccess();
+      // }
     } catch (err: any) {
       toast.error(
         err.response?.data?.message || t('modalHomepage.login.error')
