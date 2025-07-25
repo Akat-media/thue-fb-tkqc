@@ -416,7 +416,9 @@
     },
     "yes": "Có",
     "no": "Không",
-    "noLimit": "Không giới hạn"
+    "noLimit": "Không giới hạn",
+    "account_id": "ID Tài khoản",
+    "rentNow": "Thuê ngay"
   },
   "adAccountCard": {
     "personal": "Cá nhân",

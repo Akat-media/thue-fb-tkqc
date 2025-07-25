@@ -14,12 +14,12 @@ import {
   Pen,
   ALargeSmall,
   HandCoins,
-  SquarePen,
+  Search,
   MoreVertical,
   ArrowUp,
   ArrowDown,
   User,
-  Check,
+  Filter,
   Copy,
 } from 'lucide-react';
 import Subheader from '../../components/ui/Subheader';
@@ -58,7 +58,7 @@ const ManageAdsAccount: React.FC = () => {
     null
   );
   const [showModal, setShowModal] = useState(false);
-  // const [typeFilter, setTypeFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState('all');
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Transaction;
     direction: 'asc' | 'desc';
@@ -95,11 +95,15 @@ const ManageAdsAccount: React.FC = () => {
         hanleTransactionPoint(value);
       }
     }, 800);
-  }, []);
+  }, [active]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
-    setCurrentPage(1);
+    if (active === 'money') {
+      setCurrentPage(1);
+    } else {
+      setCurrentPagePoint(1);
+    }
     debounceSearch(e.target.value);
   };
 
@@ -129,19 +133,6 @@ const ManageAdsAccount: React.FC = () => {
     }
     return sortableItems;
   }, [filtered, sortConfig]);
-
-  // const handleReset = () => {
-  //   setSearch("");
-  //   setStatusFilter("all");
-  //   setFiltered(transactions);
-  // };
-  // const handleSync = async () => {
-  //   if (active === "money") {
-  //     await hanleTransactionMoney();
-  //   } else if (active === "points") {
-  //     await hanleTransactionPoint();
-  //   }
-  // };
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -208,6 +199,36 @@ const ManageAdsAccount: React.FC = () => {
       </div>
     );
   };
+
+  const [showFilter, setShowFilter] = useState(false);
+  const [filterValues, setFilterValues] = useState({
+    payment: [] as string[],
+    status: [] as string[],
+    category: [] as string[],
+  });
+
+  const toggleFilter = (group: keyof typeof filterValues, value: string) => {
+    setFilterValues((prev) => {
+      const exists = prev[group].includes(value);
+      return {
+        ...prev,
+        [group]: exists
+          ? prev[group].filter((v) => v !== value)
+          : [...prev[group], value],
+      };
+    });
+  };
+
+  const resetFilter = () => {
+    setFilterValues({
+      payment: [],
+      status: [],
+      category: [],
+    });
+    setStatusFilter('all');
+    setTypeFilter('all');
+  };
+
   const headers = [
     {
       key: 'checkbox',
@@ -320,6 +341,7 @@ const ManageAdsAccount: React.FC = () => {
       minWidth: '240px',
     },
   ];
+
   const headersPoints = [
     {
       key: 'checkbox',
@@ -488,12 +510,26 @@ const ManageAdsAccount: React.FC = () => {
   }, [active, currentPage, pageSize, currentPagePoint, pageSizePoint]);
 
   useEffect(() => {
-    if (active === 'money') {
-      setFiltered(transactions);
-    } else if (active === 'points') {
-      setFiltered(transactionPoints);
+    let data = active === 'money' ? transactions : transactionPoints;
+
+    if (filterValues.status.length > 0) {
+      data = data.filter((item) => filterValues.status.includes(item.status));
     }
-  }, [transactions, transactionPoints, active]);
+
+    if (active === 'money' && filterValues.payment.length > 0) {
+      data = data.filter((item) => filterValues.payment.includes(item.bank));
+    }
+
+    setFiltered(data);
+  }, [filterValues, active, transactions, transactionPoints]);
+
+  // useEffect(() => {
+  //   if (active === 'money') {
+  //     setFiltered(transactions);
+  //   } else if (active === 'points') {
+  //     setFiltered(transactionPoints);
+  //   }
+  // }, [transactions, transactionPoints, active]);
 
   const getStatusConfig = (status: string) => {
     const configs = {
@@ -527,6 +563,20 @@ const ManageAdsAccount: React.FC = () => {
     );
   };
 
+  const statusOptions = [
+    { label: 'Thành công', value: 'success' },
+    { label: 'Đang xử lý', value: 'processing' },
+    { label: 'Đang chờ xử lý', value: 'pending' },
+    { label: 'Thất bại', value: 'failed' },
+  ];
+
+  const paymentOptions = [
+    { label: 'Internet Banking', value: 'internet_banking' },
+    { label: 'Paypal', value: 'paypal' },
+    { label: 'VISA', value: 'visa' },
+    { label: 'Mastercard', value: 'mastercard' },
+  ];
+
   return (
     <>
       {active === 'money' && (
@@ -539,28 +589,105 @@ const ManageAdsAccount: React.FC = () => {
           </div>
 
           <div className="pl-1 p-4 mt-3 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="relative w-full md:min-w-[430px] max-w-fit flex gap-2">
-              <input
-                type="text"
-                placeholder="Tìm kiếm theo Số Tiền, Điểm"
-                className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
-                value={query}
-                onChange={handleSearch}
-              />
-            </div>
-            {/* {userParse?.user?.role === "admin" && (
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={handleSync}
-                  className="px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition"
-                >
-                  <div className="flex items-center gap-2">
-                    <RefreshCcw className="w-4 h-4" />
-                    Đồng Bộ Tài Khoản
-                  </div>
-                </button>
+            <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
+              <div className="flex items-center gap-4 flex-wrap">
+                {/* Ô input tìm kiếm */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={handleSearch}
+                    placeholder="Tìm kiếm theo Short Code"
+                    className="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-[320px]"
+                  />
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <Search className="w-4 h-4" />
+                  </span>
+                </div>
               </div>
-            )} */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowFilter(!showFilter)}
+                  className="flex items-center gap-2 px-4 py-2 border border-[#12FEDA] text-gray-700 rounded-full hover:bg-cyan-300 transition"
+                >
+                  Bộ lọc
+                  <Filter className="w-4 h-4 text-gray-600" />
+                </button>
+                {showFilter && (
+                  <div className="absolute right-0 mt-2 w-[320px] bg-white border border-gray-200 rounded-xl shadow-lg z-50 p-5 space-y-4">
+                    {/* PHƯƠNG THỨC THANH TOÁN */}
+                    <div>
+                      <label className="block text-base font-bold text-gray-800 mb-2">
+                        PHƯƠNG THỨC THANH TOÁN
+                      </label>
+                      <div className="flex flex-wrap gap-x-4 gap-y-2">
+                        {paymentOptions.map((opt) => (
+                          <label
+                            key={opt.value}
+                            className="text-sm inline-flex items-center"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={filterValues.payment.includes(opt.value)}
+                              onChange={() =>
+                                toggleFilter('payment', opt.value)
+                              }
+                              className="mr-1"
+                            />
+                            {opt.label}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* TRẠNG THÁI */}
+                    <div>
+                      <label className="block text-base font-bold text-gray-800 mb-2">
+                        TRẠNG THÁI
+                      </label>
+                      <div className="flex flex-wrap gap-x-4 gap-y-2">
+                        {statusOptions.map((opt) => (
+                          <label
+                            key={opt.value}
+                            className="text-sm inline-flex items-center"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={filterValues.status.includes(opt.value)}
+                              onChange={() => toggleFilter('status', opt.value)}
+                              className="mr-1"
+                            />
+                            {opt.label}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Nút hành động */}
+                    <div className="flex justify-between pt-2 border-t border-gray-200">
+                      <button
+                        onClick={() => {
+                          resetFilter();
+                          setShowFilter(false);
+                        }}
+                        className="text-gray-600 bg-white border border-gray-300 hover:text-red-600 text-sm font-semibold px-4 py-2 rounded-full"
+                      >
+                        Xóa tất cả
+                      </button>
+                      <button
+                        onClick={() => {
+                          console.log('Áp dụng bộ lọc:', filterValues);
+                          setShowFilter(false);
+                        }}
+                        className="bg-blue-900 text-white text-sm font-semibold px-4 py-2 rounded-full"
+                      >
+                        Hiển thị kết quả
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="overflow-x-auto rounded-lg border border-gray-300">
@@ -630,19 +757,6 @@ const ManageAdsAccount: React.FC = () => {
                           <div className="w-4 h-4 rounded border border-gray-300 bg-white peer-checked:bg-[#78bb07] peer-checked:border-[#78bb07] after:content-['✔'] after:absolute after:left-[2px] after:top-[-1px] after:text-white after:text-xs after:font-bold peer-checked:after:block after:hidden"></div>
                         </label>
                       </td>
-
-                      {/* <td className="px-4 py-2 text-center border border-gray-100">
-                        <button
-                          onClick={() => {
-                            setSelectedAccount(item);
-                            setShowModal(true);
-                          }}
-                          className="text-gray-600 hover:text-blue-600"
-                          title="Xem chi tiết"
-                        >
-                          <SquarePen className="w-4 h-4 mx-auto" />
-                        </button>
-                      </td> */}
 
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
@@ -871,21 +985,22 @@ const ManageAdsAccount: React.FC = () => {
           </div>
 
           <div className="pl-1 p-4 mt-3 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="relative w-full md:min-w-[430px] max-w-fit flex gap-2">
-              <input
-                type="text"
-                placeholder="Tìm kiếm theo ID, Tài Khoản"
-                className="form-control w-full pl-2 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200"
-                value={query}
-                onChange={handleSearch}
-              />
-              <Button
-                className="min-w-[100px] bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-800 hover:text-white"
-                variant="outline"
-                size="sm"
-              >
-                Tìm kiếm
-              </Button>
+            <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
+              <div className="flex items-center gap-4 flex-wrap">
+                {/* Ô input tìm kiếm */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={handleSearch}
+                    placeholder="Tìm kiếm theo User, ID Tài khoản"
+                    className="pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-[320px]"
+                  />
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <Search className="w-4 h-4" />
+                  </span>
+                </div>
+              </div>
             </div>
             {/* {userParse?.user?.role === "admin" && (
               <div className="flex items-center gap-1">
@@ -1039,17 +1154,22 @@ const ManageAdsAccount: React.FC = () => {
                         {item?.target_account}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
-                          activeCell === `${item.id}-total`
-                            ? 'bg-green-100'
-                            : ''
-                        }`}
+                        className="px-4 py-2 text-center border border-[#f5f5ff]"
                         onClick={() => {
-                          setActiveCell(`${item.id}-total`);
+                          setActiveCell(`${item.id}-status`);
                           setActiveRow(null);
                         }}
                       >
-                        {item?.status}
+                        {(() => {
+                          const config = getStatusConfig(item.status);
+                          return (
+                            <span
+                              className={`text-xs px-3 py-1 rounded-full font-medium ${config.bg} ${config.text}`}
+                            >
+                              {config.label}
+                            </span>
+                          );
+                        })()}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
