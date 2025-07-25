@@ -386,6 +386,7 @@ const MarketplacePage: React.FC = () => {
   });
 
   const fieldNameMap: Record<string, string> = {
+    account_id: t('cardDetailModal.account_id'),
     id: t('marketplacePage.fields.id'),
     account_status: t('marketplacePage.fields.accountStatus'),
     amount_spent: t('marketplacePage.fields.amountSpent'),
@@ -865,6 +866,7 @@ const MarketplacePage: React.FC = () => {
             setIsAdDetailOpen={setIsAdDetailOpen}
             selectedAdAccountDetail={selectedAdAccountDetail}
             fieldNameMap={fieldNameMap}
+            onRentClick={handleRentClick}
           />
         )}
 

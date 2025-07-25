@@ -1,8 +1,5 @@
-'use client';
-
 import type React from 'react';
 import {
-  User,
   CreditCard,
   Wallet,
   FileText,
@@ -17,12 +14,14 @@ import {
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePreventScroll } from '../../hook/usePreventScroll';
+import url3 from '../../assets/Badge.svg';
 
 interface ModalProps {
   isOpen: boolean;
   setIsAdDetailOpen: (open: boolean) => void;
   selectedAdAccountDetail: any;
   fieldNameMap: any;
+  onRentClick?: (account: any) => void;
 }
 
 const CardDetailModal: React.FC<ModalProps> = ({
@@ -30,9 +29,11 @@ const CardDetailModal: React.FC<ModalProps> = ({
   setIsAdDetailOpen,
   selectedAdAccountDetail,
   fieldNameMap,
+  onRentClick,
 }) => {
   const { t } = useTranslation();
-  usePreventScroll(isOpen)
+  usePreventScroll(isOpen);
+
   return (
     <div
       onClick={() => setIsAdDetailOpen(false)}
@@ -40,67 +41,75 @@ const CardDetailModal: React.FC<ModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-xl shadow-2xl w-[90%] max-w-[800px] relative max-h-[80vh] lg:max-h-[90vh] overflow-hidden"
+        className="bg-cyan-50 rounded-xl shadow-2xl w-[90%] max-w-[1100px] relative max-h-[80vh] lg:max-h-[90vh] overflow-hidden"
       >
         {/* Header */}
-        <div className="bg-[#fff] px-6 py-4 text-slate-700 relative">
+        <div className="bg-cyan-50 px-6 py-4 text-slate-700 relative">
           <button
             className="absolute top-4 right-4 text-slate-700 hover:text-slate-500 text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 hover:bg-opacity-50 transition-all"
             onClick={() => setIsAdDetailOpen(false)}
           >
             <X className="w-5 h-5" />
           </button>
-          <h2 className="text-xl lg:text-2xl  font-bold flex items-center gap-3">
-            <User className="w-6 h-6" />
+          <h2 className="text-xl lg:text-2xl font-semibold text-gray-500 flex items-center gap-3">
             {t('cardDetailModal.title')}
           </h2>
+          <p className="mt-1 text-3xl font-bold text-[#030e0e] flex items-center gap-2">
+            <span>{selectedAdAccountDetail?.name || '—'}</span>
+            <img src={url3} alt="url3" className="w-8 h-8 object-contain" />
+          </p>
         </div>
 
         {/* Content */}
         <div className="p-6 overflow-y-auto max-h-[calc(80vh-80px)] lg:max-h-[calc(90vh-80px)]">
-          <div className="space-y-6">
-            {/* Basic Information Card */}
-            <div
-              style={{ boxShadow: 'rgba(33, 35, 38, 0.1) 0px 10px 10px -10px' }}
-              className="bg-[#F1F2F5] border-l-4 border-slate-200 rounded-lg p-5"
-            >
-              <h3 className="text-lg font-semibold text-slate-600 mb-4 flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-slate-500" />
-                {t('cardDetailModal.basicInfo')}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {['account_id', 'name', 'account_status', 'active'].map(
-                  (field) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-6 bg-[#F9FAFB] border border-slate-200 rounded-xl p-4">
+              {/* Thông tin cơ bản */}
+              <div className="bg-white border-l-4 border-slate-200 rounded-lg p-5 shadow-sm">
+                <h3 className="text-2xl font-semibold text-slate-600 mb-4 flex items-center gap-2">
+                  <CreditCard className="w-6 h-6 text-slate-500" />
+                  {t('cardDetailModal.basicInfo')}
+                </h3>
+                <div className="space-y-3">
+                  {['account_id', 'account_status', 'active'].map((field) => {
                     const value = selectedAdAccountDetail[field];
-                    let displayValue = String(value ?? '—');
+                    let displayValue = '—';
 
-                    if (field === 'account_status') {
-                      displayValue =
-                        value === 1
-                          ? t('cardDetailModal.accountStatus.active')
-                          : t('cardDetailModal.accountStatus.inactive');
-                    } else if (field === 'active') {
-                      displayValue = value
-                        ? t('cardDetailModal.yes')
-                        : t('cardDetailModal.no');
+                    if (value !== undefined && value !== null) {
+                      if (field === 'account_status') {
+                        displayValue =
+                          value === 1
+                            ? t('cardDetailModal.accountStatus.active')
+                            : t('cardDetailModal.accountStatus.inactive');
+                      } else if (field === 'active') {
+                        displayValue = value
+                          ? t('cardDetailModal.yes')
+                          : t('cardDetailModal.no');
+                      } else if (field === 'status_rented') {
+                        displayValue = t(`adAccountCard.${value}`, {
+                          defaultValue: value,
+                        });
+                      } else {
+                        displayValue = String(value);
+                      }
                     }
 
                     return (
                       <div
                         key={field}
-                        className="bg-white p-3 rounded-lg shadow-sm border border-slate-100"
+                        className="flex justify-between items-center"
                       >
-                        <p className="text-sm font-medium text-slate-500 mb-1">
+                        <span className="text-base text-slate-500">
                           {fieldNameMap[field] || field}
-                        </p>
-                        <p className="text-lg font-semibold text-slate-600">
+                        </span>
+                        <span className="text-base font-semibold text-slate-700">
                           {field === 'account_id' ? (
-                            <span className="font-mono bg-slate-100 px-2 py-1 rounded text-sm">
+                            <span className="font-mono bg-slate-100 px-2 py-1 rounded text-base">
                               {displayValue}
                             </span>
                           ) : field === 'account_status' ? (
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium gap-1 ${
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium gap-1 ${
                                 value === 1
                                   ? 'bg-emerald-50 text-emerald-600'
                                   : 'bg-rose-50 text-rose-600'
@@ -115,7 +124,7 @@ const CardDetailModal: React.FC<ModalProps> = ({
                             </span>
                           ) : field === 'active' ? (
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium gap-1 ${
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium gap-1 ${
                                 value
                                   ? 'bg-emerald-50 text-emerald-600'
                                   : 'bg-rose-50 text-rose-600'
@@ -131,24 +140,71 @@ const CardDetailModal: React.FC<ModalProps> = ({
                           ) : (
                             displayValue
                           )}
-                        </p>
+                        </span>
                       </div>
                     );
-                  }
-                )}
+                  })}
+                </div>
+              </div>
+              {/* Thông tin bổ sung */}
+              <div className="bg-white border-l-4 border-slate-200 rounded-lg p-5 shadow-sm">
+                <h3 className="text-2xl font-semibold text-slate-600 mb-4 flex items-center gap-2">
+                  <FileText className="w-6 h-6 text-slate-500" />
+                  {t('cardDetailModal.additionalInfo')}
+                </h3>
+                <div className="space-y-3">
+                  {[
+                    'end_advertiser_name',
+                    'status_rented',
+                    'currency',
+                    'note_aka',
+                  ].map((field) => {
+                    const value = selectedAdAccountDetail[field];
+                    let displayValue = '—';
+                    if (value !== undefined && value !== null) {
+                      if (field === 'status_rented') {
+                        displayValue = t(`adAccountCard.${value}`, {
+                          defaultValue: value,
+                        });
+                      } else {
+                        displayValue = String(value);
+                      }
+                    }
+                    return (
+                      <div
+                        key={field}
+                        className="flex justify-between items-center"
+                      >
+                        <span className="text-base text-slate-500">
+                          {fieldNameMap[field] || field}
+                        </span>
+                        <span className="text-lg font-semibold text-slate-700">
+                          {field === 'currency' ? (
+                            <span className="bg-sky-50 text-sky-600 px-2 py-1 rounded-full text-base font-mono">
+                              {displayValue}
+                            </span>
+                          ) : field === 'status_rented' ? (
+                            <span className="bg-amber-50 text-amber-600 px-2 py-1 rounded-full text-base">
+                              {displayValue}
+                            </span>
+                          ) : (
+                            displayValue
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
-            {/* Financial Information Card */}
-            <div
-              style={{ boxShadow: 'rgba(33, 35, 38, 0.1) 0px 10px 10px -10px' }}
-              className="bg-gradient-to-r from-white to-emerald-25 border-l-4 border-emerald-200 rounded-lg p-5 "
-            >
-              <h3 className="text-lg font-semibold text-emerald-600 mb-4 flex items-center gap-2">
-                <Wallet className="w-5 h-5 text-emerald-500" />
+            {/* Thông tin tài chính */}
+            <div className="bg-white border-l-4 border-gray-200 rounded-lg p-5 shadow-sm">
+              <h3 className="text-2xl font-semibold text-gray-600 mb-4 flex items-center gap-2">
+                <Wallet className="w-6 h-6 text-gray-500" />
                 {t('cardDetailModal.financialInfo')}
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 {['amount_spent', 'balance', 'spend_cap', 'spend_limit'].map(
                   (field) => {
                     const value = selectedAdAccountDetail[field];
@@ -157,32 +213,35 @@ const CardDetailModal: React.FC<ModalProps> = ({
                         ? `${Number(value).toLocaleString('vi-VN')} VNĐ`
                         : '—';
 
-                    const getCardConfig = (field: any) => {
+                    const getCardConfig = (field: string) => {
                       switch (field) {
                         case 'amount_spent':
                           return {
-                            gradient: 'from-sky-200 to-sky-300',
-                            icon: <TrendingUp className="w-4 h-4" />,
+                            icon: (
+                              <TrendingUp className="w-6 h-6 text-cyan-500" />
+                            ),
                           };
                         case 'balance':
                           return {
-                            gradient: 'from-emerald-200 to-emerald-300',
-                            icon: <DollarSign className="w-4 h-4" />,
+                            icon: (
+                              <DollarSign className="w-6 h-6 text-cyan-500" />
+                            ),
                           };
                         case 'spend_cap':
                           return {
-                            gradient: 'from-violet-200 to-violet-300',
-                            icon: <Shield className="w-4 h-4" />,
+                            icon: <Shield className="w-6 h-6 text-cyan-500" />,
                           };
                         case 'spend_limit':
                           return {
-                            gradient: 'from-amber-200 to-amber-300',
-                            icon: <AlertTriangle className="w-4 h-4" />,
+                            icon: (
+                              <AlertTriangle className="w-6 h-6 text-cyan-500" />
+                            ),
                           };
                         default:
                           return {
-                            gradient: 'from-slate-400 to-slate-500',
-                            icon: <DollarSign className="w-4 h-4" />,
+                            icon: (
+                              <DollarSign className="w-5 h-5 text-cyan-500" />
+                            ),
                           };
                       }
                     };
@@ -192,15 +251,17 @@ const CardDetailModal: React.FC<ModalProps> = ({
                     return (
                       <div
                         key={field}
-                        className={`bg-gradient-to-r ${config.gradient} p-4 rounded-lg text-slate-700 shadow-sm`}
+                        className="bg-white rounded-xl border border-slate-100 p-6 min-h-[120px] flex flex-col justify-between shadow-sm"
                       >
-                        <div className="flex items-center gap-2 mb-1">
-                          {config.icon}
-                          <p className="text-sm font-medium opacity-90">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="p-2 bg-cyan-50 rounded-full">
+                            {config.icon}
+                          </div>
+                          <p className="text-base text-slate-500">
                             {fieldNameMap[field] || field}
                           </p>
                         </div>
-                        <p className="text-xl font-bold">
+                        <p className="text-2xl font-bold text-slate-700">
                           {field === 'spend_cap' && value === 0
                             ? t('cardDetailModal.noLimit')
                             : formattedValue}
@@ -210,50 +271,13 @@ const CardDetailModal: React.FC<ModalProps> = ({
                   }
                 )}
               </div>
-            </div>
-
-            {/* Additional Information Card */}
-            <div
-              style={{ boxShadow: 'rgba(33, 35, 38, 0.1) 0px 10px 10px -10px' }}
-              className="bg-gradient-to-r from-white to-slate-25 border-l-4 border-slate-200 rounded-lg p-5"
-            >
-              <h3 className="text-lg font-semibold text-slate-600 mb-4 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-slate-500" />
-                {t('cardDetailModal.additionalInfo')}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {['currency', 'end_advertiser_name', 'status_rented', 'note_aka'].map(
-                  (field) => {
-                    const value = selectedAdAccountDetail[field];
-                    const displayValue = String(value ?? '—');
-
-                    return (
-                      <div
-                        key={field}
-                        className="bg-white p-3 rounded-lg shadow-sm border border-slate-100"
-                      >
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium text-slate-500">
-                            {fieldNameMap[field] || field}
-                          </span>
-                          <span className="text-sm font-semibold text-slate-600">
-                            {field === 'currency' ? (
-                              <span className="bg-sky-50 text-sky-600 px-2 py-1 rounded-full text-xs font-mono">
-                                {displayValue}
-                              </span>
-                            ) : field === 'status_rented' ? (
-                              <span className="bg-amber-50 text-amber-600 px-2 py-1 rounded-full text-xs">
-                                {displayValue}
-                              </span>
-                            ) : (
-                              displayValue
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  }
-                )}
+              <div className="mt-8 text-center">
+                <button
+                  onClick={() => onRentClick?.(selectedAdAccountDetail)}
+                  className="bg-[#193250] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#1f259ca9] transition-all"
+                >
+                  {t('cardDetailModal.rentNow') || 'Thuê ngay'}
+                </button>
               </div>
             </div>
           </div>

@@ -416,7 +416,8 @@
     },
     "yes": "Yes",
     "no": "No",
-    "noLimit": "No limit"
+    "noLimit": "No limit",
+    "account_id": "ID Account"
   },
   "adAccountCard": {
     "personal": "Personal",
