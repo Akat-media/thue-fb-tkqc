@@ -756,6 +756,17 @@ const AdminTransactionsPage: React.FC = () => {
                 </thead>
 
                 <tbody className="text-sm text-gray-800">
+                  {sortedData.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={headers.length}
+                        className="px-4 py-3 text-lg text-center font-medium text-red-600 border border-gray-100"
+                      >
+                        {t('adminTransactions.emptyState') ||
+                          'Không có giao dịch nào'}
+                      </td>
+                    </tr>
+                  ) : null}
                   {sortedData.map((item: any) => (
                     <tr
                       key={item.id}
@@ -1071,6 +1082,17 @@ const AdminTransactionsPage: React.FC = () => {
                 </thead>
 
                 <tbody className="text-sm text-gray-800">
+                  {sortedData.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={headers.length}
+                        className="px-4 py-3 text-lg text-center font-medium text-red-600 border border-gray-100"
+                      >
+                        {t('adminTransactions.emptyState') ||
+                          'Không có giao dịch nào'}
+                      </td>
+                    </tr>
+                  ) : null}
                   {sortedData.map((item: any) => (
                     <tr
                       key={item.id}

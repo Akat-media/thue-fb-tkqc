@@ -417,7 +417,9 @@
     "yes": "Yes",
     "no": "No",
     "noLimit": "No limit",
-    "account_id": "ID Account"
+    "account_id": "ID Account",
+    "accountTypeBusiness": "Business",
+    "type": "Type"
   },
   "adAccountCard": {
     "personal": "Personal",
@@ -645,7 +647,8 @@
       "showing": "Showing",
       "of": "of",
       "items": "items"
-    }
+    },
+    "emptyState": "No transactions found!"
   },
   "rentModal": {
     "title": "Rent account",
