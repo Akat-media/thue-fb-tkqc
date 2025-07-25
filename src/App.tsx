@@ -97,7 +97,7 @@ function AppRoutes() {
           <Route element={<ProtectedRoute />}>
             <Route path="/add-account" element={<AddAccountPage />} />
             <Route path="/rentals" element={<RentalsPage />} />
-            <Route path="/payments" element={<PaymentPage />} />
+            <Route path="/payments/" element={<PaymentPage />} />
             <Route path="/deposit" element={<PaymentForm />} />
             <Route path="/adsaccountmanager" element={<ManageAdsAccount />} />
             <Route

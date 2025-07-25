@@ -111,10 +111,10 @@ const FloatingButtons: React.FC = () => {
                                 {/*<div className="absolute inset-0 w-14 h-14 rounded-full border-2 border-blue-500 zoom-in-animation"></div>*/}
                                 <button
                                     onClick={openChatModal}
-                                    className="relative bg-blue-400 w-14 h-14 rounded-full shadow-lg hover:scale-110 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group border"
-                                    title="Facebook"
+                                    className="relative bg-white w-14 h-14 rounded-full shadow-lg hover:scale-110 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group border"
+                                    title="chatbox"
                                 >
-                                    <MessageSquareMore  />
+                                    <MessageSquareMore color="#1f89f2" size={32} />
                                 </button>
                                 {/*<button*/}
                                 {/*    onClick={openChatModal}*/}
