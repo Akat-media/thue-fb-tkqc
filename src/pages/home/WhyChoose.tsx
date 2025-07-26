@@ -23,7 +23,7 @@ const WhyChoose = () => {
                 {t('whyChoose.headingLine1')}
               </div>
               <div className="font-hubot font-medium text-[22px] md:text-[38px] leading-[1.1]">
-                <span className="text-[#1E8CFF]">{t('whyChoose.highlight')} </span>
+                <span className="text-[#1E8CFF] italic ">{t('whyChoose.highlight')} </span>
                 <span>{t('whyChoose.headingLine2')} </span>
               </div>
             </div>
@@ -51,11 +51,11 @@ const WhyChoose = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="text-black text-left font-hubot text-[16px] md:text-[18px] font-[400] leading-[140%]">
+                  <div className="text-[#6B7280] text-left font-hubot text-[16px] md:text-[18px] font-[400] leading-[140%]">
                   {t('strongAccount.descLine1')}, <br className="hidden md:block" />{' '}
                   {t('strongAccount.descLine2')}
                   </div>
-                  <div className="text-black text-left font-hubot text-[16px] md:text-[18px] font-[400] leading-[140%]">
+                  <div className="text-[#6B7280] text-left font-hubot text-[16px] md:text-[18px] font-[400] leading-[140%]">
                   {t('strongAccount.descLine3')},{' '}
                     <br className="hidden md:block" />
                     {t('strongAccount.descLine4')}
@@ -165,7 +165,7 @@ const WhyChoose = () => {
               {/* Left image - appears second on mobile */}
               <div className="flex justify-center md:justify-start order-2 md:order-1 mt-[24px] md:mt-[0]">
                 <img
-                  src="/homepage/why-choose/test.png"
+                  src="/homepage/why-choose/active-quickly.png"
                   alt="akaads"
                   className="max-w-full h-auto max-h-48 md:max-h-none object-contain"
                   data-aos="fade-right"
@@ -189,7 +189,7 @@ const WhyChoose = () => {
                 </div>
 
                 <div>
-                  <div className="text-black text-left font-hubot text-[16px] md:text-[18px] font-[400] leading-[140%]">
+                  <div className="text-[#6B7280] text-left font-hubot text-[16px] md:text-[18px] font-[400] leading-[140%]">
                     <div>
                         <Trans i18nKey="active.descLine1" />
                     </div>
@@ -224,10 +224,10 @@ const WhyChoose = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="text-black text-left font-hubot text-[16px] md:text-[18px] font-[400] leading-[140%]">
+                  <div className="text-[#6B7280] text-left font-hubot text-[16px] md:text-[18px] font-[400] leading-[140%]">
                     <Trans i18nKey="payment.descLine1" />
                   </div>
-                  <div className="text-black text-left font-hubot text-[16px] md:text-[18px] font-[400] leading-[140%]">
+                  <div className="text-[#6B7280] text-left font-hubot text-[16px] md:text-[18px] font-[400] leading-[140%]">
                     <Trans i18nKey="payment.descLine2" />
                   </div>
                 </div>
@@ -236,7 +236,7 @@ const WhyChoose = () => {
               {/* Right image */}
               <div className="flex justify-center md:justify-end">
                 <img
-                  src="/homepage/why-choose/test.png"
+                  src="/homepage/why-choose/pay.png"
                   alt="akaads"
                   className="max-w-full h-auto max-h-48 md:max-h-none object-contain"
                   data-aos="fade-left"

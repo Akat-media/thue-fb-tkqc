@@ -12,6 +12,21 @@ export default {
         zoomIn: 'zoomIn 1s both',
         // pulseRing: 'pulseRing 1.5s infinite',
       },
+      fontFamily: {
+        work: ['"Work Sans"', 'sans-serif'],
+        sans: [
+          '"Noto Sans Vietnamese"',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          'Helvetica',
+          'Arial',
+          'sans-serif',
+        ],
+        hubot: ['"Hubot Sans"', 'sans-serif'],
+        roboto: ['Roboto', 'sans-serif'],
+        montserrat: ['"Montserrat"', 'sans-serif'],
+      },
       keyframes: {
         bgMove: {
           '0%, 100%': {
@@ -43,21 +58,6 @@ export default {
         //   '70%': { transform: 'scale(1.5)', opacity: '0' },
         //   '100%': { transform: 'scale(1.5)', opacity: '0' },
         // },
-      },
-      fontFamily: {
-        work: ['"Work Sans"', 'sans-serif'],
-        sans: [
-          '"Noto Sans Vietnamese"',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          '"Segoe UI"',
-          'Helvetica',
-          'Arial',
-          'sans-serif',
-        ],
-        hubot: ['"Hubot Sans"', 'sans-serif'],
-        roboto: ['Roboto', 'sans-serif'],
-        montserrat: ['"Montserrat"', 'sans-serif'],
       },
       colors: {
         revenue: '#4CAF50',

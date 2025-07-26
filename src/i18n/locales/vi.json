@@ -175,18 +175,19 @@
   },
   "footer": {
     "companyName": "Agency Truyền Thông AKA Media",
+    "companyName2":"Công nghệ AKA Media",
     "slogan": "Giải pháp số toàn diện",
-    "address": "Tầng 4, Tòa nhà Việt Hương, Làng nghề, Triều Khúc, Thanh Trì, Hà Nội, Việt Nam",
-
-    "serviceTitle": "Dịch vụ",
+    "address": "Tầng 4, Tòa nhà Việt Hương,",
+    "address2": "Triều Khúc, Thanh Trì, Hà Nội, Việt Nam",
+    "serviceTitle": "DỊCH VỤ",
     "services": {
       "rentBM": "Cho thuê BM",
       "rentAdAccount": "Cho thuê tài khoản quảng cáo",
       "deposit": "Nạp tiền",
       "accountManagement": "Quản lý tài khoản"
     },
-
-    "supportTitle": "Hỗ trợ",
+    "contactTitle": "LIÊN HỆ",
+    "supportTitle": "HỖ TRỢ",
     "support": {
       "faq": "FAQ",
       "terms": "Điều khoản sử dụng",
@@ -195,11 +196,17 @@
     "footerBot": "AKA Media, 2025. Bảo lưu mọi quyền."
   },
   "price": {
+    "basic": "Cơ bản",
+    "standard": "Tiêu chuẩn",
+    "advanced":"Nâng cao",
+    "premium":"Cao cấp",
     "title": "BÁO GIÁ DỊCH VỤ",
-    "title2": "Gói thuê tài khoản",
-    "title3": "Quảng cáo",
+    "title2": "Gói thuê",
+    "title2sub": "tài khoản",
+    "title3": "quảng cáo",
     "fee": "Phí dịch vụ",
-    "rent": "Thuê ngay"
+    "rent": "Thuê ngay",
+    "contact": "Liên hệ"
   },
   "highlightProject": {
     "title": "DỰ ÁN NỔI BẬT",

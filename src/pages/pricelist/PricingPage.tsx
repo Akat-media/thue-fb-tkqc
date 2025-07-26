@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import PricingCard from './PricingCard';
 import BaseHeader from "../../api/BaseHeader.ts";
 import {useTranslation} from "react-i18next";
+import { Col, ConfigProvider, Row } from 'antd';
 
 interface BudgetItem {
     id?: string;
@@ -46,14 +47,20 @@ const PricingPage: React.FC = () => {
     }, [i18n.language]);
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-10 max-w-7xl mx-auto">
-            {data.map((plan, index) => (
-                <PricingCard
-                    key = {index}
-                    {...plan}
-                />
-            ))}
-        </div>
+    //   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-10 max-w-7xl mx-auto">
+    <Row gutter={[24, 24]} className='pb-6'> 
+    {data.map((plan, index) => (
+        <Col key={index} xs={24} sm={24} md={12} lg={12} xl={12}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <PricingCard 
+            key = {index}
+            {...plan}
+          />
+            </div>
+        </Col>
+    ))}
+    </Row>
+    //   </div>
     );
 };
 

@@ -104,6 +104,8 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showBalance, setShowBalance] = useState(false)
+
   // Notification fetch logic
   const { fetchNotifications, notificationsList } = useNotificationStore();
   useEffect(() => {
@@ -219,6 +221,8 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
         handleLogout={handleLogout}
         setShowLoginModal={setShowLoginModal}
         setShowRegisterModal={setShowRegisterModal}
+        setShowBalance={setShowBalance}
+        showBalance={showBalance}
       />
 
       {/* SP Navigation */}
@@ -231,6 +235,8 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
         setMobileNavOpen={setMobileNavOpen}
         onToggle={handleMobileNavToggle}
         onClose={handleMobileNavClose}
+        setShowBalance={setShowBalance}
+        showBalance={showBalance}
       />
       {/* Modals */}
       {showLoginModal && (
