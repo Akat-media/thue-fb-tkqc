@@ -213,7 +213,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       footer={null} // <-- Tắt cả hai nút OK và Cancel
       centered
       width={896}
-      className="z-[1000000000] p-0"
+      className="z-[1000000000] p-0 max-h-[80vh] sm:max-h-screen  overflow-scroll sm:overflow-hidden"
     >
       <Main
         ref={innerBorderRef}
@@ -226,17 +226,17 @@ const RentModal: React.FC<RentModalProps> = (props) => {
           className="w-full z-10 relative"
         >
           <div className="flex flex-col">
-            <h3 className="text-[24px] font-medium text-[#6B7280]">
+            <h3 className="text-[20px] sm:text-[24px] font-medium text-[#6B7280]">
               Thuê tài khoản
             </h3>
             <h1 className="flex gap-2">
-              <div className="text-[42px] font-semibold">{account?.name}</div>
+              <div className="text-[25px] sm:text-[42px] font-semibold">{account?.name}</div>
               <img src={url3} alt="Xem chi tiết" />
             </h1>
           </div>
-          <main className="flex items-stretch w-full justify-between">
+          <main className="flex sm:flex-row flex-col items-stretch w-full justify-between">
             {/* phần left */}
-            <div className="w-[48%] bg-white p-[24px] rounded-[16px]">
+            <div className="w-full sm:w-[48%] my-5 sm:my-0 bg-white p-[24px] rounded-[16px]">
               <div className={`${!errors.bmId ? 'mb-3' : ''}`}>
                 <label className="block mb-[8px] font-medium text-[14px] uppercase text-[#6B7280]">
                   ID BM
@@ -343,7 +343,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
               </div>
             </div>
             {/* phần right */}
-            <div className="w-[48%] bg-white p-[24px] rounded-[16px]">
+            <div className="w-full sm:w-[48%] bg-white p-[24px] rounded-[16px]">
               <h4 className="block mb-[18px] font-medium text-[14px] uppercase text-[#6B7280]">
                 CHI TIẾT THANH TOÁN
               </h4>
@@ -415,7 +415,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
           </main>
 
           <div className="flex justify-between mt-[28px]">
-            <button type="submit" className="btn-close">
+            <button type="button" onClick={handleCancel} className="btn-close">
               Hủy
             </button>
             <button
