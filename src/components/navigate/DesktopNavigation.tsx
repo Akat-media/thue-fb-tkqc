@@ -13,21 +13,25 @@ import Icon from '../icons';
 import { ProfileDropdown } from '../layout/ProfileDropdown';
 import { NAV_ITEMS } from '../layout/Navbar';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Dropdown } from 'antd';
+import { Button, Dropdown } from 'antd';
 import { LANGUAGE_ITEMS } from '../layout/Navbar';
 import { useTranslation } from 'react-i18next';
-import { Bell } from 'lucide-react';
+import { Bell, Eye, EyeOff, Star, Wallet } from 'lucide-react';
 import { useNotificationStore } from '../../stores/notificationStore';
 type DesktopNavigationProps = {
   user: any;
+  showBalance:boolean;
   setShowLoginModal: Dispatch<SetStateAction<boolean>>;
   setShowRegisterModal: Dispatch<SetStateAction<boolean>>;
+  setShowBalance: Dispatch<SetStateAction<boolean>>;
   handleLogout: () => void;
 };
 export default function DesktopNavigation({
   user,
+  showBalance,
   setShowLoginModal,
   setShowRegisterModal,
+  setShowBalance,
   handleLogout,
 }: DesktopNavigationProps) {
   const { i18n, t } = useTranslation();
@@ -131,7 +135,7 @@ export default function DesktopNavigation({
   const unReadNoti = useMemo(() => {
     return notificationsList.filter((item) => !item.is_read);
   }, [notificationsList]);
-
+  console.log("userrr", user)
   return (
     <div className={`hidden lg:block ${isScrolled ? 'relative' : 'unset'}`}>
       {/* Desktop Header */}
@@ -142,6 +146,7 @@ export default function DesktopNavigation({
               onClick={() => navigate('/dashboard')}
               className="flex items-center cursor-pointer"
             >
+              {' '}
               <Icon name="logo" />
             </div>
 
@@ -150,16 +155,47 @@ export default function DesktopNavigation({
               {user ? (
                 <div className="relative">
                   <div className="flex items-center gap-3">
-                    <div className='relative'>
-                    <Bell
-                      className="w-5 h-5 cursor-pointer"
-                      onClick={() => openNotification('third')}
-                    />
-                    {unReadNoti.length > 0 && (
-                      <div className="absolute top-0 left-3 transform -translate-y-1/2 translate-x-[calc(50%-10px)] bg-red-500 text-white text-[10px] font-semibold rounded-full h-4 min-w-[16px] flex items-center justify-center px-[4px]">
-                        {unReadNoti.length}
+                    <div className="bg-white/98 backdrop-blur-xl rounded-2xl px-2 py-2 border-2 border-white shadow-2xl ring-4 ring-white/20">
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-lg">
+                            <Star className="w-6 h-6 text-white" />
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="text-right">
+                            <div 
+                            className="text-lg font-black text-gray-900 drop-shadow-sm"
+                            >
+                            
+                              {showBalance
+                                ? (<span>{user?.user?.points?.toLocaleString('vi-VN')} <span className='text-sm'>{t('profile.menu.points')}</span></span>)
+                                : <span className='font-mono text-[10px]'>••••••••</span>}
+                            </div>
+                          </div>
+                          <div
+                            onClick={() => setShowBalance(!showBalance)}
+                            className='cursor-pointer'
+                          >
+                            {showBalance ? (
+                              <EyeOff className="w-5 h-5" />
+                            ) : (
+                              <Eye className="w-5 h-5" />
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    )}
+                    </div>
+                    <div className="relative">
+                      <Bell
+                        className="w-5 h-5 cursor-pointer"
+                        onClick={() => openNotification('third')}
+                      />
+                      {unReadNoti.length > 0 && (
+                        <div className="absolute top-0 left-3 transform -translate-y-1/2 translate-x-[calc(50%-10px)] bg-red-500 text-white text-[10px] font-semibold rounded-full h-4 min-w-[16px] flex items-center justify-center px-[4px]">
+                          {unReadNoti.length}
+                        </div>
+                      )}
                     </div>
                     <ProfileDropdown handleLogout={handleLogout} />
                   </div>

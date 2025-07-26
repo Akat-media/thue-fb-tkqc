@@ -51,7 +51,7 @@ const GlobalStyle = createGlobalStyle`
 const HomePage: React.FC = () => {
   const { fetchNotifications } = useNotificationStore();
   const user = localStorage.getItem('user');
-  const role = typeof user === 'string' ? JSON.parse(user)?.user.role : '';
+  const role = typeof user === 'string' ? JSON.parse(user)?.user?.role : '';
   const { RangePicker } = DatePicker;
   const dateFormat = 'YYYY/MM/DD';
   const [stats, setStats] = useState<any>(null);

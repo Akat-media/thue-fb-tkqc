@@ -35,8 +35,8 @@ const Logo: React.FC<IconProps> = () => {
     <path d="M206.148 57.6372V51.5976H207.049V57.6372H206.148Z" fill="#282828"/>
     <path d="M212.138 52.455H209.274V54.0767H211.896V54.9218H209.274V56.7734H212.138V57.6309H208.373V51.5913H212.138V52.4488V52.455ZM210.33 50.3051L209.38 51.1439L208.926 50.6095L210.33 49.3606L211.734 50.6095L211.281 51.1439L210.33 50.3051ZM210.349 58.3641C210.504 58.3641 210.641 58.42 210.753 58.5319C210.865 58.6437 210.921 58.7742 210.921 58.9358C210.921 59.0973 210.865 59.2278 210.753 59.3396C210.641 59.4515 210.504 59.5074 210.349 59.5074C210.194 59.5074 210.051 59.4515 209.933 59.3396C209.814 59.2278 209.765 59.0911 209.765 58.9358C209.765 58.7804 209.821 58.6437 209.933 58.5319C210.044 58.42 210.181 58.3641 210.349 58.3641Z" fill="#282828"/>
     <path d="M218.321 57.7304L214.108 53.5673V57.6372H213.232V51.4982L217.439 55.6613V51.5914H218.321V57.7304Z" fill="#282828"/>
-    </g>
-    <defs>
+      </g>
+      <defs>
     <linearGradient id="paint0_linear_1_31" x1="81.7698" y1="46.1237" x2="97.5524" y2="18.7901" gradientUnits="userSpaceOnUse">
     <stop stopColor="#323CEB"/>
     <stop offset="0.41" stopColor="#0596FF"/>
@@ -72,13 +72,13 @@ const Logo: React.FC<IconProps> = () => {
     <stop offset="0.5" stopColor="#0596FF"/>
     <stop offset="0.79" stopColor="#1DC1FF"/>
     <stop offset="1" stopColor="#2DDCFF"/>
-    </linearGradient>
+        </linearGradient>
     <clipPath id="clip0_1_31">
     <rect width="258.013" height="64" fill="white"/>
     </clipPath>
-    </defs>
-    </svg>    
+      </defs>
+    </svg>
   );
 };
 
-export default Logo; 
+export default Logo;

@@ -6,4 +6,4 @@ export interface IconProps {
   height?: number | string;
 }
 
-export type IconType = 'home' | 'pricing' | 'topup' | 'accounts' | 'rented' | 'history' | 'support' | 'logo' | 'logoVietnam' | 'vietnameseFlag' | 'logoEL'  ;  
+export type IconType = 'home' | 'pricing' | 'topup' | 'accounts' | 'rented' | 'history' | 'support' | 'logo' | 'logoVietnam' | 'vietnameseFlag' | 'logoEL' | 'percent' | 'checkCircle' | 'logoNew' | 'fb' | 'zalo' | 'youtube' | 'logoV2' | 'ccIcon';  

@@ -1,5 +1,5 @@
 'use client';
-import { Bell, Menu, X } from 'lucide-react';
+import { Bell, Eye, EyeOff, Menu, Star, X } from 'lucide-react';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
 import { ProfileDropdown } from '../layout/ProfileDropdown';
@@ -13,9 +13,11 @@ import { useNotificationStore } from '../../stores/notificationStore';
 interface MobileNavigationProps {
   isOpen: boolean;
   user: any;
+  showBalance:boolean;
   setShowLoginModal: Dispatch<SetStateAction<boolean>>;
   setShowRegisterModal: Dispatch<SetStateAction<boolean>>;
   setMobileNavOpen:Dispatch<SetStateAction<boolean>>;
+  setShowBalance: Dispatch<SetStateAction<boolean>>;
   handleLogout: () => void;
   onToggle: () => void;
   onClose: () => void;
@@ -24,6 +26,8 @@ interface MobileNavigationProps {
 export default function MobileNavigation({
   isOpen,
   user,
+  showBalance,
+  setShowBalance,
   setShowLoginModal,
   setShowRegisterModal,
   handleLogout,
@@ -53,20 +57,58 @@ export default function MobileNavigation({
           >
             <Menu className="w-6 h-6 transition-transform duration-200" />
           </button>
-          <div
-              onClick={() => navigate('/dashboard')}
-              className="hidden sm:flex items-center cursor-pointer">
+          {/* <div
+            onClick={() => navigate('/dashboard')}
+            className="hidden sm:flex items-center cursor-pointer"
+          >
             <img
               src="/logo.png"
               alt=""
               className="h-10 sm:h-12 customScreen:h-14 shrink-0"
             />
-          </div>
+          </div> */}
           <div className="flex">
             {user && (
               <div className="relative">
-                <div className='flex items-center gap-3'>
-                <div className='relative'>
+                <div className="flex items-center gap-3">
+                  <div className="bg-white/98 backdrop-blur-xl rounded-2xl px-2 py-2 border-2 border-white shadow-2xl ring-4 ring-white/20">
+                    <div className="flex items-center">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-lg">
+                          <Star className="w-5 h-5 text-white" />
+                        </div>
+                      </div>
+                      <div className="ml-2 items-start">
+                        <p className='text-sm font-hubot font-bold'>{t('profile.menu.points')}</p>
+                        <div className="flex text-right">
+                          <div className="text-sm font-black text-gray-900 drop-shadow-sm text-nowrap">
+                            {showBalance ? (
+                              <span>
+                                {user?.user?.points?.toLocaleString('vi-VN')}{' '}
+                                <span className="text-sm">
+                                </span>
+                              </span>
+                            ) : (
+                              <span className="font-mono text-[10px]">
+                                ••••••••
+                              </span>
+                            )}
+                          </div>
+                        <div
+                          onClick={() => setShowBalance(!showBalance)}
+                          className="cursor-pointer ml-2"
+                        >
+                          {showBalance ? (
+                            <EyeOff className="w-5 h-5" />
+                          ) : (
+                            <Eye className="w-5 h-5" />
+                          )}
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative">
                     <Bell
                       className="w-5 h-5 cursor-pointer"
                       onClick={() => openNotification('third')}
@@ -76,10 +118,8 @@ export default function MobileNavigation({
                         {unReadNoti.length}
                       </div>
                     )}
-                    </div>
-                  <ProfileDropdown
-                    handleLogout={handleLogout}
-                  />
+                  </div>
+                  <ProfileDropdown handleLogout={handleLogout} />
                 </div>
               </div>
             )}
@@ -92,7 +132,7 @@ export default function MobileNavigation({
                 },
               }}
               placement="topRight"
-              className='ml-2'
+              className="ml-2"
             >
               <button className="text-white rounded-full transition-all duration-200 flex items-center">
                 {i18n.language === 'vi' ? (
@@ -145,13 +185,25 @@ export default function MobileNavigation({
                   to={item.url}
                   onClick={handleClick}
                   className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg transition-all duration-200 group
-                    ${isActive ? 'bg-[#B3D8FF] text-blue-600 font-semibold' : 'text-gray-700 hover:bg-[#EBEBEB] hover:text-gray-900'}`}
+                    ${
+                      isActive
+                        ? 'bg-[#B3D8FF] text-blue-600 font-semibold'
+                        : 'text-gray-700 hover:bg-[#EBEBEB] hover:text-gray-900'
+                    }`}
+                >
+                  <div
+                    className={`flex-shrink-0 transition-transform duration-200 ${
+                      isActive ? 'text-blue-600' : 'group-hover:scale-110'
+                    }`}
                   >
-                  <div className={`flex-shrink-0 transition-transform duration-200 ${isActive ? 'text-blue-600' : 'group-hover:scale-110'}`}>
                     {item.icon}
                   </div>
-                  <span className={`text-sm font-hubot ${isActive ? 'text-blue-600' : 'text-[#6B7280]'}`}>
-                  {t(item.i18nKey)}
+                  <span
+                    className={`text-sm font-hubot ${
+                      isActive ? 'text-blue-600' : 'text-[#6B7280]'
+                    }`}
+                  >
+                    {t(item.i18nKey)}
                   </span>
                 </Link>
               );
@@ -215,12 +267,20 @@ export default function MobileNavigation({
                   to={item.url}
                   onClick={handleClick}
                   className={`flex flex-col items-center space-y-1 cursor-pointer transition-all duration-200 p-2 rounded-lg
-                    ${isActive ? 'bg-[#B3D8FF] text-blue-600 font-semibold' : 'hover:text-blue-600'}`}
+                    ${
+                      isActive
+                        ? 'bg-[#B3D8FF] text-blue-600 font-semibold'
+                        : 'hover:text-blue-600'
+                    }`}
                   style={{
                     animationDelay: `${index * 100}ms`,
                   }}
                 >
-                  <div className={`text-lg transition-transform duration-200 ${isActive ? 'text-blue-600' : 'text-blue-500'}`}>
+                  <div
+                    className={`text-lg transition-transform duration-200 ${
+                      isActive ? 'text-blue-600' : 'text-blue-500'
+                    }`}
+                  >
                     {item.icon}
                   </div>
                 </Link>

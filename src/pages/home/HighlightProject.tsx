@@ -21,12 +21,12 @@ const HighlightProject = () => {
                             {t('highlightProject.title2')}
                         </div>
                         <div className="font-hubot font-medium text-[22px] md:text-[38px] leading-[1.1]">
-                          <span className="text-blue-500">{t('highlightProject.title3')} </span>
+                          <span className="text-[#1E8CFF] italic">{t('highlightProject.title3')} </span>
                         </div>
                     </div>
                 </div>
 
-                <div className="font-hubot text-[18px] max-w-[657px] my-6 md:text-right ml-auto">
+                <div className="font-hubot text-[#6B7280] text-[18px] max-w-[657px] my-6 md:text-start ml-auto text-start">
                     {t('highlightProject.content')}
                 </div>
 

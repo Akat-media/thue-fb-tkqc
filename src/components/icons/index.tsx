@@ -11,6 +11,14 @@ import Logo from './Logo';
 import VietnameseIcon from './VietnameseIcon';
 import VietnameseFlag from './VietnamFlag';
 import EnglishIcon from './EnglishIcon';
+import Percent from './Percent';
+import Checkcircle from './Checkcircle';
+import LogoNew from './LogoNew';
+import LogoV2 from './LogoV2';
+import TagIcon from './TagIcon';
+import FbIcon from './FbIcon';
+import ZaloIcon from './ZaloIcon';
+import YoutubeIcon from './YoutubeIcon';
 
 interface IconComponentProps extends IconProps {
   name: IconType;
@@ -28,7 +36,15 @@ const Icon: React.FC<IconComponentProps> = ({ name, ...props }) => {
     logo: Logo,
     logoVietnam: VietnameseIcon,
     logoEL:EnglishIcon,
-    vietnameseFlag:VietnameseFlag
+    vietnameseFlag:VietnameseFlag,
+    percent: Percent,
+    checkCircle: Checkcircle,
+    logoNew: LogoNew,
+    fb: FbIcon,
+    zalo: ZaloIcon,
+    youtube: YoutubeIcon,
+    logoV2: LogoV2,
+    ccIcon: TagIcon
   };
 
   const IconComponent = iconComponents[name];

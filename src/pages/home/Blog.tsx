@@ -126,7 +126,7 @@ const Blog = () => {
                             {t('blog.titleLine1')}
                         </div>
                         <div className="font-hubot font-medium text-[17px] md:text-[38px] leading-[1]">
-                            <Trans i18nKey="blog.titleLine2" components={{ span: <span className="text-blue-600" /> }} />
+                            <Trans i18nKey="blog.titleLine2" components={{ span: <span className="text-[#1E8CFF] italic" /> }} />
                         </div>
                     </div>
                 </div>
@@ -139,9 +139,9 @@ const Blog = () => {
                                 <button
                                     onClick={handleBack}
                                     disabled={isTransitioning}
-                                    className="p-2 bg-white rounded-lg border border-gray-300 shadow hover:shadow-md transition button-hover disabled:opacity-50"
+                                    className="p-4 bg-white rounded-2xl shadow hover:shadow-md transition button-hover disabled:opacity-50"
                                 >
-                                    <ChevronRight className="h-6 w-6 text-gray-600 rotate-180" />
+                                    <ChevronRight className="h-7 w-7 text-gray-600 rotate-180" />
                                 </button>
                             )}
                         </div>
@@ -195,9 +195,9 @@ const Blog = () => {
                         <button
                             onClick={handleNext}
                             disabled={isTransitioning}
-                            className="p-2 bg-white rounded-lg border border-gray-300 shadow hover:shadow-md transition button-hover disabled:opacity-50"
+                            className="p-4 bg-white rounded-2xl shadow hover:shadow-md transition button-hover disabled:opacity-50"
                         >
-                            <ChevronRight className="h-6 w-6 text-gray-600" />
+                            <ChevronRight className="h-7 w-7 text-gray-600" />
                         </button>
                     </div>
                 </div>
@@ -208,17 +208,17 @@ const Blog = () => {
                         <button
                             onClick={handleBack}
                             disabled={isTransitioning || startIndex === 0}
-                            className="p-2 bg-white rounded-lg border border-gray-300 shadow hover:shadow-md transition button-hover disabled:opacity-50"
+                            className="p-3 bg-white rounded-xl shadow hover:shadow-md transition button-hover disabled:opacity-50"
                         >
-                            <ChevronRight className="h-5 w-5 text-gray-600 rotate-180" />
+                            <ChevronRight className="h-6 w-6 text-gray-600 rotate-180" />
                         </button>
 
                         <button
                             onClick={handleNext}
                             disabled={isTransitioning}
-                            className="p-2 bg-white rounded-lg border border-gray-300 shadow hover:shadow-md transition button-hover disabled:opacity-50"
+                            className="p-3 bg-white rounded-xl shadow hover:shadow-md transition button-hover disabled:opacity-50"
                         >
-                            <ChevronRight className="h-5 w-5 text-gray-600" />
+                            <ChevronRight className="h-6 w-6 text-gray-600" />
                         </button>
                     </div>
                 </div>

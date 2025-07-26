@@ -22,9 +22,9 @@ export const ProfileDropdown: React.FC<{
             <p className="text-gray-500 truncate">
               {user?.email || 'email@example.com'}
             </p>
-            <p className="font-semibold text-green-600 mt-1">
+            {/* <p className="font-semibold text-green-600 mt-1">
               {user?.points?.toLocaleString('vi-VN')} {t('profile.menu.points')}
-            </p>
+            </p> */}
           </div>
         </div>
       ),
