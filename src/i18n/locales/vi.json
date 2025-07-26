@@ -418,7 +418,9 @@
     "no": "Không",
     "noLimit": "Không giới hạn",
     "account_id": "ID Tài khoản",
-    "rentNow": "Thuê ngay"
+    "rentNow": "Thuê ngay",
+    "accountTypeBusiness": "Doanh nghiệp",
+    "type": "Loại tài khoản"
   },
   "adAccountCard": {
     "personal": "Cá nhân",
@@ -646,7 +648,8 @@
       "showing": "Hiển thị",
       "of": "của",
       "items": "mục"
-    }
+    },
+    "emptyState": "Hiện tại chưa có giao dịch nào được ghi nhận!"
   },
   "rentModal": {
     "title": "Thuê tài khoản",

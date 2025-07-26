@@ -387,6 +387,7 @@ const MarketplacePage: React.FC = () => {
 
   const fieldNameMap: Record<string, string> = {
     account_id: t('cardDetailModal.account_id'),
+    type: t('cardDetailModal.type'),
     id: t('marketplacePage.fields.id'),
     account_status: t('marketplacePage.fields.accountStatus'),
     amount_spent: t('marketplacePage.fields.amountSpent'),
