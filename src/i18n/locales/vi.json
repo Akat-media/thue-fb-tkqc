@@ -205,7 +205,7 @@
     "title2sub": "tài khoản",
     "title3": "quảng cáo",
     "fee": "Phí dịch vụ",
-    "rent": "Thuê ngay",
+    "c": "Thuê ngay",
     "contact": "Liên hệ"
   },
   "highlightProject": {
@@ -686,7 +686,29 @@
     "userBalance": "Số dư:",
     "notEnoughBalance": "Số dư không đủ để thuê tài khoản này. Vui lòng nạp thêm tiền.",
     "cancel": "Hủy",
-    "confirm": "Xác nhận thuê"
+    "confirm": "Xác nhận thuê",
+    "requireBmId": "Nhập ID BM của bạn",
+    "verifyInput": {
+      "verifyInput1": "BM ID phải là chuỗi ID và không được để trống",
+      "verifyInput2": "BM ID phải là chuỗi số",
+      "verifyInput3": "Hạn mức chi tiêu phải là số",
+      "verifyInput4": "Hạn mức chi tiêu phải lớn hơn 10.000 VNĐ",
+      "verifyInput5": "Hạn mức không được vượt quá số dư",
+      "verifyInput6": "điểm"
+    },
+    "runningTime": "Khoảng thời gian chạy",
+    "applyVoucher": "Áp dụng voucher",
+    "selectVoucher": "Chọn voucher",
+    "remainWallet": "Số dư ví AKA Ads:",
+    "spendingLimit": "Hạn mức chi tiêu yêu cầu:",
+    "discountVoucher": "Voucher giảm giá:",
+    "note": {
+      "note1": "Phí dịch vụ được tính dựa trên giới hạn chi tiêu của tài khoản. Vui lòng tham khảo",
+      "note2": "Bảng giá",
+      "note3": "hoặc liên hệ",
+      "note4": "Hỗ trợ"
+    }
+
   },
   "notificationSidebar": {
     "title": "Thông báo",
