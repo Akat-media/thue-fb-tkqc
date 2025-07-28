@@ -422,7 +422,8 @@
     "noLimit": "No limit",
     "account_id": "ID Account",
     "accountTypeBusiness": "Business",
-    "type": "Type"
+    "type": "Type",
+    "rentNow": "Rent now"
   },
   "adAccountCard": {
     "personal": "Personal",
@@ -681,7 +682,28 @@
     "userBalance": "Balance:",
     "notEnoughBalance": "Insufficient balance to rent this account. Please top up.",
     "cancel": "Cancel",
-    "confirm": "Confirm rental"
+    "confirm": "Confirm rental",
+    "requireBmId": "Enter your BM ID",
+    "verifyInput": {
+      "verifyInput1": "BM ID must be a string ID and cannot be empty",
+      "verifyInput2": "BM ID must be a numeric string",
+      "verifyInput3": "Spending limit must be a number",
+      "verifyInput4": "Spending limit must be greater than 10,000 VND",
+      "verifyInput5": "The limit cannot exceed the balance.",
+      "verifyInput6": "point"
+    },
+    "runningTime": "Running time",
+    "applyVoucher": "Apply voucher",
+    "selectVoucher": "Select voucher",
+    "remainWallet": "AKA Ads Wallet Balance:",
+    "spendingLimit": "Required spending limit:",
+    "discountVoucher": "Discount voucher:",
+    "note": {
+      "note1": "Service fees are calculated based on the account spending limit. Please refer to",
+      "note2": "Price list",
+      "note3": "or contact",
+      "note4": "Support"
+    }
   },
   "notificationSidebar": {
     "title": "Notifications",
