@@ -179,6 +179,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       amountPoint:
         data.spendLimit +
         Number(watch('spendLimit') || 0) * (user?.percentage || 0),
+      fee: Number(watch('spendLimit') || 0) * (user?.percentage || 0),
       voucher_id: data.voucher || '',
       bot_id: selectedCookieId || null,
       currency: selectedCurrend,

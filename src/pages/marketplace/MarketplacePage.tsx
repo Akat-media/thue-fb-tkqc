@@ -224,6 +224,7 @@ const MarketplacePage: React.FC = () => {
     searchParams.get('from'),
     searchParams.get('to'),
     activeTab,
+    successRent,
   ]);
   useEffect(() => {
     if (!isAdmin && activeTab === 'visa') {
@@ -235,6 +236,7 @@ const MarketplacePage: React.FC = () => {
     searchParams.get('from'),
     searchParams.get('to'),
     activeTab,
+    successRent,
   ]);
   useEffect(() => {
     if (!isAdmin && activeTab === 'simple') {
@@ -246,6 +248,7 @@ const MarketplacePage: React.FC = () => {
     searchParams.get('from'),
     searchParams.get('to'),
     activeTab,
+    successRent,
   ]);
 
   const handleRentClick = (account: any) => {
