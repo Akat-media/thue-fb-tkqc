@@ -84,7 +84,7 @@ export default function MobileNavigation({
                           <div className="text-sm font-black text-gray-900 drop-shadow-sm text-nowrap">
                             {showBalance ? (
                               <span>
-                                {user?.user?.points?.toLocaleString('vi-VN')}{' '}
+                                {user?.points?.toLocaleString('vi-VN')}{' '}
                                 <span className="text-sm">
                                 </span>
                               </span>

@@ -135,7 +135,7 @@ export default function DesktopNavigation({
   const unReadNoti = useMemo(() => {
     return notificationsList.filter((item) => !item.is_read);
   }, [notificationsList]);
-  console.log("userrr", user)
+  // console.log("userrr", user)
   return (
     <div className={`hidden lg:block ${isScrolled ? 'relative' : 'unset'}`}>
       {/* Desktop Header */}
@@ -169,7 +169,7 @@ export default function DesktopNavigation({
                             >
                             
                               {showBalance
-                                ? (<span>{user?.user?.points?.toLocaleString('vi-VN')} <span className='text-sm'>{t('profile.menu.points')}</span></span>)
+                                ? (<span>{user?.points?.toLocaleString('vi-VN')} <span className='text-sm'>{t('profile.menu.points')}</span></span>)
                                 : <span className='font-mono text-[10px]'>••••••••</span>}
                             </div>
                           </div>
