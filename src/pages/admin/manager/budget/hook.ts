@@ -48,15 +48,18 @@ const useManagerBudget = ({ form }: UseManagerBudgetProps) => {
       ...data,
       amount: Number(data.amount),
       percentage: Number(data.percentage),
-      start_date: data.start_date
-        ? dayjs(data.start_date).format('YYYY-MM-DD')
-        : '',
-      end_date: data.end_date ? dayjs(data.end_date).format('YYYY-MM-DD') : '',
+      // start_date: data.start_date
+      //   ? dayjs(data.start_date).format('YYYY-MM-DD')
+      //   : '',
+      // end_date: data.end_date ? dayjs(data.end_date).format('YYYY-MM-DD') : '',
+      start_date: data.start_date ? dayjs(data.start_date).toDate() : null,
+      end_date: data.end_date ? dayjs(data.end_date).toDate() : null,
       description:
         typeof data.description === 'string'
           ? data.description.split('\n')
           : data.description,
     };
+
     try {
       const method = data?.id ? 'put' : 'post';
       const url = data?.id ? `/budget/${data.id}` : `/budget`;

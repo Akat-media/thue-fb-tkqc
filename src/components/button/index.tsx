@@ -40,6 +40,20 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
   const formatMoney = (value: number) => value.toLocaleString('vi-VN');
   const parseMoney = (str: string) => Number(str.replace(/\./g, '') || '0');
 
+  const resetFilters = () => {
+    const defaultRange: [number, number] = [0, 10000000000];
+    const defaultSelectedItems: string[] = ['1'];
+
+    setRange(defaultRange);
+    setSelectedItems(defaultSelectedItems);
+    // setDropdownOpen(false);
+
+    onClick?.({
+      selectedItems: defaultSelectedItems,
+      range: defaultRange,
+    });
+  };
+
   const toggleDropdown = () => {
     if (beforeIcon) {
       setDropdownOpen(!dropdownOpen);
@@ -73,6 +87,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
 
     setRange(newRange);
   };
+
   const onChange = (e: any) => {
     console.log(`checked = ${e.target.checked}`);
   };
@@ -194,7 +209,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
           <div className="btn-filter-group show flex justify-between gap-[20px] mt-4">
             <button
               className="button button__filter-children-close is-small is-danger is-light"
-              onClick={() => setDropdownOpen(false)}
+              onClick={resetFilters}
             >
               {t('filter.close')}
             </button>
@@ -371,18 +386,17 @@ const ButtonStyle = styled.div`
     width: 13px;
     height: 13px;
   }
-  
+
   @media (max-width: 640px) {
     // can giua dropdown
     .list-filter-child {
       transform: translateX(-76%) !important;
     }
     // mui ten tro xuong
-    .list-filter-child.active:after {  
-      display: none !important; 
+    .list-filter-child.active:after {
+      display: none !important;
     }
   }
-
 `;
 
 export default ButtonCmp;
