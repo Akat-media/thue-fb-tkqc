@@ -112,7 +112,7 @@ const PaymentPage: React.FC = () => {
         'success'
       );
       setIsShowingQR(true);
-      const qrUrl = `https://apiqr.web2m.com/api/generate/ACB/20478471/duy%20nam?amount=${amount}&memo=${shortCode}&is_mask=1&bg=1`;
+      const qrUrl = `https://apiqr.web2m.com/api/generate/ACB/21280151/bich%20ngoc?amount=${amount}&memo=${shortCode}&is_mask=1&bg=1`;
       setQrImageUrl(qrUrl);
       setTimeout(() => {
         setShowQRCode(true);

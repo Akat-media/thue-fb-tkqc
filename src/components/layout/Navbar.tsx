@@ -98,7 +98,7 @@ export const NAV_ITEMS:NavType = [
 ];
 export default function Navbar({ isHomePage }: NavbarV2Props) {
   const navigate = useNavigate();
-  const { setUser } = useUserStore();
+  const { setUser, user } = useUserStore();
   const userInfo = JSON.parse(localStorage.getItem('user') || 'null')
   const fetchUser = useUserStore((state) => state.fetchUser);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -217,7 +217,7 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
     >
       {/* PC Navigation */}
       <DesktopNavigation
-        user={userInfo}
+        user={user}
         handleLogout={handleLogout}
         setShowLoginModal={setShowLoginModal}
         setShowRegisterModal={setShowRegisterModal}
@@ -228,7 +228,7 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
       {/* SP Navigation */}
       <MobileNavigation
         isOpen={mobileNavOpen}
-        user={userInfo}
+        user={user}
         handleLogout={handleLogout}
         setShowLoginModal={setShowLoginModal}
         setShowRegisterModal={setShowRegisterModal}
