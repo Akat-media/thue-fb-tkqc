@@ -143,7 +143,7 @@ const DepositCard: React.FC<DepositCardProps> = (
                                   <div className="text-lg text-[#6E7382]">{t('paymentPage.accountNumber')}</div>
                                   <div className="flex flex-row items-center">
                                       <div className="flex flex-col mr-2">
-                                          <div className="flex justify-end text-lg font-semibold text-[#193250]">20478471</div>
+                                          <div className="flex justify-end text-lg font-semibold text-[#193250]">21280151</div>
                                       </div>
                                       <div className="text-[#6E7382]"><Copy className="h-4 w-4" /></div>
                                   </div>
@@ -152,7 +152,7 @@ const DepositCard: React.FC<DepositCardProps> = (
                                   <div className="text-lg text-[#6E7382]">{t('paymentPage.accountName')}</div>
                                   <div className="flex flex-row items-center">
                                       <div className="flex flex-col mr-2">
-                                          <div className="flex justify-end text-lg font-semibold text-[#193250]">Duy Nam</div>
+                                          <div className="flex justify-end text-lg font-semibold text-[#193250]">BICH NGOC</div>
                                       </div>
                                       <div className="text-[#6E7382]"><Copy className="h-4 w-4" /></div>
                                   </div>
