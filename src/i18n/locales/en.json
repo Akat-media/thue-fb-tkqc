@@ -175,10 +175,10 @@
   },
   "footer": {
     "companyName": "AKA Media Agency",
-    "companyName2":"AKA Media technology",
+    "companyName2": "AKA Media technology",
     "slogan": "Comprehensive digital solutions",
     "address": "4th Floor, Viet Huong Building,",
-    "address2":"Trieu Khuc, Thanh Tri, Hanoi, Vietnam",
+    "address2": "Trieu Khuc, Thanh Tri, Hanoi, Vietnam",
     "serviceTitle": "SERVICES",
     "services": {
       "rentBM": "BM rental",
@@ -451,7 +451,7 @@
     "withCard": "With Card",
     "withoutCard": "Without Card",
     "noLimit": "No Limit",
-    "close": "Close",
+    "close": "Reset Filter",
     "viewResults": "View Results",
     "minimum": "Minimum",
     "maximum": "Maximum"

@@ -139,14 +139,18 @@ const PricingManagement: React.FC = () => {
               destroyOnHidden
               style={{
                 padding: 0,
-                top: 40,
+                top: 70,
                 marginBottom: 40,
               }}
               styles={{
+                header: {
+                  padding: '10px 16px 0px 16px',
+                },
                 body: {
                   maxHeight: 'calc(100vh - 160px)',
                   overflowY: 'auto', // cuộn bên trong modal
                   paddingRight: 16,
+                  paddingLeft: 16,
                 },
               }}
             >
@@ -229,7 +233,7 @@ const PricingManagement: React.FC = () => {
                 </div>
 
                 <FieldForm type="hidden" name="id" label={''} />
-                <div className="flex justify-end space-x-2 mt-4">
+                <div className="flex justify-end space-x-2 mt-4 pb-6">
                   <Button
                     onClick={() => {
                       form.resetFields();

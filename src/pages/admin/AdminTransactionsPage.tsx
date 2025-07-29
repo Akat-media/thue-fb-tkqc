@@ -800,7 +800,7 @@ const AdminTransactionsPage: React.FC = () => {
                         </label>
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-id` ? 'bg-green-100' : ''
                         }`}
                         onClick={() => {
@@ -812,7 +812,7 @@ const AdminTransactionsPage: React.FC = () => {
                       </td>
 
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-username`
                             ? 'bg-green-100'
                             : ''
@@ -826,7 +826,7 @@ const AdminTransactionsPage: React.FC = () => {
                       </td>
 
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item?.id}-accountName`
                             ? 'bg-green-100'
                             : ''
@@ -843,7 +843,7 @@ const AdminTransactionsPage: React.FC = () => {
                           : '-'}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-status`
                             ? 'bg-green-100'
                             : ''
@@ -858,7 +858,7 @@ const AdminTransactionsPage: React.FC = () => {
                           : item?.points}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-amount`
                             ? 'bg-green-100'
                             : ''
@@ -871,7 +871,7 @@ const AdminTransactionsPage: React.FC = () => {
                         {item?.bank}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff] cursor-pointer`}
+                        className={`px-4 py-2 text-center border border-gray-200 cursor-pointer`}
                         onClick={() => {
                           setActiveCell(`${item.id}-status`);
                           setActiveRow(null);
@@ -880,16 +880,18 @@ const AdminTransactionsPage: React.FC = () => {
                         {(() => {
                           const config = getStatusConfig(item.status);
                           return (
-                            <span
-                              className={`text-xs px-3 py-1 rounded-full font-medium ${config.bg} ${config.text}`}
-                            >
-                              {config.label}
-                            </span>
+                            <div className="flex justify-center items-center px-2 py-1">
+                              <span
+                                className={`inline-block text-xs px-3 py-1 rounded-full font-medium ${config.bg} ${config.text}`}
+                              >
+                                {config.label}
+                              </span>
+                            </div>
                           );
                         })()}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-business`
                             ? 'bg-green-100'
                             : ''
@@ -908,7 +910,7 @@ const AdminTransactionsPage: React.FC = () => {
                           : ''}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-currency`
                             ? 'bg-green-100'
                             : ''
@@ -921,7 +923,7 @@ const AdminTransactionsPage: React.FC = () => {
                         {item?.type}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff] cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
                           activeCell === `${item.id}-createdAt`
                             ? 'bg-green-100'
                             : ''
@@ -949,7 +951,7 @@ const AdminTransactionsPage: React.FC = () => {
                         </div>
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-name` ? 'bg-green-100' : ''
                         }`}
                         onClick={() => {
@@ -1130,7 +1132,7 @@ const AdminTransactionsPage: React.FC = () => {
                       </td> */}
 
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-id` ? 'bg-green-100' : ''
                         }`}
                         onClick={() => {
@@ -1141,7 +1143,7 @@ const AdminTransactionsPage: React.FC = () => {
                         {item.id}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-accountName`
                             ? 'bg-green-100'
                             : ''
@@ -1156,7 +1158,7 @@ const AdminTransactionsPage: React.FC = () => {
                           : item?.points_used}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-status`
                             ? 'bg-green-100'
                             : ''
@@ -1169,7 +1171,7 @@ const AdminTransactionsPage: React.FC = () => {
                         {item?.service_type}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-amount`
                             ? 'bg-green-100'
                             : ''
@@ -1182,7 +1184,7 @@ const AdminTransactionsPage: React.FC = () => {
                         {item?.target_account}
                       </td>
                       <td
-                        className="px-4 py-2 text-center border border-[#f5f5ff]"
+                        className="px-4 py-2 text-center border border-gray-200"
                         onClick={() => {
                           setActiveCell(`${item.id}-status`);
                           setActiveRow(null);
@@ -1191,16 +1193,18 @@ const AdminTransactionsPage: React.FC = () => {
                         {(() => {
                           const config = getStatusConfig(item.status);
                           return (
-                            <span
-                              className={`text-xs px-3 py-1 rounded-full font-medium ${config.bg} ${config.text}`}
-                            >
-                              {config.label}
-                            </span>
+                            <div className="flex justify-center items-center px-2 py-1">
+                              <span
+                                className={`inline-block text-xs px-3 py-1 rounded-full font-medium ${config.bg} ${config.text}`}
+                              >
+                                {config.label}
+                              </span>
+                            </div>
                           );
                         })()}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-business`
                             ? 'bg-green-100'
                             : ''
@@ -1219,7 +1223,7 @@ const AdminTransactionsPage: React.FC = () => {
                           : ''}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-[#f5f5ff]cursor-pointer ${
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
                           activeCell === `${item.id}-currency`
                             ? 'bg-green-100'
                             : ''

@@ -101,7 +101,7 @@
     "home": "Trang chủ",
     "accounts": "Danh sách tài khoản",
     "pricing": "Bảng giá",
-    "rented": "Tài khoản đang thuê",
+    "rented": "Quản lý tài khoản",
     "topup": "Nạp tiền",
     "history": "Lịch sử giao dịch",
     "support": "Hỗ trợ",
@@ -175,7 +175,7 @@
   },
   "footer": {
     "companyName": "Agency Truyền Thông AKA Media",
-    "companyName2":"Công nghệ AKA Media",
+    "companyName2": "Công nghệ AKA Media",
     "slogan": "Giải pháp số toàn diện",
     "address": "Tầng 4, Tòa nhà Việt Hương,",
     "address2": "Triều Khúc, Thanh Trì, Hà Nội, Việt Nam",
@@ -198,8 +198,8 @@
   "price": {
     "basic": "Cơ bản",
     "standard": "Tiêu chuẩn",
-    "advanced":"Nâng cao",
-    "premium":"Cao cấp",
+    "advanced": "Nâng cao",
+    "premium": "Cao cấp",
     "title": "BÁO GIÁ DỊCH VỤ",
     "title2": "Gói thuê",
     "title2sub": "tài khoản",
@@ -455,7 +455,7 @@
     "withCard": "Đã gắn thẻ",
     "withoutCard": "Chưa gắn thẻ",
     "noLimit": "Không giới hạn",
-    "close": "Đóng",
+    "close": "Xóa tất cả",
     "viewResults": "Xem kết quả",
     "minimum": "Tối thiểu",
     "maximum": "Tối đa"
@@ -708,7 +708,6 @@
       "note3": "hoặc liên hệ",
       "note4": "Hỗ trợ"
     }
-
   },
   "notificationSidebar": {
     "title": "Thông báo",

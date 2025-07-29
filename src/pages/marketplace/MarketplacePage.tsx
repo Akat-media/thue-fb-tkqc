@@ -259,7 +259,10 @@ const MarketplacePage: React.FC = () => {
       return;
     }
     setSelectedAccount(account);
-    setIsRentModalOpen(true);
+    setIsAdDetailOpen(false);
+    setTimeout(() => {
+      setIsRentModalOpen(true);
+    }, 100);
   };
 
   //luu thong tin the
@@ -428,8 +431,8 @@ const MarketplacePage: React.FC = () => {
 
           <div className="sm:hidden flex">
             <ButtonCmp
-                onClick={hanleSearch}
-                overrideClass="h-[40px] min-w-[90px]"
+              onClick={hanleSearch}
+              overrideClass="h-[40px] min-w-[90px]"
             />
           </div>
         </div>
@@ -439,10 +442,7 @@ const MarketplacePage: React.FC = () => {
             setActiveTab={setActiveTab}
             activeTab={activeTab}
           />
-          <ButtonCmp
-              onClick={hanleSearch}
-              className="hidden sm:flex"
-          />
+          <ButtonCmp onClick={hanleSearch} className="hidden sm:flex" />
         </div>
         <div className="sm:mt-6 mt-0 flex flex-col md:flex-row md:items-center md:justify-between">
           <div className="mt-3 md:mt-0 flex items-center gap-3">

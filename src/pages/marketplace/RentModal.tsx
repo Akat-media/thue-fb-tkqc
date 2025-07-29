@@ -68,15 +68,17 @@ const RentModal: React.FC<RentModalProps> = (props) => {
   const schema = z.object({
     bmId: z
       .string()
-      .min(1, t("rentModal.verifyInput.verifyInput1"))
-      .regex(/^\d+$/, t("rentModal.verifyInput.verifyInput2")),
+      .min(1, t('rentModal.verifyInput.verifyInput1'))
+      .regex(/^\d+$/, t('rentModal.verifyInput.verifyInput2')),
     spendLimit: z
-      .number({ invalid_type_error: t("rentModal.verifyInput.verifyInput3") })
-      .gt(10000, t("rentModal.verifyInput.verifyInput4"))
+      .number({ invalid_type_error: t('rentModal.verifyInput.verifyInput3') })
+      .gt(10000, t('rentModal.verifyInput.verifyInput4'))
       .max(user?.points || 0, {
-        message: `${t("rentModal.verifyInput.verifyInput5")} (${user?.points?.toLocaleString(
-          'vi-VN'
-        )} ${t("rentModal.verifyInput.verifyInput6")})`,
+        message: `${t(
+          'rentModal.verifyInput.verifyInput5'
+        )} (${user?.points?.toLocaleString('vi-VN')} ${t(
+          'rentModal.verifyInput.verifyInput6'
+        )})`,
       }),
     voucher: z.string().optional(),
     dateRange: z
@@ -127,6 +129,12 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       fetchCookies();
       fetchData();
       fetchUser();
+      reset({
+        bmId: '',
+        spendLimit: 0,
+        voucher: '',
+        dateRange: { from: new Date(), to: addDays(new Date(), 30) },
+      });
     }
   }, [isOpen, isVisaAccount]);
 
@@ -228,10 +236,12 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         >
           <div className="flex flex-col">
             <h3 className="text-[20px] sm:text-[24px] font-medium text-[#6B7280]">
-              {t("rentModal.title")}
+              {t('rentModal.title')}
             </h3>
             <h1 className="flex gap-2">
-              <div className="text-[25px] sm:text-[42px] font-semibold">{account?.name}</div>
+              <div className="text-[25px] sm:text-[42px] font-semibold">
+                {account?.name}
+              </div>
               <img src={url3} alt="Xem chi tiết" />
             </h1>
           </div>
@@ -330,7 +340,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
               </div>
               <div>
                 <label className="block mb-[8px] font-medium text-[14px] uppercase text-[#6B7280]">
-                  {t("rentModal.applyVoucher")}
+                  {t('rentModal.applyVoucher')}
                 </label>
                 <select
                   {...register('voucher')}
@@ -338,7 +348,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   defaultValue=""
                 >
                   <option value="" disabled>
-                    {t("rentModal.selectVoucher")}
+                    {t('rentModal.selectVoucher')}
                   </option>
                 </select>
               </div>
@@ -346,47 +356,48 @@ const RentModal: React.FC<RentModalProps> = (props) => {
             {/* phần right */}
             <div className="w-full sm:w-[48%] bg-white p-[24px] rounded-[16px]">
               <h4 className="block mb-[18px] font-medium text-[14px] uppercase text-[#6B7280]">
-                {t("rentModal.paymentDetails")}
+                {t('rentModal.paymentDetails')}
               </h4>
               <div className="p-[12px] customer-point flex items-center gap-2 mb-8">
                 <img src={url5} alt="url5" />
                 <div className="flex flex-col">
                   <span className="text-[16px] font-semibold text-[#6B7280]">
-                    {t("rentModal.remainWallet")}
+                    {t('rentModal.remainWallet')}
                   </span>
                   <span className="text-[16px] font-semibold  text-[#193250]">
-                    {user?.points?.toLocaleString('vi-VN') || '0'} {t("rentModal.verifyInput.verifyInput6")}
+                    {user?.points?.toLocaleString('vi-VN') || '0'}{' '}
+                    {t('rentModal.verifyInput.verifyInput6')}
                   </span>
                 </div>
               </div>
               <div className="flex justify-between flex-wrap mb-2 text-[16px] text-[#6B7280]">
-                <span>{t("rentModal.spendingLimit")}</span>
+                <span>{t('rentModal.spendingLimit')}</span>
                 <span>
                   {Number(watch('spendLimit') || 0).toLocaleString('vi-VN')}{' '}
-                  {t("rentModal.verifyInput.verifyInput6")}
+                  {t('rentModal.verifyInput.verifyInput6')}
                 </span>
               </div>
               <div className="flex justify-between flex-wrap mb-2 text-[16px] text-[#6B7280]">
-                <span>{t("rentModal.serviceFee")}</span>
+                <span>{t('rentModal.serviceFee')}</span>
                 <span>
                   {(
                     Number(watch('spendLimit') || 0) * (user?.percentage || 0)
                   ).toLocaleString('vi-VN')}{' '}
-                  {t("rentModal.verifyInput.verifyInput6")}
+                  {t('rentModal.verifyInput.verifyInput6')}
                 </span>
               </div>
               <div className="flex justify-between flex-wrap mb-2 text-[16px] text-[#6B7280]">
-                <span>{t("rentModal.discountVoucher")}</span>
+                <span>{t('rentModal.discountVoucher')}</span>
                 <span className="text-green-600">0</span>
               </div>
               <div className="flex justify-between font-semibold mt-2 mb-[25px] text-[18px] text-[#193250]">
-                <span>{t("rentModal.totalPayment")}</span>
+                <span>{t('rentModal.totalPayment')}</span>
                 <span>
                   {(
                     Number(watch('spendLimit') || 0) +
                     Number(watch('spendLimit') || 0) * (user?.percentage || 0)
                   ).toLocaleString('vi-VN')}{' '}
-                  {t("rentModal.verifyInput.verifyInput6")}
+                  {t('rentModal.verifyInput.verifyInput6')}
                 </span>
               </div>
               <div className="flex gap-1 rounded-[12px] bg-[#F4F6F8] p-2">
@@ -394,19 +405,19 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   <img src={url6} alt="url6" />
                 </div>
                 <p className="w-[calc(100%-12px)] text-[16px] text-[#6B7280]">
-                  {t("rentModal.note.note1")}{' '}
+                  {t('rentModal.note.note1')}{' '}
                   <span
                     onClick={() => navigate('/price')}
                     className="underline text-[#2AA6FF]"
                   >
-                    {t("rentModal.note.note2")}
+                    {t('rentModal.note.note2')}
                   </span>{' '}
-                  {t("rentModal.note.note3")}{' '}
+                  {t('rentModal.note.note3')}{' '}
                   <span
                     onClick={() => navigate('/support')}
                     className="underline text-[#2AA6FF]"
                   >
-                    {t("rentModal.note.note4")}
+                    {t('rentModal.note.note4')}
                   </span>
                   .
                 </p>
@@ -416,17 +427,17 @@ const RentModal: React.FC<RentModalProps> = (props) => {
 
           <div className="flex justify-between mt-[28px]">
             <button type="button" onClick={handleCancel} className="btn-close">
-              {t("common.button.cancel")}
+              {t('common.button.cancel')}
             </button>
             <button
-              data-text={t("rentModal.confirm")}
+              data-text={t('rentModal.confirm')}
               type="submit"
               className={`btn-submit ${
                 !isValid ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               disabled={!isValid}
             >
-              {t("rentModal.confirm")}
+              {t('rentModal.confirm')}
             </button>
           </div>
         </form>
