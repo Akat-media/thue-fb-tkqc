@@ -785,5 +785,25 @@
       "success": "Thành công",
       "error": "Thất bại"
     }
+  },
+  "account_card": {
+    "bm_id": "BM ID",
+    "start_date": "Thời gian bắt đầu thuê",
+    "end_date": "Thời gian kết thúc thuê",
+    "spend_limit": "Giới hạn chi tiêu",
+    "amount_spent": "Số tiền chi tiêu",
+    "remaining": "Số dư",
+    "cancel": "Hủy tài khoản thuê",
+    "support": "Liên hệ Hỗ trợ",
+    "confirm_title": "Bạn có chắc muốn hủy tài khoản này không?",
+    "confirm_content": "Thao tác này không thể hoàn tác.",
+    "confirm_ok": "Xác nhận",
+    "confirm_cancel": "Hủy",
+    "status": {
+      "processing":"Đang xử lý",
+      "success": "Thành công",
+      "faild": "Thất bại",
+      "complete_remove":"Đã thuê"
+    }
   }
 }

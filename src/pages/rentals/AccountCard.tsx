@@ -2,6 +2,8 @@ import React from 'react';
 import url from '../../assets/Badge.svg';
 import { Clock, AlertTriangle, Check, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Modal } from 'antd';
+import { useTranslation } from 'react-i18next';
 interface AccountCardProps {
   data: any;
   onClick?: () => void;
@@ -24,34 +26,35 @@ const AccountCard: React.FC<AccountCardProps> = ({
   onClick,
   hanleCancel,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { bm_id, status, ad_account, start_date, end_date } = data;
   const { name, spend_limit, amount_spent } = ad_account;
-  const isProcessing = status === 'Đang xử lý';
+  const isProcessing = status === t('account_card.status.processing');
   const statusConfig: Record<
     StatusKey,
     { label: string; color: string; icon: React.ReactNode; bgColor?: string }
   > = {
     process: {
-      label: 'Đang xử lý',
+      label: t('account_card.status.processing'),
       color: 'text-[#F79009] bg-[#FEF0C7]',
       icon: <Clock />,
       bgColor: 'border-[#F79009]',
     },
     success: {
-      label: 'Thành công',
+      label: t('account_card.status.success'),
       color: 'text-[#12B76A] bg-[#D1FADF]',
       icon: <Check />,
       bgColor: 'border-[#12B76A]',
     },
     faild: {
-      label: 'Thất bại',
+      label: t('account_card.status.faild'),
       color: 'text-[#F04438] bg-[#FEE4E2]',
       icon: <AlertTriangle />,
       bgColor: 'border-[#F04438]',
     },
     complete_remove: {
-      label: 'Đã thuê',
+      label: t('account_card.status.complete_remove'),
       color: 'text-[#9E77ED] bg-[#F4EBFF]',
       icon: <Lock />,
       bgColor: 'border-[#9E77ED]',
@@ -87,18 +90,18 @@ const AccountCard: React.FC<AccountCardProps> = ({
         </p>
         <p className="flex justify-between mb-2 text-[16px]">
           <span className="font-medium text-gray-600">
-            {'Thời gian bắt đầu thuê'}:
+            {t('account_card.start_date')}
           </span>
           <span>{start_date}</span>
         </p>
         <p className="flex justify-between mb-2 text-[16px]">
           <span className="font-medium text-gray-600">
-            {'Thời gian kết thúc thuê'}:
+          {t('account_card.end_date')}
           </span>
           <span>{end_date}</span>
         </p>
         <p className="flex justify-between mb-3 text-[16px]">
-          <span className="font-medium text-gray-600">Giới hạn chi tiêu:</span>
+          <span className="font-medium text-gray-600">{t('account_card.spend_limit')}</span>
           <span>{spend_limit ? formatCurrency(spend_limit) : ''}</span>
         </p>
       </div>
@@ -111,7 +114,7 @@ const AccountCard: React.FC<AccountCardProps> = ({
         font-semibold text-[#4B5563] border-t-0 `}
         >
           <p className="font-medium text-gray-400 mb-1 text-[16px]">
-            Số tiền chi tiêu
+            {t('account_card.amount_spent')}
           </p>
           <p className={`${status ? statusConfig[safeStatus]?.bgColor : ''}`}>
             {formatCurrency(amount_spent)} VNĐ
@@ -123,7 +126,9 @@ const AccountCard: React.FC<AccountCardProps> = ({
           } rounded-[16px] p-2.5 text-sm 
         font-semibold text-[#4B5563] border-t-0 `}
         >
-          <p className=" font-medium text-gray-400 mb-1 text-[16px]">Số dư</p>
+          <p className=" font-medium text-gray-400 mb-1 text-[16px]">
+            {t('account_card.remaining')}
+          </p>
           <p>
             {formatCurrency(Number(spend_limit) - Number(amount_spent))} VNĐ
           </p>
@@ -134,11 +139,22 @@ const AccountCard: React.FC<AccountCardProps> = ({
         <>
           {status === 'success' && (
             <button
-              onClick={hanleCancel}
+              onClick={() => {
+                Modal.confirm({
+                  title: t('account_card.confirm_title'),
+                  content: t('account_card.confirm_content'),
+                  okText: t('account_card.confirm_ok'),
+                  cancelText: t('account_card.confirm_cancel'),
+                  onOk: () => {
+                    hanleCancel?.();
+                  },
+                  className:"custom-modal-ant"
+                });
+              }}
               className="flex-1 border border-[#10b981] text-[#10b981] 
-          rounded-full px-3 py-3 text-sm font-medium hover:bg-[#f0fdf4] transition"
+      rounded-full px-3 py-3 text-sm font-medium hover:bg-[#f0fdf4] transition"
             >
-              Hủy tài khoản thuê
+              {t('account_card.cancel')}
             </button>
           )}
           <button
@@ -146,7 +162,7 @@ const AccountCard: React.FC<AccountCardProps> = ({
             className="flex-1 bg-[#111827] text-white rounded-full 
           px-3 py-3 text-sm font-medium hover:bg-[#1f2937] transition"
           >
-            Liên hệ Hỗ trợ
+            {t('account_card.support')}
           </button>
         </>
       </div>
