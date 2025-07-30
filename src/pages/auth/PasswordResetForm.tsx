@@ -45,52 +45,15 @@ const PasswordResetForm: React.FC = () => {
   const {
     register,
     handleSubmit,
-    watch,
-    formState: { errors, isValid }
+    formState: { errors, isValid },
   } = useForm<FormData>({
     resolver: zodResolver(passwordResetSchema),
-    mode: 'onChange',
+    mode: 'all',
     defaultValues: {
       password: '',
       confirmPassword: ''
     }
   });
-
-  const password = watch('password');
-  const confirmPassword = watch('confirmPassword');
-
-  const getPasswordStrength = () =>   {
-    if (!password || password.length === 0)
-      return { level: 0, text: '', color: 'bg-gray-200' };
-    let score = 0;
-    const checks = [
-      password.length >= 8,
-      /[A-Z]/.test(password),
-      /[a-z]/.test(password),
-      /\d/.test(password),
-      /[!@#$%^&*(),.?":{}|<>]/.test(password)
-    ];
-    score = checks.filter(Boolean).length;
-    if (score <= 2)
-      return { level: 1, text: t('modalHomepage.forgotPassword.strongPass.strong2'), color: 'bg-red-500' };
-    if (score === 3)
-      return { level: 2, text: t('modalHomepage.forgotPassword.strongPass.strong3'), color: 'bg-yellow-500' };
-    if (score === 4)
-      return { level: 3, text: t('modalHomepage.forgotPassword.strongPass.strong4'), color: 'bg-blue-500' };
-    return { level: 4, text: t('modalHomepage.forgotPassword.strongPass.strong5'), color: 'bg-green-500' };
-  };
-
-  const getPasswordErrors = () => {
-    const passwordErrors = [];
-    if (password && password.length > 0) {
-      if (password.length < 8) passwordErrors.push(t('modalHomepage.forgotPassword.strongPass.strong6'));
-      if (!/[A-Z]/.test(password)) passwordErrors.push(t('modalHomepage.forgotPassword.strongPass.strong7'));
-      if (!/[a-z]/.test(password)) passwordErrors.push(t('modalHomepage.forgotPassword.strongPass.strong8'));
-      if (!/\d/.test(password)) passwordErrors.push(t('modalHomepage.forgotPassword.strongPass.strong9'));
-      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) passwordErrors.push(t('modalHomepage.forgotPassword.strongPass.strong10'));
-    }
-    return passwordErrors;
-  };
 
   // Handle form submission
   const onSubmit = async (data: FormData) => {
@@ -125,9 +88,6 @@ const PasswordResetForm: React.FC = () => {
       toast.error(errorMessage);
     }
   };
-
-  const passwordStrength = getPasswordStrength();
-  const passwordErrors = getPasswordErrors();
 
   // Success screen
   if (isSuccess) {
@@ -180,11 +140,7 @@ const PasswordResetForm: React.FC = () => {
                       id="newPassword"
                       type={showPassword ? 'text' : 'password'}
                       {...register('password')}
-                      className={`w-full px-4 py-3 pr-12 border rounded-xl focus:outline-none focus:ring-2 transition-all ${
-                          errors.password || passwordErrors.length > 0
-                              ? 'border-red-300 focus:ring-red-500'
-                              : 'border-gray-300 focus:ring-blue-500'
-                      }`}
+                      className={`w-full px-4 py-3 pr-12 border rounded-xl focus:outline-none focus:ring-2 transition-all border-gray-300 focus:ring-blue-500`}
                       placeholder={t('profile.password.confirm')}
                   />
                   <button
@@ -199,57 +155,11 @@ const PasswordResetForm: React.FC = () => {
                     )}
                   </button>
                 </div>
-
-                {/* Password Strength Indicator */}
-                {password && (
-                    <div className="mt-3">
-                      <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-gray-600">
-                      {t('modalHomepage.forgotPassword.strongPass.strong1')}
-                    </span>
-                        <span
-                            className={`text-xs font-medium ${
-                                passwordStrength.level >= 3
-                                    ? 'text-green-600'
-                                    : passwordStrength.level >= 2
-                                        ? 'text-yellow-600'
-                                        : 'text-red-600'
-                            }`}
-                        >
-                      {passwordStrength.text}
-                    </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                            className={`h-2 rounded-full transition-all duration-300 ${passwordStrength.color}`}
-                            style={{
-                              width: `${(passwordStrength.level / 4) * 100}%`,
-                            }}
-                        />
-                      </div>
-                    </div>
+                {errors.password && (
+                    <span className="text-red-500">{errors.password.message}</span>
                 )}
 
-                {/* Password Validation Messages */}
-                {password && (
-                    <div className="mt-3 space-y-1">
-                      {passwordErrors.map((error, index) => (
-                          <div
-                              key={index}
-                              className="flex items-center gap-2 text-xs text-red-600"
-                          >
-                            <AlertCircle className="w-3 h-3" />
-                            <span>{error}</span>
-                          </div>
-                      ))}
-                      {passwordErrors.length === 0 && password.length >= 8 && (
-                          <div className="flex items-center gap-2 text-xs text-green-600">
-                            <CheckCircle className="w-3 h-3" />
-                            <span> {t('modalHomepage.forgotPassword.passIsRequired')}</span>
-                          </div>
-                      )}
-                    </div>
-                )}
+
               </div>
 
               {/* Confirm Password Input */}
@@ -276,22 +186,10 @@ const PasswordResetForm: React.FC = () => {
                         <Eye className="w-5 h-5" />
                     )}
                   </button>
+                  {errors.confirmPassword && (
+                      <span className="text-red-500">{errors.confirmPassword.message}</span>
+                  )}
                 </div>
-
-                {/* Confirm Password Validation Messages */}
-                {errors.confirmPassword && (
-                    <div className="mt-2 flex items-center gap-2 text-xs text-red-600">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>{errors.confirmPassword.message}</span>
-                    </div>
-                )}
-
-                {confirmPassword && !errors.confirmPassword && password === confirmPassword && (
-                    <div className="mt-2 flex items-center gap-2 text-xs text-green-600">
-                      <CheckCircle className="w-3 h-3" />
-                      <span>{t('modalHomepage.forgotPassword.matchPass')}</span>
-                    </div>
-                )}
               </div>
 
               {/* Security Notice */}
