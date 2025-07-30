@@ -12,6 +12,7 @@ import loginimg from '../../public/login.jpg';
 import {usePageStore} from "../../stores/usePageStore.ts";
 import {useTranslation} from "react-i18next";
 import {toast} from "react-toastify";
+import i18n from "i18next";
 
 const RegisterPage: React.FC = () => {
   // const [isOpen, setIsOpen] = useState(true);
@@ -84,7 +85,10 @@ const RegisterPage: React.FC = () => {
         data: {
           email: email,
           createdTime: createdTime
-        }
+        },
+        headers: {
+          'Accept-Language': i18n.language || 'vi',
+        },
       })
 
       if (registerRes.status === 200) {

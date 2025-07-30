@@ -19,6 +19,7 @@ import ChatBox from './ChatBox';
 import { useUserStore } from '../../stores/useUserStore.ts';
 // import { toast } from 'react-toastify';
 import BaseHeader from '../../api/BaseHeader.ts';
+import i18n from "i18next";
 
 interface SupportRequest {
   id: string;
@@ -295,6 +296,9 @@ const AdminSupportRequests: React.FC = () => {
           email: result.email,
           name: result.fullName,
           phone: result.phone,
+        },
+        headers: {
+          'Accept-Language': i18n.language || 'vi',
         },
       });
       // if (sendMailUser.status === 200) {

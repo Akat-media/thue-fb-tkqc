@@ -1,6 +1,6 @@
 'use client';
 
-import {
+import React, {
   Dispatch,
   Fragment,
   SetStateAction,
@@ -138,6 +138,15 @@ export default function DesktopNavigation({
   // console.log("userrr", user)
   return (
     <div className={`hidden lg:block ${isScrolled ? 'relative' : 'unset'}`}>
+      <style>
+      {`
+          @import url('https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Hubot+Sans:ital,wght@0,200..900;1,200..900&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+          .font-mona {
+            font-family: 'Mona Sans', sans-serif;
+          }
+      `}
+      </style>
       {/* Desktop Header */}
       <header className="relative z-10 py-4">
         <div className="container mx-auto px-4">
@@ -328,7 +337,7 @@ export default function DesktopNavigation({
 
                       <span
                         className={`
-                          text-sm whitespace-nowrap font-medium transition-all duration-300 font-hubot
+                          text-base font-medium whitespace-nowrap transition-all duration-300 font-mona
                           ${
                             isActive
                               ? 'text-[#3399FF] font-semibold drop-shadow-md'

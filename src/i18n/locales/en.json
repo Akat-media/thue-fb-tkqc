@@ -250,6 +250,33 @@
       "existedEmail": "Existed email",
       "existedEmail2": "Email already exists. Please enter another email.",
       "errorCommon": "An error occurred during registration."
+    },
+    "forgotPassword": {
+      "createNew": "Create new password",
+      "enterNewPass": "Please enter a new password for your account",
+      "strongPass": {
+        "strong1": "Strong length",
+        "strong2": "Weak",
+        "strong3": "Medium",
+        "strong4": "Quite",
+        "strong5": "Strong",
+        "strong6": "At least 8 characters",
+        "strong7": "At least 1 uppercase letter",
+        "strong8": "At least 1 lowercase letter",
+        "strong9": "At least 1 number",
+        "strong10": "At least 1 special character"
+      },
+      "matchNotPass": "Password do not match",
+      "passIsRequired": "Password is required",
+      "matchPass": "Password match",
+      "accountSecurity": "Account Security",
+      "accountSecurity2": "The new password will be applied immediately. Please use a strong password to protect your account.",
+      "updatePass": "Update password",
+      "successToast": "Password reset successful!",
+      "failToast": "An error occurred while resetting your password.",
+      "successReset": "Password reset successful!",
+      "successReset2": "Your password has been updated. You can log in with the new password.",
+      "successReset3": "Sign in now"
     }
   },
   "loginPage": {

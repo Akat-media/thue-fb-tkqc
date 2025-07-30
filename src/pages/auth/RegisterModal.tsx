@@ -10,6 +10,7 @@ import { useUserStore } from '../../stores/useUserStore.ts';
 import { useNavigate } from 'react-router-dom';
 import {usePageStore} from "../../stores/usePageStore.ts";
 import {useTranslation} from "react-i18next";
+import i18n from "i18next";
 
 
 interface RegisterModalProps {
@@ -115,7 +116,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           data: {
             email: email,
             createdTime: createdTime
-          }
+          },
+          headers: {
+            'Accept-Language': i18n.language || 'vi',
+          },
         })
 
         navigate('/');

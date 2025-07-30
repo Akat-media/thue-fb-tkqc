@@ -32,13 +32,13 @@ export default function IntroSection() {
     <div
       className={`relative ${
         isScrolled ? 'lg:pt-[92px]' : ''
-      } font-[Helvetica,Arial,sans-serif]`}
+      } font-hubot`}
     >
       <main className="relative mt-8 lg:mt-16">
         <div className="container mx-auto px-4">
           <div className="text-center">
             <h2
-              className={`text-3xl lg:text-5xl font-bold text-gray-800 mb-4 lg:mb-8 transition-all duration-700
+              className={`text-3xl lg:text-[56px] font-semibold text-gray-800 mb-4 lg:mb-8 transition-all duration-700
                 ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
               `}
               style={{ transitionDelay: '100ms' }}
@@ -46,7 +46,7 @@ export default function IntroSection() {
               {t('mainHeading.title')}
             </h2>
             <h1
-              className={`text-3xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-6 pt-2 lg:mb-8 leading-tight drop-shadow-2xl transition-all duration-700
+              className={`text-3xl lg:text-[56px] font-semibold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-6 pt-2 lg:mb-8 leading-tight drop-shadow-2xl transition-all duration-700
                 ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
               `}
               style={{ transitionDelay: '300ms' }}
@@ -55,7 +55,7 @@ export default function IntroSection() {
             </h1>
             <div className="space-y-3 lg:space-y-4 mb-8 lg:mb-16 max-w-4xl mx-auto">
               <p
-                className={`text-base lg:text-xl text-gray-700 leading-relaxed transition-all duration-700
+                className={`font-mona font-medium text-base lg:text-lg text-gray-700 leading-relaxed transition-all duration-700
                   ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
                 `}
                 style={{ transitionDelay: '500ms' }}
@@ -63,7 +63,7 @@ export default function IntroSection() {
                 {t('mainHeading.subtitle')}
               </p>
               <p
-                className={`text-base lg:text-xl text-gray-700 leading-relaxed transition-all duration-700
+                className={`font-mona font-medium text-base lg:text-lg text-gray-700 leading-relaxed transition-all duration-700
                   ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
                 `}
                 style={{ transitionDelay: '700ms' }}
@@ -91,7 +91,7 @@ export default function IntroSection() {
               style={{ transitionDelay: '900ms' }}
             >
               <div className="flex items-center justify-between w-full bg-white hover:bg-gray-50 rounded-full px-2 sm:px-2 py-[6px] sm:py-2 transition-colors duration-300">
-                <span className="mx-2 font-hubot sm:mx-3 md:mx-4 text-base sm:text-lg md:text-xl font-bold text-[#193250]">
+                <span className="mx-2 font-mona sm:mx-3 md:mx-4 text-base sm:text-lg md:text-xl font-bold text-[#193250]">
                 {t('mainHeading.textButton')}
                 </span>
                 <div

@@ -16,6 +16,7 @@ import { useUserStore } from '../../stores/useUserStore.ts';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import i18n from "i18next";
 
 // interface FormData {
 //     fullName: string;
@@ -205,6 +206,9 @@ const RequestForm: React.FC = () => {
             content: data.content,
             title: data.title,
             created_at: formattedNow,
+          },
+          headers: {
+            'Accept-Language': i18n.language || 'vi',
           },
         }),
       ]);
