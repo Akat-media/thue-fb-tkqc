@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Check, RefreshCcw, X, Plus } from 'lucide-react';
+import { Check, RefreshCcw, X, Plus, Search } from 'lucide-react';
 import AdAccountCard from './AdAccountCard';
 import RentModal from './RentModal';
 import CreateBMModal from './CreateBMModal';
@@ -21,6 +21,7 @@ import CardDetailModal from './CardDetailModal';
 import { useTranslation } from 'react-i18next';
 import { usePreventScroll } from '../../hook/usePreventScroll';
 import BreadCumbsCmp from '../../components/breadCumbs';
+import Button from '../../components/ui/Button';
 
 interface BM {
   id: string;
@@ -62,9 +63,11 @@ const MarketplacePage: React.FC = () => {
   const [selectedAdAccountDetail, setSelectedAdAccountDetail] =
     useState<any>(null);
   const [isAdDetailOpen, setIsAdDetailOpen] = useState(false);
+  const [search, setSearch] = useState<any>('');
   const [total, setTotal] = useState<any>(0);
   const [totalVisa, setTotalVisa] = useState<any>(0);
   const [totalAll, setTotalAll] = useState<any>(0);
+  const [totalRent, setTotalRent] = useState<any>(0);
   const [dataQuery, setDataQuery] = useState<any>({
     pageSize: 6,
     page: 1,
@@ -78,6 +81,11 @@ const MarketplacePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const { currentPage, pageSize, handleChange } = usePagination(urlPage, 6);
   const {
+    currentPage: currentPageRent,
+    pageSize: pageSizeRent,
+    handleChange: handleChangeRent,
+  } = usePagination(urlPage, 6);
+  const {
     currentPage: currentPageAll,
     pageSize: pageSizeAll,
     handleChange: handleChangeAll,
@@ -89,13 +97,21 @@ const MarketplacePage: React.FC = () => {
   } = usePagination(urlPageSimple, 6);
   usePreventScroll(successRent);
 
-  const handleCallAPiVisaRent = async () => {
+  const handleCallAPiRent = async () => {
     try {
       const [rentedRes] = await Promise.all([
-        BaseHeader({ method: 'get', url: 'ad-accounts-visa-rent' }),
+        BaseHeader({
+          method: 'get',
+          url: 'ad-accounts-rent',
+          params: {
+            page: currentPageRent,
+            pageSize,
+          },
+        }),
       ]);
       const rentedList = rentedRes.data.data.data || [];
       setRentedAccounts(rentedList);
+      setTotalRent(rentedRes.data.data?.count);
     } catch (error) {
       console.error('Error fetching ad accounts:', error);
       toast.error(t('marketplacePage.errors.fetchAdAccounts'));
@@ -127,6 +143,7 @@ const MarketplacePage: React.FC = () => {
             pageSize,
             from: searchParams.get('from') || 0,
             to: searchParams.get('to') || 10000000000,
+            search,
           },
         }),
       ]);
@@ -150,6 +167,7 @@ const MarketplacePage: React.FC = () => {
             pageSize: pageSizeSimple,
             from: searchParams.get('from') || 0,
             to: searchParams.get('to') || 10000000000,
+            search,
           },
         }),
       ]);
@@ -159,6 +177,25 @@ const MarketplacePage: React.FC = () => {
     } catch (error) {
       console.error('Error fetching ad accounts:', error);
       toast.error(t('marketplacePage.errors.fetchAdAccounts'));
+    }
+  };
+  const hanleChangeSearch = async () => {
+    switch (activeTab) {
+      case 'all': {
+        await handleCallAPiAll();
+        return;
+      }
+      case 'visa': {
+        await handleCallAPiVisa();
+        return;
+      }
+      case 'simple': {
+        await handleCallAPiSimple();
+        return;
+      }
+
+      default:
+        return;
     }
   };
   const handleCallAPiAll = async () => {
@@ -172,6 +209,7 @@ const MarketplacePage: React.FC = () => {
             pageSize: pageSizeAll,
             from: searchParams.get('from') || 0,
             to: searchParams.get('to') || 10000000000,
+            search,
           },
         }),
       ]);
@@ -210,12 +248,12 @@ const MarketplacePage: React.FC = () => {
 
   useEffect(() => {
     if (isAdmin) {
-      handleCallAPiVisaRent();
+      handleCallAPiRent();
       fetchBMList();
     }
-  }, [isAdmin]);
+  }, [isAdmin, currentPageRent]);
   useEffect(() => {
-    if (!isAdmin && activeTab === 'all') {
+    if (activeTab === 'all') {
       handleCallAPiAll();
     }
   }, [
@@ -250,6 +288,9 @@ const MarketplacePage: React.FC = () => {
     activeTab,
     successRent,
   ]);
+  useEffect(() => {
+    setSearch('');
+  }, [activeTab]);
 
   const handleRentClick = (account: any) => {
     const userString = localStorage.getItem('user');
@@ -444,6 +485,26 @@ const MarketplacePage: React.FC = () => {
           />
           <ButtonCmp onClick={hanleSearch} className="hidden sm:flex" />
         </div>
+        <div className={'mt-3 w-full md:max-w-[50%] block md:flex gap-2'}>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            type="text"
+            placeholder="Nhập ID ads hoặc tên tài khoản quảng cáo"
+            className="w-full  px-3 py-3 text-[16px] rounded-[8px] border-[1.5px] border-[#CBCDD2]"
+          />
+          <Button
+            size="lg"
+            onClick={hanleChangeSearch}
+            className="mt-2 md:mt-0 text-white bg-gradient-to-r 
+  from-purple-500 to-indigo-500 hover:bg-gradient-to-bl 
+  focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 
+  font-medium rounded-lg text-sm min-w-[150px]"
+            icon={<Search className="h-4 w-4" />}
+          >
+            Tìm kiếm
+          </Button>
+        </div>
         <div className="sm:mt-6 mt-0 flex flex-col md:flex-row md:items-center md:justify-between">
           <div className="mt-3 md:mt-0 flex items-center gap-3">
             {isAdmin && (
@@ -514,16 +575,18 @@ const MarketplacePage: React.FC = () => {
                 />
               ))}
             </div>
-            {Boolean(totalAll) && (
-              <div className="mt-8 mb-4">
-                <Pagination
-                  total={totalAll}
-                  onChange={handleChangeAll}
-                  current={currentPageAll}
-                  pageSize={pageSizeAll}
-                />
-              </div>
-            )}
+            <div>
+              {Boolean(totalAll) && (
+                <div className="mt-8 mb-4">
+                  <Pagination
+                    total={totalAll}
+                    onChange={handleChangeAll}
+                    current={currentPageAll}
+                    pageSize={pageSizeAll}
+                  />
+                </div>
+              )}
+            </div>
           </>
         )}
         {activeTab === 'visa' && searchParams.get('is_ads_visa') == '1' && (
@@ -604,20 +667,32 @@ const MarketplacePage: React.FC = () => {
               {t('marketplacePage.rentedAccounts')}
             </h3>
             {rentedAccounts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {rentedAccounts.map((account: any, index) => (
-                  <AdAccountCard
-                    key={`${account.id}-${index}`}
-                    account={account}
-                    onRentClick={() => handleRentClick(account)}
-                    isAdmin={isAdmin}
-                    onViewDetail={(acc) => {
-                      setSelectedAdAccountDetail(acc);
-                      setIsAdDetailOpen(true);
-                    }}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {rentedAccounts.map((account: any, index) => (
+                    <AdAccountCard
+                      key={`${account.id}-${index}`}
+                      account={account}
+                      onRentClick={() => handleRentClick(account)}
+                      isAdmin={isAdmin}
+                      onViewDetail={(acc) => {
+                        setSelectedAdAccountDetail(acc);
+                        setIsAdDetailOpen(true);
+                      }}
+                    />
+                  ))}
+                </div>
+                {Boolean(totalRent) && (
+                  <div className="mt-8 mb-4">
+                    <Pagination
+                      total={totalRent}
+                      onChange={handleChangeRent}
+                      current={currentPageRent}
+                      pageSize={pageSizeRent}
+                    />
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-center text-gray-500 italic py-4">
                 {t('marketplacePage.noRentedAccounts')}

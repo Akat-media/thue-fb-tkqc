@@ -126,7 +126,7 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
                   }}
                   src={url2}
                   alt="Xem chi tiết"
-                  className="h-5 w-5 cursor-pointer"
+                  className="h-10 w-10 cursor-pointer"
                 />
               </div>
             </div>
@@ -212,18 +212,21 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
             </div>
           </CardContent>
           <CardFooter className="relative z-10 px-6 py-4 flex gap-2">
-            <Button
-              size="lg"
-              className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm "
-              fullWidth
-              onClick={(e) => {
-                e.stopPropagation();
-                onRentClick();
-              }}
-              icon={<CreditCard className="h-4 w-4" />}
-            >
-              {t('adAccountCard.rentNow')}
-            </Button>
+            {account?.status_rented !== 'rented' && (
+              <Button
+                size="lg"
+                className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm "
+                fullWidth
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRentClick();
+                }}
+                icon={<CreditCard className="h-4 w-4" />}
+              >
+                {t('adAccountCard.rentNow')}
+              </Button>
+            )}
+
             <Button
               size="lg"
               className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm "
