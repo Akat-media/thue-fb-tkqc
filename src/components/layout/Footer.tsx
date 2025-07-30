@@ -140,27 +140,47 @@ const Footer: React.FC = () => {
 
                   {/* Social Media Icons */}
                   <div className="flex gap-2 ml-6">
-                    <Link
-                      to="#"
-                      className="w-8 h-8 rounded flex items-center justify-center hover:bg-blue-700 transition-colors"
+                    {/*<Link*/}
+                    {/*  to="https://www.facebook.com/akamedia.giaiphapso/"*/}
+                    {/*  className="w-8 h-8 rounded flex items-center justify-center  transition-colors"*/}
+                    {/*>*/}
+                    {/*  <Icon name="fb" className="w-4 h-4" />*/}
+                    {/*</Link>*/}
+
+                    {/*<Link*/}
+                    {/*  to="https://zalo.me/0385958416"*/}
+                    {/*  className="w-8 h-8 rounded flex items-center justify-center  transition-colors"*/}
+                    {/*>*/}
+                    {/*  <Icon name="zalo" className="w-4 h-4" />*/}
+                    {/*</Link>*/}
+
+                    <a
+                        href="https://www.facebook.com/akamedia.giaiphapso/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-8 h-8 rounded flex items-center justify-center transition-colors"
                     >
                       <Icon name="fb" className="w-4 h-4" />
-                    </Link>
-                    <Link
-                      to="#"
-                      className="w-8 h-8 rounded flex items-center justify-center hover:bg-blue-600 transition-colors"
+                    </a>
+
+                    <a
+                        href="https://zalo.me/0385958416"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-8 h-8 rounded flex items-center justify-center transition-colors"
                     >
                       <Icon name="zalo" className="w-4 h-4" />
-                    </Link>
+                    </a>
+
                     <Link
                       to="#"
-                      className="w-8 h-8 rounded flex items-center justify-center hover:bg-red-700 transition-colors"
+                      className="w-8 h-8 rounded flex items-center justify-center transition-colors"
                     >
                       <Icon name="youtube" className="w-4 h-4" />
                     </Link>
                     <Link
                       to="#"
-                      className="w-8 h-8 rounded flex items-center justify-center hover:from-purple-600 hover:to-pink-600 transition-colors"
+                      className="w-8 h-8 rounded flex items-center justify-center transition-colors"
                     >
                       <img className="cursor-pointer" src="/homepage/footer/insta.png" alt="instagram" />
                     </Link>

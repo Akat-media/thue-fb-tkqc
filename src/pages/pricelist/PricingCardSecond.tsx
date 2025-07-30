@@ -33,7 +33,7 @@ const PricingCardSecond:React.FC<PricingCardProps> = ({
     const { t } = useTranslation();
     return (
       <div className="flex flex-col rounded-3xl transition-all duration-300 w-full max-w-sm cursor-pointer">
-        <div className="p-5 rounded-3xl bg-white">
+        <div className="p-5 rounded-3xl bg-white min-h-[450px] flex flex-col justify-between">
           <div
             className="w-[116px] h-[38px] text-sm px-2 mb-[12px] md:mb-[15px] text-white border border-gray-300 rounded-full flex justify-center items-center font-light"
             style={{

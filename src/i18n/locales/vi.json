@@ -205,7 +205,7 @@
     "title2sub": "tài khoản",
     "title3": "quảng cáo",
     "fee": "Phí dịch vụ",
-    "c": "Thuê ngay",
+    "rent": "Thuê ngay",
     "contact": "Liên hệ"
   },
   "highlightProject": {
@@ -254,6 +254,34 @@
       "existedEmail": "Email đã tồn tại",
       "existedEmail2": "Email đã tồn tại. Vui lòng nhập email khác.",
       "errorCommon": "Có lỗi xảy ra trong quá trình đăng ký"
+    },
+    "forgotPassword": {
+      "createNew": "Tạo mật khẩu mới",
+      "enterNewPass": "Vui lòng nhập mật khẩu mới cho tài khoản",
+      "strongPass": {
+        "strong1": "Độ mạnh mật khẩu",
+        "strong2": "Yếu",
+        "strong3": "Trung bình",
+        "strong4": "Khá",
+        "strong5": "Mạnh",
+        "strong6": "Ít nhất 8 ký tự",
+        "strong7": "Ít nhất 1 chữ hoa",
+        "strong8": "Ít nhất 1 chữ thường",
+        "strong9": "Ít nhất 1 số",
+        "strong10": "Ít nhất 1 ký tự đặc biệt"
+      },
+      "matchNotPass": "Mật khẩu không khớp",
+      "passIsRequired": "Mật khẩu đạt yêu cầu",
+      "matchPass": "Mật khẩu khớp",
+      "accountSecurity": "Bảo mật tài khoản",
+      "accountSecurity2": "Mật khẩu mới sẽ được áp dụng ngay lập tức. Vui lòng sử dụng mật khẩu mạnh để bảo vệ tài khoản.",
+      "updatePass": "Cập nhật mật khẩu",
+      "successToast": "Đặt lại mật khẩu thành công!",
+      "failToast": "Đã có lỗi xảy ra khi đặt lại mật khẩu",
+      "successReset": "Đặt lại mật khẩu thành công!",
+      "successReset2": "Mật khẩu của bạn đã được cập nhật. Bạn có thể đăng nhập với mật khẩu mới.",
+      "successReset3": "Đăng nhập ngay",
+      "errorToken": "Token không hợp lệ"
     }
   },
   "loginPage": {

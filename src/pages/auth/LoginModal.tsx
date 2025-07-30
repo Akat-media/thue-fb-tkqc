@@ -32,7 +32,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
-  const {t} = useTranslation();
+  const {t,i18n} = useTranslation();
   const { setUser } = useUserStore();
   const navigate = useNavigate();
 
@@ -101,6 +101,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
         url: '/forgot-password',
         baseURL: BaseUrl,
         data: { email },
+        headers: {
+          'Accept-Language': i18n.language || 'vi',
+        },
       });
       toast.success(t('modalHomepage.login.toastSuccess'));
       setIsForgotPassword(false); // Quay lại form đăng nhập
