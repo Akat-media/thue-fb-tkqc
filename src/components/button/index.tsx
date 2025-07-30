@@ -30,6 +30,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
   const [selectedItems, setSelectedItems] = useState<string[]>(['1']);
   const { innerBorderRef } = useOnOutsideClick(() => setDropdownOpen(false));
   const buttonLabel = label || (i18n.language === 'en' ? 'Filter' : 'Bộ lọc');
+  const [noLimit, setNoLimit] = useState(false);
 
   const filterItems = [
     { id: '1', label: t('filter.withCard') },
@@ -46,6 +47,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
 
     setRange(defaultRange);
     setSelectedItems(defaultSelectedItems);
+    // setNoLimit(true);
     // setDropdownOpen(false);
 
     onClick?.({
@@ -69,6 +71,8 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
   const isSelected = (id: string) => selectedItems.includes(id);
   ///
   const [range, setRange] = useState<[number, number]>([0, 10000000000]);
+  const noLimitChecked = range[0] === 0 && range[1] === 10000000000;
+
   const handleSliderChange = (value: number[]) => {
     setRange([value[0], value[1]]);
   };
@@ -89,8 +93,14 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
   };
 
   const onChange = (e: any) => {
-    console.log(`checked = ${e.target.checked}`);
+    const checked = e.target.checked;
+    setNoLimit(checked);
+
+    if (checked) {
+      resetFilters();
+    }
   };
+
   return (
     <ButtonStyle className="relative">
       <button
@@ -126,6 +136,7 @@ const ButtonCmp: React.FC<ButtonCmpProps> = ({
                 <Checkbox
                   className="text-[15px] font-medium"
                   onChange={onChange}
+                  checked={noLimit}
                 >
                   {t('filter.noLimit')}
                 </Checkbox>

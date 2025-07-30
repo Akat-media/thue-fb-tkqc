@@ -628,7 +628,7 @@ const RequestForm: React.FC = () => {
               </div>
 
               {/* Submit Button */}
-              <div className="pt-4">
+              <div className="pt-4 w-fit mx-auto">
                 <button
                   type="submit"
                   disabled={isSubmitting}
