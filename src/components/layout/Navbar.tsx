@@ -195,7 +195,7 @@ export default function Navbar({ isHomePage }: NavbarV2Props) {
     navigate('/login');
   };
   const userStorage = localStorage.getItem('user');
-  const role = userStorage != null ? JSON.parse(userStorage)?.user.role : '';
+  const role = userStorage != null ? JSON.parse(userStorage)?.user?.role : '';
   const hiddenPaths = ['/login', '/register'];
   if (hiddenPaths.includes(location.pathname) || role === 'admin') {
     return null;

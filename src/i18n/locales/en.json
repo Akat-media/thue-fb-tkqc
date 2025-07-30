@@ -101,7 +101,7 @@
     "home": "Home",
     "accounts": "Account List",
     "pricing": "Pricing",
-    "rented": "Rented Accounts",
+    "rented": "Account management",
     "topup": "Top-up",
     "history": "Transaction History",
     "support": "Support",
@@ -780,6 +780,26 @@
     "noti": {
       "success": "Success",
       "error": "Failed"
+    }
+  },
+  "account_card": {
+    "bm_id": "BM ID",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "spend_limit": "Spend limit",
+    "amount_spent": "Amount spent",
+    "remaining": "Remaining",
+    "cancel": "Cancel rental",
+    "support": "Contact Support",
+    "confirm_title": "Are you sure you want to cancel this account?",
+    "confirm_content": "This action cannot be undone.",
+    "confirm_ok": "Confirm",
+    "confirm_cancel": "Cancel",
+    "status": {
+      "processing":"Processing",
+      "success": "Success",
+      "faild": "Faild",
+      "complete_remove":"Rented"
     }
   }
 }
