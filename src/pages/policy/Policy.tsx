@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BaseHeader from '../../api/BaseHeader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n/index.ts';
@@ -9,6 +9,7 @@ interface PolicySection {
   message: string;
   created_at: string;
   updated_at: string;
+  country:string
 }
 
 interface SubSection {
@@ -16,46 +17,20 @@ interface SubSection {
   title: string;
   content: string;
 }
-
-const parseMessage = (message: string): SubSection[] => {
-  const lines = message
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean);
-  const result: SubSection[] = [];
-  let current: SubSection | null = null;
-  let counter = 1;
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const match = line.match(/^(\d+\.\d+)\.?\s*(.*)/);
-
-    if (match) {
-      if (current) result.push(current);
-      current = { id: match[1], title: match[2], content: '' };
-    } else {
-      const next = lines[i + 1];
-      const isTitleBlock =
-        !next || (/^[A-Z\u00C0-\u1EF9]/.test(line) && /^[a-z0-9]/i.test(next));
-
-      if (!current || match === null) {
-        if (isTitleBlock) {
-          if (current) result.push(current);
-          current = { id: `${counter++}`, title: line, content: '' };
-        } else if (current) {
-          current.content += (current.content ? '\n' : '') + line;
-        }
-      }
-    }
-  }
-  if (current) result.push(current);
-  return result;
-};
+type Content = {
+  title:string,
+  content:string
+}
+type Policeis = {
+  title:string;
+  message: Content[]
+}
 
 const Policy: React.FC = () => {
   const [policies, setPolicies] = useState<PolicySection[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [data, setData] = useState<Policeis[]>([])
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -78,7 +53,26 @@ const Policy: React.FC = () => {
       setLoading(false);
     }
   };
-
+  const convertMessage = policies.map((policie) => {
+    const newMessage = policie.message.split("\n\n")
+    const newMessageList: { title: string; content: string; }[] = []
+    for(let i = 0; i < newMessage.length ;  i += 2) {
+      const title = newMessage[i]?.trim()
+      const content = newMessage[i + 1]?.trim()
+      newMessageList.push({title, content})
+    }
+    return {
+      ...policie,
+      message: newMessageList
+    }
+  })
+  useEffect(() => {
+    if (policies.length > 0) { 
+      const selectedTitle = policies[activeIndex]?.title;
+      const filtered = convertMessage.filter((item) => item.title === selectedTitle);
+      setData(filtered);
+    }
+  }, [activeIndex, policies])
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-100 to-cyan-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
@@ -115,10 +109,10 @@ const Policy: React.FC = () => {
             <div className="bg-white shadow-xl rounded-b-xl p-6 mt-0">
               {policies[activeIndex] && (
                 <div className="space-y-6">
-                  {parseMessage(policies[activeIndex].message).map((sec) => (
-                    <div key={sec.id} className="flex items-center gap-4">
+                  {data[0]?.message.map((sec, index) => (
+                    <div key={index} className="flex items-center gap-4">
                       <div className="w-10 h-10 flex-shrink-0 rounded-full bg-blue-100 text-blue-900 flex items-center justify-center font-bold text-sm">
-                        {sec.id}
+                        {index + 1}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-gray-700 mb-1 leading-snug">

@@ -8,6 +8,7 @@ import BaseHeader from '../../api/BaseHeader';
 interface PolicySection {
   id?: string;
   title: string;
+  country: string;
   message: string;
 }
 
@@ -46,6 +47,7 @@ const PolicyManagement: React.FC = () => {
   const handleAddPolicy = () => {
     setEditingPolicy({
       title: 'Chính sách mới',
+      country: 'vi',
       message: 'Nội dung mới',
     });
     setEditingIndex(-1);
@@ -173,7 +175,24 @@ const PolicyManagement: React.FC = () => {
                       placeholder="Nhập tiêu đề chính sách"
                     />
                   </div>
-
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Ngôn ngữ <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={editingPolicy.country}
+                      onChange={(e) =>
+                        setEditingPolicy({
+                          ...editingPolicy,
+                          country: e.target.value,
+                        })
+                      }
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="vi">Tiếng Việt</option>
+                      <option value="en">English</option>
+                    </select>
+                  </div>
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Nội dung <span className="text-red-500">*</span>
@@ -267,10 +286,27 @@ const PolicyManagement: React.FC = () => {
                                 placeholder="Nhập tiêu đề chính sách"
                               />
                             </div>
-
                             <div className="mb-4">
                               <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Nội dung <span className="text-red-500">*</span>
+                                Ngôn ngữ <span className="text-red-500">*</span>
+                              </label>
+                              <select
+                                value={editingPolicy.country}
+                                onChange={(e) =>
+                                  setEditingPolicy({
+                                    ...editingPolicy,
+                                    country: e.target.value,
+                                  })
+                                }
+                                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                              >
+                                <option value="vi">Tiếng Việt</option>
+                                <option value="en">English</option>
+                              </select>
+                            </div>
+                            <div className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Nội dung<span className="text-red-500">*</span>
                               </label>
                               <textarea
                                 value={editingPolicy.message}
