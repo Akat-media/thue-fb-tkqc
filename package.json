@@ -11,6 +11,7 @@
     "prod": "docker compose up -d --build"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.0.0",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.0.1",
     "antd": "^5.25.3",

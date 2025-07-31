@@ -1,0 +1,606 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    box-sizing: border-box;
+    font-family: "Be Vietnam Pro", sans-serif;
+}
+
+body {
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: #275EFE;
+}
+
+/* Checkbox 1 */
+.checkbox-wrapper-28 {
+    --size: 22px;
+    position: relative;
+}
+
+.checkbox-wrapper-28 *,
+.checkbox-wrapper-28 *:before,
+.checkbox-wrapper-28 *:after {
+    box-sizing: border-box;
+}
+
+.checkbox-wrapper-28 .promoted-input-checkbox {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.checkbox-wrapper-28 input:checked ~ svg {
+    height: calc(var(--size) * 0.6);
+    -webkit-animation: draw-checkbox-28 ease-in-out 0.2s forwards;
+    animation: draw-checkbox-28 ease-in-out 0.2s forwards;
+}
+
+.checkbox-wrapper-28 label:active::after {
+    background-color: #e6e6e6;
+}
+
+.checkbox-wrapper-28 label {
+    color: #0080d3;
+    line-height: var(--size);
+    cursor: pointer;
+    position: relative;
+}
+
+.checkbox-wrapper-28 label:after {
+    content: "";
+    height: var(--size);
+    width: var(--size);
+    margin-right: 8px;
+    float: left;
+    border: 1px solid #d6d6d6;
+    border-radius: 3px;
+    transition: 0.15s all ease-out;
+}
+
+.checkbox-wrapper-28 svg {
+    stroke: #0080d3;
+    stroke-width: 3px;
+    height: 0;
+    width: calc(var(--size) * 0.6);
+    position: absolute;
+    left: calc(var(--size) * 0.21);
+    top: calc(var(--size) * 0.2);
+    stroke-dasharray: 33;
+}
+
+@-webkit-keyframes draw-checkbox-28 {
+    0% {
+        stroke-dashoffset: 33;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes draw-checkbox-28 {
+    0% {
+        stroke-dashoffset: 33;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* End Checkbox 1 */
+
+/* Checkbox 2 */
+@supports (-webkit-appearance: none) or (-moz-appearance: none) {
+    .checkbox-wrapper-14 input[type=checkbox] {
+        --active: #275EFE;
+        --active-inner: #fff;
+        --focus: 2px rgba(39, 94, 254, .3);
+        --border: #BBC1E1;
+        --border-hover: #275EFE;
+        --background: #fff;
+        --disabled: #F6F8FF;
+        --disabled-inner: #E1E6F9;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        height: 24px;
+        outline: none;
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        margin: 0;
+        cursor: pointer;
+        border: 1px solid var(--bc, var(--border));
+        background: var(--b, var(--background));
+        transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:after {
+        content: "";
+        display: block;
+        left: 0;
+        top: 0;
+        position: absolute;
+        transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:checked {
+        --b: var(--active);
+        --bc: var(--active);
+        --d-o: .3s;
+        --d-t: .6s;
+        --d-t-e: cubic-bezier(.2, .85, .32, 1.2);
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:disabled {
+        --b: var(--disabled);
+        cursor: not-allowed;
+        opacity: 0.9;
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:disabled:checked {
+        --b: var(--disabled-inner);
+        --bc: var(--border);
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:disabled + label {
+        cursor: not-allowed;
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:hover:not(:checked):not(:disabled) {
+        --bc: var(--border-hover);
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:focus {
+        box-shadow: 0 0 0 var(--focus);
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:not(.switch) {
+        width: 21px;
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:not(.switch):after {
+        opacity: var(--o, 0);
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:not(.switch):checked {
+        --o: 1;
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox] + label {
+        display: inline-block;
+        vertical-align: middle;
+        cursor: pointer;
+        margin-left: 4px;
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:not(.switch) {
+        border-radius: 7px;
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:not(.switch):after {
+        width: 5px;
+        height: 9px;
+        border: 2px solid var(--active-inner);
+        border-top: 0;
+        border-left: 0;
+        left: 7px;
+        top: 4px;
+        transform: rotate(var(--r, 20deg));
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox]:not(.switch):checked {
+        --r: 43deg;
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox].switch {
+        width: 40px;
+        border-radius: 11px;
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox].switch:after {
+        left: 2px;
+        top: 2.5px;
+        border-radius: 50%;
+        width: 17px;
+        height: 17px;
+        background: var(--ab, var(--border));
+        transform: translateX(var(--x, 0));
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox].switch:checked {
+        --ab: var(--active-inner);
+        --x: 17px;
+    }
+
+    .checkbox-wrapper-14 input[type=checkbox].switch:disabled:not(:checked):after {
+        opacity: 0.6;
+    }
+}
+
+.checkbox-wrapper-14 * {
+    box-sizing: inherit;
+}
+
+.checkbox-wrapper-14 *:before,
+.checkbox-wrapper-14 *:after {
+    box-sizing: inherit;
+}
+
+/* End Checkbox 2 */
+
+/* Button */
+.button {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+    cursor: pointer;
+    min-width: 40px;
+    position: relative;
+    background-color: #fff;
+}
+
+.button .inner-logo {
+    border-right: 1px solid #ddd;
+    padding-right: 8px;
+}
+
+.button .inner-logo img {
+    width: 28px;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    display: block;
+}
+
+.button .inner-icon {
+    font-size: 18px;
+}
+
+.button .inner-text {
+    font-size: 16px;
+}
+
+.button-blue {
+    background-color: #275EFE;
+    color: white;
+    border-color: #275EFE;
+}
+
+.button-green {
+    background-color: green;
+    color: white;
+    border-color: green;
+}
+
+.button-circle {
+    border-radius: 50%;
+}
+
+.button .inner-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    width: 18px;
+    height: 18px;
+    border-radius: 15px;
+    background-color: #275EFE;
+    color: white;
+    z-index: 1;
+}
+
+.button.active {
+    border-color: #275EFE;
+    color: #275EFE;
+}
+
+.button-round {
+    border-radius: 25px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.button-none {
+    border: 0;
+    background-color: transparent;
+}
+
+.button-group {
+    display: inline-flex;
+}
+
+.button-group .button:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.button-group .button:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 0;
+}
+
+/* End Button */
+
+.page-fix {
+    /*width: 1920px;*/
+    margin: 0 auto;
+    padding: 15px;
+    background-color: #F0F3F8;
+}
+
+/* Section 1 */
+.section-1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.section-1 .inner-left, .section-1 .inner-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-1 .inner-text-1 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.section-1 .inner-icon-down {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* End Section 1 */
+
+/* Section 2 */
+.section-2 {
+    border: 1px solid #ddd;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+/* End Section 2 */
+
+/* Section 3 */
+.section-3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.section-3 .inner-left, .section-3 .inner-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* End Section 3 */
+
+/* Section 4 */
+.section-4 {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.section-4 .inner-tag {
+    background-color: #ddd;
+    padding: 5px 8px;
+    border-radius: 3px;
+}
+
+.section-4 .inner-tag .inner-tag-2 {
+    font-weight: 600;
+}
+
+.section-4 .inner-tag .inner-tag-close {
+    cursor: pointer;
+}
+
+.section-4 .inner-input {
+    flex: 1;
+}
+
+.section-4 .inner-input input {
+    width: 100%;
+    height: 28px;
+    outline: none;
+    border: 0;
+    font-size: 16px;
+}
+
+.section-4 .inner-delete {
+    color: #275EFE;
+    cursor: pointer;
+}
+
+/* End Section 4 */
+
+/* Section 5 */
+.section-5 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 0;
+}
+
+.section-5 .inner-left, .section-5 .inner-right {
+    display: inline-flex;
+    gap: 10px;
+}
+
+.section-5 .inner-button {
+    border: 1px solid #ddd;
+    border-radius: 5px 5px 0 0;
+    padding: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: white;
+    border-bottom: 0;
+}
+
+.section-5 .inner-button.active {
+    color: #275EFE;
+}
+
+.section-5 .inner-button .inner-tag {
+    background-color: #275EFE;
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 4px 8px;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.section-5 .inner-button .inner-tag .inner-tag-close {
+    cursor: pointer;
+}
+
+/* End Section 5 */
+
+/* Section 6 */
+.section-6 {
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.section-6 .inner-left, .section-6 .inner-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* End Section 6 */
+
+/* Section 7 */
+.section-7 {
+    background-color: white;
+    padding: 10px;
+}
+
+.section-7 table {
+    border: 1px solid #ddd;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.section-7 table th, .section-7 table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.section-7 table th {
+    font-weight: 600;
+}
+
+.section-7 table .inner-text-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section-7 table .inner-text-wrap span {
+    display: inline-block;
+    white-space: nowrap; /* KhĂ´ng xuá»‘ng dĂ²ng */
+    overflow: hidden; /* áº¨n pháº§n bá»‹ trĂ n */
+    text-overflow: ellipsis; /* Thay pháº§n bá»‹ áº©n báº±ng ... */
+    max-width: 150px; /* Giá»›i háº¡n Ä‘á»™ rá»™ng, cĂ³ thá»ƒ thay Ä‘á»•i */
+}
+
+.section-7 table .text-right small {
+    display: inline-block;
+    white-space: nowrap; /* KhĂ´ng xuá»‘ng dĂ²ng */
+    overflow: hidden; /* áº¨n pháº§n bá»‹ trĂ n */
+    text-overflow: ellipsis; /* Thay pháº§n bá»‹ áº©n báº±ng ... */
+    max-width: 150px; /* Giá»›i háº¡n Ä‘á»™ rá»™ng, cĂ³ thá»ƒ thay Ä‘á»•i */
+}
+
+.section-7 table td .inner-icon {
+    font-size: 10px;
+    margin-right: 4px;
+    position: relative;
+    top: -2px;
+}
+
+.section-7 table td .inner-icon.icon-green {
+    color: green;
+}
+
+.section-7 table td .inner-icon.icon-gray {
+    color: gray;
+}
+
+.section-7 table td .inner-icon.icon-red {
+    color: red;
+}
+
+.section-7 table .text-right {
+    text-align: right;
+}
+
+.section-7 table small {
+    font-size: 12px;
+    color: gray;
+}
+
+/* End Section 7 */
+
+#ai-ad-banner {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+}
+
+#ai-ad-banner img {
+    height: 50px;
+    width: auto;
+    margin-right: 10px;
+}
+
+#ai-ad-banner span {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+
+}
