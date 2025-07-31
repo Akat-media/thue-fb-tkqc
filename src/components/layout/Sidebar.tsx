@@ -19,7 +19,8 @@ import {
   Settings,
   TicketPercent,
   QrCode,
-  Mail
+  Mail,
+  ClipboardList
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
@@ -64,6 +65,7 @@ const Sidebar: React.FC<{
     { label: 'Nạp tiền', icon: CircleDollarSign, path: '/payments' },
     { label: 'Quản lý bot', icon: Bot, path: '/create-bot' },
     { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
+    { label: 'Quản lý quảng cáo', icon: ClipboardList , path: '/admin/advertisement' },
     // { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     // { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
   ];

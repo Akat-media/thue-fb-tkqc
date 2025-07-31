@@ -51,6 +51,7 @@ import PopupWelcome from './components/layout/PopupWelcome.tsx';
 import ChatLayout from "./pages/admin/chats/ChatLayout.tsx";
 import CashBackManagement from './pages/admin/cashback/CashBackManagement.tsx';
 import AtomicSpinner from "atomic-spinner";
+import Advertisement from "./pages/admin/advertisement/Advertisement.tsx";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -142,6 +143,7 @@ function AppRoutes() {
             <Route path="/admin/account" element={<Account />} />
             <Route path="/create-bot" element={<CreateBotPage />} />
             <Route path="/admin-cashback" element={<CashBackManagement />} />
+            <Route path="/admin/advertisement" element={<Advertisement />} />
             <Route path="/support">
               <Route index element={<ListSupport />} />
               <Route path="create" element={<RequestForm />} />
