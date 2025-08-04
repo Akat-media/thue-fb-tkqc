@@ -18,7 +18,7 @@ pipeline {
                 sshagent (credentials: ["${SSH_CREDENTIALS_ID}"]) {
                     script {
                         sh """
-ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS_IP} "\
+ssh -o StrictHostKeyChecking=no -p 24700 ${VPS_USER}@${VPS_IP} "\
 export NVM_DIR='/root/.nvm'; \
 [ -s '\$NVM_DIR/nvm.sh' ] && . '\$NVM_DIR/nvm.sh'; \
 nvm use 20; \
