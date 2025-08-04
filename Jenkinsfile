@@ -20,6 +20,8 @@ pipeline {
                         sh """
 ssh -o StrictHostKeyChecking=no -p 24700 ${VPS_USER}@${VPS_IP} 'bash -lc "
 echo PATH=\\\$PATH;
+export NVM_DIR=\\\$HOME/.nvm;
+[ -s \\\$NVM_DIR/nvm.sh ] && \\\\. \\\$NVM_DIR/nvm.sh;
 which nvm;
 nvm use 20.16.0;
 which node;
