@@ -307,12 +307,12 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   name="dateRange"
                   render={({ field }) => (
                     <DatePicker
+                      ref={datePickerRef}
                       selectsRange
                       startDate={field.value?.from}
                       endDate={field.value?.to}
                       onChange={(dates) => {
                         const [start, end] = dates;
-
                         field.onChange({
                           from: start ?? undefined,
                           to: end ?? undefined,
