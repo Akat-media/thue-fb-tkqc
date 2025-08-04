@@ -64,6 +64,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
     percentage: number;
   } | null>(null);
   const { user, fetchUser } = useUserStore();
+  const [maxToDate, setMaxToDate] = useState<Date | undefined>(undefined);
 
   const schema = z.object({
     bmId: z
@@ -89,10 +90,10 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       .refine(
         ({ from, to }) => {
           const diff = (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24);
-          return diff >= 7 && diff <= 30;
+          return diff >= 7 && diff <= 60;
         },
         {
-          message: 'Khoảng thời gian phải từ 7 đến 30 ngày',
+          message: 'Khoảng thời gian phải từ 7 đến 60 ngày',
           path: ['to'],
         }
       ),
@@ -114,7 +115,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
       bmId: '',
       spendLimit: 10000000,
       voucher: '',
-      dateRange: { from: new Date(), to: addDays(new Date(), 30) },
+      dateRange: { from: undefined, to: undefined },
     },
     mode: 'onChange',
   });
@@ -133,7 +134,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
         bmId: '',
         spendLimit: 0,
         voucher: '',
-        dateRange: { from: new Date(), to: addDays(new Date(), 30) },
+        dateRange: { from: undefined, to: undefined },
       });
     }
   }, [isOpen, isVisaAccount]);
@@ -249,7 +250,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
             {/* phần left */}
             <div className="w-full sm:w-[48%] my-5 sm:my-0 bg-white p-[24px] rounded-[16px]">
               <div className={`${!errors.bmId ? 'mb-3' : ''}`}>
-                <label className="block mb-[8px] font-medium text-[14px] uppercase text-[#6B7280]">
+                <label className="block mb-[8px] font-medium text-[14px] uppercase text-gray-600">
                   ID BM
                 </label>
                 <input
@@ -265,7 +266,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 )}
               </div>
               <div className={`${!errors.spendLimit ? 'mb-3' : ''}`}>
-                <label className="block mb-[8px] font-medium text-[14px] uppercase text-[#6B7280]">
+                <label className="block mb-[8px] font-medium text-[14px] uppercase text-gray-600">
                   {t('rentModal.limitLabel')}
                 </label>
                 <Controller
@@ -306,17 +307,27 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                   name="dateRange"
                   render={({ field }) => (
                     <DatePicker
-                      ref={datePickerRef}
                       selectsRange
-                      startDate={field.value.from}
-                      endDate={field.value.to}
+                      startDate={field.value?.from}
+                      endDate={field.value?.to}
                       onChange={(dates) => {
                         const [start, end] = dates;
-                        field.onChange({ from: start, to: end });
+
+                        field.onChange({
+                          from: start ?? undefined,
+                          to: end ?? undefined,
+                        });
+                        if (start) {
+                          setMaxToDate(addDays(start, 60));
+                        } else {
+                          setMaxToDate(undefined);
+                        }
                       }}
-                      minDate={new Date()}
-                      maxDate={addDays(new Date(), 30)}
                       dateFormat="dd/MM/yyyy"
+                      minDate={new Date()}
+                      maxDate={
+                        field.value?.from ? maxToDate : addDays(new Date(), 7)
+                      }
                       className="w-full px-3 py-3 text-[16px] rounded-[8px] border-[1.5px] border-[#CBCDD2]"
                       placeholderText="Chọn khoảng thời gian"
                     />
@@ -339,7 +350,7 @@ const RentModal: React.FC<RentModalProps> = (props) => {
                 )}
               </div>
               <div>
-                <label className="block mb-[8px] font-medium text-[14px] uppercase text-[#6B7280]">
+                <label className="block mb-[8px] font-medium text-[14px] uppercase text-gray-600">
                   {t('rentModal.applyVoucher')}
                 </label>
                 <select
