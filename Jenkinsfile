@@ -21,7 +21,8 @@ pipeline {
 ssh -o StrictHostKeyChecking=no -p 24700 ${VPS_USER}@${VPS_IP} "\
 export NVM_DIR='/root/.nvm'; \
 [ -s '\$NVM_DIR/nvm.sh' ] && . '\$NVM_DIR/nvm.sh'; \
-nvm use 20; \
+[ -s '\$NVM_DIR/bash_completion' ] && . '\$NVM_DIR/bash_completion'; \
+nvm use 20.16.0; \
 cd ${DEPLOY_DIR}; \
 git pull origin main; \
 npm run prod; \
