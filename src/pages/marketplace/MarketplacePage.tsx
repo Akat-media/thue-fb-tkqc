@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Check, RefreshCcw, X, Plus, Search } from 'lucide-react';
+import {
+  Check,
+  RefreshCcw,
+  X,
+  Plus,
+  Search,
+  Key,
+  Edit,
+  Save,
+} from 'lucide-react';
 import AdAccountCard from './AdAccountCard';
 import RentModal from './RentModal';
 import CreateBMModal from './CreateBMModal';
@@ -68,6 +77,10 @@ const MarketplacePage: React.FC = () => {
   const [totalVisa, setTotalVisa] = useState<any>(0);
   const [totalAll, setTotalAll] = useState<any>(0);
   const [totalRent, setTotalRent] = useState<any>(0);
+  const [isAccessTokenModalOpen, setIsAccessTokenModalOpen] = useState(false);
+  const [accessToken, setAccessToken] = useState<string>('');
+  const [isEditingBM, setIsEditingBM] = useState(false);
+  const [editedBMToken, setEditedBMToken] = useState<string>('');
   const [dataQuery, setDataQuery] = useState<any>({
     pageSize: 6,
     page: 1,
@@ -432,6 +445,69 @@ const MarketplacePage: React.FC = () => {
     setIsDeleteModalOpen(false);
   });
 
+  const { innerBorderRef: accessTokenModalRef } = useOnOutsideClick(() => {
+    setIsAccessTokenModalOpen(false);
+  });
+
+  const handleEditBM = () => {
+    setIsEditingBM(true);
+    setEditedBMToken(selectedBM?.system_user_token || '');
+  };
+
+  const handleSaveBMToken = async () => {
+    if (!selectedBM || !editedBMToken.trim()) {
+      toast.error('Vui lòng nhập token hợp lệ!');
+      return;
+    }
+
+    try {
+      console.log('Updating BM with data:', {
+        id: selectedBM.id,
+        bm_name: selectedBM.bm_name,
+        bm_id: selectedBM.bm_id,
+        system_user_token: editedBMToken.trim(),
+      });
+
+      const response = await BaseHeader({
+        method: 'post',
+        url: 'facebook-bm-update',
+        data: {
+          id: selectedBM.id,
+          bm_name: selectedBM.bm_name,
+          bm_id: selectedBM.bm_id,
+          system_user_token: editedBMToken.trim(),
+        },
+      });
+
+      console.log('Update response:', response);
+
+      if (response.status === 200 || response.status === 201) {
+        toast.success('Cập nhật token thành công!');
+        setIsEditingBM(false);
+        // Cập nhật selectedBM với token mới
+        setSelectedBM({
+          ...selectedBM,
+          system_user_token: editedBMToken.trim(),
+        });
+        // Refresh danh sách BM
+        fetchBMList();
+      } else {
+        toast.error('Cập nhật token thất bại!');
+      }
+    } catch (error: any) {
+      console.error('Error updating BM token:', error);
+      console.error('Error details:', error.response?.data);
+      toast.error(
+        error?.response?.data?.message || 'Có lỗi xảy ra khi cập nhật token!'
+      );
+    }
+  };
+
+  const handleCancelEditBM = () => {
+    setIsEditingBM(false);
+    setEditedBMToken('');
+  };
+
   const fieldNameMap: Record<string, string> = {
     account_id: t('cardDetailModal.account_id'),
     type: t('cardDetailModal.type'),
@@ -485,25 +561,45 @@ const MarketplacePage: React.FC = () => {
           />
           <ButtonCmp onClick={hanleSearch} className="hidden sm:flex" />
         </div>
-        <div className={'mt-3 w-full md:max-w-[50%] block md:flex gap-2'}>
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            type="text"
-            placeholder="Nhập ID ads hoặc tên tài khoản quảng cáo"
-            className="w-full  px-3 py-3 text-[16px] rounded-[8px] border-[1.5px] border-[#CBCDD2]"
-          />
-          <Button
-            size="lg"
-            onClick={hanleChangeSearch}
-            className="mt-2 md:mt-0 text-white bg-gradient-to-r 
-  from-purple-500 to-indigo-500 hover:bg-gradient-to-bl 
-  focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 
-  font-medium rounded-lg text-sm min-w-[150px]"
-            icon={<Search className="h-4 w-4" />}
-          >
-            Tìm kiếm
-          </Button>
+        <div
+          className={
+            'mt-3 w-full flex flex-col md:flex-row gap-2 justify-between'
+          }
+        >
+          <div className="flex gap-2 md:max-w-[50%] w-full">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              type="text"
+              placeholder="Nhập ID ads hoặc tên tài khoản quảng cáo"
+              className="w-full px-3 py-3 text-[16px] rounded-[8px] border-[1.5px] border-[#CBCDD2]"
+            />
+            <Button
+              size="lg"
+              onClick={hanleChangeSearch}
+              className="text-white bg-gradient-to-r
+    from-purple-500 to-indigo-500 hover:bg-gradient-to-bl
+    focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800
+    font-medium rounded-lg text-sm min-w-[150px]"
+              icon={<Search className="h-4 w-4" />}
+            >
+              Tìm kiếm
+            </Button>
+          </div>
+
+          {isAdmin && (
+            <Button
+              size="lg"
+              onClick={() => setIsAccessTokenModalOpen(true)}
+              className="mt-2 md:mt-0 text-white bg-gradient-to-r
+    from-green-500 to-emerald-500 hover:bg-gradient-to-bl
+    focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800
+    font-medium rounded-lg text-sm min-w-[150px]"
+              icon={<Key className="h-4 w-4" />}
+            >
+              Access Token
+            </Button>
+          )}
         </div>
         <div className="sm:mt-6 mt-0 flex flex-col md:flex-row md:items-center md:justify-between">
           <div className="mt-3 md:mt-0 flex items-center gap-3">
@@ -739,7 +835,11 @@ const MarketplacePage: React.FC = () => {
             >
               <button
                 className="absolute top-3 right-3 text-gray-500 hover:text-black text-4xl"
-                onClick={() => setIsBMDetailModalOpen(false)}
+                onClick={() => {
+                  setIsBMDetailModalOpen(false);
+                  setIsEditingBM(false);
+                  setEditedBMToken('');
+                }}
               >
                 ×
               </button>
@@ -762,16 +862,41 @@ const MarketplacePage: React.FC = () => {
                     Hoạt động
                   </span>
                 </div>
-                {selectedBM.system_user_token && (
-                  <div className="flex flex-col">
-                    <span className="font-medium mb-1">System User Token:</span>
+                <div className="flex flex-col">
+                  <span className="font-medium mb-1">System User Token:</span>
+                  {isEditingBM ? (
+                    <div className="space-y-3">
+                      <textarea
+                        value={editedBMToken}
+                        onChange={(e) => setEditedBMToken(e.target.value)}
+                        rows={4}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                        placeholder="Nhập System User Token..."
+                      />
+                      <div className="flex justify-end space-x-2">
+                        <button
+                          onClick={handleCancelEditBM}
+                          className="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+                        >
+                          Hủy
+                        </button>
+                        <button
+                          onClick={handleSaveBMToken}
+                          className="flex items-center gap-1 px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                        >
+                          <Save className="h-3 w-3" />
+                          Lưu
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
                     <div className="bg-gray-100 p-2 rounded-md text-xs overflow-x-auto">
                       <code className="break-all whitespace-pre-wrap">
-                        {selectedBM.system_user_token}
+                        {selectedBM.system_user_token || 'Chưa có token'}
                       </code>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
                 {Object.entries(selectedBM).map(
                   ([key, value]: [string, any]) => {
                     if (
@@ -808,6 +933,19 @@ const MarketplacePage: React.FC = () => {
                   }
                 )}
               </div>
+
+              {/* Nút Edit ở góc dưới bên phải */}
+              {!isEditingBM && (
+                <div className="flex justify-end mt-6">
+                  <button
+                    onClick={handleEditBM}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit Token
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -981,6 +1119,86 @@ const MarketplacePage: React.FC = () => {
             setIsRentModalOpen(true);
           }}
         />
+
+        {/* Access Token Modal */}
+        {isAccessTokenModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30 px-4">
+            <div
+              ref={accessTokenModalRef}
+              className="bg-white w-full max-w-md rounded-lg shadow-lg overflow-hidden relative"
+            >
+              <button
+                onClick={() => setIsAccessTokenModalOpen(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="p-6">
+                <h2 className="text-2xl font-bold text-green-600 mb-4">
+                  Access Token
+                </h2>
+
+                <div className="mb-6">
+                  <label
+                    htmlFor="accessToken"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Nhập Access Token
+                  </label>
+                  <textarea
+                    id="accessToken"
+                    rows={4}
+                    className="block w-full px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 sm:text-sm resize-none"
+                    placeholder="Paste your access token here..."
+                    value={accessToken}
+                    onChange={(e) => setAccessToken(e.target.value)}
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAccessTokenModalOpen(false);
+                      setAccessToken('');
+                    }}
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (accessToken.trim()) {
+                        // Lưu access token vào localStorage hoặc xử lý theo yêu cầu
+                        localStorage.setItem(
+                          'facebook_access_token',
+                          accessToken.trim()
+                        );
+                        toast.success('Access Token đã được lưu thành công!');
+                        setIsAccessTokenModalOpen(false);
+                        setAccessToken('');
+                      } else {
+                        toast.error('Vui lòng nhập Access Token!');
+                      }
+                    }}
+                    disabled={!accessToken.trim()}
+                    className={`px-4 py-2 rounded-lg text-white ${
+                      !accessToken.trim()
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-green-600 hover:bg-green-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Key className="w-4 h-4" />
+                      Lưu Token
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
