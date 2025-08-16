@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Check, RefreshCcw, X, Plus, Search, Key } from 'lucide-react';
+import {
+  Check,
+  RefreshCcw,
+  X,
+  Plus,
+  Search,
+  Key,
+  Edit,
+  Save,
+} from 'lucide-react';
 import AdAccountCard from './AdAccountCard';
 import RentModal from './RentModal';
 import CreateBMModal from './CreateBMModal';
@@ -70,6 +79,8 @@ const MarketplacePage: React.FC = () => {
   const [totalRent, setTotalRent] = useState<any>(0);
   const [isAccessTokenModalOpen, setIsAccessTokenModalOpen] = useState(false);
   const [accessToken, setAccessToken] = useState<string>('');
+  const [isEditingBM, setIsEditingBM] = useState(false);
+  const [editedBMToken, setEditedBMToken] = useState<string>('');
   const [dataQuery, setDataQuery] = useState<any>({
     pageSize: 6,
     page: 1,
@@ -438,6 +449,53 @@ const MarketplacePage: React.FC = () => {
     setIsAccessTokenModalOpen(false);
   });
 
+  const handleEditBM = () => {
+    setIsEditingBM(true);
+    setEditedBMToken(selectedBM?.system_user_token || '');
+  };
+
+  const handleSaveBMToken = async () => {
+    if (!selectedBM || !editedBMToken.trim()) {
+      toast.error('Vui lòng nhập token hợp lệ!');
+      return;
+    }
+
+    try {
+      const response = await BaseHeader({
+        method: 'put',
+        url: 'facebook-bm',
+        data: {
+          id: selectedBM.id,
+          system_user_token: editedBMToken.trim(),
+        },
+      });
+
+      if (response.status === 200) {
+        toast.success('Cập nhật token thành công!');
+        setIsEditingBM(false);
+        // Cập nhật selectedBM với token mới
+        setSelectedBM({
+          ...selectedBM,
+          system_user_token: editedBMToken.trim(),
+        });
+        // Refresh danh sách BM
+        fetchBMList();
+      } else {
+        toast.error('Cập nhật token thất bại!');
+      }
+    } catch (error: any) {
+      console.error('Error updating BM token:', error);
+      toast.error(
+        error?.response?.data?.message || 'Có lỗi xảy ra khi cập nhật token!'
+      );
+    }
+  };
+
+  const handleCancelEditBM = () => {
+    setIsEditingBM(false);
+    setEditedBMToken('');
+  };
+
   const fieldNameMap: Record<string, string> = {
     account_id: t('cardDetailModal.account_id'),
     type: t('cardDetailModal.type'),
@@ -765,7 +823,11 @@ const MarketplacePage: React.FC = () => {
             >
               <button
                 className="absolute top-3 right-3 text-gray-500 hover:text-black text-4xl"
-                onClick={() => setIsBMDetailModalOpen(false)}
+                onClick={() => {
+                  setIsBMDetailModalOpen(false);
+                  setIsEditingBM(false);
+                  setEditedBMToken('');
+                }}
               >
                 ×
               </button>
@@ -788,16 +850,41 @@ const MarketplacePage: React.FC = () => {
                     Hoạt động
                   </span>
                 </div>
-                {selectedBM.system_user_token && (
-                  <div className="flex flex-col">
-                    <span className="font-medium mb-1">System User Token:</span>
+                <div className="flex flex-col">
+                  <span className="font-medium mb-1">System User Token:</span>
+                  {isEditingBM ? (
+                    <div className="space-y-3">
+                      <textarea
+                        value={editedBMToken}
+                        onChange={(e) => setEditedBMToken(e.target.value)}
+                        rows={4}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                        placeholder="Nhập System User Token..."
+                      />
+                      <div className="flex justify-end space-x-2">
+                        <button
+                          onClick={handleCancelEditBM}
+                          className="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+                        >
+                          Hủy
+                        </button>
+                        <button
+                          onClick={handleSaveBMToken}
+                          className="flex items-center gap-1 px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                        >
+                          <Save className="h-3 w-3" />
+                          Lưu
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
                     <div className="bg-gray-100 p-2 rounded-md text-xs overflow-x-auto">
                       <code className="break-all whitespace-pre-wrap">
-                        {selectedBM.system_user_token}
+                        {selectedBM.system_user_token || 'Chưa có token'}
                       </code>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
                 {Object.entries(selectedBM).map(
                   ([key, value]: [string, any]) => {
                     if (
@@ -834,6 +921,19 @@ const MarketplacePage: React.FC = () => {
                   }
                 )}
               </div>
+
+              {/* Nút Edit ở góc dưới bên phải */}
+              {!isEditingBM && (
+                <div className="flex justify-end mt-6">
+                  <button
+                    onClick={handleEditBM}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit Token
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
