@@ -461,16 +461,27 @@ const MarketplacePage: React.FC = () => {
     }
 
     try {
+      console.log('Updating BM with data:', {
+        id: selectedBM.id,
+        bm_name: selectedBM.bm_name,
+        bm_id: selectedBM.bm_id,
+        system_user_token: editedBMToken.trim(),
+      });
+
       const response = await BaseHeader({
-        method: 'put',
-        url: 'facebook-bm',
+        method: 'post',
+        url: 'facebook-bm-update',
         data: {
           id: selectedBM.id,
+          bm_name: selectedBM.bm_name,
+          bm_id: selectedBM.bm_id,
           system_user_token: editedBMToken.trim(),
         },
       });
 
-      if (response.status === 200) {
+      console.log('Update response:', response);
+
+      if (response.status === 200 || response.status === 201) {
         toast.success('Cập nhật token thành công!');
         setIsEditingBM(false);
         // Cập nhật selectedBM với token mới
@@ -485,6 +496,7 @@ const MarketplacePage: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Error updating BM token:', error);
+      console.error('Error details:', error.response?.data);
       toast.error(
         error?.response?.data?.message || 'Có lỗi xảy ra khi cập nhật token!'
       );
