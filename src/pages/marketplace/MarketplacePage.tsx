@@ -262,11 +262,9 @@ const MarketplacePage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isAdmin) {
-      handleCallAPiRent();
-      fetchBMList();
-    }
-  }, [isAdmin, currentPageRent]);
+    handleCallAPiRent();
+    fetchBMList();
+  }, [currentPageRent]);
   useEffect(() => {
     if (activeTab === 'all') {
       handleCallAPiAll();
@@ -627,7 +625,7 @@ const MarketplacePage: React.FC = () => {
         </div>
         <div className="sm:mt-6 mt-0 flex flex-col md:flex-row md:items-center md:justify-between">
           <div className="mt-3 md:mt-0 flex items-center gap-3">
-            {isAdmin && (
+            {
               <button
                 onClick={handleSync}
                 className="group inline-flex items-center px-3 py-[10px] border border-yellow-400 rounded-xl shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 overflow-hidden"
@@ -637,8 +635,8 @@ const MarketplacePage: React.FC = () => {
                   {t('marketplacePage.syncAccounts')}
                 </span>
               </button>
-            )}
-            {isAdmin && (
+            }
+            {
               <button
                 type="button"
                 className="group inline-flex items-center px-3 py-[10px] border border-green-600 rounded-xl shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 overflow-hidden"
@@ -652,12 +650,12 @@ const MarketplacePage: React.FC = () => {
                   {t('marketplacePage.createBM')}
                 </span>
               </button>
-            )}
+            }
           </div>
         </div>
 
         {/* BM List Section */}
-        {isAdmin && filteredBmList.length > 0 && (
+        {filteredBmList.length > 0 && (
           <div className="mt-8">
             <h3 className="text-2xl font-bold text-blue-900 mb-4">
               {t('marketplacePage.bmList')}
