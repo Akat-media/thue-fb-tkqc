@@ -1,9 +1,9 @@
-import React, {useEffect, useRef, useState} from "react";
-import { useForm, Controller } from "react-hook-form";
+import React, { useEffect, useRef, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 // import axios from 'axios';
-import BaseHeader, { BaseUrl } from "../../../api/BaseHeader";
-import { toast } from "react-toastify";
-import { Eye, EyeOff } from "lucide-react";
+import BaseHeader, { BaseUrl } from '../../../api/BaseHeader';
+import { toast } from 'react-toastify';
+import { Eye, EyeOff } from 'lucide-react';
 
 interface AddUserModalProps {
   onClose: () => void;
@@ -26,11 +26,11 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
     reset,
   } = useForm<FormData>({
     defaultValues: {
-      username: "",
-      email: "",
-      phone: "",
-      role: "",
-      password: "",
+      username: '',
+      email: '',
+      phone: '',
+      role: '',
+      password: '',
     },
   });
 
@@ -40,26 +40,27 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
   // const baseUrl = import.meta.env.VITE_BASE_URL;
 
   const onSubmit = async (data: FormData) => {
+    console.log('Submitting data:', data);
     try {
       await BaseHeader({
-        method: "post",
-        url: "/user",
+        method: 'post',
+        url: '/user',
         baseURL: BaseUrl,
         data,
       });
-      toast.success("Thêm người dùng thành công");
+      toast.success('Thêm người dùng thành công');
       onSuccess();
       reset();
     } catch (error: any) {
       const errorMsg = error?.response?.data?.message || error.message;
 
-      if (errorMsg?.toLowerCase().includes("email")) {
-        toast.error("Email đã tồn tại");
+      if (errorMsg?.toLowerCase().includes('email')) {
+        toast.error('Email đã tồn tại');
       } else {
-        toast.error("Lỗi khi thêm người dùng. Vui lòng thử lại.");
+        toast.error('Lỗi khi thêm người dùng. Vui lòng thử lại.');
       }
 
-      console.error("Lỗi khi thêm người dùng:", errorMsg);
+      console.error('Lỗi khi thêm người dùng:', errorMsg);
     }
   };
 
@@ -70,11 +71,11 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
         onClose();
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.body.style.overflow = "hidden";
+    document.addEventListener('mousedown', handleClickOutside);
+    document.body.style.overflow = 'hidden';
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = "unset";
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'unset';
     };
   }, [onClose]);
 
@@ -117,7 +118,11 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
 
         {/* Form content */}
         <div className="p-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" autoComplete="off">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-6"
+            autoComplete="off"
+          >
             {/* Username */}
             <div className="group">
               <label className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-blue-600 transition-colors">
@@ -128,10 +133,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                   name="username"
                   control={control}
                   rules={{
-                    required: "Tên người dùng là bắt buộc",
+                    required: 'Tên người dùng là bắt buộc',
                     minLength: {
                       value: 3,
-                      message: "Tên người dùng phải có ít nhất 3 ký tự",
+                      message: 'Tên người dùng phải có ít nhất 3 ký tự',
                     },
                   }}
                   render={({ field }) => (
@@ -141,8 +146,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                       autoComplete="off"
                       className={`w-full p-3 pl-10 border-2 rounded-xl transition-all duration-200 outline-none bg-gray-50/50 hover:bg-white ${
                         errors.username
-                          ? "border-red-400"
-                          : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                          ? 'border-red-400'
+                          : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                       }`}
                       placeholder="Nhập tên người dùng"
                     />
@@ -181,10 +186,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                   name="email"
                   control={control}
                   rules={{
-                    required: "Email là bắt buộc",
+                    required: 'Email là bắt buộc',
                     pattern: {
                       value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: "Email không hợp lệ",
+                      message: 'Email không hợp lệ',
                     },
                   }}
                   render={({ field }) => (
@@ -193,8 +198,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                       type="email"
                       className={`w-full p-3 pl-10 border-2 rounded-xl transition-all duration-200 outline-none bg-gray-50/50 hover:bg-white ${
                         errors.email
-                          ? "border-red-400"
-                          : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                          ? 'border-red-400'
+                          : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                       }`}
                       placeholder="Nhập địa chỉ email"
                     />
@@ -233,10 +238,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                   name="phone"
                   control={control}
                   rules={{
-                    required: "Số điện thoại là bắt buộc",
+                    required: 'Số điện thoại là bắt buộc',
                     pattern: {
                       value: /^\+?\d{10,15}$/,
-                      message: "Số điện thoại không hợp lệ",
+                      message: 'Số điện thoại không hợp lệ',
                     },
                   }}
                   render={({ field }) => (
@@ -245,8 +250,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                       type="text"
                       className={`w-full p-3 pl-10 border-2 rounded-xl transition-all duration-200 outline-none bg-gray-50/50 hover:bg-white ${
                         errors.phone
-                          ? "border-red-400"
-                          : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                          ? 'border-red-400'
+                          : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                       }`}
                       placeholder="Nhập số điện thoại"
                     />
@@ -285,24 +290,25 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                   name="role"
                   control={control}
                   rules={{
-                    required: "Vai trò là bắt buộc",
+                    required: 'Vai trò là bắt buộc',
                     validate: (value) =>
-                      ["admin", "user"].includes(value)
+                      ['admin', 'user', 'super_admin'].includes(value)
                         ? true
-                        : "Vai trò không hợp lệ",
+                        : 'Vai trò không hợp lệ',
                   }}
                   render={({ field }) => (
                     <select
                       {...field}
                       className={`w-full p-3 pl-10 pr-8 border-2 rounded-xl transition-all duration-200 outline-none appearance-none cursor-pointer ${
                         errors.role
-                          ? "border-red-400"
-                          : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                          ? 'border-red-400'
+                          : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                       } bg-gray-50/50 hover:bg-white`}
                     >
                       <option value="">Chọn vai trò</option>
                       <option value="admin">Admin</option>
                       <option value="user">User</option>
+                      <option value="super_admin">Super Admin</option>
                     </select>
                   )}
                 />
@@ -354,21 +360,21 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                   name="password"
                   control={control}
                   rules={{
-                    required: "Mật khẩu là bắt buộc",
+                    required: 'Mật khẩu là bắt buộc',
                     minLength: {
                       value: 6,
-                      message: "Mật khẩu phải có ít nhất 6 ký tự",
+                      message: 'Mật khẩu phải có ít nhất 6 ký tự',
                     },
                   }}
                   render={({ field }) => (
                     <input
                       {...field}
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       className={`w-full p-3 pl-10 border-2 rounded-xl transition-all duration-200 outline-none bg-gray-50/50 hover:bg-white ${
                         errors.password
-                          ? "border-red-400"
-                          : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                          ? 'border-red-400'
+                          : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                       }`}
                       placeholder="Nhập mật khẩu"
                     />
@@ -391,14 +397,14 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                 </div>
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center">
                   <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="text-gray-400 hover:text-gray-600"
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-gray-400 hover:text-gray-600"
                   >
                     {showPassword ? (
-                        <EyeOff className="h-5 w-5" />
+                      <EyeOff className="h-5 w-5" />
                     ) : (
-                        <Eye className="h-5 w-5" />
+                      <Eye className="h-5 w-5" />
                     )}
                   </button>
                 </div>
@@ -427,8 +433,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onSuccess }) => {
                 disabled={Object.keys(errors).length > 0}
                 className={`flex-1 px-6 py-3 text-sm font-semibold text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] ${
                   Object.keys(errors).length > 0
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
                 }`}
               >
                 Thêm người dùng

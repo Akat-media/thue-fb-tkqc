@@ -31,6 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { usePreventScroll } from '../../hook/usePreventScroll';
 import BreadCumbsCmp from '../../components/breadCumbs';
 import Button from '../../components/ui/Button';
+import CardExchangeToken from './CardExchangeToken';
 
 interface BM {
   id: string;
@@ -72,6 +73,7 @@ const MarketplacePage: React.FC = () => {
   const [selectedAdAccountDetail, setSelectedAdAccountDetail] =
     useState<any>(null);
   const [isAdDetailOpen, setIsAdDetailOpen] = useState(false);
+  const [isExchangeToken, setIsExchangeToken] = useState(false);
   const [search, setSearch] = useState<any>('');
   const [total, setTotal] = useState<any>(0);
   const [totalVisa, setTotalVisa] = useState<any>(0);
@@ -526,15 +528,37 @@ const MarketplacePage: React.FC = () => {
   };
   const tabs = [
     { key: 'all', label: t('marketplacePage.adAccounts') },
-    {
-      key: 'visa',
-      label: t('marketplacePage.adAccountsWithCard'),
-    },
-    {
-      key: 'simple',
-      label: t('marketplacePage.adAccountsWithoutCard'),
-    },
+    // {
+    //   key: 'visa',
+    //   label: t('marketplacePage.adAccountsWithCard'),
+    // },
+    // {
+    //   key: 'simple',
+    //   label: t('marketplacePage.adAccountsWithoutCard'),
+    // },
   ];
+  const onSubmitExchangeToken = async (data: any) => {
+    try {
+      const response = await BaseHeader({
+        method: 'post',
+        url: 'ad-accounts-exchange-token',
+        data: {
+          bm_id: selectedBM.bm_id,
+          client_id: data.client_id,
+          client_secret: data.client_secret,
+        },
+      });
+      if (response.status == 200) {
+        toast.success('Cập nhật token thành công!');
+      } else {
+        toast.error('Cập nhật token thất bại!');
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSelectedBM(null);
+    }
+  };
 
   return (
     <>
@@ -645,6 +669,10 @@ const MarketplacePage: React.FC = () => {
                   bm={bm}
                   onClick={() => handleBMClick(bm)}
                   onDelete={handleDeleteBM}
+                  onExchangeToken={(data) => {
+                    setIsExchangeToken(true);
+                    setSelectedBM(data);
+                  }}
                 />
               ))}
             </div>
@@ -685,7 +713,7 @@ const MarketplacePage: React.FC = () => {
             </div>
           </>
         )}
-        {activeTab === 'visa' && searchParams.get('is_ads_visa') == '1' && (
+        {/* {activeTab === 'visa' && searchParams.get('is_ads_visa') == '1' && (
           <>
             <h3 className="text-2xl font-bold text-gray-600 mb-4 mt-6">
               {t('marketplacePage.adAccountsWithCard')}
@@ -755,8 +783,8 @@ const MarketplacePage: React.FC = () => {
               </div>
             )}
           </>
-        )}
-
+        )} */}
+        {/* 
         {isAdmin && (
           <>
             <h3 className="text-2xl font-bold text-green-600 my-4 mt-6">
@@ -795,7 +823,7 @@ const MarketplacePage: React.FC = () => {
               </div>
             )}
           </>
-        )}
+        )} */}
 
         {selectedAccount && (
           <RentModal
@@ -1094,6 +1122,13 @@ const MarketplacePage: React.FC = () => {
             selectedAdAccountDetail={selectedAdAccountDetail}
             fieldNameMap={fieldNameMap}
             onRentClick={handleRentClick}
+          />
+        )}
+        {isExchangeToken && (
+          <CardExchangeToken
+            isOpen={isExchangeToken}
+            onClose={setIsExchangeToken}
+            onSubmit={onSubmitExchangeToken}
           />
         )}
 

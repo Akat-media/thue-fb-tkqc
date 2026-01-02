@@ -44,14 +44,16 @@ import Paypal from './pages/paypal/index.tsx';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useTranslation } from 'react-i18next';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import NotFoundPage from './pages/404/NotFoundPage.tsx';
 import { usePageStore } from './stores/usePageStore.ts';
 import PopupWelcome from './components/layout/PopupWelcome.tsx';
-import ChatLayout from "./pages/admin/chats/ChatLayout.tsx";
+import ChatLayout from './pages/admin/chats/ChatLayout.tsx';
 import CashBackManagement from './pages/admin/cashback/CashBackManagement.tsx';
-import AtomicSpinner from "atomic-spinner";
-import Advertisement from "./pages/admin/advertisement/Advertisement.tsx";
+import AtomicSpinner from 'atomic-spinner';
+import Advertisement from './pages/admin/advertisement/Advertisement.tsx';
+import Wallet from './pages/wallet/index.tsx';
+import WalletDetail from './pages/wallet/WalletDetail.tsx';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -92,16 +94,17 @@ function AppRoutes() {
     setIsInitialized(true);
   }, []);
 
-  if (!isInitialized) return (
+  if (!isInitialized)
+    return (
       <div className="fixed inset-0 z-[9999] backdrop-blur-sm bg-white/60 flex items-center justify-center">
         <AtomicSpinner atomSize={200} nucleusParticleFillColor="#ffffff" />
       </div>
-  );
+    );
 
   return (
     <NotificationProvider>
-      <PopupWelcome />
-      {!isHideNavbar && <Navbar />}
+      {/* <PopupWelcome /> */}
+      {/* {!isHideNavbar && <Navbar />} */}
       <Layout role={userobj?.role}>
         <ScrollToTop />
         <Routes>
@@ -117,6 +120,8 @@ function AppRoutes() {
           <Route path="/price" element={<PriceList />} />
           {/* Route yêu cầu đăng nhập */}
           <Route element={<ProtectedRoute />}>
+            <Route path="/wallet" element={<Wallet />} />
+            <Route path="/wallet-detail" element={<WalletDetail />} />
             <Route path="/add-account" element={<AddAccountPage />} />
             <Route path="/rentals" element={<RentalsPage />} />
             <Route path="/payments/" element={<PaymentPage />} />

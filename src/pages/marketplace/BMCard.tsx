@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 import { Briefcase, ShieldCheck, CircleFadingPlus, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardFooter } from "../../components/ui/Card";
-import Button from "../../components/ui/Button";
-import { Tooltip } from "antd";
-import styled from "styled-components";
-import url from "../../assets/bg.svg";
+import { Card, CardContent, CardFooter } from '../../components/ui/Card';
+import Button from '../../components/ui/Button';
+import { Tooltip } from 'antd';
+import styled from 'styled-components';
+import url from '../../assets/bg.svg';
 
 interface BM {
   id: string;
@@ -19,9 +19,15 @@ interface BMCardProps {
   bm: BM;
   onClick: () => void;
   onDelete: (bm: BM) => void;
+  onExchangeToken: (bm: BM) => void;
 }
 
-const BMCard: React.FC<BMCardProps> = ({ bm, onClick, onDelete }) => {
+const BMCard: React.FC<BMCardProps> = ({
+  bm,
+  onClick,
+  onDelete,
+  onExchangeToken,
+}) => {
   return (
     <CardContainer url={url}>
       <Card className="relative main-card h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
@@ -43,7 +49,9 @@ const BMCard: React.FC<BMCardProps> = ({ bm, onClick, onDelete }) => {
                 BM ID:
               </span>
               <Tooltip title={bm?.bm_id} placement="top">
-                <span className="text-gray-900 font-medium overflow-hidden text-ellipsis leading-tight cursor-pointer">{bm?.bm_id}</span>
+                <span className="text-gray-900 font-medium overflow-hidden text-ellipsis leading-tight cursor-pointer">
+                  {bm?.bm_id}
+                </span>
               </Tooltip>
             </div>
             <div className="flex items-center text-sm">
@@ -74,13 +82,29 @@ const BMCard: React.FC<BMCardProps> = ({ bm, onClick, onDelete }) => {
             >
               Xóa
             </Button>
-            <Button fullWidth onClick={onClick}>
+            <Button
+              fullWidth
+              onClick={(e) => {
+                e.stopPropagation();
+                onExchangeToken(bm);
+              }}
+              className="bg-yellow-500 hover:bg-yellow-600"
+            >
+              Gia hạn token
+            </Button>
+            <Button
+              fullWidth
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick();
+              }}
+            >
               Xem chi tiết
             </Button>
           </div>
         </CardFooter>
         <div className="absolute bottom-0 left-0 w-full">
-          <img className="w-full" src={url || "/placeholder.svg"} alt="img" />
+          <img className="w-full" src={url || '/placeholder.svg'} alt="img" />
         </div>
       </Card>
     </CardContainer>

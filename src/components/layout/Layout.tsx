@@ -23,16 +23,16 @@ const Layout = ({
   //render without navbar and footer
   const is404 = usePageStore((state) => state.is404);
   if (is404) {
-     return (
-         <div>
-             {children}
-             <NotificationOverlay />
-             <Outlet />
-         </div>
-     );
+    return (
+      <div>
+        {children}
+        <NotificationOverlay />
+        <Outlet />
+      </div>
+    );
   }
 
-  return role === 'admin' ? (
+  return ['admin', 'user', 'super_admin']?.includes(role as string) ? (
     <div className="flex h-screen overflow-hidden w-full">
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <main

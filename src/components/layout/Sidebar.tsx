@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   LayoutDashboard,
   Briefcase,
@@ -20,7 +20,9 @@ import {
   TicketPercent,
   QrCode,
   Mail,
-  ClipboardList
+  ClipboardList,
+  Wallet,
+  BadgeCheck,
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
@@ -57,20 +59,59 @@ const Sidebar: React.FC<{
   const links = [
     { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
     { label: 'Danh sách tài khoản', icon: Briefcase, path: '/marketplace' },
+    { label: 'Danh sách ví', icon: Wallet, path: '/wallet' },
+    { label: 'Chi tiết ví', icon: BadgeCheck, path: '/wallet-detail' },
     {
-      label: 'Trạng thái tài khoản',
-      icon: ShoppingCart,
-      path: '/admin/rentals',
+      label: 'Quản lý quảng cáo',
+      icon: ClipboardList,
+      path: '/admin/advertisement',
     },
+    // {
+    //   label: 'Trạng thái tài khoản',
+    //   icon: ShoppingCart,
+    //   path: '/admin/rentals',
+    // },
     { label: 'Nạp tiền', icon: CircleDollarSign, path: '/payments' },
-    { label: 'Quản lý bot', icon: Bot, path: '/create-bot' },
+    // { label: 'Quản lý bot', icon: Bot, path: '/create-bot' },
     { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
-    { label: 'Quản lý quảng cáo', icon: ClipboardList , path: '/admin/advertisement' },
+
     // { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     // { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
   ];
-
-  // notify admin
+  const linksMarketing = [
+    { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
+    { label: 'Chi tiết ví', icon: BadgeCheck, path: '/wallet-detail' },
+    {
+      label: 'Quản lý quảng cáo',
+      icon: ClipboardList,
+      path: '/admin/advertisement',
+    },
+    // { label: 'Nạp tiền', icon: CircleDollarSign, path: '/payments' },
+    { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
+  ];
+  const linksMarketingUser = [
+    { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
+    {
+      label: 'Quản lý quảng cáo',
+      icon: ClipboardList,
+      path: '/admin/advertisement',
+    },
+    // { label: 'Nạp tiền', icon: CircleDollarSign, path: '/payments' },
+    // { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
+  ];
+  const fetchUser = useUserStore((state) => state.fetchUser);
+  const userobj = useUserStore((state) => state.user);
+  const CheckLink = useCallback(() => {
+    if (userobj?.role === 'super_admin') {
+      return links;
+    } else if (userobj?.role === 'admin') {
+      return linksMarketing;
+    } else if (userobj?.role === 'user') {
+      return linksMarketingUser;
+    } else {
+      return linksMarketingUser;
+    }
+  }, [userobj]);
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -81,8 +122,8 @@ const Sidebar: React.FC<{
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [isSidebarOpen, toggleSidebar]);
-  const fetchUser = useUserStore((state) => state.fetchUser);
-  const userobj = useUserStore((state) => state.user);
+
+  console.log('userobj', userobj);
 
   useEffect(() => {
     fetchUser();
@@ -155,17 +196,46 @@ const Sidebar: React.FC<{
         </div>
 
         <nav className="space-y-2">
-          {links.slice(0, 5).map(({ label, icon: Icon, path }) => (
-            <Link
-              key={path}
-              to={path}
+          {CheckLink()
+            .slice(0, 5)
+            .map(({ label, icon: Icon, path }) => (
+              <Link
+                key={path}
+                to={path}
+                className={clsx(
+                  'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+                  location.pathname === path && 'bg-white font-semibold'
+                )}
+              >
+                <div className="w-12 flex justify-center">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <span
+                  className={clsx(
+                    'transition-all whitespace-nowrap overflow-hidden duration-300',
+                    isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                  )}
+                >
+                  {label}
+                </span>
+              </Link>
+            ))}
+          {userobj?.role === 'super_admin' && (
+            <button
+              onClick={() => {
+                if (!isSidebarOpen) {
+                  toggleSidebar();
+                } else {
+                  setOpenAdsSubmenu(!openAdsSubmenu);
+                }
+              }}
               className={clsx(
-                'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-                location.pathname === path && 'bg-white font-semibold'
+                'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full',
+                isAdsMenuActive && 'bg-white font-semibold'
               )}
             >
               <div className="w-12 flex justify-center">
-                <Icon className="w-5 h-5" />
+                <AlignStartHorizontal className="w-5 h-5" />
               </div>
               <span
                 className={clsx(
@@ -173,43 +243,18 @@ const Sidebar: React.FC<{
                   isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
                 )}
               >
-                {label}
+                Quản lý hệ thống
               </span>
-            </Link>
-          ))}
-          <button
-            onClick={() => {
-              if (!isSidebarOpen) {
-                toggleSidebar();
-              } else {
-                setOpenAdsSubmenu(!openAdsSubmenu);
-              }
-            }}
-            className={clsx(
-              'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full',
-              isAdsMenuActive && 'bg-white font-semibold'
-            )}
-          >
-            <div className="w-12 flex justify-center">
-              <AlignStartHorizontal className="w-5 h-5" />
-            </div>
-            <span
-              className={clsx(
-                'transition-all whitespace-nowrap overflow-hidden duration-300',
-                isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+              {isSidebarOpen && (
+                <ChevronDown
+                  className={clsx(
+                    'ml-auto mr-2 w-4 h-4 transition-transform',
+                    openAdsSubmenu && 'rotate-180'
+                  )}
+                />
               )}
-            >
-              Quản lý hệ thống
-            </span>
-            {isSidebarOpen && (
-              <ChevronDown
-                className={clsx(
-                  'ml-auto mr-2 w-4 h-4 transition-transform',
-                  openAdsSubmenu && 'rotate-180'
-                )}
-              />
-            )}
-          </button>
+            </button>
+          )}
           {/* Thêm max-height nếu thêm item */}
           <div
             className={clsx(
@@ -233,19 +278,6 @@ const Sidebar: React.FC<{
                 </div>
                 <span className="text-gray-600">Quản lý giao dịch</span>
               </Link>
-              {/*<Link*/}
-              {/*  to="/add-account"*/}
-              {/*  className={clsx(*/}
-              {/*    "flex items-center py-2 rounded-lg hover:bg-gray-100 text-sm text-gray-700",*/}
-              {/*    location.pathname === "/add-account" &&*/}
-              {/*      "bg-blue-100 font-semibold"*/}
-              {/*  )}*/}
-              {/*>*/}
-              {/*  <div className="w-8 flex justify-center">*/}
-              {/*    <PackagePlus className="w-4 h-4" />*/}
-              {/*  </div>*/}
-              {/*  <span className="text-gray-600">Thêm TKQC</span>*/}
-              {/*</Link>*/}
               <Link
                 to="/admin/account"
                 className={clsx(
@@ -301,28 +333,30 @@ const Sidebar: React.FC<{
             </div>
           </div>
 
-          {links.slice(5).map(({ label, icon: Icon, path }) => (
-            <Link
-              key={path}
-              to={path}
-              className={clsx(
-                'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-                location.pathname === path && 'bg-white font-semibold'
-              )}
-            >
-              <div className="w-12 flex justify-center">
-                <Icon className="w-5 h-5" />
-              </div>
-              <span
+          {CheckLink()
+            .slice(5)
+            .map(({ label, icon: Icon, path }) => (
+              <Link
+                key={path}
+                to={path}
                 className={clsx(
-                  'transition-all whitespace-nowrap overflow-hidden duration-300',
-                  isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                  'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+                  location.pathname === path && 'bg-white font-semibold'
                 )}
               >
-                {label}
-              </span>
-            </Link>
-          ))}
+                <div className="w-12 flex justify-center">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <span
+                  className={clsx(
+                    'transition-all whitespace-nowrap overflow-hidden duration-300',
+                    isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                  )}
+                >
+                  {label}
+                </span>
+              </Link>
+            ))}
         </nav>
       </div>
 
@@ -366,20 +400,20 @@ const Sidebar: React.FC<{
           </span>
         </Link>
         <Link
-            to="/admin/messages"
-            className={clsx(
-                'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-                location.pathname === '/admin/messages' && 'bg-white font-semibold'
-            )}
+          to="/admin/messages"
+          className={clsx(
+            'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+            location.pathname === '/admin/messages' && 'bg-white font-semibold'
+          )}
         >
           <div className="w-12 flex justify-center">
             <Mail className="w-5 h-5" />
           </div>
           <span
-              className={clsx(
-                  'transition-all whitespace-nowrap overflow-hidden duration-300',
-                  isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
-              )}
+            className={clsx(
+              'transition-all whitespace-nowrap overflow-hidden duration-300',
+              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+            )}
           >
             Tin nhắn
           </span>

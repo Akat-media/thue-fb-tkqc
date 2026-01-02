@@ -409,7 +409,7 @@
     "title": "Tài khoản quảng cáo BM",
     "syncAccounts": "Đồng Bộ Tài Khoản",
     "createBM": "Tạo tài khoản BM",
-    "bmList": "Danh sách BM",
+    "bmList": "Danh sách Agency",
     "adAccountsWithCard": "Tài khoản gắn thẻ",
     "adAccountsWithoutCard": "Tài khoản chưa gắn thẻ",
     "adAccounts": "Tất cả tài khoản",
@@ -828,10 +828,10 @@
     "confirm_ok": "Xác nhận",
     "confirm_cancel": "Hủy",
     "status": {
-      "processing":"Đang xử lý",
+      "processing": "Đang xử lý",
       "success": "Thành công",
       "faild": "Thất bại",
-      "complete_remove":"Đã thuê"
+      "complete_remove": "Đã thuê"
     }
   }
 }

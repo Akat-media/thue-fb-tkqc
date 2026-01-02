@@ -304,14 +304,14 @@ const CardDetailModal: React.FC<ModalProps> = ({
                   }
                 )}
               </div>
-              <div className="mt-8 text-center">
+              {/* <div className="mt-8 text-center">
                 <button
                   onClick={() => onRentClick?.(selectedAdAccountDetail)}
                   className="bg-[#193250] text-cyan-300 px-6 py-2 rounded-full font-semibold hover:bg-[#1f259ca9] transition-all w-full sm:w-auto"
                 >
                   {t('cardDetailModal.rentNow') || 'Thuê ngay'}
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

@@ -24,20 +24,21 @@ import {
   X,
   Gift,
   TicketPercent,
-} from "lucide-react";
-import Pagination from "./Pagination.tsx";
+  UserRoundSearch,
+} from 'lucide-react';
+import Pagination from './Pagination.tsx';
 // import axios from "axios";
-import BaseHeader, { BaseUrl } from "../../../api/BaseHeader";
-import debounce from "lodash.debounce";
-import usePagination from "../../../hook/usePagination.tsx";
-import { useForm, Controller } from "react-hook-form";
-import UserDetailModal from "./UserDetailModal.tsx";
-import AddUserModal from "./AddUserModal.tsx";
-import { toast, ToastContainer } from "react-toastify";
-import { useUserStore } from "../../../stores/useUserStore.ts";
-import ToggleStatus from "./ToggleStatus.tsx";
-import { Checkbox, InputNumber, Modal, Table } from "antd";
-import { Voucher } from "../manager/voucher/VoucherManager.tsx";
+import BaseHeader, { BaseUrl } from '../../../api/BaseHeader';
+import debounce from 'lodash.debounce';
+import usePagination from '../../../hook/usePagination.tsx';
+import { useForm, Controller } from 'react-hook-form';
+import UserDetailModal from './UserDetailModal.tsx';
+import AddUserModal from './AddUserModal.tsx';
+import { toast, ToastContainer } from 'react-toastify';
+import { useUserStore } from '../../../stores/useUserStore.ts';
+import ToggleStatus from './ToggleStatus.tsx';
+import { Checkbox, InputNumber, Modal, Table } from 'antd';
+import { Voucher } from '../manager/voucher/VoucherManager.tsx';
 
 // Define the User interface
 interface User {
@@ -57,6 +58,7 @@ interface User {
   percentage: number;
   created_at: string;
   active: boolean;
+  type: string;
 }
 interface VoucherWithMeta extends Voucher {
   is_checked: boolean;
@@ -68,7 +70,6 @@ interface VoucherWithMeta extends Voucher {
   initial_total_assigned: number;
   _count: { userVouchers: number };
 }
-
 
 const AccountForm: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -85,7 +86,7 @@ const AccountForm: React.FC = () => {
   const [query, setQuery] = useState('');
   const { currentPage, pageSize, setCurrentPage, setPageSize } = usePagination(
     1,
-    6
+    12
   );
   const [showEditModal, setShowEditModal] = useState(false);
   const [showVoucherModal, setShowVoucherModal] = useState(false);
@@ -94,8 +95,8 @@ const AccountForm: React.FC = () => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
   const [voucherList, setVoucherList] = useState<VoucherWithMeta[]>([]);
-  const [rowUserId, setRowUserId] = useState<string>()
-  console.log("voucherList111",voucherList)
+  const [rowUserId, setRowUserId] = useState<string>();
+  console.log('voucherList111', voucherList);
 
   // Initialize react-hook-form
   const {
@@ -282,10 +283,10 @@ const AccountForm: React.FC = () => {
     setValue('role', user.role || 'user');
     setShowEditModal(true);
   };
-  const handleVoucher = (user:User) => {
-    fetchDataVoucher(user.id)
-    setShowVoucherModal(true)
-  }
+  const handleVoucher = (user: User) => {
+    fetchDataVoucher(user.id);
+    setShowVoucherModal(true);
+  };
 
   const handleDelete = async () => {
     if (!deleteTargetId) return;
@@ -379,7 +380,7 @@ const AccountForm: React.FC = () => {
           ...v,
           initial_quantity: v.quantity,
           initial_total_assigned: v.total_assigned,
-        }),
+        })
       );
       setVoucherList(vouchersWithInitialState);
     } catch (err: any) {
@@ -404,9 +405,11 @@ const AccountForm: React.FC = () => {
         data: payload,
       });
       setShowVoucherModal(false);
-      toast.success(respone.data.message)
+      toast.success(respone.data.message);
     } catch (err: any) {
-      toast.error(err?.response?.data?.error ||'Có lỗi xảy ra. Vui lòng thử lại');
+      toast.error(
+        err?.response?.data?.error || 'Có lỗi xảy ra. Vui lòng thử lại'
+      );
     }
   };
   const columns = [
@@ -422,7 +425,8 @@ const AccountForm: React.FC = () => {
           max={
             record.max_usage
               ? record.max_usage -
-                (record.total_assigned - (record.is_checked ? record.quantity : 0))
+                (record.total_assigned -
+                  (record.is_checked ? record.quantity : 0))
               : undefined
           }
           value={record.quantity}
@@ -442,7 +446,9 @@ const AccountForm: React.FC = () => {
             });
             setVoucherList(newVoucherList);
           }}
-          disabled={!record.is_checked || record.is_exceeded || record.is_expired}
+          disabled={
+            !record.is_checked || record.is_exceeded || record.is_expired
+          }
         />
       ),
     },
@@ -486,6 +492,13 @@ const AccountForm: React.FC = () => {
         record.max_usage ? record.max_usage - record.total_assigned : '∞',
     },
   ];
+
+  const CheckType = (type: string) => {
+    if (type === 'Manager') return 'Quản trị viên';
+    if (type === 'Supper Admin') return 'Quản trị Marketing';
+    if (type === 'User') return 'Người dùng';
+    return type;
+  };
   return (
     <div className="min-w-0">
       <div className="pl-1 p-4 mt-3 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -564,6 +577,17 @@ const AccountForm: React.FC = () => {
                     <SortableHeader
                       label="Vai trò"
                       sortKey="role"
+                      openSortKey={openSortKey}
+                      setOpenSortKey={setOpenSortKey}
+                    />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-center border border-gray-200 whitespace-nowrap">
+                  <div className="flex items-center justify-center gap-1">
+                    <UserRoundSearch className="w-4 h-4 text-gray-500" />
+                    <SortableHeader
+                      label="Loại tài khoản"
+                      sortKey="type"
                       openSortKey={openSortKey}
                       setOpenSortKey={setOpenSortKey}
                     />
@@ -663,6 +687,9 @@ const AccountForm: React.FC = () => {
                       {user.role}
                     </td>
                     <td className="text-center px-2 py-2 border border-gray-100">
+                      {CheckType(user.type || '')}
+                    </td>
+                    <td className="text-center px-2 py-2 border border-gray-100">
                       <ToggleStatus
                         isEnabled={isEnabled}
                         setIsEnabled={() =>
@@ -690,8 +717,8 @@ const AccountForm: React.FC = () => {
                           }`}
                           title="Chỉnh sửa"
                           onClick={() => {
-                          handleVoucher(user)  
-                          setRowUserId(user.id)  
+                            handleVoucher(user);
+                            setRowUserId(user.id);
                           }}
                           disabled={isDisabled}
                         >
@@ -974,7 +1001,7 @@ const AccountForm: React.FC = () => {
                           prev.map((v) => {
                             const wasChecked = v.is_checked;
                             const isChecked = selectedRowKeys.includes(v.id);
-                            
+
                             let newQuantity = v.quantity;
 
                             if (isChecked && !wasChecked) {
@@ -985,46 +1012,48 @@ const AccountForm: React.FC = () => {
                               newQuantity = 0;
                             }
 
-                            const quantityChange = newQuantity - v.initial_quantity;
-                            const newTotalAssigned = v.initial_total_assigned + quantityChange;
+                            const quantityChange =
+                              newQuantity - v.initial_quantity;
+                            const newTotalAssigned =
+                              v.initial_total_assigned + quantityChange;
 
                             return {
                               ...v,
                               is_checked: isChecked,
                               quantity: newQuantity,
-                              total_assigned: newTotalAssigned
+                              total_assigned: newTotalAssigned,
                             };
-                          }),
+                          })
                         );
                       },
                     }}
                     columns={columns}
                   />
                 </div>
-                  <div className="flex gap-3 pt-6 border-t border-gray-100">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowVoucherModal(false);
-                        reset();
-                      }}
-                      className="flex-1 px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all duration-200 hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98]"
-                    >
-                      Hủy
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={Object.keys(errors).length > 0}
-                      className={`flex-1 px-6 py-3 text-sm font-semibold text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] ${
-                        Object.keys(errors).length > 0
-                          ? 'bg-gray-400 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-                      }`}
-                      onClick={handleSubmitVoucher}
-                    >
-                      Lưu thay đổi
-                    </button>
-                  </div>
+                <div className="flex gap-3 pt-6 border-t border-gray-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowVoucherModal(false);
+                      reset();
+                    }}
+                    className="flex-1 px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all duration-200 hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={Object.keys(errors).length > 0}
+                    className={`flex-1 px-6 py-3 text-sm font-semibold text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] ${
+                      Object.keys(errors).length > 0
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+                    }`}
+                    onClick={handleSubmitVoucher}
+                  >
+                    Lưu thay đổi
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1232,7 +1261,7 @@ const AccountForm: React.FC = () => {
                           rules={{
                             required: 'Vai trò là bắt buộc',
                             validate: (value) =>
-                              ['admin', 'user'].includes(value)
+                              ['admin', 'user', 'super_admin'].includes(value)
                                 ? true
                                 : 'Vai trò không hợp lệ',
                           }}
@@ -1247,6 +1276,7 @@ const AccountForm: React.FC = () => {
                             >
                               <option value="admin">Admin</option>
                               <option value="user">User</option>
+                              <option value="super_admin">Super Admin</option>
                             </select>
                           )}
                         />

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Bell,
-} from 'lucide-react';
+import { Bell } from 'lucide-react';
 import StatCard from './analytics/StatCard.tsx';
 import StatsCharts from './analytics/StatsCharts.tsx';
 import ChartDashboard from './analytics/ChartDashboard.tsx';
@@ -93,7 +91,7 @@ const HomePage: React.FC = () => {
       }
     };
 
-    if (role === 'admin') fetchStats();
+    fetchStats();
   }, [role]);
 
   const handleRangeChange = (
@@ -107,7 +105,7 @@ const HomePage: React.FC = () => {
         targetFrom: targetDayFrom,
         targetTo: targetDayTo,
       });
-      if (role === 'admin') fetchDataChart(targetDayFrom, targetDayTo);
+      fetchDataChart(targetDayFrom, targetDayTo);
     }
   };
   const fetchDataChart = async (targetDayFrom: string, targetDayTo: string) => {
@@ -123,9 +121,8 @@ const HomePage: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (role === 'admin') {
-      fetchDataChart(dateRange.targetFrom, dateRange.targetTo);
-    }
+    fetchDataChart(dateRange.targetFrom, dateRange.targetTo);
+
     if (user) {
       try {
         const userData = JSON.parse(user);
@@ -144,11 +141,11 @@ const HomePage: React.FC = () => {
   };
   return (
     <>
-    {
+      {/* {
       role !== 'admin' && <LandingPageLayout/>
-    }
+    } */}
 
-      {role === 'admin' && (
+      {
         <>
           <div className="flex flex-col mb-7 md:flex-row flex-1 max-w-screen-3xl mx-auto box-border px-4 sm:px-10 items-start md:items-center justify-between gap-2 mt-4">
             <GlobalStyle />
@@ -256,7 +253,7 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         </>
-      )}
+      }
     </>
   );
 };

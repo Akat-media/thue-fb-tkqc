@@ -34,25 +34,6 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const getAccountTypeLabel = (type: string) => {
-    return type === 'personal'
-      ? t('adAccountCard.personal')
-      : t('adAccountCard.bm');
-  };
-
-  const getLimitTypeLabel = (type: string) => {
-    switch (type) {
-      case 'visa':
-        return t('adAccountCard.visa');
-      case 'high_limit':
-        return t('adAccountCard.highLimit');
-      case 'low_limit':
-        return t('adAccountCard.lowLimit');
-      default:
-        return type;
-    }
-  };
-
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case 'available':
@@ -91,7 +72,7 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
         return <Check className="h-4 w-4" />;
     }
   };
-
+  console.log(account);
   return (
     <div
       onClick={() => onViewDetail?.(account)}
@@ -146,37 +127,20 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
               <div className="flex justify-between items-center text-sm">
                 <div className="flex items-center whitespace-nowrap font-medium">
                   <Briefcase className="h-4 w-4 text-gray-500 mr-1" />
-                  <span className="text-gray-500 text-[16px]">
-                    {t('adAccountCard.adAccountType')}:
-                  </span>
+                  <span className="text-gray-500 text-[16px]">Id:</span>
                 </div>
-                {account?.is_visa_account ? (
-                  <div>
-                    <span
-                      className={`inline-flex items-center px-3 py-1 
+
+                <div>
+                  <span
+                    className={`inline-flex items-center px-3 py-1 
                         rounded-full text-xs font-medium gap-1
                         cursor-pointer bg-blue-100 text-blue-800`}
-                    >
-                      <Link className="h-4 w-4" />
-                      <span className="ml-1 whitespace-nowrap">
-                        {t('adAccountCard.withCard')}
-                      </span>
+                  >
+                    <span className="ml-1 whitespace-nowrap">
+                      {account?.account_id}
                     </span>
-                  </div>
-                ) : (
-                  <div>
-                    <span
-                      className={`inline-flex items-center px-3 py-1 
-                        rounded-full text-xs font-medium gap-1
-                        cursor-pointer bg-[#FFEBDC] text-[#FF6400]`}
-                    >
-                      <Link className="h-4 w-4" />
-                      <span className="ml-1 whitespace-nowrap">
-                        {t('adAccountCard.withoutCard')}
-                      </span>
-                    </span>
-                  </div>
-                )}
+                  </span>
+                </div>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <div className="flex items-center whitespace-nowrap font-medium">
@@ -212,7 +176,7 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
             </div>
           </CardContent>
           <CardFooter className="relative z-10 px-6 py-4 flex gap-2">
-            {account?.status_rented !== 'rented' && (
+            {/* {account?.status_rented !== 'rented' && (
               <Button
                 size="lg"
                 className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm "
@@ -225,7 +189,7 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
               >
                 {t('adAccountCard.rentNow')}
               </Button>
-            )}
+            )} */}
 
             <Button
               size="lg"

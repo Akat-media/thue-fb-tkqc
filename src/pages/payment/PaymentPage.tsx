@@ -24,9 +24,9 @@ import axios from 'axios';
 import { useOnOutsideClick } from '../../hook/useOutside';
 import { useTranslation } from 'react-i18next';
 import PaymentDropdown from './PaymentDropdown';
-import Deposit from "./Deposit.tsx";
+import Deposit from './Deposit.tsx';
 import DepositCard from './DepositCard.tsx';
-import {toast} from "react-toastify";
+import { toast } from 'react-toastify';
 
 const PaymentPage: React.FC = () => {
   const { t } = useTranslation();
@@ -52,9 +52,9 @@ const PaymentPage: React.FC = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [selectedOption, setSelectedOption] = useState('VND');
   const [showInfo, setShowInfo] = useState(false);
-  const handleChange = (event:any) => {
+  const handleChange = (event: any) => {
     setSelectedOption(event.target.value);
-    setCurrencyTab(event.target.value)
+    setCurrencyTab(event.target.value);
   };
 
   const { innerBorderRef } = useOnOutsideClick(() => {
@@ -75,6 +75,9 @@ const PaymentPage: React.FC = () => {
           amountVND: number,
           user_id: userParse.user_id || '',
         },
+      }).then((response) => {
+        setPaymentStatus('success');
+        fetchUser();
       });
       return res.data.data.short_code;
     } catch (error) {
@@ -103,7 +106,6 @@ const PaymentPage: React.FC = () => {
     }
     const shortCode = await hanleCalTransaction(amount);
     setIsLoading(true);
-    setShowInfo(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       addNotification(
@@ -111,17 +113,17 @@ const PaymentPage: React.FC = () => {
         t('paymentPage.pleaseTransfer'),
         'success'
       );
-      setIsShowingQR(true);
-      const qrUrl = `https://apiqr.web2m.com/api/generate/ACB/21280151/bich%20ngoc?amount=${amount}&memo=${shortCode}&is_mask=1&bg=1`;
-      setQrImageUrl(qrUrl);
+      // setIsShowingQR(true);
+      // const qrUrl = `https://apiqr.web2m.com/api/generate/ACB/21280151/bich%20ngoc?amount=${amount}&memo=${shortCode}&is_mask=1&bg=1`;
+      // setQrImageUrl(qrUrl);
       setTimeout(() => {
         setShowQRCode(true);
         setIsShowingQR(false);
         setCountdown(120);
       }, 1200);
-      if (qrUrl) {
-        setIsLoading(false);
-      }
+      // if (qrUrl) {
+      //   setIsLoading(false);
+      // }
     } catch (error) {
       setIsLoading(false);
       console.error('Deposit error:', error);
@@ -204,6 +206,9 @@ const PaymentPage: React.FC = () => {
       socket.off('payment_success');
     };
   }, [fetchUser]);
+  const onClose = () => {
+    setPaymentStatus(null);
+  };
 
   return (
     <div className="container mx-auto">
@@ -216,68 +221,6 @@ const PaymentPage: React.FC = () => {
           }
         `}
       </style>
-      {isCurrencyModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center ">
-          <div
-            ref={innerBorderRef}
-            className="flex flex-col bg-[#F5FAFF] rounded-xl p-6 shadow-2xl w-full max-w-max sm:max-w-[452px] relative"
-          >
-            <button
-              onClick={() => setIsCurrencyModalOpen(false)}
-              className="flex justify-end text-gray-500 hover:text-gray-800 transition-colors"
-            >
-              <X size={20} />
-            </button>
-            <h2 className="font-mona text-[24px] leading-[33.6px] font-semibold text-[#6B7280] text-center">
-              {t('payment_method.title')}
-            </h2>
-
-            <div className="my-[32px] max-w-[289px] w-full mx-auto">
-              <div className="flex flex-row justify-between mb-[36px]">
-                <label className="flex items-center">
-                  <input
-                      type="radio"
-                      name="money"
-                      value="VND"
-                      checked={selectedOption === 'VND'}
-                      onChange={handleChange}
-                      className="mr-2"
-                  />
-                  <span className="font-mona text-[18px] font-medium leading-[25.2px] text-[#6E7382]">VNĐ</span>
-                </label>
-
-                <label className="flex items-center">
-                  <input
-                      type="radio"
-                      name="money"
-                      value="USD"
-                      checked={selectedOption === 'USD'}
-                      onChange={handleChange}
-                      className="mr-2"
-                      disabled
-                  />
-                  <span className="font-mona text-[18px] font-medium leading-[25.2px] text-[#6E7382]">USD</span>
-                </label>
-              </div>
-
-              <PaymentDropdown />
-            </div>
-
-            <div className="mx-auto">
-              <button
-                  className="bg-[#193250] border rounded-full w-[200px] h-[64px]"
-                  onClick={() => {
-                    setIsCurrencyModalOpen(false);
-                    setActiveTab('deposit');
-                  }}
-              >
-                <span className="text-cyan-300 font-mona font-semibold text-[20px]">{t('paymentPage.confirm')}</span>
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
 
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex-1 min-w-0">
@@ -331,15 +274,15 @@ const PaymentPage: React.FC = () => {
 
         <div className="mt-6">
           {activeTab === 'deposit' && currencyTab === 'VND' && (
-              <DepositCard
-                  handleDeposit={handleDeposit}
-                  showInfo={showInfo}
-                  backInfo={()=>setShowInfo(false)}
-                  customAmount={customAmount}
-                  setCustomAmount={setCustomAmount}
-                  qrImageUrl = {qrImageUrl}
-                  countdown = {countdown}
-              />
+            <DepositCard
+              handleDeposit={handleDeposit}
+              showInfo={showInfo}
+              backInfo={() => setShowInfo(false)}
+              customAmount={customAmount}
+              setCustomAmount={setCustomAmount}
+              qrImageUrl={qrImageUrl}
+              countdown={countdown}
+            />
           )}
 
           {activeTab === 'deposit' && currencyTab === 'USD' && (
@@ -498,9 +441,9 @@ const PaymentPage: React.FC = () => {
           )}
 
           {activeTab === 'deposit' && !currencyTab && (
-              <div className="text-center text-gray-500">
-                Vui lòng chọn đơn vị tiền tệ (VND hoặc USD) để tiếp tục.
-              </div>
+            <div className="text-center text-gray-500">
+              Vui lòng chọn đơn vị tiền tệ (VND hoặc USD) để tiếp tục.
+            </div>
           )}
         </div>
       </div>
@@ -521,16 +464,37 @@ const PaymentPage: React.FC = () => {
             )}
 
             {paymentStatus === 'success' && (
-              <div className="text-center">
-                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-                  <Check className="h-6 w-6 text-green-600" />
+              <div className="relative text-center px-6 py-8">
+                {/* Nút đóng */}
+                <button
+                  onClick={onClose} // hoặc () => setOpen(false)
+                  className="absolute top-3 right-3 rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition"
+                >
+                  ✕
+                </button>
+
+                {/* Icon success */}
+                <div className="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-green-100">
+                  <Check className="h-7 w-7 text-green-600" />
                 </div>
-                <h3 className="mt-4 text-lg font-medium text-gray-900">
+
+                {/* Title */}
+                <h3 className="mt-5 text-lg font-semibold text-gray-900">
                   {t('paymentPage.status.success')}
                 </h3>
-                <p className="mt-2 text-sm text-gray-500">
+
+                {/* Message */}
+                <p className="mt-2 text-sm text-gray-500 leading-relaxed">
                   {t('paymentPage.status.successMessage')}
                 </p>
+
+                {/* Action button (optional) */}
+                <button
+                  onClick={onClose}
+                  className="mt-6 inline-flex items-center justify-center rounded-lg bg-green-600 px-5 py-2 text-sm font-medium text-white hover:bg-green-700 transition"
+                >
+                  OK
+                </button>
               </div>
             )}
 
