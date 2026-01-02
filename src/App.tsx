@@ -54,6 +54,7 @@ import AtomicSpinner from 'atomic-spinner';
 import Advertisement from './pages/admin/advertisement/Advertisement.tsx';
 import Wallet from './pages/wallet/index.tsx';
 import WalletDetail from './pages/wallet/WalletDetail.tsx';
+import { useNavigate } from 'react-router-dom';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -64,9 +65,11 @@ const ScrollToTop = () => {
 };
 function AppRoutes() {
   const [isInitialized, setIsInitialized] = useState(false);
-
+  const navigate = useNavigate();
   const userobj = useUserStore((state) => state.user);
   const { setUser } = useUserStore();
+  const user = localStorage.getItem('user');
+  const role = typeof user === 'string' ? JSON.parse(user)?.user?.role : '';
 
   const { i18n } = useTranslation();
   const location = useLocation();
@@ -93,7 +96,11 @@ function AppRoutes() {
     }
     setIsInitialized(true);
   }, []);
-
+  useEffect(() => {
+    if (!role) {
+      navigate('login');
+    }
+  }, [role]);
   if (!isInitialized)
     return (
       <div className="fixed inset-0 z-[9999] backdrop-blur-sm bg-white/60 flex items-center justify-center">
