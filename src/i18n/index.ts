@@ -13,6 +13,7 @@ i18n
       en: { translation: en },
       vi: { translation: vi },
     },
+    lng: 'vi',
     fallbackLng: 'vi', // mặc định nếu ko có
     // lng: 'vi',
     interpolation: {
