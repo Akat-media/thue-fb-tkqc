@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import BaseHeader from '../../api/BaseHeader';
 import { toast } from 'react-toastify';
-
-/* ================= MOCK API ================= */
-
-/* ================= TYPES ================= */
+type ModalType =
+  | 'SYNC_CONFIRM'
+  | 'ATTACH_ACCOUNT'
+  | 'SET_LIMIT'
+  | 'UP_LIMIT'
+  | 'SYNC_ALL_CONFIRM'
+  | null;
 
 interface Wallet {
   id: number;
@@ -35,8 +38,10 @@ const WalletDetail = () => {
   const [loading, setLoading] = useState(false);
 
   // modal
-  const [openModal, setOpenModal] = useState(false);
+  const [modalType, setModalType] = useState<ModalType>(null);
+
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   const [openDelete, setOpenDelete] = useState(false);
   const [walletToDelete, setWalletToDelete] = useState<any>(null);
@@ -62,20 +67,63 @@ const WalletDetail = () => {
       console.error(error);
     }
   };
+  const fetchUserNotInCamp = async () => {
+    try {
+      const [response] = await Promise.all([
+        BaseHeader({
+          url: '/user-not-in-campaign',
+          method: 'get',
+          params: {
+            ads_id: selectedAccount.id,
+          },
+        }),
+      ]);
+      const result = response.data.data;
+      if (result.length > 0) {
+        setSelectedUsers(result);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     setLoading(true);
     fetchWallets();
   }, []);
 
+  useEffect(() => {
+    if (modalType === 'ATTACH_ACCOUNT') {
+      setLoading(true);
+      fetchUserNotInCamp();
+    }
+  }, [modalType]);
+
   const selectedWallet = wallets.find((w) => w.id === selectedWalletId);
 
   const handleOpenModal = (account: any) => {
     setSelectedAccount(account);
-    setOpenModal(true);
+    setModalType('SET_LIMIT');
+  };
+  const handleOpenModalUpLimit = (account: any) => {
+    setSelectedAccount(account);
+    setModalType('UP_LIMIT');
   };
   const handleOpenModalDelete = (account: any) => {
     setWalletToDelete(account);
     setOpenDelete(true);
+  };
+  const handleOpenSyncModal = (account: any) => {
+    setSelectedAccount(account);
+    setModalType('SYNC_CONFIRM');
+  };
+  const handleOpenSyncAllModal = () => {
+    setModalType('SYNC_ALL_CONFIRM');
+  };
+  const handleOpenAttachModal = (account: any) => {
+    setSelectedAccount(account);
+    setModalType('ATTACH_ACCOUNT');
   };
 
   const handleConfirmLimit = async () => {
@@ -99,7 +147,34 @@ const WalletDetail = () => {
     } catch (error) {
       toast.error('Lỗi set ngưỡng khoản ví thất bại!');
     } finally {
-      setOpenModal(false);
+      setModalType(null);
+      setSelectedAccount(null);
+      setWalletBalance('');
+      setWalletBalanceDisplay('');
+    }
+  };
+  const handleConfirmUpLimit = async () => {
+    if (!selectedWallet || !selectedAccount || !walletBalance) return;
+
+    try {
+      const response = await BaseHeader({
+        url: `/wallet/ads-spend-cap-increase/${selectedWallet?.id}`,
+        method: 'post',
+        data: {
+          ads_id: selectedAccount.id,
+          spend_cap: String(walletBalance),
+        },
+      });
+      if (response.status == 200) {
+        toast.success('Set ngưỡng tài khoản ví thành công!');
+        fetchWallets();
+      } else {
+        toast.error('Lỗi set ngưỡng tài khoản ví thất bại!');
+      }
+    } catch (error) {
+      toast.error('Lỗi set ngưỡng khoản ví thất bại!');
+    } finally {
+      setModalType(null);
       setSelectedAccount(null);
       setWalletBalance('');
       setWalletBalanceDisplay('');
@@ -124,6 +199,73 @@ const WalletDetail = () => {
       toast.error('Lỗi xóa tài khoản ví thất bại!');
     } finally {
       setOpenDelete(false);
+    }
+  };
+  const confirmAsyncAllCamp = async () => {
+    try {
+      const listAds = selectedWallet?.adsAccounts.map((item: any) => item.id);
+      const response = await BaseHeader({
+        url: `/async-many-campaign`,
+        method: 'post',
+        data: {
+          list_ads_id: listAds,
+          wallet_id: selectedWallet?.id,
+        },
+      });
+      if (response.status == 200) {
+        toast.success('Đồng bộ tất cả camp thành công!');
+        fetchWallets();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error('Đồng bộ tất cả camp thất bại!');
+    } finally {
+      setModalType(null);
+    }
+  };
+  const confirmAsyncCamp = async () => {
+    try {
+      const response = await BaseHeader({
+        url: `/async-one-campaign`,
+        method: 'post',
+        data: {
+          list_ads_id: [selectedAccount.id],
+          wallet_id: selectedWallet?.id,
+        },
+      });
+      if (response.status == 200) {
+        toast.success('Đồng bộ camp thành công!');
+        fetchWallets();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error('Đồng bộ camp thất bại!');
+    } finally {
+      setModalType(null);
+    }
+  };
+  const confirmAttachUser = async () => {
+    try {
+      const response = await BaseHeader({
+        url: `/attach-user-in-campaign`,
+        method: 'post',
+        data: {
+          list_user_id: selectedUsers,
+          ads_id: selectedAccount.id,
+        },
+      });
+      if (response.status == 200) {
+        toast.success('Đồng bộ camp thành công!');
+        fetchWallets();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error('Đồng bộ camp thất bại!');
+    } finally {
+      setModalType(null);
     }
   };
   return (
@@ -157,15 +299,22 @@ const WalletDetail = () => {
               <div className="text-gray-500 mt-1">Số dư hiện tại</div>
             </div>
             <div className="text-2xl font-bold text-green-600">
-              {selectedWallet.balance.toLocaleString()}{' '}
-              {selectedWallet.currency}
+              <div>
+                {selectedWallet.balance.toLocaleString()}{' '}
+                {selectedWallet.currency}
+              </div>
+              <button
+                onClick={handleOpenSyncAllModal}
+                className="bg-orange-600 text-white text-base px-5 py-2.5 rounded-lg hover:bg-orange-700 transition mt-2"
+              >
+                Đồng bộ tất cả campaign
+              </button>
             </div>
           </div>
 
           {/* Accounts */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Tài khoản quảng cáo</h3>
-
             <ul className="space-y-4">
               {selectedWallet?.adsAccounts?.map((acc) => (
                 <li
@@ -173,26 +322,66 @@ const WalletDetail = () => {
                   className="border border-gray-200 rounded-xl p-5 flex justify-between items-center hover:shadow-md transition"
                 >
                   <div>
-                    <div className="text-lg font-medium">{acc.name}</div>
+                    <div className="text-lg font-medium">{acc?.name}</div>
+                    <div className="text-[14px] font-medium">
+                      {acc?.account_id}
+                    </div>
                     <div className="text-gray-500 mt-1">
                       Ngưỡng chi tiêu:{' '}
                       <span className="font-semibold text-gray-700">
                         {formatVNDV2(acc.spend_cap)} VND
                       </span>
                     </div>
+                    <div className="text-gray-500 mt-1">
+                      Đã tiêu:{' '}
+                      <span className="font-semibold text-gray-700">
+                        {formatVNDV2(acc.amount_spent)} VND
+                      </span>
+                    </div>
+                    <div className="text-gray-500 mt-1">
+                      User thấy camp:{' '}
+                      <span className="font-semibold text-gray-700 break-words max-w-[500px] block">
+                        duynam11a11999@gmai.com,duynam11a11999@gmai.com,
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="flex gap-1">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleOpenSyncModal(acc)}
+                      className="bg-indigo-600 text-white text-base px-5 py-2.5 
+    rounded-lg hover:bg-indigo-700 transition"
+                    >
+                      Đồng bộ camp
+                    </button>
+
+                    <button
+                      onClick={() => handleOpenAttachModal(acc)}
+                      className="bg-emerald-600 text-white text-base px-5 py-2.5 
+    rounded-lg hover:bg-emerald-700 transition"
+                    >
+                      Gắn tài khoản
+                    </button>
+
                     <button
                       onClick={() => handleOpenModal(acc)}
-                      className="bg-blue-600 text-white text-base px-5 py-2.5 rounded-lg hover:bg-blue-700 transition"
+                      className="bg-purple-500 text-white text-base px-5 py-2.5 
+    rounded-lg hover:bg-purple-600 transition"
+                    >
+                      Nâng ngưỡng
+                    </button>
+                    <button
+                      onClick={() => handleOpenModalUpLimit(acc)}
+                      className="bg-amber-500 text-white text-base px-5 py-2.5 
+    rounded-lg hover:bg-amber-600 transition"
                     >
                       Set ngưỡng
                     </button>
+
                     <button
                       onClick={() => handleOpenModalDelete(acc)}
-                      className="bg-red-600 text-white text-base px-5 py-2.5 
-                      rounded-lg hover:bg-red-700 transition"
+                      className="bg-rose-600 text-white text-base px-5 py-2.5 
+    rounded-lg hover:bg-rose-700 transition"
                     >
                       Xóa tài khoản
                     </button>
@@ -231,25 +420,20 @@ const WalletDetail = () => {
         </div>
       )}
       {/* ================= MODAL ================= */}
-      {openModal && selectedAccount && (
+      {modalType === 'SET_LIMIT' && selectedAccount && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 w-[420px] space-y-6">
             <h3 className="text-xl font-bold">Thiết lập ngưỡng chi tiêu</h3>
-
             <div className="text-gray-600 text-lg">{selectedAccount.name}</div>
-
             <input
               className="border border-gray-300 rounded-lg px-4 py-3 text-lg w-full focus:ring-2 focus:ring-blue-500"
               inputMode="numeric"
               value={walletBalanceDisplay}
               onChange={(e) => {
                 const raw = e.target.value;
-
                 // chỉ cho nhập số + dấu chấm
                 if (!/^[0-9.]*$/.test(raw)) return;
-
                 const numberValue = parseVND(raw);
-
                 setWalletBalance(numberValue || '');
                 setWalletBalanceDisplay(
                   numberValue ? formatVND(numberValue) : ''
@@ -257,11 +441,10 @@ const WalletDetail = () => {
               }}
               placeholder="VD: 10.000.000"
             />
-
             <div className="flex justify-end gap-3 pt-4">
               <button
                 className="px-5 py-2.5 text-lg border rounded-lg"
-                onClick={() => setOpenModal(false)}
+                onClick={() => setModalType(null)}
               >
                 Huỷ
               </button>
@@ -270,6 +453,141 @@ const WalletDetail = () => {
                 onClick={handleConfirmLimit}
               >
                 Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {modalType === 'UP_LIMIT' && selectedAccount && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 w-[420px] space-y-6">
+            <h3 className="text-xl font-bold">Nâng ngưỡng chi tiêu thêm</h3>
+            <div className="text-gray-600 text-lg">{selectedAccount.name}</div>
+            <input
+              className="border border-gray-300 rounded-lg px-4 py-3 text-lg w-full focus:ring-2 focus:ring-blue-500"
+              inputMode="numeric"
+              value={walletBalanceDisplay}
+              onChange={(e) => {
+                const raw = e.target.value;
+                // chỉ cho nhập số + dấu chấm
+                if (!/^[0-9.]*$/.test(raw)) return;
+                const numberValue = parseVND(raw);
+                setWalletBalance(numberValue || '');
+                setWalletBalanceDisplay(
+                  numberValue ? formatVND(numberValue) : ''
+                );
+              }}
+              placeholder="VD: 10.000.000"
+            />
+            <div className="flex justify-end gap-3 pt-4">
+              <button
+                className="px-5 py-2.5 text-lg border rounded-lg"
+                onClick={() => setModalType(null)}
+              >
+                Huỷ
+              </button>
+              <button
+                className="px-5 py-2.5 text-lg bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                onClick={handleConfirmUpLimit}
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {modalType === 'SYNC_CONFIRM' && selectedAccount && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-[400px] space-y-4">
+            <h3 className="text-xl font-bold text-indigo-600">
+              Xác nhận đồng bộ
+            </h3>
+
+            <p>
+              Bạn có chắc muốn đồng bộ campaign cho tài khoản
+              <strong> {selectedAccount.name}</strong>?
+            </p>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setModalType(null)}
+                className="px-4 py-2 border rounded-lg"
+              >
+                Huỷ
+              </button>
+              <button
+                onClick={confirmAsyncCamp}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {modalType === 'SYNC_ALL_CONFIRM' && selectedAccount && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-[400px] space-y-4">
+            <h3 className="text-xl font-bold text-indigo-600">
+              Xác nhận đồng bộ
+            </h3>
+
+            <p>
+              Bạn có chắc muốn đồng bộ tất cả campaign cho các tài khoản
+              <strong> {selectedAccount.name}</strong>?
+            </p>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setModalType(null)}
+                className="px-4 py-2 border rounded-lg"
+              >
+                Huỷ
+              </button>
+              <button
+                onClick={confirmAsyncAllCamp}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {modalType === 'ATTACH_ACCOUNT' && selectedAccount && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-[450px] space-y-4">
+            <h3 className="text-xl font-bold text-emerald-600">
+              Gắn tài khoản
+            </h3>
+
+            <select
+              multiple
+              value={selectedUsers}
+              onChange={(e) =>
+                setSelectedUsers(
+                  Array.from(e.target.selectedOptions, (option) => option.value)
+                )
+              }
+              className="w-full border rounded-lg px-4 py-2 h-[120px]"
+            >
+              <option value="1">Account A</option>
+              <option value="2">Account B</option>
+              <option value="3">Account C</option>
+            </select>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setModalType(null)}
+                className="px-4 py-2 border rounded-lg"
+              >
+                Huỷ
+              </button>
+              <button
+                onClick={confirmAttachUser}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg"
+              >
+                Gắn
               </button>
             </div>
           </div>
