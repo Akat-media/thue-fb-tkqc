@@ -68,9 +68,11 @@ const ManageAdsAccount: React.FC = () => {
   const [openSortKey, setOpenSortKey] = useState<keyof Transaction | null>(
     null
   );
-  const [active, setActive] = useState('money');
+  const [active, setActive] = useState('points');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+
   const [transactionPoints, setTransactionPoints] = useState<Transaction[]>([]);
+  console.log('transactions', transactionPoints);
   const [query, setQuery] = useState('');
 
   const toggleCheckbox = (id: string) => {
@@ -106,33 +108,6 @@ const ManageAdsAccount: React.FC = () => {
     }
     debounceSearch(e.target.value);
   };
-
-  const sortedData = useMemo(() => {
-    const sortableItems = [...filtered];
-    if (sortConfig !== null) {
-      sortableItems.sort((a, b) => {
-        const aValue = a[sortConfig.key];
-        const bValue = b[sortConfig.key];
-
-        if (typeof aValue === 'number' && typeof bValue === 'number') {
-          return sortConfig.direction === 'asc'
-            ? aValue - bValue
-            : bValue - aValue;
-        }
-
-        if (aValue == null && bValue != null)
-          return sortConfig.direction === 'asc' ? -1 : 1;
-        if (aValue != null && bValue == null)
-          return sortConfig.direction === 'asc' ? 1 : -1;
-        if (aValue == null && bValue == null) return 0;
-
-        return sortConfig.direction === 'asc'
-          ? String(aValue).localeCompare(String(bValue))
-          : String(bValue).localeCompare(String(aValue));
-      });
-    }
-    return sortableItems;
-  }, [filtered, sortConfig]);
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -235,34 +210,12 @@ const ManageAdsAccount: React.FC = () => {
       render: () => (
         <th className="px-2 py-3 text-center min-w-[50px] border border-gray-200">
           <label className="relative inline-flex items-center justify-center cursor-pointer w-4 h-4">
-            <input
-              type="checkbox"
-              checked={
-                selectedIds.length === sortedData.length &&
-                selectedIds.length > 0
-              }
-              onChange={(e) => {
-                const newSelected = e.target.checked
-                  ? sortedData.map((i) => i.id)
-                  : [];
-                setSelectedIds(newSelected);
-                setHighlightedRows(newSelected);
-              }}
-              className="sr-only peer"
-            />
+            <input type="checkbox" className="sr-only peer" />
             <div className="w-4 h-4 rounded border border-gray-300 bg-white peer-checked:bg-[#78bb07] peer-checked:border-[#78bb07] after:content-['✔'] after:absolute after:left-[2px] after:top-[-1px] after:text-white after:text-xs after:font-bold peer-checked:after:block after:hidden"></div>
           </label>
         </th>
       ),
     },
-    // {
-    //   key: 'edit',
-    //   render: () => (
-    //     <th className="px-4 py-3 text-center min-w-[50px] border border-gray-200">
-    //       <SquarePen className="w-4 h-4 text-gray-500" />
-    //     </th>
-    //   ),
-    // },
     {
       key: 'id',
       label: 'ID',
@@ -285,15 +238,8 @@ const ManageAdsAccount: React.FC = () => {
       minWidth: '160px',
     },
     {
-      key: 'points',
-      label: 'Điểm',
-      icon: <BadgeCheck className="w-4 h-4 text-gray-500" />,
-      sortKey: 'points',
-      minWidth: '160px',
-    },
-    {
       key: 'bank',
-      label: 'Phương thức thanh toán',
+      label: 'Mô tả',
       icon: <Scale className="w-4 h-4 text-gray-500" />,
       sortKey: 'bank',
       minWidth: '120px',
@@ -320,25 +266,11 @@ const ManageAdsAccount: React.FC = () => {
       minWidth: '100px',
     },
     {
-      key: 'short_code',
-      label: 'Short Code',
-      icon: <HandCoins className="w-4 h-4 text-gray-500" />,
-      sortKey: 'short_code',
-      minWidth: '140px',
-    },
-    {
       key: 'transactionID',
       label: 'TransactionID',
       icon: <Pen className="w-4 h-4 text-gray-500" />,
       sortKey: 'transactionID',
       minWidth: '140px',
-    },
-    {
-      key: 'description',
-      label: 'Mô tả',
-      icon: <ALargeSmall className="w-4 h-4 text-gray-500" />,
-      sortKey: 'description',
-      minWidth: '240px',
     },
   ];
 
@@ -348,34 +280,12 @@ const ManageAdsAccount: React.FC = () => {
       render: () => (
         <th className="px-2 py-3 text-center min-w-[50px] border border-gray-200">
           <label className="relative inline-flex items-center justify-center cursor-pointer w-4 h-4">
-            <input
-              type="checkbox"
-              checked={
-                selectedIds.length === sortedData.length &&
-                selectedIds.length > 0
-              }
-              onChange={(e) => {
-                const newSelected = e.target.checked
-                  ? sortedData.map((i) => i.id)
-                  : [];
-                setSelectedIds(newSelected);
-                setHighlightedRows(newSelected);
-              }}
-              className="sr-only peer"
-            />
+            <input type="checkbox" className="sr-only peer" />
             <div className="w-4 h-4 rounded border border-gray-300 bg-white peer-checked:bg-[#78bb07] peer-checked:border-[#78bb07] after:content-['✔'] after:absolute after:left-[2px] after:top-[-1px] after:text-white after:text-xs after:font-bold peer-checked:after:block after:hidden"></div>
           </label>
         </th>
       ),
     },
-    // {
-    //   key: 'edit',
-    //   render: () => (
-    //     <th className="px-4 py-3 text-center min-w-[50px] border border-gray-200">
-    //       <SquarePen className="w-4 h-4 text-gray-500" />
-    //     </th>
-    //   ),
-    // },
     {
       key: 'id',
       label: 'ID',
@@ -392,16 +302,9 @@ const ManageAdsAccount: React.FC = () => {
     },
     {
       key: 'points_used',
-      label: 'Số điểm đã đổi',
+      label: 'Số tiền đã đổi',
       icon: <CircleDollarSign className="w-4 h-4 text-gray-500" />,
       sortKey: 'points_used',
-      minWidth: '160px',
-    },
-    {
-      key: 'service_type',
-      label: 'Loại dịch vụ',
-      icon: <BadgeCheck className="w-4 h-4 text-gray-500" />,
-      sortKey: 'service_type',
       minWidth: '160px',
     },
     {
@@ -484,7 +387,7 @@ const ManageAdsAccount: React.FC = () => {
   const hanleTransactionPoint = async (searchQuery = '') => {
     try {
       const response = await BaseHeader({
-        url: '/points-used-all',
+        url: '/wallet/transfer-money',
         method: 'get',
         params: {
           page: currentPagePoint,
@@ -492,7 +395,7 @@ const ManageAdsAccount: React.FC = () => {
           ...(searchQuery && { query: searchQuery.trim() }),
         },
       });
-      const pointsData = response.data.data.data;
+      const pointsData = response.data.data;
       setTransactionPoints(pointsData);
       setFiltered(pointsData); // Cập nhật filtered khi nhận dữ liệu mới
       setTotalPoints(response.data.data.count);
@@ -523,14 +426,6 @@ const ManageAdsAccount: React.FC = () => {
     setFiltered(data);
   }, [filterValues, active, transactions, transactionPoints]);
 
-  // useEffect(() => {
-  //   if (active === 'money') {
-  //     setFiltered(transactions);
-  //   } else if (active === 'points') {
-  //     setFiltered(transactionPoints);
-  //   }
-  // }, [transactions, transactionPoints, active]);
-
   const getStatusConfig = (status: string) => {
     const configs = {
       pending: {
@@ -556,9 +451,9 @@ const ManageAdsAccount: React.FC = () => {
     };
     return (
       configs[status as keyof typeof configs] || {
-        bg: 'bg-gray-100',
-        text: 'text-gray-600',
-        label: status || 'Không xác định',
+        bg: 'bg-green-100',
+        text: 'text-green-600',
+        label: 'Thành công',
       }
     );
   };
@@ -725,7 +620,7 @@ const ManageAdsAccount: React.FC = () => {
                 </thead>
 
                 <tbody className="text-sm text-gray-800">
-                  {sortedData.map((item: any) => (
+                  {transactions?.map((item: any) => (
                     <tr
                       key={item.id}
                       className={`${
@@ -800,33 +695,13 @@ const ManageAdsAccount: React.FC = () => {
                           : '—'}
                       </td>
                       <td
-                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
-                          activeCell === `${item.id}-status`
-                            ? 'bg-green-100'
-                            : ''
-                        }`}
-                        onClick={() => {
-                          setActiveCell(`${item.id}-status`);
-                          setActiveRow(null);
-                        }}
+                        className={`px-4 py-2 text-center border border-gray-200 cursor-pointer`}
                       >
-                        {typeof item?.points === 'number'
-                          ? item.points.toLocaleString()
-                          : item?.points}
+                        {item?.type === 'in'
+                          ? 'Nạp tiền vào tài khoản SUPER_ADMIN'
+                          : 'Nạp tiền vào ví'}
                       </td>
-                      <td
-                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
-                          activeCell === `${item.id}-amount`
-                            ? 'bg-green-100'
-                            : ''
-                        }`}
-                        onClick={() => {
-                          setActiveCell(`${item.id}-amount`);
-                          setActiveRow(null);
-                        }}
-                      >
-                        {item?.bank}
-                      </td>
+
                       <td
                         className={`px-4 py-2 text-center border border-gray-200 cursor-pointer`}
                         onClick={() => {
@@ -879,34 +754,6 @@ const ManageAdsAccount: React.FC = () => {
                         }}
                       >
                         {item?.type}
-                      </td>
-                      <td
-                        className={`px-4 py-2 text-center border border-gray-200 cursor-pointer ${
-                          activeCell === `${item.id}-createdAt`
-                            ? 'bg-green-100'
-                            : ''
-                        }`}
-                        onClick={() => {
-                          setActiveCell(`${item.id}-createdAt`);
-                          setActiveRow(null);
-                        }}
-                      >
-                        <div className="flex items-center justify-center gap-2">
-                          <span>{item?.short_code}</span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigator.clipboard.writeText(
-                                item?.short_code || ''
-                              );
-                              toast.success('Đã sao chép Short Code!');
-                            }}
-                            title="Copy"
-                            className="hover:text-blue-500 transition"
-                          >
-                            <Copy className="w-4 h-4" />
-                          </button>
-                        </div>
                       </td>
 
                       <td
@@ -982,7 +829,7 @@ const ManageAdsAccount: React.FC = () => {
           <Subheader active={active} setActive={setActive} />
           <div className="flex items-end justify-between mb-4">
             <h1 className="text-1xl font-semibold	 leading-7 text-blue-900 sm:text-3xl sm:truncate mt-1">
-              Quản lý giao dịch đổi điểm
+              Quản lý giao dịch nạp tiền vào ví
             </h1>
           </div>
 
@@ -1004,19 +851,6 @@ const ManageAdsAccount: React.FC = () => {
                 </div>
               </div>
             </div>
-            {/* {userParse?.user?.role === "admin" && (
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={handleSync}
-                  className="px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition"
-                >
-                  <div className="flex items-center gap-2">
-                    <RefreshCcw className="w-4 h-4" />
-                    Đồng Bộ Tài Khoản
-                  </div>
-                </button>
-              </div>
-            )} */}
           </div>
 
           <div className="overflow-x-auto rounded-lg border border-gray-300">
@@ -1054,7 +888,7 @@ const ManageAdsAccount: React.FC = () => {
                 </thead>
 
                 <tbody className="text-sm text-gray-800">
-                  {sortedData.map((item: any) => (
+                  {transactionPoints.map((item: any) => (
                     <tr
                       key={item.id}
                       className={`${
@@ -1076,19 +910,6 @@ const ManageAdsAccount: React.FC = () => {
                           <div className="w-4 h-4 rounded border border-gray-300 bg-white peer-checked:bg-[#78bb07] peer-checked:border-[#78bb07] after:content-['✔'] after:absolute after:left-[2px] after:top-[-1px] after:text-white after:text-xs after:font-bold peer-checked:after:block after:hidden"></div>
                         </label>
                       </td>
-
-                      {/* <td className="px-4 py-2 text-center border border-gray-100">
-                        <button
-                          onClick={() => {
-                            setSelectedAccount(item);
-                            setShowModal(true);
-                          }}
-                          className="text-gray-600 hover:text-blue-600"
-                          title="Xem chi tiết"
-                        >
-                          <SquarePen className="w-4 h-4 mx-auto" />
-                        </button>
-                      </td> */}
 
                       <td
                         className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
@@ -1112,7 +933,7 @@ const ManageAdsAccount: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {item.user_id}
+                        {item.to_user_id}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
@@ -1125,22 +946,7 @@ const ManageAdsAccount: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {typeof item?.points_used === 'number'
-                          ? item.points_used.toLocaleString()
-                          : item?.points_used}{' '}
-                      </td>
-                      <td
-                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
-                          activeCell === `${item.id}-status`
-                            ? 'bg-green-100'
-                            : ''
-                        }`}
-                        onClick={() => {
-                          setActiveCell(`${item.id}-status`);
-                          setActiveRow(null);
-                        }}
-                      >
-                        {item?.service_type}
+                        {item?.amount.toLocaleString()} VNĐ
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
@@ -1153,7 +959,7 @@ const ManageAdsAccount: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {item?.target_account}
+                        {item?.ads_account_id}
                       </td>
                       <td
                         className="px-4 py-2 text-center border border-gray-200"

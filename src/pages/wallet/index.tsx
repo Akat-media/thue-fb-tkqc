@@ -3,6 +3,7 @@ import BaseHeader from '../../api/BaseHeader';
 import { toast } from 'react-toastify';
 import { debounce } from 'lodash';
 import { useUserStore } from '../../stores/useUserStore';
+import axios from 'axios';
 
 interface WalletType {
   id: number;
@@ -133,10 +134,15 @@ const Wallet = () => {
         toast.success('Tạo ví thành công!');
         handleGetUser();
       } else {
-        toast.error('Tạo ví thất bại!');
+        toast.error(response?.data?.message);
       }
-    } catch (error) {
-      toast.error('Lỗi');
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Có lỗi xảy ra';
+        toast.error(message);
+      } else {
+        toast.error('Lỗi không xác định');
+      }
     } finally {
       resetForm();
       setOpenCreate(false);
@@ -181,7 +187,12 @@ const Wallet = () => {
         toast.error('Tạo ví thất bại!');
       }
     } catch (error) {
-      toast.error('Lỗi');
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Có lỗi xảy ra';
+        toast.error(message);
+      } else {
+        toast.error('Lỗi không xác định');
+      }
     } finally {
       resetForm();
       setOpenEdit(false);
@@ -207,7 +218,12 @@ const Wallet = () => {
         toast.error('Lỗi xóa ví thất bại!');
       }
     } catch (error) {
-      toast.error('Lỗi xóa ví thất bại!');
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Có lỗi xảy ra';
+        toast.error(message);
+      } else {
+        toast.error('Lỗi không xác định');
+      }
     } finally {
       setOpenDelete(false);
     }

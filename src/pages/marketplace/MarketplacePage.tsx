@@ -46,7 +46,7 @@ const MarketplacePage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const userString = localStorage.getItem('user');
   const userInfo = userString ? JSON.parse(userString) : null;
-  const isAdmin = userInfo?.user?.role === 'admin';
+  const isAdmin = userInfo?.user?.role === 'super_admin';
   const [selectedAccount, setSelectedAccount] = useState<AdAccount | null>(
     null
   );

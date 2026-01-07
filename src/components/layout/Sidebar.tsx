@@ -220,41 +220,41 @@ const Sidebar: React.FC<{
                 </span>
               </Link>
             ))}
-          {userobj?.role === 'super_admin' && (
-            <button
-              onClick={() => {
-                if (!isSidebarOpen) {
-                  toggleSidebar();
-                } else {
-                  setOpenAdsSubmenu(!openAdsSubmenu);
-                }
-              }}
+
+          <button
+            onClick={() => {
+              if (!isSidebarOpen) {
+                toggleSidebar();
+              } else {
+                setOpenAdsSubmenu(!openAdsSubmenu);
+              }
+            }}
+            className={clsx(
+              'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full',
+              isAdsMenuActive && 'bg-white font-semibold'
+            )}
+          >
+            <div className="w-12 flex justify-center">
+              <AlignStartHorizontal className="w-5 h-5" />
+            </div>
+            <span
               className={clsx(
-                'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full',
-                isAdsMenuActive && 'bg-white font-semibold'
+                'transition-all whitespace-nowrap overflow-hidden duration-300',
+                isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
               )}
             >
-              <div className="w-12 flex justify-center">
-                <AlignStartHorizontal className="w-5 h-5" />
-              </div>
-              <span
+              Quản lý hệ thống
+            </span>
+            {isSidebarOpen && (
+              <ChevronDown
                 className={clsx(
-                  'transition-all whitespace-nowrap overflow-hidden duration-300',
-                  isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                  'ml-auto mr-2 w-4 h-4 transition-transform',
+                  openAdsSubmenu && 'rotate-180'
                 )}
-              >
-                Quản lý hệ thống
-              </span>
-              {isSidebarOpen && (
-                <ChevronDown
-                  className={clsx(
-                    'ml-auto mr-2 w-4 h-4 transition-transform',
-                    openAdsSubmenu && 'rotate-180'
-                  )}
-                />
-              )}
-            </button>
-          )}
+              />
+            )}
+          </button>
+
           {/* Thêm max-height nếu thêm item */}
           <div
             className={clsx(
@@ -265,32 +265,38 @@ const Sidebar: React.FC<{
             )}
           >
             <div className="ml-10 space-y-1">
-              <Link
-                to="/adsaccountmanager"
-                className={clsx(
-                  'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
-                  location.pathname === '/adsaccountmanager' &&
-                    'bg-white font-semibold'
-                )}
-              >
-                <div className="w-8 flex justify-center">
-                  <Archive className="w-4 h-4" />
-                </div>
-                <span className="text-gray-600">Quản lý giao dịch</span>
-              </Link>
-              <Link
-                to="/admin/account"
-                className={clsx(
-                  'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
-                  location.pathname === '/admin/account' &&
-                    'bg-white font-semibold'
-                )}
-              >
-                <div className="w-8 flex justify-center">
-                  <Users className="w-4 h-4" />
-                </div>
-                <span className="text-gray-600">Quản lý người dùng</span>
-              </Link>
+              {userobj?.role !== 'user' && (
+                <Link
+                  to="/adsaccountmanager"
+                  className={clsx(
+                    'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
+                    location.pathname === '/adsaccountmanager' &&
+                      'bg-white font-semibold'
+                  )}
+                >
+                  <div className="w-8 flex justify-center">
+                    <Archive className="w-4 h-4" />
+                  </div>
+                  <span className="text-gray-600">Quản lý giao dịch</span>
+                </Link>
+              )}
+
+              {userobj?.role === 'super_admin' && (
+                <Link
+                  to="/admin/account"
+                  className={clsx(
+                    'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
+                    location.pathname === '/admin/account' &&
+                      'bg-white font-semibold'
+                  )}
+                >
+                  <div className="w-8 flex justify-center">
+                    <Users className="w-4 h-4" />
+                  </div>
+                  <span className="text-gray-600">Quản lý người dùng</span>
+                </Link>
+              )}
+
               <Link
                 to="/admin/policy"
                 className={clsx(

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import BaseHeader from '../../api/BaseHeader';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 type ModalType =
   | 'SYNC_CONFIRM'
   | 'ATTACH_ACCOUNT'
@@ -15,6 +16,7 @@ interface Wallet {
   balance: number;
   currency: string;
   adsAccounts: any[];
+  userViewCampaign: any[];
 }
 const formatVND = (value: number | '') => {
   if (value === '' || isNaN(value)) return '';
@@ -42,7 +44,8 @@ const WalletDetail = () => {
 
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-
+  const [chooseUser, setChooseUser] = useState<string[]>([]);
+  console.log('chooseUser', chooseUser);
   const [openDelete, setOpenDelete] = useState(false);
   const [walletToDelete, setWalletToDelete] = useState<any>(null);
 
@@ -145,7 +148,12 @@ const WalletDetail = () => {
         toast.error('Lỗi set ngưỡng tài khoản ví thất bại!');
       }
     } catch (error) {
-      toast.error('Lỗi set ngưỡng khoản ví thất bại!');
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Có lỗi xảy ra';
+        toast.error(message);
+      } else {
+        toast.error('Lỗi không xác định');
+      }
     } finally {
       setModalType(null);
       setSelectedAccount(null);
@@ -172,7 +180,12 @@ const WalletDetail = () => {
         toast.error('Lỗi set ngưỡng tài khoản ví thất bại!');
       }
     } catch (error) {
-      toast.error('Lỗi set ngưỡng khoản ví thất bại!');
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Có lỗi xảy ra';
+        toast.error(message);
+      } else {
+        toast.error('Lỗi không xác định');
+      }
     } finally {
       setModalType(null);
       setSelectedAccount(null);
@@ -196,7 +209,12 @@ const WalletDetail = () => {
         toast.error('Lỗi xóa tài khoản ví thất bại!');
       }
     } catch (error) {
-      toast.error('Lỗi xóa tài khoản ví thất bại!');
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Có lỗi xảy ra';
+        toast.error(message);
+      } else {
+        toast.error('Lỗi không xác định');
+      }
     } finally {
       setOpenDelete(false);
     }
@@ -219,7 +237,12 @@ const WalletDetail = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error('Đồng bộ tất cả camp thất bại!');
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Có lỗi xảy ra';
+        toast.error(message);
+      } else {
+        toast.error('Lỗi không xác định');
+      }
     } finally {
       setModalType(null);
     }
@@ -241,7 +264,12 @@ const WalletDetail = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error('Đồng bộ camp thất bại!');
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Có lỗi xảy ra';
+        toast.error(message);
+      } else {
+        toast.error('Lỗi không xác định');
+      }
     } finally {
       setModalType(null);
     }
@@ -252,18 +280,24 @@ const WalletDetail = () => {
         url: `/attach-user-in-campaign`,
         method: 'post',
         data: {
-          list_user_id: selectedUsers,
+          list_user_id: chooseUser,
           ads_id: selectedAccount.id,
+          wallet_id: selectedWalletId,
         },
       });
       if (response.status == 200) {
-        toast.success('Đồng bộ camp thành công!');
+        toast.success('Gắn tài khoản thành công!');
         fetchWallets();
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error('Đồng bộ camp thất bại!');
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Có lỗi xảy ra';
+        toast.error(message);
+      } else {
+        toast.error('Lỗi không xác định');
+      }
     } finally {
       setModalType(null);
     }
@@ -327,6 +361,12 @@ const WalletDetail = () => {
                       {acc?.account_id}
                     </div>
                     <div className="text-gray-500 mt-1">
+                      BM_ID:{' '}
+                      <span className="font-semibold text-gray-700">
+                        {acc.owner}
+                      </span>
+                    </div>
+                    <div className="text-gray-500 mt-1">
                       Ngưỡng chi tiêu:{' '}
                       <span className="font-semibold text-gray-700">
                         {formatVNDV2(acc.spend_cap)} VND
@@ -339,9 +379,12 @@ const WalletDetail = () => {
                       </span>
                     </div>
                     <div className="text-gray-500 mt-1">
-                      User thấy camp:{' '}
-                      <span className="font-semibold text-gray-700 break-words max-w-[500px] block">
-                        duynam11a11999@gmai.com,duynam11a11999@gmai.com,
+                      User gắn campaign:{' '}
+                      <span className="font-semibold text-red-500 break-words max-w-[500px] block">
+                        {selectedWallet?.userViewCampaign
+                          ?.filter((item) => item.ads_id === acc.id)
+                          ?.map((item) => item.user?.email)
+                          ?.join(', ')}
                       </span>
                     </div>
                   </div>
@@ -364,14 +407,14 @@ const WalletDetail = () => {
                     </button>
 
                     <button
-                      onClick={() => handleOpenModal(acc)}
+                      onClick={() => handleOpenModalUpLimit(acc)}
                       className="bg-purple-500 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-purple-600 transition"
                     >
                       Nâng ngưỡng
                     </button>
                     <button
-                      onClick={() => handleOpenModalUpLimit(acc)}
+                      onClick={() => handleOpenModal(acc)}
                       className="bg-amber-500 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-amber-600 transition"
                     >
@@ -563,17 +606,21 @@ const WalletDetail = () => {
 
             <select
               multiple
-              value={selectedUsers}
+              value={chooseUser}
               onChange={(e) =>
-                setSelectedUsers(
+                setChooseUser(
                   Array.from(e.target.selectedOptions, (option) => option.value)
                 )
               }
               className="w-full border rounded-lg px-4 py-2 h-[120px]"
             >
-              <option value="1">Account A</option>
-              <option value="2">Account B</option>
-              <option value="3">Account C</option>
+              <option value="">Chọn tài khoản</option>
+              {selectedUsers.length > 0 &&
+                selectedUsers.map((item: any) => (
+                  <option key={item.id} value={item.id}>
+                    {item.email}
+                  </option>
+                ))}
             </select>
 
             <div className="flex justify-end gap-2">

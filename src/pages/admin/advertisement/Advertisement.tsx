@@ -1,5 +1,5 @@
 import './style.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   RefreshCw,
   MoreHorizontal,
@@ -13,9 +13,22 @@ import {
   LayoutDashboard,
   PanelTop,
 } from 'lucide-react';
+import BaseHeader from '../../../api/BaseHeader';
+import { format } from 'date-fns';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
+const formatDateTime = (value?: string) => {
+  if (!value) return '-';
+  return format(new Date(value), 'dd/MM/yyyy HH:mm');
+};
+const formatVNDV2 = (value?: number | string) => {
+  if (value === null || value === undefined || value === '') return '0';
+  const num = Number(value);
+  if (isNaN(num)) return value;
+  return num.toLocaleString('vi-VN');
+};
 const Advertisement = () => {
-  const [statusFilter, setStatusFilter] = useState('all');
   const [selectedSearch, setSelectedSearch] = useState(false);
 
   const [count, setCount] = useState(0);
@@ -24,7 +37,30 @@ const Advertisement = () => {
     displayOnSearchBar: false,
     name: '',
   });
-
+  const [loading, setLoading] = useState(false);
+  const [dataCampaign, setDataCampaign] = useState<any>([]);
+  console.log('dataCampaign', dataCampaign);
+  const fetchData = async () => {
+    try {
+      const [response] = await Promise.all([
+        BaseHeader({
+          url: '/campaign',
+          method: 'get',
+        }),
+      ]);
+      const result = response.data.data;
+      setDataCampaign(result);
+      if (result.length > 0) {
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    setLoading(true);
+    fetchData();
+  }, []);
   const handleSelectedFilter = (name: any) => {
     if (selectedFilter.name === name) {
       setCount(0);
@@ -45,15 +81,42 @@ const Advertisement = () => {
       setCount(0);
     }
   };
-
+  const handleToggleCampaign = async (item: any) => {
+    try {
+      const response = await BaseHeader({
+        url: `/campaign`,
+        method: 'put',
+        data: {
+          id: item.id,
+          ads_id: item.ad_account_id,
+          wallet_id: item.wallet_id,
+          is_active: item.status === 'ACTIVE' ? false : true,
+        },
+      });
+      if (response.status == 200) {
+        toast.success('Cập nhật Campaiig khoản thành công!');
+        fetchData();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Có lỗi xảy ra';
+        toast.error(message);
+      } else {
+        toast.error('Lỗi không xác định');
+      }
+    } finally {
+    }
+  };
   return (
     <div className="page-fix">
       <div className="section-1 flex-col sm:flex-row">
         <div className="inner-left">
-          <div className="inner-text-1">Chiến dịch</div>
+          <div className="text-[24px] font-bold">Quản lý chiến dịch</div>
 
           <div className="relative w-[220px] sm:w-[286px]">
-            <select
+            {/* <select
               className="w-full h-[46px] text-sm border border-gray-300 rounded-lg pr-10 pl-3 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white truncate overflow-hidden whitespace-nowrap"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -62,7 +125,7 @@ const Advertisement = () => {
               <option value="pending">Chiến dịch 2</option>
               <option value="in-progress">Chiến dịch 3</option>
               <option value="resolved">Chiến dịch 4</option>
-            </select>
+            </select> */}
 
             {/* Icon mũi tên xuống */}
             <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
@@ -334,82 +397,94 @@ const Advertisement = () => {
           <table>
             <thead>
               <tr>
-                <th>
-                  <input type="checkbox" />
-                </th>
                 <th>Tắt/Bật</th>
-                <th>Chiến dịch</th>
-                <th>Phân phối</th>
-                <th>Ngân sách</th>
-                <th>Người tiếp cận</th>
-                <th>Lượt hiển thị</th>
-                <th>Thurplay</th>
-                <th>Chi phí / Thruplay</th>
-                <th>Số tiền đã chi</th>
+                <th>Tên chiến dịch</th>
+                <th>Trạng thái</th>
+                <th>Ngân sách mỗi ngày</th>
+                <th>Ngân sách trọn đời</th>
+                <th>Ngân sách còn lại</th>
+                <th>Mục tiêu chiến dịch</th>
+                <th>Chiến lược đặt giá thầu</th>
+                <th>Danh mục quảng cáo đặc biệt</th>
+                <th>Trạng thái thực tế Facebook đang chạy</th>
+                <th>Cách mua quảng cáo</th>
+                <th>Thời điểm bắt đầu chạy</th>
                 <th>Kết thúc</th>
                 <th></th>
               </tr>
             </thead>
+            {/* ========================phần map dữ liệu ========================== */}
             <tbody>
               {/* Dữ liệu ví dụ, có thể tạo thêm component map */}
-              <tr>
-                <td>
-                  <input type="checkbox" />
-                </td>
-                <td>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" className="sr-only peer" />
-                    <div
-                      className="
-        w-14 h-8 
-        bg-gray-300 
-        rounded-full 
-        peer peer-checked:bg-green-500
-        transition-colors
-      "
-                    />
-                    <div
-                      className="
-        absolute left-1 top-1 
-        w-6 h-6 
-        bg-white 
-        rounded-full 
-        shadow-md
-        transition-transform
-        peer-checked:translate-x-6
-      "
-                    />
-                  </label>
-                </td>
+              {dataCampaign.length > 0 &&
+                dataCampaign.map((item: any) => (
+                  <tr key={item.id}>
+                    <td>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          className="sr-only peer"
+                          type="checkbox"
+                          checked={item?.status === 'ACTIVE'}
+                          onChange={() => handleToggleCampaign(item)}
+                        />
+                        <div
+                          className="
+                            w-14 h-8 
+                            bg-gray-300 
+                            rounded-full 
+                            peer peer-checked:bg-green-500
+                            transition-colors
+                          "
+                        />
+                        <div
+                          className="
+                          absolute left-1 top-1 
+                          w-6 h-6 
+                          bg-white 
+                          rounded-full 
+                          shadow-md
+                          transition-transform
+                          peer-checked:translate-x-6
+                        "
+                        />
+                      </label>
+                    </td>
 
-                <td>
-                  <a href="#">LIVE_AP1_PHƯƠNG_2607_AM_UYÊN VŨ_15M</a>
-                </td>
-                <td>Không hoạt động</td>
-                <td className="text-right">
-                  5.000.000
-                  <br />
-                  <small>Trọn đời</small>
-                </td>
-                <td className="text-right">16.668</td>
-                <td className="text-right">17.824</td>
-                <td className="text-right">976</td>
-                <td className="text-right">1.277</td>
-                <td className="text-right">1.246.331</td>
-                <td className="text-right">26 Tháng 7, 2025</td>
-                <td></td>
-              </tr>
-              {/* Thêm dòng khác nếu cần */}
+                    <td>{item?.name}</td>
+                    <td>
+                      <span
+                        className={`
+                                px-3 py-1
+                                text-xs font-semibold
+                                rounded-full
+                                ${
+                                  item?.status === 'ACTIVE'
+                                    ? 'bg-green-100 text-green-700'
+                                    : 'bg-gray-200 text-gray-600'
+                                }
+                              `}
+                      >
+                        {item?.status === 'ACTIVE'
+                          ? 'Đang hoạt động'
+                          : 'Không hoạt động'}
+                      </span>
+                    </td>
+                    <td>{formatVNDV2(item?.daily_budget)}</td>
+                    <td>{formatVNDV2(item?.lifetime_budget)}</td>
+                    <td>{formatVNDV2(item?.budget_remaining)}</td>
+                    <td>{item?.objective}</td>
+                    <td>{item?.bid_strategy}</td>
+                    <td>{item?.special_ad_categories?.join(',')}</td>
+                    <td>{item?.effective_status}</td>
+                    <td>{item?.buying_type}</td>
+                    <td>{formatDateTime(item?.start_time)}</td>
+                    <td>{formatDateTime(item?.stop_time)}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
       </div>
-
-      {/* Banner quảng cáo AI */}
-      {/*<div id="ai-ad-banner">*/}
-      {/*    <img src="https://ads.flagteam.vn/assets/media/logo.png" alt="Logo AI Ads" />*/}
-      {/*    <span>Tối ưu hóa Quảng Cáo với AI</span>*/}
-      {/*</div>*/}
     </div>
   );
 };

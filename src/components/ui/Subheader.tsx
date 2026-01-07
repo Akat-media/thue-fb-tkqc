@@ -18,6 +18,16 @@ const Subheader = ({ active, setActive }: Props) => {
   return (
     <div className="flex items-center gap-2 sm:gap-4 border-b border-gray-200 mb-6">
       <button
+        onClick={() => setActive('points')}
+        className={`px-6 py-4 text-base font-bold transition-colors min-w-max rounded-t-lg ${
+          active === 'points'
+            ? 'text-blue-900 bg-gradient-to-r from-[#09FFCD] to-[#0AEEFE]'
+            : 'text-gray-600 hover:text-[#1e3a8a]'
+        }`}
+      >
+        Nạp tiền vào ví
+      </button>
+      <button
         onClick={() => setActive('money')}
         className={`px-6 py-4 text-base font-bold transition-colors min-w-max rounded-t-lg ${
           active === 'money'
@@ -26,16 +36,6 @@ const Subheader = ({ active, setActive }: Props) => {
         }`}
       >
         Nạp tiền
-      </button>
-      <button
-        onClick={() => setActive('points')}
-        className={`px-6 py-4 text-base font-bold transition-colors min-w-max rounded-t-lg ${
-          active === 'points'
-            ? 'text-blue-900 bg-gradient-to-r from-[#09FFCD] to-[#0AEEFE]'
-            : 'text-gray-600 hover:text-[#1e3a8a]'
-        }`}
-      >
-        Đổi điểm
       </button>
     </div>
   );
