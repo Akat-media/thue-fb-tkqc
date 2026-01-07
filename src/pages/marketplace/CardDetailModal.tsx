@@ -75,85 +75,89 @@ const CardDetailModal: React.FC<ModalProps> = ({
                   {t('cardDetailModal.basicInfo')}
                 </h3>
                 <div className="space-y-3">
-                  {['account_id', 'type', 'account_status', 'active'].map(
-                    (field) => {
-                      const value = selectedAdAccountDetail[field];
-                      let displayValue = '—';
+                  {[
+                    'account_id',
+                    'type',
+                    'account_status',
+                    'active',
+                    'owner',
+                  ].map((field) => {
+                    const value = selectedAdAccountDetail[field];
+                    let displayValue = '—';
 
-                      if (value !== undefined && value !== null) {
-                        if (field === 'account_status') {
-                          displayValue =
-                            value === 1
-                              ? t('cardDetailModal.accountStatus.active')
-                              : t('cardDetailModal.accountStatus.inactive');
-                        } else if (field === 'active') {
-                          displayValue = value
-                            ? t('cardDetailModal.yes')
-                            : t('cardDetailModal.no');
-                        } else if (field === 'status_rented') {
-                          displayValue = t(`adAccountCard.${value}`, {
-                            defaultValue: value,
-                          });
-                        } else {
-                          displayValue = String(value);
-                        }
+                    if (value !== undefined && value !== null) {
+                      if (field === 'account_status') {
+                        displayValue =
+                          value === 1
+                            ? t('cardDetailModal.accountStatus.active')
+                            : t('cardDetailModal.accountStatus.inactive');
+                      } else if (field === 'active') {
+                        displayValue = value
+                          ? t('cardDetailModal.yes')
+                          : t('cardDetailModal.no');
+                      } else if (field === 'status_rented') {
+                        displayValue = t(`adAccountCard.${value}`, {
+                          defaultValue: value,
+                        });
+                      } else {
+                        displayValue = String(value);
                       }
-
-                      return (
-                        <div
-                          key={field}
-                          className="flex justify-between items-center"
-                        >
-                          <span className="text-base text-slate-500">
-                            {fieldNameMap[field] || field}
-                          </span>
-                          <span className="text-base font-semibold text-slate-700">
-                            {field === 'account_id' ? (
-                              <span className="font-mono bg-slate-100 px-2 py-1 rounded text-base">
-                                {displayValue}
-                              </span>
-                            ) : field === 'type' ? (
-                              <span className="text-blue-900 font-bold">
-                                {t('cardDetailModal.accountTypeBusiness')}
-                              </span>
-                            ) : field === 'account_status' ? (
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium gap-1 ${
-                                  value === 1
-                                    ? 'bg-emerald-50 text-emerald-600'
-                                    : 'bg-rose-50 text-rose-600'
-                                }`}
-                              >
-                                {value === 1 ? (
-                                  <CheckCircle className="w-3 h-3" />
-                                ) : (
-                                  <XCircle className="w-3 h-3" />
-                                )}
-                                {displayValue}
-                              </span>
-                            ) : field === 'active' ? (
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium gap-1 ${
-                                  value
-                                    ? 'bg-emerald-50 text-emerald-600'
-                                    : 'bg-rose-50 text-rose-600'
-                                }`}
-                              >
-                                {value ? (
-                                  <CheckCircle className="w-3 h-3" />
-                                ) : (
-                                  <XCircle className="w-3 h-3" />
-                                )}
-                                {displayValue}
-                              </span>
-                            ) : (
-                              displayValue
-                            )}
-                          </span>
-                        </div>
-                      );
                     }
-                  )}
+
+                    return (
+                      <div
+                        key={field}
+                        className="flex justify-between items-center"
+                      >
+                        <span className="text-base text-slate-500">
+                          {fieldNameMap[field] || field}
+                        </span>
+                        <span className="text-base font-semibold text-slate-700">
+                          {field === 'account_id' ? (
+                            <span className="font-mono bg-slate-100 px-2 py-1 rounded text-base">
+                              {displayValue}
+                            </span>
+                          ) : field === 'type' ? (
+                            <span className="text-blue-900 font-bold">
+                              {t('cardDetailModal.accountTypeBusiness')}
+                            </span>
+                          ) : field === 'account_status' ? (
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium gap-1 ${
+                                value === 1
+                                  ? 'bg-emerald-50 text-emerald-600'
+                                  : 'bg-rose-50 text-rose-600'
+                              }`}
+                            >
+                              {value === 1 ? (
+                                <CheckCircle className="w-3 h-3" />
+                              ) : (
+                                <XCircle className="w-3 h-3" />
+                              )}
+                              {displayValue}
+                            </span>
+                          ) : field === 'active' ? (
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium gap-1 ${
+                                value
+                                  ? 'bg-emerald-50 text-emerald-600'
+                                  : 'bg-rose-50 text-rose-600'
+                              }`}
+                            >
+                              {value ? (
+                                <CheckCircle className="w-3 h-3" />
+                              ) : (
+                                <XCircle className="w-3 h-3" />
+                              )}
+                              {displayValue}
+                            </span>
+                          ) : (
+                            displayValue
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 

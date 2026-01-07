@@ -144,6 +144,24 @@ const AdAccountCard: React.FC<AdAccountCardProps> = ({
               </div>
               <div className="flex justify-between items-center text-sm">
                 <div className="flex items-center whitespace-nowrap font-medium">
+                  <Link className="h-4 w-4 text-gray-500 mr-1" />
+                  <span className="text-gray-500 text-[16px]">BM Id:</span>
+                </div>
+
+                <div>
+                  <span
+                    className={`inline-flex items-center px-3 py-1 
+                        rounded-full text-xs font-medium gap-1
+                        cursor-pointer bg-red-100 text-red-800`}
+                  >
+                    <span className="ml-1 whitespace-nowrap">
+                      {account?.owner}
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <div className="flex items-center whitespace-nowrap font-medium">
                   <ShieldCheck className="h-4 w-4 text-gray-500 mr-1" />
                   <span className="text-gray-500 text-[16px]">
                     {t('adAccountCard.accountNumber')}:

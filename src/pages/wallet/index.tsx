@@ -1,24 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import BaseHeader from '../../api/BaseHeader';
 import { toast } from 'react-toastify';
-
-/* ===== Danh sách tài khoản quảng cáo ===== */
-const adAccounts = [
-  { id: 'act_111', name: 'Ads Account A' },
-  { id: 'act_222', name: 'Ads Account B' },
-  { id: 'act_333', name: 'Ads Account C' },
-  { id: 'act_444', name: 'Ads Account D' },
-  { id: 'act_555', name: 'Ads Account E' },
-  { id: 'act_666', name: 'Ads Account F' },
-  { id: 'act_777', name: 'Ads Account G' },
-  { id: 'act_888', name: 'Ads Account H' },
-  { id: 'act_999', name: 'Ads Account I' },
-];
+import { debounce } from 'lodash';
+import { useUserStore } from '../../stores/useUserStore';
 
 interface WalletType {
   id: number;
   name: string;
   adsAccounts: any;
+  balance: string;
+  user: any;
 }
 const formatVND = (value: number | '') => {
   if (value === '' || isNaN(value)) return '';
@@ -31,6 +22,7 @@ const parseVND = (value: string) => {
 
 const Wallet = () => {
   /* ===== State ===== */
+  const fetchUser = useUserStore((state) => state.fetchUser);
   const [wallets, setWallets] = useState<WalletType[]>([]);
   const userString = localStorage.getItem('user');
   const userInfo = userString ? JSON.parse(userString) : null;
@@ -79,10 +71,41 @@ const Wallet = () => {
       console.error(error);
     }
   };
+  const getAdAccounts = async (keyword = '') => {
+    const userId = userInfo?.user_id || userInfo?.user?.user_id;
+    if (!userId) return;
+
+    const res = await BaseHeader({
+      url: '/ad-accounts-all',
+      method: 'get',
+      params: {
+        user_id: userId,
+        query: keyword || undefined, // không gửi nếu rỗng
+      },
+    });
+
+    setAccounts(res.data.data);
+  };
+
   useEffect(() => {
     handleGetUser();
   }, []);
-
+  const debouncedGetAdAccounts = useCallback(
+    debounce((value: string) => {
+      getAdAccounts(value);
+    }, 500),
+    []
+  );
+  useEffect(() => {
+    if (search) {
+      debouncedGetAdAccounts(search);
+    } else {
+      getAdAccounts(); // search rỗng → load all
+    }
+    return () => {
+      debouncedGetAdAccounts.cancel();
+    };
+  }, [search]);
   /* ===== Toggle account ===== */
   const toggleAccount = (id: string) => {
     setSelectedAccounts((prev) =>
@@ -117,6 +140,7 @@ const Wallet = () => {
     } finally {
       resetForm();
       setOpenCreate(false);
+      fetchUser();
     }
   };
 
@@ -161,6 +185,7 @@ const Wallet = () => {
     } finally {
       resetForm();
       setOpenEdit(false);
+      fetchUser();
     }
   };
 
@@ -233,11 +258,20 @@ const Wallet = () => {
                 </button>
               </div>
 
-              <h3 className="text-xl font-semibold mb-3 pr-20">
+              <h3 className="text-[24px] font-semibold mb-3 pr-20">
                 {wallet?.name}
               </h3>
+              <h5 className="text-[20px] text-gray-600 font-semibold mb-3 pr-20">
+                Ngân sách: {formatVND(Number(wallet?.balance))} VND
+              </h5>
+              <h5 className="font-semibold mb-3 pr-20">
+                Tài khoản marketing: {wallet?.user?.email}
+              </h5>
 
               <div className="flex flex-wrap gap-2">
+                <span className="text-purple-900 font-bold">
+                  Tài khoản ads :
+                </span>
                 {wallet?.adsAccounts?.map((acc: any) => (
                   <span
                     key={acc?.account_id}

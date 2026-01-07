@@ -523,6 +523,7 @@ const MarketplacePage: React.FC = () => {
     spend_limit: t('marketplacePage.fields.spendLimit'),
     note_aka: t('marketplacePage.fields.noteAka'),
     active: t('marketplacePage.fields.active'),
+    owner: 'BM ID',
   };
   const tabs = [
     { key: 'all', label: t('marketplacePage.adAccounts') },
