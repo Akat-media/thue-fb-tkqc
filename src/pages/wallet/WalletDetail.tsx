@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import BaseHeader from '../../api/BaseHeader';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -36,7 +36,7 @@ const parseVND = (value: string) => {
 /* ================= COMPONENT ================= */
 const WalletDetail = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
-  const [selectedWalletId, setSelectedWalletId] = useState<number | null>(null);
+  const [selectedWalletId, setSelectedWalletId] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   // modal
@@ -45,7 +45,7 @@ const WalletDetail = () => {
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [chooseUser, setChooseUser] = useState<string[]>([]);
-  console.log('chooseUser', chooseUser);
+
   const [openDelete, setOpenDelete] = useState(false);
   const [walletToDelete, setWalletToDelete] = useState<any>(null);
 
@@ -62,15 +62,27 @@ const WalletDetail = () => {
       ]);
       const result = response.data.data;
       setWallets(result);
-      if (result.length > 0) {
-        setSelectedWalletId(result[0].id);
-        setLoading(false);
-      }
+      setSelectedWalletId((prev: any) =>
+        prev === null && result.length > 0 ? result[0].id : prev
+      );
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
+  useEffect(() => {
+    if (!selectedWalletId) return;
+
+    // reset state phụ thuộc ví
+    setSelectedAccount(null);
+    setSelectedUsers([]);
+    setChooseUser([]);
+    setModalType(null);
+  }, [selectedWalletId]);
+
   const fetchUserNotInCamp = async () => {
+    if (!selectedAccount?.id) return;
     try {
       const [response] = await Promise.all([
         BaseHeader({
@@ -103,8 +115,10 @@ const WalletDetail = () => {
     }
   }, [modalType]);
 
-  const selectedWallet = wallets.find((w) => w.id === selectedWalletId);
-
+  const selectedWallet = useMemo(() => {
+    return wallets.find((w) => w.id === selectedWalletId);
+  }, [selectedWalletId]);
+  console.log('selectedWallet', selectedWallet, selectedWalletId);
   const handleOpenModal = (account: any) => {
     setSelectedAccount(account);
     setModalType('SET_LIMIT');
@@ -312,7 +326,7 @@ const WalletDetail = () => {
         <select
           className="border border-gray-300 rounded-lg px-4 py-3 text-lg w-96 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={selectedWalletId ?? ''}
-          onChange={(e) => setSelectedWalletId(Number(e.target.value))}
+          onChange={(e) => setSelectedWalletId(e.target.value)}
         >
           {wallets.map((wallet) => (
             <option key={wallet.id} value={wallet.id}>
@@ -381,10 +395,10 @@ const WalletDetail = () => {
                     <div className="text-gray-500 mt-1">
                       User gắn campaign:{' '}
                       <span className="font-semibold text-red-500 break-words max-w-[500px] block">
-                        {selectedWallet?.userViewCampaign
-                          ?.filter((item) => item.ads_id === acc.id)
-                          ?.map((item) => item.user?.email)
-                          ?.join(', ')}
+                        {(selectedWallet?.userViewCampaign || [])
+                          .filter((item) => item.ads_id === acc.id)
+                          .map((item) => item.user?.email)
+                          .join(', ')}
                       </span>
                     </div>
                   </div>
