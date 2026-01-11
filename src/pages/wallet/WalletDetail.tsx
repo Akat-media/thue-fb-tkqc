@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import BaseHeader from '../../api/BaseHeader';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { useUserStore } from '../../stores/useUserStore';
 type ModalType =
   | 'SYNC_CONFIRM'
   | 'ATTACH_ACCOUNT'
@@ -35,6 +36,7 @@ const parseVND = (value: string) => {
 
 /* ================= COMPONENT ================= */
 const WalletDetail = () => {
+  const { user } = useUserStore();
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [selectedWalletId, setSelectedWalletId] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -43,6 +45,7 @@ const WalletDetail = () => {
   const [modalType, setModalType] = useState<ModalType>(null);
 
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
+  console.log('selectedAccount', selectedAccount);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [chooseUser, setChooseUser] = useState<string[]>([]);
 
@@ -118,7 +121,6 @@ const WalletDetail = () => {
   const selectedWallet = useMemo(() => {
     return wallets.find((w) => w.id === selectedWalletId);
   }, [selectedWalletId]);
-  console.log('selectedWallet', selectedWallet, selectedWalletId);
   const handleOpenModal = (account: any) => {
     setSelectedAccount(account);
     setModalType('SET_LIMIT');
@@ -427,21 +429,24 @@ const WalletDetail = () => {
                     >
                       Nâng ngưỡng
                     </button>
-                    <button
-                      onClick={() => handleOpenModal(acc)}
-                      className="bg-amber-500 text-white text-base px-5 py-2.5 
+                    {user?.role === 'super_admin' && (
+                      <button
+                        onClick={() => handleOpenModal(acc)}
+                        className="bg-amber-500 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-amber-600 transition"
-                    >
-                      Set ngưỡng
-                    </button>
-
-                    <button
-                      onClick={() => handleOpenModalDelete(acc)}
-                      className="bg-rose-600 text-white text-base px-5 py-2.5 
+                      >
+                        Set ngưỡng
+                      </button>
+                    )}
+                    {user?.role === 'super_admin' && (
+                      <button
+                        onClick={() => handleOpenModalDelete(acc)}
+                        className="bg-rose-600 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-rose-700 transition"
-                    >
-                      Xóa tài khoản
-                    </button>
+                      >
+                        Xóa tài khoản
+                      </button>
+                    )}
                   </div>
                 </li>
               ))}
@@ -520,6 +525,15 @@ const WalletDetail = () => {
           <div className="bg-white rounded-2xl p-8 w-[420px] space-y-6">
             <h3 className="text-xl font-bold">Nâng ngưỡng chi tiêu thêm</h3>
             <div className="text-gray-600 text-lg">{selectedAccount.name}</div>
+            <p className="!mt-2">
+              Ngưỡng hiện tại: {formatVNDV2(selectedAccount?.spend_cap)} VND
+            </p>
+            <p className="!mt-2">
+              Đã chi tiêu: {formatVNDV2(selectedAccount?.amount_spent)} VND
+            </p>
+            <p className="!mt-2">
+              Dư nợ (balance): {formatVNDV2(selectedAccount?.balance)} VND
+            </p>
             <input
               className="border border-gray-300 rounded-lg px-4 py-3 text-lg w-full focus:ring-2 focus:ring-blue-500"
               inputMode="numeric"

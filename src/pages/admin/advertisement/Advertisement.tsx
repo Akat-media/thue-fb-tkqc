@@ -106,14 +106,13 @@ const Advertisement = () => {
       } else {
         toast.error('Lỗi không xác định');
       }
-    } finally {
     }
   };
   return (
     <div className="page-fix">
       <div className="section-1 flex-col sm:flex-row">
         <div className="inner-left">
-          <div className="text-[24px] font-bold">Quản lý chiến dịch</div>
+          <div className="text-[24px] font-bold ">Quản lý chiến dịch</div>
 
           <div className="relative w-[220px] sm:w-[286px]">
             {/* <select
@@ -243,27 +242,59 @@ const Advertisement = () => {
         )}
 
         {/* Section 5: Tab hiển thị */}
-        <div className="section-5 flex flex-col 2xl:flex-row">
-          <div className="inner-left flex flex-col 2xl:flex-row">
-            <div className="inner-button active w-[307px]">
+        <div className="section-5 mb-4">
+          <div
+            className="
+      inner-left
+      flex flex-col
+      gap-2
+      sm:flex-row sm:flex-wrap
+      xl:flex-nowrap
+    "
+          >
+            {/* Chiến dịch */}
+            <div
+              className="
+        inner-button active
+        flex items-center gap-2
+        w-full
+        sm:w-[48%]
+        xl:w-[307px]
+      "
+            >
               <FolderUp />
               <div className="inner-text">Chiến dịch</div>
-              {/*<div className="inner-tag">*/}
-              {/*    <span className="inner-tag-1">Đã chọn 3 mục</span>*/}
-              {/*    <span className="inner-tag-close"><i className="fa-solid fa-xmark" /></span>*/}
-              {/*</div>*/}
             </div>
-            <div className="inner-button w-[307px]">
+
+            {/* Nhóm quảng cáo */}
+            <div
+              className="
+        inner-button
+        flex items-center gap-2
+        w-full
+        sm:w-[48%]
+        xl:w-[307px]
+      "
+            >
               <LayoutDashboard />
               <div className="inner-text">Nhóm quảng cáo</div>
             </div>
-            <div className="inner-button w-[307px]">
+
+            {/* Quảng cáo */}
+            <div
+              className="
+        inner-button
+        flex items-center gap-2
+        w-full
+        sm:w-[48%]
+        xl:w-[307px]
+      "
+            >
               <PanelTop />
-              <div className="inner-text">Quảng cáo </div>
+              <div className="inner-text">Quảng cáo</div>
             </div>
           </div>
-
-          <div className="inner-right">
+          {/* <div className="inner-right">
             <div className="button">
               <div className="inner-icon">
                 <i className="fa-regular fa-calendar-days" />
@@ -275,7 +306,7 @@ const Advertisement = () => {
                 <i className="fa-solid fa-caret-down" />
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Section 6: Hành động & báo cáo */}

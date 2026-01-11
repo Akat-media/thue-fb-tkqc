@@ -30,7 +30,8 @@ const Wallet = () => {
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [selectedUser, setSelectedUser] = useState('');
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+
   const [users, setUsers] = useState<any>([]);
   const [accounts, setAccounts] = useState<any>([]);
   const [walletBalance, setWalletBalance] = useState<number | ''>('');
@@ -39,6 +40,7 @@ const Wallet = () => {
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [walletEditing, setWalletEditing] = useState<WalletType | null>(null);
   const [walletToDelete, setWalletToDelete] = useState<WalletType | null>(null);
+  const [searchUser, setSearchUser] = useState<any>('');
 
   const [search, setSearch] = useState('');
 
@@ -87,6 +89,19 @@ const Wallet = () => {
 
     setAccounts(res.data.data);
   };
+  const getAccounts = async (keyword = '') => {
+    const userId = userInfo?.user_id || userInfo?.user?.user_id;
+    if (!userId) return;
+    const res = await BaseHeader({
+      url: '/user-orther',
+      method: 'get',
+      params: {
+        user_id: userId,
+        query: keyword || undefined, // không gửi nếu rỗng
+      },
+    });
+    setUsers(res.data.data);
+  };
 
   useEffect(() => {
     handleGetUser();
@@ -94,6 +109,12 @@ const Wallet = () => {
   const debouncedGetAdAccounts = useCallback(
     debounce((value: string) => {
       getAdAccounts(value);
+    }, 500),
+    []
+  );
+  const debouncedGetUser = useCallback(
+    debounce((value: string) => {
+      getAccounts(value);
     }, 500),
     []
   );
@@ -107,9 +128,24 @@ const Wallet = () => {
       debouncedGetAdAccounts.cancel();
     };
   }, [search]);
+  useEffect(() => {
+    if (searchUser) {
+      debouncedGetUser(searchUser);
+    } else {
+      getAccounts(); // searchUser rỗng → load all
+    }
+    return () => {
+      debouncedGetUser.cancel();
+    };
+  }, [searchUser]);
   /* ===== Toggle account ===== */
   const toggleAccount = (id: string) => {
     setSelectedAccounts((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+  const toggleUser = (id: string) => {
+    setSelectedUsers((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
@@ -124,7 +160,7 @@ const Wallet = () => {
         method: 'post',
         data: {
           name: walletName,
-          user_id: selectedUser,
+          user_id: selectedUsers,
           admin_id: userId,
           ad_accounts: selectedAccounts,
           balance: walletBalance ? walletBalance : 0,
@@ -154,7 +190,7 @@ const Wallet = () => {
   const openEditModal = (wallet: any) => {
     setWalletEditing(wallet);
     setWalletName(wallet.name);
-    setSelectedUser(wallet.user_id);
+    // setSelectedUser(wallet.user_id);
     setOpenEdit(true);
     const numberValue = parseVND(String(wallet?.balance));
     setWalletBalance(numberValue || '');
@@ -174,7 +210,7 @@ const Wallet = () => {
         method: 'put',
         data: {
           name: walletName,
-          user_id: selectedUser,
+          user_id: selectedUsers,
           admin_id: userId,
           ad_accounts: selectedAccounts,
           balance: walletBalance ? walletBalance : 0,
@@ -352,18 +388,45 @@ const Wallet = () => {
                 {/* Select user / account owner */}
                 <div className="mb-4">
                   <label className="font-medium">Gắn với tài khoản</label>
-                  <select
-                    value={selectedUser}
-                    onChange={(e) => setSelectedUser(e.target.value)}
-                    className="w-full border rounded-lg px-3 py-2 mt-1 bg-white"
-                  >
-                    <option value="">-- Chọn tài khoản --</option>
-                    {users.map((user: any) => (
-                      <option key={user.id} value={user.id}>
-                        {user.username} ({user.email})
-                      </option>
-                    ))}
-                  </select>
+                  {/* Input tìm kiếm */}
+                  <input
+                    type="text"
+                    placeholder="Tìm theo username hoặc email..."
+                    value={searchUser}
+                    onChange={(e) => setSearchUser(e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2 mt-1 mb-2"
+                  />
+                  <div className="max-h-72 overflow-auto border rounded-lg p-2">
+                    {users.length === 0 && (
+                      <p className="text-center text-gray-400 py-6">
+                        Không có kết quả
+                      </p>
+                    )}
+                    {users.map((user: any) => {
+                      const checked = selectedUsers.includes(user.id);
+                      return (
+                        <label
+                          key={user.id}
+                          className={`flex gap-3 p-3 rounded-lg cursor-pointer
+                    ${checked ? 'bg-blue-50' : 'hover:bg-gray-50'}
+                  `}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleUser(user.id)}
+                            className="accent-blue-600 mt-1"
+                          />
+                          <div>
+                            <p className="font-medium">{user.username}</p>
+                            <p className="text-xs text-gray-500">
+                              {user.email}
+                            </p>
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
@@ -431,7 +494,9 @@ const Wallet = () => {
               <button
                 onClick={openEdit ? handleUpdateWallet : handleCreateWallet}
                 disabled={
-                  !walletName || !selectedUser || selectedAccounts.length === 0
+                  !walletName ||
+                  !selectedUsers.length ||
+                  selectedAccounts.length === 0
                 }
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-40"
               >

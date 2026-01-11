@@ -643,7 +643,7 @@ const AccountForm: React.FC = () => {
             <tbody>
               {currentItems.map((user: User) => {
                 const isDisabled =
-                  user.email !== userobj?.email && user.role === 'admin';
+                  user.email !== userobj?.email && user.role === 'super_admin';
                 const isEnabled = user?.active ?? false;
                 return (
                   <tr

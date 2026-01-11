@@ -73,7 +73,7 @@ const Sidebar: React.FC<{
     // },
     { label: 'Nạp tiền', icon: CircleDollarSign, path: '/payments' },
     // { label: 'Quản lý bot', icon: Bot, path: '/create-bot' },
-    { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
+    // { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
 
     // { label: "Quản lý giao dịch", icon: CreditCard, path: "/admintransaction" },
     // { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
@@ -87,7 +87,7 @@ const Sidebar: React.FC<{
       path: '/admin/advertisement',
     },
     // { label: 'Nạp tiền', icon: CircleDollarSign, path: '/payments' },
-    { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
+    // { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
   ];
   const linksMarketingUser = [
     { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
@@ -297,7 +297,7 @@ const Sidebar: React.FC<{
                 </Link>
               )}
 
-              <Link
+              {/* <Link
                 to="/admin/policy"
                 className={clsx(
                   'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
@@ -309,8 +309,8 @@ const Sidebar: React.FC<{
                   <FileText className="w-4 h-4" />
                 </div>
                 <span className="text-gray-600">Quản lý chính sách</span>
-              </Link>
-              <Link
+              </Link> */}
+              {/* <Link
                 to="/admin/princing"
                 className={clsx(
                   'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
@@ -322,8 +322,8 @@ const Sidebar: React.FC<{
                   <TrendingUp className="w-4 h-4" />
                 </div>
                 <span className="text-gray-600">Quản lý ngân sách</span>
-              </Link>
-              <Link
+              </Link> */}
+              {/* <Link
                 to="/admin/voucher"
                 className={clsx(
                   'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
@@ -335,7 +335,7 @@ const Sidebar: React.FC<{
                   <TicketPercent className=" h-4 w-4" />
                 </div>
                 <span className="text-gray-600">Quản lý voucher</span>
-              </Link>
+              </Link> */}
             </div>
           </div>
 

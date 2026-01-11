@@ -294,8 +294,15 @@ const ManageAdsAccount: React.FC = () => {
       minWidth: '80px',
     },
     {
-      key: 'user_id',
-      label: 'User ID',
+      key: 'from_user_id',
+      label: 'Email chuyển tiền',
+      icon: <User className="w-4 h-4 text-gray-500" />,
+      sortKey: 'user_id',
+      minWidth: '100px',
+    },
+    {
+      key: 'to_user_id',
+      label: 'Email nhận tiền',
       icon: <User className="w-4 h-4 text-gray-500" />,
       sortKey: 'user_id',
       minWidth: '100px',
@@ -933,7 +940,20 @@ const ManageAdsAccount: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
-                        {item.to_user_id}
+                        {item.fromUser?.email}
+                      </td>
+                      <td
+                        className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
+                          activeCell === `${item.id}-user_id`
+                            ? 'bg-green-100'
+                            : ''
+                        }`}
+                        onClick={() => {
+                          setActiveCell(`${item.id}-user_id`);
+                          setActiveRow(null);
+                        }}
+                      >
+                        {item.toUser?.email}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-gray-200cursor-pointer ${
