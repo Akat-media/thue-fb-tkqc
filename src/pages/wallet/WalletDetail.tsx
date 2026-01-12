@@ -181,6 +181,7 @@ const WalletDetail = () => {
         data: {
           ads_id: selectedAccount.id,
           spend_cap: String(walletBalance),
+          user_id: user?.id,
         },
       });
       if (response.status == 200) {
@@ -213,6 +214,7 @@ const WalletDetail = () => {
         data: {
           ads_id: selectedAccount.id,
           spend_cap: String(walletBalance),
+          user_id: user?.id,
         },
       });
       if (response.status == 200) {
@@ -585,6 +587,13 @@ const WalletDetail = () => {
               }}
               placeholder="VD: 10.000.000"
             />
+            <p className="!mt-2 text-[12px] text-red-500">
+              Lưu ý: ngưỡng sau khi nâng{' '}
+              {formatVNDV2(
+                Number(selectedAccount?.spend_cap) + Number(walletBalance)
+              )}{' '}
+              VND
+            </p>
             <div className="flex justify-end gap-3 pt-4">
               <button
                 className="px-5 py-2.5 text-lg border rounded-lg"

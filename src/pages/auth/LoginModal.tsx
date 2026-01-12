@@ -6,9 +6,9 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import AtomicSpinner from "atomic-spinner";
 import { Mail, Eye, EyeOff } from 'lucide-react';
-import {useTranslation} from "react-i18next";
-import {useUserStore} from "../../stores/useUserStore.ts";
-import {useNavigate} from "react-router-dom";
+import { useTranslation } from 'react-i18next';
+import { useUserStore } from '../../stores/useUserStore.ts';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -32,7 +32,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
-  const {t,i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const { setUser } = useUserStore();
   const navigate = useNavigate();
 
@@ -44,7 +44,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
     const newErrors: { email?: string; password?: string } = {};
     if (!email.trim()) newErrors.email = t('modalHomepage.login.validateEmail');
-    if (!password.trim()) newErrors.password = t('modalHomepage.login.validatePassword');
+    if (!password.trim())
+      newErrors.password = t('modalHomepage.login.validatePassword');
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -87,7 +88,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
     setLoading(true);
 
     const newErrors: { email?: string } = {};
-    if (!email.trim()) newErrors.email =  t('modalHomepage.login.validateEmail');
+    if (!email.trim()) newErrors.email = t('modalHomepage.login.validateEmail');
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -144,13 +145,14 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-2">
-            {isForgotPassword ? t('modalHomepage.login.forgotPassword') : t('modalHomepage.login.title')}
+            {isForgotPassword
+              ? t('modalHomepage.login.forgotPassword')
+              : t('modalHomepage.login.title')}
           </h2>
           <p className="text-sm text-gray-500 mb-6">
             {isForgotPassword
               ? t('modalHomepage.login.subTitle2')
-              : t('modalHomepage.login.subTitle')
-            }
+              : t('modalHomepage.login.subTitle')}
           </p>
 
           {/*<form onSubmit={handleSubmit} className="space-y-4">*/}
@@ -222,7 +224,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
             <div className="text-right text-sm text-blue-600 hover:underline cursor-pointer">
               <span onClick={() => setIsForgotPassword(!isForgotPassword)}>
-                {isForgotPassword ? t('modalHomepage.login.backToLogin') : t('modalHomepage.login.forgotPassword')}
+                {isForgotPassword
+                  ? t('modalHomepage.login.backToLogin')
+                  : t('modalHomepage.login.forgotPassword')}
               </span>
             </div>
 
@@ -256,11 +260,11 @@ const LoginModal: React.FC<LoginModalProps> = ({
               ) : isForgotPassword ? (
                 t('modalHomepage.login.sendRequest')
               ) : (
-               t('modalHomepage.login.title')
+                t('modalHomepage.login.title')
               )}
             </button>
 
-            {!isForgotPassword && (
+            {/* {!isForgotPassword && (
               <div className="text-center text-sm mt-2">
                 {t('modalHomepage.login.footer1')}{' '}
                 <span
@@ -277,7 +281,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                   {t('modalHomepage.login.footer2')}
                 </span>
               </div>
-            )}
+            )} */}
           </form>
         </div>
       </div>

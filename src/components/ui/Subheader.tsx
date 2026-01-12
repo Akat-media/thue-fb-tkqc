@@ -1,10 +1,6 @@
 import styled from 'styled-components';
-import img from '../../assets/bg-money-info-mb.png';
-import avatar from '../../../public/avatar.jpg';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useUserStore } from '../../stores/useUserStore';
-import { useTranslation } from 'react-i18next';
-import i18n from '../../i18n/index.ts';
 
 interface Props {
   active: string;
@@ -13,8 +9,6 @@ interface Props {
 
 const Subheader = ({ active, setActive }: Props) => {
   const userobj = useUserStore((state) => state.user);
-  const { t } = useTranslation();
-
   return (
     <div className="flex items-center gap-2 sm:gap-4 border-b border-gray-200 mb-6">
       <button
@@ -27,16 +21,18 @@ const Subheader = ({ active, setActive }: Props) => {
       >
         Nạp tiền vào ví
       </button>
-      <button
-        onClick={() => setActive('money')}
-        className={`px-6 py-4 text-base font-bold transition-colors min-w-max rounded-t-lg ${
-          active === 'money'
-            ? 'text-blue-900 bg-gradient-to-r from-[#09FFCD] to-[#0AEEFE]'
-            : 'text-gray-600 hover:text-[#1e3a8a]'
-        }`}
-      >
-        Nạp tiền
-      </button>
+      {userobj?.role === 'super_admin' && (
+        <button
+          onClick={() => setActive('money')}
+          className={`px-6 py-4 text-base font-bold transition-colors min-w-max rounded-t-lg ${
+            active === 'money'
+              ? 'text-blue-900 bg-gradient-to-r from-[#09FFCD] to-[#0AEEFE]'
+              : 'text-gray-600 hover:text-[#1e3a8a]'
+          }`}
+        >
+          Nạp tiền
+        </button>
+      )}
     </div>
   );
 };

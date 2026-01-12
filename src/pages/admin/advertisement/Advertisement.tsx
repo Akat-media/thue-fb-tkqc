@@ -1,5 +1,5 @@
 import './style.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   RefreshCw,
   MoreHorizontal,
@@ -30,22 +30,29 @@ const formatVNDV2 = (value?: number | string) => {
 };
 const Advertisement = () => {
   const [selectedSearch, setSelectedSearch] = useState(false);
+  const [wallets, setWallets] = useState<any[]>([]);
+  const [selectedWalletId, setSelectedWalletId] = useState<any>('all');
 
-  const [count, setCount] = useState(0);
   const [selectedFilter, setSelectedFilter] = useState({
     active: false,
     displayOnSearchBar: false,
-    name: '',
+    name: 'all',
   });
   const [loading, setLoading] = useState(false);
   const [dataCampaign, setDataCampaign] = useState<any>([]);
-  console.log('dataCampaign', dataCampaign);
+
   const fetchData = async () => {
     try {
+      const payload = {
+        wallet_id: selectedWalletId,
+        ad_account_id: selectedFilter.name,
+      };
+
       const [response] = await Promise.all([
         BaseHeader({
           url: '/campaign',
           method: 'get',
+          params: payload,
         }),
       ]);
       const result = response.data.data;
@@ -60,26 +67,39 @@ const Advertisement = () => {
   useEffect(() => {
     setLoading(true);
     fetchData();
+  }, [selectedWalletId, selectedFilter]);
+  const fetchWallets = async () => {
+    try {
+      const [response] = await Promise.all([
+        BaseHeader({
+          url: '/wallet',
+          method: 'get',
+        }),
+      ]);
+      const result = response.data.data;
+      setWallets(result);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    setLoading(true);
+    fetchWallets();
   }, []);
+  const selectedWallet = useMemo(() => {
+    return wallets.find((w) => w.id === selectedWalletId) || [];
+  }, [selectedWalletId, wallets]);
+
+  console.log('selectedWallet', selectedWallet);
+  console.log('selectedWallet?.adsAccounts', selectedWallet?.adsAccounts);
   const handleSelectedFilter = (name: any) => {
-    if (selectedFilter.name === name) {
-      setCount(0);
-      setSelectedFilter({
-        active: true,
-        displayOnSearchBar: true,
-        name: 'one',
-      });
-    } else {
-      setSelectedFilter({
-        active: true,
-        displayOnSearchBar: true,
-        name: name,
-      });
-      setCount(count + 1);
-    }
-    if (name === 'one') {
-      setCount(0);
-    }
+    setSelectedFilter({
+      active: true,
+      displayOnSearchBar: true,
+      name: name,
+    });
   };
   const handleToggleCampaign = async (item: any) => {
     try {
@@ -113,18 +133,48 @@ const Advertisement = () => {
       <div className="section-1 flex-col sm:flex-row">
         <div className="inner-left">
           <div className="text-[24px] font-bold ">Quản lý chiến dịch</div>
+        </div>
 
+        <div className="inner-right">
+          <div className="inner-text-2">Thời gian cập nhật: vừa xong</div>
+          <div
+            className="button hover:bg-gray-200"
+            onClick={() => window.location.reload()}
+          >
+            <RefreshCw className="w-5 h-5 cursor-pointer" />
+          </div>
+          <div className="button hover:bg-gray-200">
+            <MoreHorizontal className="w-5 h-5 cursor-pointer" />
+          </div>
+        </div>
+      </div>
+
+      {/* Section 2: Bộ lọc và chế độ xem */}
+      <div className="section-2">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-[20px] font-medium">Ví liên kết: </span>
           <div className="relative w-[220px] sm:w-[286px]">
-            {/* <select
-              className="w-full h-[46px] text-sm border border-gray-300 rounded-lg pr-10 pl-3 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white truncate overflow-hidden whitespace-nowrap"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+            <select
+              value={selectedWalletId ?? ''}
+              onChange={(e) => {
+                setSelectedWalletId(e.target.value);
+                setSelectedFilter({
+                  active: true,
+                  displayOnSearchBar: true,
+                  name: 'all',
+                });
+              }}
+              className="w-full h-[46px] text border border-gray-300 rounded-lg 
+            pr-10 pl-3 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            bg-white truncate overflow-hidden whitespace-nowrap font-medium"
             >
-              <option value="all">Akamedia Nhat Dam 1</option>
-              <option value="pending">Chiến dịch 2</option>
-              <option value="in-progress">Chiến dịch 3</option>
-              <option value="resolved">Chiến dịch 4</option>
-            </select> */}
+              <option value="all">Tất cả</option>
+              {wallets.map((wallet) => (
+                <option key={wallet.id} value={wallet.id}>
+                  {wallet.name}
+                </option>
+              ))}
+            </select>
 
             {/* Icon mũi tên xuống */}
             <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
@@ -144,46 +194,46 @@ const Advertisement = () => {
             </div>
           </div>
         </div>
-
-        <div className="inner-right">
-          <div className="inner-text-2">Thời gian cập nhật: vừa xong</div>
-          <div
-            className="button hover:bg-gray-200"
-            onClick={() => window.location.reload()}
+        <div className="flex flex-wrap items-center gap-2 overflow-x-auto pb-2">
+          <button
+            onClick={() => handleSelectedFilter('all')}
+            className={`
+      flex items-center gap-2 whitespace-nowrap
+      px-4 py-2 rounded-full border transition-all
+      ${
+        selectedFilter.name === 'all'
+          ? 'bg-blue-600 text-white border-blue-600 shadow-md'
+          : 'bg-white  border-gray-300 hover:bg-gray-100'
+      }
+    `}
           >
-            <RefreshCw className="w-5 h-5 cursor-pointer" />
-          </div>
-          <div className="button hover:bg-gray-200">
-            <MoreHorizontal className="w-5 h-5 cursor-pointer" />
+            <Folder className="w-4 h-4" />
+            <span className="font-medium">Tất cả quảng cáo</span>
+          </button>
+
+          <div className="flex gap-2 flex-wrap">
+            {selectedWallet?.adsAccounts?.map((acc: any) => (
+              <button
+                key={acc.id}
+                onClick={() => handleSelectedFilter(acc.id)}
+                className={`
+        w-full flex items-center gap-3
+        px-4 py-3 rounded-lg border
+        ${
+          selectedFilter.name === acc.id
+            ? 'bg-blue-600 text-white'
+            : 'bg-white hover:bg-gray-100'
+        }
+      `}
+              >
+                <Folder className="w-5 h-5" />
+                <span className="font-medium">{acc.name}</span>
+              </button>
+            ))}
           </div>
         </div>
-      </div>
-
-      {/* Section 2: Bộ lọc và chế độ xem */}
-      <div className="section-2">
         <div className="section-3 flex flex-col sm:flex-row ">
           <div className="sm:inner-left">
-            {/* Các nút menu trái */}
-            <div
-              className="button button-circle active hover:bg-gray-200 mr-3 mb-2 sm:mb-0"
-              onClick={() => setSelectedSearch(!selectedSearch)}
-            >
-              <div className="inner-icon">
-                <Search className="w-5 h-5 cursor-pointer" />
-              </div>
-              {/*<div className="inner-badge">{count}</div>*/}
-            </div>
-            <div
-              className={`button button-round hover:bg-gray-200 mr-2 mb-2 sm:mb-0 bg-white
-                                ${
-                                  selectedFilter.name === 'one' ? 'active' : ''
-                                } 
-                            `}
-              onClick={() => handleSelectedFilter('one')}
-            >
-              <Folder className="w-5 h-5 cursor-pointer" />
-              <div className="inner-text">Tất cả quảng cáo</div>
-            </div>
             <div
               className={`button button-round hover:bg-gray-200 mr-2 mb-2 sm:mb-0 bg-white
                                 ${
@@ -226,11 +276,13 @@ const Advertisement = () => {
 
         {selectedSearch && (
           <div className="section-4">
-            {/*<div className="inner-tag">*/}
-            {/*    <span className="inner-tag-1">Chiến dịch là</span>*/}
-            {/*    <span className="inner-tag-2">Đã chọn 3</span>*/}
-            {/*    <span className="inner-tag-close"><i className="fa-solid fa-xmark" /></span>*/}
-            {/*</div>*/}
+            <div className="inner-tag">
+              <span className="inner-tag-1">Chiến dịch là</span>
+              <span className="inner-tag-2">Đã chọn 3</span>
+              <span className="inner-tag-close">
+                <i className="fa-solid fa-xmark" />
+              </span>
+            </div>
             <div className="inner-input">
               <input
                 type="text"

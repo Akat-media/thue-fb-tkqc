@@ -220,41 +220,41 @@ const Sidebar: React.FC<{
                 </span>
               </Link>
             ))}
-
-          <button
-            onClick={() => {
-              if (!isSidebarOpen) {
-                toggleSidebar();
-              } else {
-                setOpenAdsSubmenu(!openAdsSubmenu);
-              }
-            }}
-            className={clsx(
-              'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full',
-              isAdsMenuActive && 'bg-white font-semibold'
-            )}
-          >
-            <div className="w-12 flex justify-center">
-              <AlignStartHorizontal className="w-5 h-5" />
-            </div>
-            <span
+          {userobj?.role !== 'user' && (
+            <button
+              onClick={() => {
+                if (!isSidebarOpen) {
+                  toggleSidebar();
+                } else {
+                  setOpenAdsSubmenu(!openAdsSubmenu);
+                }
+              }}
               className={clsx(
-                'transition-all whitespace-nowrap overflow-hidden duration-300',
-                isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full',
+                isAdsMenuActive && 'bg-white font-semibold'
               )}
             >
-              Quản lý hệ thống
-            </span>
-            {isSidebarOpen && (
-              <ChevronDown
+              <div className="w-12 flex justify-center">
+                <AlignStartHorizontal className="w-5 h-5" />
+              </div>
+              <span
                 className={clsx(
-                  'ml-auto mr-2 w-4 h-4 transition-transform',
-                  openAdsSubmenu && 'rotate-180'
+                  'transition-all whitespace-nowrap overflow-hidden duration-300',
+                  isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
                 )}
-              />
-            )}
-          </button>
-
+              >
+                Quản lý hệ thống
+              </span>
+              {isSidebarOpen && (
+                <ChevronDown
+                  className={clsx(
+                    'ml-auto mr-2 w-4 h-4 transition-transform',
+                    openAdsSubmenu && 'rotate-180'
+                  )}
+                />
+              )}
+            </button>
+          )}
           {/* Thêm max-height nếu thêm item */}
           <div
             className={clsx(

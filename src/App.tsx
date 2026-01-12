@@ -117,7 +117,7 @@ function AppRoutes() {
         <Routes>
           {/* Route công khai: Không yêu cầu đăng nhập */}
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          {/* <Route path="/register" element={<RegisterPage />} /> */}
           <Route path="/policy" element={<Policy />} />
           <Route path="/reset-password" element={<PasswordResetForm />} />
           <Route path="/princing" element={<PricingPage />} />

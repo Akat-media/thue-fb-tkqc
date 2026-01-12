@@ -230,12 +230,12 @@ const LoginPage: React.FC = () => {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-800">
+        {/* <p className="mt-6 text-center text-sm text-gray-800">
           {t('modalHomepage.login.footer1')}{' '}
           <Link to="/register" className="text-[#42e1b6] hover:underline">
             {t('loginPage.registerNow')}
           </Link>
-        </p>
+        </p> */}
 
         <p className="mt-6 text-center text-base text-gray-500">
           {t('loginPage.allRightReserved')}
