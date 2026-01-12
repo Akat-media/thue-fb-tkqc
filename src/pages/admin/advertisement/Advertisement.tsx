@@ -194,7 +194,7 @@ const Advertisement = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2 overflow-x-auto pb-2">
+        <div className="w-full flex flex-wrap items-center gap-2 pb-2">
           <button
             onClick={() => handleSelectedFilter('all')}
             className={`
@@ -211,13 +211,13 @@ const Advertisement = () => {
             <span className="font-medium">Tất cả quảng cáo</span>
           </button>
 
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-wrap flex-1">
             {selectedWallet?.adsAccounts?.map((acc: any) => (
               <button
                 key={acc.id}
                 onClick={() => handleSelectedFilter(acc.id)}
                 className={`
-        w-full flex items-center gap-3
+        inline-flex items-center gap-3
         px-4 py-3 rounded-lg border
         ${
           selectedFilter.name === acc.id
