@@ -279,6 +279,9 @@ const Wallet = () => {
     setSelectedAccounts([]);
     setWalletEditing(null);
     setSearch('');
+    setWalletBalance('');
+    setSelectedUsers([]);
+    setWalletBalanceDisplay('');
   };
 
   /* ===== Render ===== */
@@ -286,7 +289,7 @@ const Wallet = () => {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Quản lý ví marketing</h2>
+        <h2 className="text-3xl font-bold mb-8">Quản lý ví marketing</h2>
         <button
           onClick={() => setOpenCreate(true)}
           className="px-5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
