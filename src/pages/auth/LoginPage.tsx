@@ -25,7 +25,7 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const validateForm = (): boolean => {
     const newErrors: { email?: string; password?: string } = {};
@@ -63,7 +63,14 @@ const LoginPage: React.FC = () => {
       if (res.status == 200) {
         setIsLoading(false);
         setUser(res.data.data.user);
-        navigate('/');
+        if (res.data.data.user.role === 'admin') {
+          navigate('/wallet-detail');
+        } else if (res.data.data.user.role === 'user') {
+          navigate('/admin/advertisement');
+        } else {
+          navigate('/');
+        }
+
         localStorage.setItem('access_token', res.data.data.access_token);
         localStorage.setItem('refresh_token', res.data.data.refresh_token);
         localStorage.setItem('user', JSON.stringify(res.data.data));
@@ -103,7 +110,7 @@ const LoginPage: React.FC = () => {
       setEmail('');
     } catch (err: any) {
       toast.error(
-          err.response?.data?.message || t('modalHomepage.login.error')
+        err.response?.data?.message || t('modalHomepage.login.error')
       );
     } finally {
       setIsLoading(false);
@@ -138,8 +145,10 @@ const LoginPage: React.FC = () => {
         </div>
 
         <form
-            onSubmit={showForgotPassword ? handleForgotPasswordSubmit : handleSubmit}
-            className="space-y-4"
+          onSubmit={
+            showForgotPassword ? handleForgotPasswordSubmit : handleSubmit
+          }
+          className="space-y-4"
         >
           {/*tai khoan field*/}
           <div>
@@ -163,60 +172,61 @@ const LoginPage: React.FC = () => {
 
           {/*mat khau field*/}
           {!showForgotPassword && (
-          <div>
-            <label className="block text-sm font-semibold uppercase text-black mb-1">
-              {t('modalHomepage.register.password')}
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                className="w-full px-4 py-3 border border-black rounded-md focus:outline-none focus:border-[#f2f2f2] pr-10 text-base"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
-              </button>
+            <div>
+              <label className="block text-sm font-semibold uppercase text-black mb-1">
+                {t('modalHomepage.register.password')}
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  className="w-full px-4 py-3 border border-black rounded-md focus:outline-none focus:border-[#f2f2f2] pr-10 text-base"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+              )}
             </div>
-            {errors.password && (
-              <p className="text-sm text-red-500 mt-1">{errors.password}</p>
-            )}
-          </div>
           )}
 
           <div className="text-sm text-left">
             {!showForgotPassword ? (
-                <span
-                    onClick={() => setShowForgotPassword(true)}
-                    className="text-[#42e1b6] hover:underline cursor-pointer"
-                >
-                  {t('modalHomepage.login.forgotPassword')}
-                </span>
-              ) : (
-                <span
-                    onClick={() => setShowForgotPassword(false)}
-                    className="text-[#42e1b6] hover:underline cursor-pointer"
-                >
-                   {t('modalHomepage.login.backToLogin')}
-                </span>
-              )
-            }
+              <span
+                onClick={() => setShowForgotPassword(true)}
+                className="text-[#42e1b6] hover:underline cursor-pointer"
+              >
+                {t('modalHomepage.login.forgotPassword')}
+              </span>
+            ) : (
+              <span
+                onClick={() => setShowForgotPassword(false)}
+                className="text-[#42e1b6] hover:underline cursor-pointer"
+              >
+                {t('modalHomepage.login.backToLogin')}
+              </span>
+            )}
           </div>
 
           <button
             type="submit"
             className="w-full py-2 bg-[#0a1f38] text-white rounded-full font-semibold hover:bg-[#062b57] transition"
           >
-            {showForgotPassword ?  t('modalHomepage.login.sendRequest') : t('modalHomepage.login.title')}
+            {showForgotPassword
+              ? t('modalHomepage.login.sendRequest')
+              : t('modalHomepage.login.title')}
           </button>
         </form>
 

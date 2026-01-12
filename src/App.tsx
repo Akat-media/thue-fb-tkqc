@@ -118,17 +118,27 @@ function AppRoutes() {
           {/* Route công khai: Không yêu cầu đăng nhập */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/" element={<HomePage />} />
-          <Route path="/dashboard" element={<HomePage />} />
-          <Route path="/marketplace" element={<MarketplacePage />} />
           <Route path="/policy" element={<Policy />} />
           <Route path="/reset-password" element={<PasswordResetForm />} />
           <Route path="/princing" element={<PricingPage />} />
           <Route path="/price" element={<PriceList />} />
           {/* Route yêu cầu đăng nhập */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/wallet" element={<Wallet />} />
-            <Route path="/wallet-detail" element={<WalletDetail />} />
+            {userobj?.role === 'super_admin' && (
+              <Route path="/" element={<HomePage />} />
+            )}
+            {userobj?.role === 'super_admin' && (
+              <Route path="/dashboard" element={<HomePage />} />
+            )}
+            {userobj?.role === 'super_admin' && (
+              <Route path="/marketplace" element={<MarketplacePage />} />
+            )}
+            {userobj?.role === 'super_admin' && (
+              <Route path="/wallet" element={<Wallet />} />
+            )}
+            {userobj?.role !== 'user' && (
+              <Route path="/wallet-detail" element={<WalletDetail />} />
+            )}
             <Route path="/add-account" element={<AddAccountPage />} />
             <Route path="/rentals" element={<RentalsPage />} />
             <Route path="/payments/" element={<PaymentPage />} />

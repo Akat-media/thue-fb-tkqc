@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import BaseHeader from '../../api/BaseHeader';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useUserStore } from '../../stores/useUserStore';
+import { debounce } from 'lodash';
 type ModalType =
   | 'SYNC_CONFIRM'
   | 'ATTACH_ACCOUNT'
@@ -18,6 +19,7 @@ interface Wallet {
   currency: string;
   adsAccounts: any[];
   userViewCampaign: any[];
+  users: any[];
 }
 const formatVND = (value: number | '') => {
   if (value === '' || isNaN(value)) return '';
@@ -47,13 +49,15 @@ const WalletDetail = () => {
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
   console.log('selectedAccount', selectedAccount);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [chooseUser, setChooseUser] = useState<string[]>([]);
+  const [usersData, setUsersData] = useState<any[]>([]);
 
   const [openDelete, setOpenDelete] = useState(false);
   const [walletToDelete, setWalletToDelete] = useState<any>(null);
 
   const [walletBalance, setWalletBalance] = useState<number | ''>('');
   const [walletBalanceDisplay, setWalletBalanceDisplay] = useState('');
+
+  const [searchUser, setSearchUser] = useState<any>('');
 
   const fetchWallets = async () => {
     try {
@@ -80,11 +84,10 @@ const WalletDetail = () => {
     // reset state phụ thuộc ví
     setSelectedAccount(null);
     setSelectedUsers([]);
-    setChooseUser([]);
     setModalType(null);
   }, [selectedWalletId]);
 
-  const fetchUserNotInCamp = async () => {
+  const fetchUserNotInCamp = async (searchUser = '') => {
     if (!selectedAccount?.id) return;
     try {
       const [response] = await Promise.all([
@@ -93,12 +96,13 @@ const WalletDetail = () => {
           method: 'get',
           params: {
             ads_id: selectedAccount.id,
+            query: searchUser || undefined,
           },
         }),
       ]);
       const result = response.data.data;
       if (result.length > 0) {
-        setSelectedUsers(result);
+        setUsersData(result);
       }
     } catch (error) {
       console.error(error);
@@ -106,21 +110,39 @@ const WalletDetail = () => {
       setLoading(false);
     }
   };
+  const toggleUser = (id: string) => {
+    setSelectedUsers((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
   useEffect(() => {
     setLoading(true);
     fetchWallets();
   }, []);
-
+  const debouncedGetUser = useCallback(
+    debounce((value: string) => {
+      fetchUserNotInCamp(value);
+    }, 500),
+    []
+  );
   useEffect(() => {
     if (modalType === 'ATTACH_ACCOUNT') {
-      setLoading(true);
-      fetchUserNotInCamp();
+      if (searchUser) {
+        debouncedGetUser(searchUser);
+      } else {
+        fetchUserNotInCamp('');
+      }
     }
-  }, [modalType]);
+    return () => {
+      debouncedGetUser.cancel();
+    };
+  }, [modalType, searchUser]);
 
   const selectedWallet = useMemo(() => {
     return wallets.find((w) => w.id === selectedWalletId);
-  }, [selectedWalletId]);
+  }, [selectedWalletId, wallets]);
+
+  console.log('SelectedUsers', selectedUsers);
   const handleOpenModal = (account: any) => {
     setSelectedAccount(account);
     setModalType('SET_LIMIT');
@@ -143,6 +165,10 @@ const WalletDetail = () => {
   const handleOpenAttachModal = (account: any) => {
     setSelectedAccount(account);
     setModalType('ATTACH_ACCOUNT');
+    const listUser = selectedWallet?.userViewCampaign
+      ?.filter((item) => item.ads_id === account.id)
+      ?.map((item: any) => item.user_id);
+    setSelectedUsers(listUser || []);
   };
 
   const handleConfirmLimit = async () => {
@@ -296,7 +322,7 @@ const WalletDetail = () => {
         url: `/attach-user-in-campaign`,
         method: 'post',
         data: {
-          list_user_id: chooseUser,
+          list_user_id: selectedUsers,
           ads_id: selectedAccount.id,
           wallet_id: selectedWalletId,
         },
@@ -395,6 +421,14 @@ const WalletDetail = () => {
                       </span>
                     </div>
                     <div className="text-gray-500 mt-1">
+                      Tài khoản marketing:{' '}
+                      <span className="font-semibold text-red-500 break-words max-w-[500px] block">
+                        {selectedWallet?.users
+                          ?.map((item: any) => item?.user?.email)
+                          .join(', ')}
+                      </span>
+                    </div>
+                    <div className="text-gray-500 mt-1">
                       User gắn campaign:{' '}
                       <span className="font-semibold text-red-500 break-words max-w-[500px] block">
                         {(selectedWallet?.userViewCampaign || [])
@@ -413,14 +447,15 @@ const WalletDetail = () => {
                     >
                       Đồng bộ camp
                     </button>
-
-                    <button
-                      onClick={() => handleOpenAttachModal(acc)}
-                      className="bg-emerald-600 text-white text-base px-5 py-2.5 
+                    {user?.role === 'super_admin' && (
+                      <button
+                        onClick={() => handleOpenAttachModal(acc)}
+                        className="bg-emerald-600 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-emerald-700 transition"
-                    >
-                      Gắn tài khoản
-                    </button>
+                      >
+                        Gắn tài khoản
+                      </button>
+                    )}
 
                     <button
                       onClick={() => handleOpenModalUpLimit(acc)}
@@ -631,25 +666,42 @@ const WalletDetail = () => {
             <h3 className="text-xl font-bold text-emerald-600">
               Gắn tài khoản
             </h3>
-
-            <select
-              multiple
-              value={chooseUser}
-              onChange={(e) =>
-                setChooseUser(
-                  Array.from(e.target.selectedOptions, (option) => option.value)
-                )
-              }
-              className="w-full border rounded-lg px-4 py-2 h-[120px]"
-            >
-              <option value="">Chọn tài khoản</option>
-              {selectedUsers.length > 0 &&
-                selectedUsers.map((item: any) => (
-                  <option key={item.id} value={item.id}>
-                    {item.email}
-                  </option>
-                ))}
-            </select>
+            <input
+              type="text"
+              placeholder="Tìm theo username hoặc email..."
+              value={searchUser}
+              onChange={(e) => setSearchUser(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2 mt-1 mb-2"
+            />
+            <div className="max-h-72 overflow-auto border rounded-lg p-2">
+              {usersData.length === 0 && (
+                <p className="text-center text-gray-400 py-6">
+                  Không có kết quả
+                </p>
+              )}
+              {usersData.map((user: any) => {
+                const checked = selectedUsers.includes(user.id);
+                return (
+                  <label
+                    key={user.id}
+                    className={`flex gap-3 p-3 rounded-lg cursor-pointer
+                    ${checked ? 'bg-blue-50' : 'hover:bg-gray-50'}
+                  `}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleUser(user.id)}
+                      className="accent-blue-600 mt-1"
+                    />
+                    <div>
+                      <p className="font-medium">{user.username}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
 
             <div className="flex justify-end gap-2">
               <button

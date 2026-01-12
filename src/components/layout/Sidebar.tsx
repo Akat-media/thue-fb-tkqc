@@ -79,7 +79,7 @@ const Sidebar: React.FC<{
     // { label: "Quản lý người dùng", icon: Users, path: "/usermanage" },
   ];
   const linksMarketing = [
-    { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
+    // { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
     { label: 'Chi tiết ví', icon: BadgeCheck, path: '/wallet-detail' },
     {
       label: 'Quản lý quảng cáo',
@@ -90,7 +90,7 @@ const Sidebar: React.FC<{
     // { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
   ];
   const linksMarketingUser = [
-    { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
+    // { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
     {
       label: 'Quản lý quảng cáo',
       icon: ClipboardList,

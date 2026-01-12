@@ -10,7 +10,7 @@ interface WalletType {
   name: string;
   adsAccounts: any;
   balance: string;
-  user: any;
+  users: any[];
 }
 const formatVND = (value: number | '') => {
   if (value === '' || isNaN(value)) return '';
@@ -84,6 +84,7 @@ const Wallet = () => {
       params: {
         user_id: userId,
         query: keyword || undefined, // không gửi nếu rỗng
+        type: openEdit ? 'edit' : 'create',
       },
     });
 
@@ -127,7 +128,7 @@ const Wallet = () => {
     return () => {
       debouncedGetAdAccounts.cancel();
     };
-  }, [search]);
+  }, [search, openEdit]);
   useEffect(() => {
     if (searchUser) {
       debouncedGetUser(searchUser);
@@ -160,7 +161,7 @@ const Wallet = () => {
         method: 'post',
         data: {
           name: walletName,
-          user_id: selectedUsers,
+          user_ids: selectedUsers,
           admin_id: userId,
           ad_accounts: selectedAccounts,
           balance: walletBalance ? walletBalance : 0,
@@ -197,11 +198,18 @@ const Wallet = () => {
     setWalletBalanceDisplay(numberValue ? formatVND(numberValue) : '');
     const reseult = wallet?.adsAccounts?.map((item: any) => item.id);
     setSelectedAccounts(reseult);
+    const listUser = wallet?.users?.map((item: any) => item.user_id);
+    setSelectedUsers(listUser);
   };
 
   const handleUpdateWallet = async () => {
+    console.log('Updating wallet...', walletEditing);
     if (!walletEditing) return;
-
+    console.log(
+      'Updating wallet...',
+      !walletName.trim(),
+      selectedAccounts.length === 0
+    );
     if (!walletName.trim() || selectedAccounts.length === 0) return;
     const userId = userInfo?.user_id || userInfo?.user?.user_id;
     try {
@@ -210,17 +218,17 @@ const Wallet = () => {
         method: 'put',
         data: {
           name: walletName,
-          user_id: selectedUsers,
+          user_ids: selectedUsers,
           admin_id: userId,
           ad_accounts: selectedAccounts,
           balance: walletBalance ? walletBalance : 0,
         },
       });
       if (response.status == 200) {
-        toast.success('Tạo ví thành công!');
+        toast.success('Update ví thành công!');
         handleGetUser();
       } else {
-        toast.error('Tạo ví thất bại!');
+        toast.error('Update ví thất bại!');
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -317,7 +325,10 @@ const Wallet = () => {
                 Ngân sách: {formatVND(Number(wallet?.balance))} VND
               </h5>
               <h5 className="font-semibold mb-3 pr-20">
-                Tài khoản marketing: {wallet?.user?.email}
+                Tài khoản marketing:{' '}
+                {wallet?.users
+                  ?.map((item: any) => item?.user?.email)
+                  .join(', ')}
               </h5>
 
               <div className="flex flex-wrap gap-2">
