@@ -299,12 +299,12 @@ const Wallet = () => {
       </div>
 
       {/* Wallet list */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="columns-1 md:columns-2 gap-6 space-y-6">
         {wallets?.length > 0 &&
           wallets?.map((wallet) => (
             <div
               key={wallet?.id}
-              className="relative rounded-2xl border bg-white p-5 shadow hover:shadow-md transition"
+              className="break-inside-avoid relative rounded-2xl border bg-white p-5 shadow hover:shadow-md transition"
             >
               <div className="absolute top-4 right-4 flex gap-2">
                 <button
@@ -359,7 +359,7 @@ const Wallet = () => {
               {openEdit ? 'Chỉnh sửa ví' : 'Tạo ví marketing'}
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
               {/* ===== LEFT ===== */}
               <div>
                 {/* Wallet name */}
@@ -410,7 +410,7 @@ const Wallet = () => {
                     onChange={(e) => setSearchUser(e.target.value)}
                     className="w-full border rounded-lg px-3 py-2 mt-1 mb-2"
                   />
-                  <div className="max-h-72 overflow-auto border rounded-lg p-2">
+                  <div className="max-h-[500px] overflow-auto border rounded-lg p-2">
                     {users.length === 0 && (
                       <p className="text-center text-gray-400 py-6">
                         Không có kết quả
@@ -445,7 +445,7 @@ const Wallet = () => {
               </div>
 
               {/* ===== RIGHT ===== */}
-              <div>
+              <div className="flex flex-col h-full">
                 {/* Search */}
                 <div className="mb-3 relative">
                   <input
@@ -460,7 +460,7 @@ const Wallet = () => {
                 </div>
 
                 {/* Accounts list */}
-                <div className="max-h-72 overflow-auto border rounded-lg p-2">
+                <div className="max-h-[556px] overflow-auto border rounded-lg p-2">
                   {accounts.length === 0 && (
                     <p className="text-center text-gray-400 py-6">
                       Không có kết quả
