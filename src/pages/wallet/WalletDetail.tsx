@@ -4,6 +4,11 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useUserStore } from '../../stores/useUserStore';
 import { debounce } from 'lodash';
+import { Button, Input, Pagination, Spin } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import usePagination from '../../hook/usePagination';
+import EmptyState from '../../components/EmptyState';
+
 type ModalType =
   | 'SYNC_CONFIRM'
   | 'ATTACH_ACCOUNT'
@@ -40,14 +45,13 @@ const parseVND = (value: string) => {
 const WalletDetail = () => {
   const { user } = useUserStore();
   const [wallets, setWallets] = useState<Wallet[]>([]);
-  const [selectedWalletId, setSelectedWalletId] = useState<any>(null);
+  const [chooseWallet, setChooseWallet] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   // modal
   const [modalType, setModalType] = useState<ModalType>(null);
 
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
-  console.log('selectedAccount', selectedAccount);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [usersData, setUsersData] = useState<any[]>([]);
 
@@ -59,33 +63,43 @@ const WalletDetail = () => {
 
   const [searchUser, setSearchUser] = useState<any>('');
 
+  const [inputValue, setInputValue] = useState('');
+  const [searchQuery, setSearchQuery] = useState<any>('');
+  const [totalWallet, setTotalWallet] = useState<number>(0);
+  const { currentPage, pageSize, handleChange, setCurrentPage } = usePagination(
+    1,
+    3
+  );
+  const [reloadKey, setReloadKey] = useState(0);
+
   const fetchWallets = async () => {
     try {
+      setLoading(true);
       const [response] = await Promise.all([
         BaseHeader({
           url: '/wallet',
           method: 'get',
+          params: {
+            page: currentPage,
+            limit: pageSize,
+            query: searchQuery || undefined,
+          },
         }),
       ]);
-      const result = response.data.data;
+      const result = response.data.data.data;
       setWallets(result);
-      setSelectedWalletId((prev: any) =>
-        prev === null && result.length > 0 ? result[0].id : prev
-      );
+      setTotalWallet(response.data.data.count);
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     }
   };
   useEffect(() => {
-    if (!selectedWalletId) return;
-
-    // reset state phụ thuộc ví
-    setSelectedAccount(null);
-    setSelectedUsers([]);
-    setModalType(null);
-  }, [selectedWalletId]);
+    fetchWallets();
+  }, [currentPage, searchQuery, reloadKey]);
 
   const fetchUserNotInCamp = async (searchUser = '') => {
     if (!selectedAccount?.id) return;
@@ -107,7 +121,6 @@ const WalletDetail = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
     }
   };
   const toggleUser = (id: string) => {
@@ -115,10 +128,7 @@ const WalletDetail = () => {
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
-  useEffect(() => {
-    setLoading(true);
-    fetchWallets();
-  }, []);
+
   const debouncedGetUser = useCallback(
     debounce((value: string) => {
       fetchUserNotInCamp(value);
@@ -138,45 +148,45 @@ const WalletDetail = () => {
     };
   }, [modalType, searchUser]);
 
-  const selectedWallet = useMemo(() => {
-    return wallets.find((w) => w.id === selectedWalletId);
-  }, [selectedWalletId, wallets]);
-
-  console.log('SelectedUsers', selectedUsers);
-  const handleOpenModal = (account: any) => {
+  const handleOpenModal = (account: any, selectedWallet: any) => {
     setSelectedAccount(account);
     setModalType('SET_LIMIT');
+    setChooseWallet(selectedWallet);
   };
-  const handleOpenModalUpLimit = (account: any) => {
+  const handleOpenModalUpLimit = (account: any, selectedWallet: any) => {
     setSelectedAccount(account);
     setModalType('UP_LIMIT');
+    setChooseWallet(selectedWallet);
   };
-  const handleOpenModalDelete = (account: any) => {
+  const handleOpenModalDelete = (account: any, selectedWallet: any) => {
     setWalletToDelete(account);
     setOpenDelete(true);
+    setChooseWallet(selectedWallet);
   };
-  const handleOpenSyncModal = (account: any) => {
+  const handleOpenSyncModal = (account: any, selectedWallet: any) => {
     setSelectedAccount(account);
     setModalType('SYNC_CONFIRM');
+    setChooseWallet(selectedWallet);
   };
-  const handleOpenSyncAllModal = () => {
-    setModalType('SYNC_ALL_CONFIRM');
-  };
-  const handleOpenAttachModal = (account: any) => {
+  // const handleOpenSyncAllModal = () => {
+  //   setModalType('SYNC_ALL_CONFIRM');
+  // };
+  const handleOpenAttachModal = (account: any, selectedWallet: any) => {
     setSelectedAccount(account);
     setModalType('ATTACH_ACCOUNT');
     const listUser = selectedWallet?.userViewCampaign
-      ?.filter((item) => item.ads_id === account.id)
+      ?.filter((item: any) => item.ads_id === account.id)
       ?.map((item: any) => item.user_id);
     setSelectedUsers(listUser || []);
+    setChooseWallet(selectedWallet);
   };
 
   const handleConfirmLimit = async () => {
-    if (!selectedWallet || !selectedAccount || !walletBalance) return;
+    if (!chooseWallet || !selectedAccount || !walletBalance) return;
 
     try {
       const response = await BaseHeader({
-        url: `/wallet/ads-spend-cap/${selectedWallet?.id}`,
+        url: `/wallet/ads-spend-cap/${chooseWallet?.id}`,
         method: 'post',
         data: {
           ads_id: selectedAccount.id,
@@ -186,7 +196,8 @@ const WalletDetail = () => {
       });
       if (response.status == 200) {
         toast.success('Set ngưỡng tài khoản ví thành công!');
-        fetchWallets();
+        setCurrentPage(1);
+        setReloadKey((prev) => prev + 1);
       } else {
         toast.error('Lỗi set ngưỡng tài khoản ví thất bại!');
       }
@@ -205,11 +216,11 @@ const WalletDetail = () => {
     }
   };
   const handleConfirmUpLimit = async () => {
-    if (!selectedWallet || !selectedAccount || !walletBalance) return;
+    if (!chooseWallet || !selectedAccount || !walletBalance) return;
 
     try {
       const response = await BaseHeader({
-        url: `/wallet/ads-spend-cap-increase/${selectedWallet?.id}`,
+        url: `/wallet/ads-spend-cap-increase/${chooseWallet?.id}`,
         method: 'post',
         data: {
           ads_id: selectedAccount.id,
@@ -219,7 +230,8 @@ const WalletDetail = () => {
       });
       if (response.status == 200) {
         toast.success('Set ngưỡng tài khoản ví thành công!');
-        fetchWallets();
+        setCurrentPage(1);
+        setReloadKey((prev) => prev + 1);
       } else {
         toast.error('Lỗi set ngưỡng tài khoản ví thất bại!');
       }
@@ -248,7 +260,8 @@ const WalletDetail = () => {
       });
       if (response.status == 200) {
         toast.success('Xóa tài khoản ví thành công!');
-        fetchWallets();
+        setCurrentPage(1);
+        setReloadKey((prev) => prev + 1);
       } else {
         toast.error('Lỗi xóa tài khoản ví thất bại!');
       }
@@ -264,32 +277,32 @@ const WalletDetail = () => {
     }
   };
   const confirmAsyncAllCamp = async () => {
-    try {
-      const listAds = selectedWallet?.adsAccounts.map((item: any) => item.id);
-      const response = await BaseHeader({
-        url: `/async-many-campaign`,
-        method: 'post',
-        data: {
-          list_ads_id: listAds,
-          wallet_id: selectedWallet?.id,
-        },
-      });
-      if (response.status == 200) {
-        toast.success('Đồng bộ tất cả camp thành công!');
-        fetchWallets();
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const message = error.response?.data?.message || 'Có lỗi xảy ra';
-        toast.error(message);
-      } else {
-        toast.error('Lỗi không xác định');
-      }
-    } finally {
-      setModalType(null);
-    }
+    // try {
+    //   const listAds = wall?.adsAccounts.map((item: any) => item.id);
+    //   const response = await BaseHeader({
+    //     url: `/async-many-campaign`,
+    //     method: 'post',
+    //     data: {
+    //       list_ads_id: listAds,
+    //       wallet_id: selectedWallet?.id,
+    //     },
+    //   });
+    //   if (response.status == 200) {
+    //     toast.success('Đồng bộ tất cả camp thành công!');
+    //     setCurrentPage(1);
+    //   } else {
+    //     toast.error(response.data.message);
+    //   }
+    // } catch (error) {
+    //   if (axios.isAxiosError(error)) {
+    //     const message = error.response?.data?.message || 'Có lỗi xảy ra';
+    //     toast.error(message);
+    //   } else {
+    //     toast.error('Lỗi không xác định');
+    //   }
+    // } finally {
+    //   setModalType(null);
+    // }
   };
   const confirmAsyncCamp = async () => {
     try {
@@ -298,12 +311,13 @@ const WalletDetail = () => {
         method: 'post',
         data: {
           list_ads_id: [selectedAccount.id],
-          wallet_id: selectedWallet?.id,
+          wallet_id: chooseWallet?.id,
         },
       });
       if (response.status == 200) {
         toast.success('Đồng bộ camp thành công!');
-        fetchWallets();
+        setCurrentPage(1);
+        setReloadKey((prev) => prev + 1);
       } else {
         toast.error(response.data.message);
       }
@@ -318,6 +332,7 @@ const WalletDetail = () => {
       setModalType(null);
     }
   };
+
   const confirmAttachUser = async () => {
     try {
       const response = await BaseHeader({
@@ -326,12 +341,13 @@ const WalletDetail = () => {
         data: {
           list_user_id: selectedUsers,
           ads_id: selectedAccount.id,
-          wallet_id: selectedWalletId,
+          wallet_id: chooseWallet?.id,
         },
       });
       if (response.status == 200) {
         toast.success('Gắn tài khoản thành công!');
-        fetchWallets();
+        setCurrentPage(1);
+        setReloadKey((prev) => prev + 1);
       } else {
         toast.error(response.data.message);
       }
@@ -346,12 +362,60 @@ const WalletDetail = () => {
       setModalType(null);
     }
   };
+
   return (
     <div className="container mx-auto px-6 py-10 ">
       <h2 className="text-3xl font-bold mb-8">Quản lý chi tiết ví</h2>
+      <div className="flex w-full max-w-xl">
+        <div className="flex-1">
+          <Input
+            placeholder="Tìm kiếm theo tên ví, TK quảng cáo, TK marketing..."
+            allowClear
+            value={inputValue}
+            onChange={(e) => {
+              const value = e.target.value;
+              setInputValue(value);
+
+              if (value === '') {
+                setCurrentPage(1);
+                setSearchQuery('');
+              }
+            }}
+            className="
+            !text-[18px]
+        h-12
+        rounded-l-xl
+        rounded-r-[0px]
+        text-sm
+        border border-r-0 border-gray-200
+        focus:border-indigo-500
+        focus:ring-2
+        focus:ring-indigo-200
+      "
+          />
+        </div>
+
+        <Button
+          icon={<SearchOutlined />}
+          onClick={() => {
+            setCurrentPage(1); // reset page
+            setSearchQuery(inputValue.trim()); // set keyword thật
+          }}
+          className="
+          text-[20px]
+      !w-[70px]
+      h-12
+      rounded-r-xl
+      bg-indigo-500
+      border-indigo-500
+      text-white
+      hover:bg-indigo-600
+    "
+        />
+      </div>
 
       {/* Wallet selector */}
-      <div className="mb-8">
+      {/* <div className="mb-8">
         <label className="block text-lg font-semibold mb-2">Chọn ví</label>
         <select
           className="border border-gray-300 rounded-lg px-4 py-3 text-lg w-96 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -364,132 +428,160 @@ const WalletDetail = () => {
             </option>
           ))}
         </select>
-      </div>
+      </div> */}
 
-      {loading && <div className="text-lg">Đang tải dữ liệu...</div>}
+      {loading && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center
+                  bg-black/40 backdrop-blur-sm"
+        >
+          <Spin tip="Loading..." size="large" />
+        </div>
+      )}
 
       {/* Wallet card */}
-      {!loading && selectedWallet && (
-        <div className="bg-white rounded-2xl shadow-lg p-8 space-y-8">
-          <div className="flex justify-between items-center">
-            <div>
-              <div className="text-xl font-semibold">{selectedWallet.name}</div>
-              <div className="text-gray-500 mt-1">Số dư hiện tại</div>
-            </div>
-            <div className="text-2xl font-bold text-green-600">
-              <div>
-                {selectedWallet.balance.toLocaleString()}{' '}
-                {selectedWallet.currency}
-              </div>
-              <button
-                onClick={handleOpenSyncAllModal}
-                className="bg-orange-600 text-white text-base px-5 py-2.5 rounded-lg hover:bg-orange-700 transition mt-2"
-              >
-                Đồng bộ tất cả campaign
-              </button>
-            </div>
-          </div>
-
-          {/* Accounts */}
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Tài khoản quảng cáo</h3>
-            <ul className="space-y-4">
-              {selectedWallet?.adsAccounts?.map((acc) => (
-                <li
-                  key={acc.id}
-                  className="border border-gray-200 rounded-xl p-5 flex justify-between items-center hover:shadow-md transition"
-                >
+      {!loading && wallets.length > 0 ? (
+        wallets.map((selectedWallet) => {
+          return (
+            <div
+              key={selectedWallet.id}
+              className="bg-white rounded-2xl shadow-lg p-8 space-y-8 mb-4"
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="text-xl font-semibold">
+                    {selectedWallet.name}
+                  </div>
+                  <div className="text-gray-500 mt-1">Số dư hiện tại</div>
+                </div>
+                {/* <div className="text-2xl font-bold text-green-600">
                   <div>
-                    <div className="text-lg font-medium">{acc?.name}</div>
-                    <div className="text-[14px] font-medium">
-                      {acc?.account_id}
-                    </div>
-                    <div className="text-gray-500 mt-1">
-                      BM_ID:{' '}
-                      <span className="font-semibold text-gray-700">
-                        {acc.owner}
-                      </span>
-                    </div>
-                    <div className="text-gray-500 mt-1">
-                      Ngưỡng chi tiêu:{' '}
-                      <span className="font-semibold text-gray-700">
-                        {formatVNDV2(acc.spend_cap)} VND
-                      </span>
-                    </div>
-                    <div className="text-gray-500 mt-1">
-                      Đã tiêu:{' '}
-                      <span className="font-semibold text-gray-700">
-                        {formatVNDV2(acc.amount_spent)} VND
-                      </span>
-                    </div>
-                    <div className="text-gray-500 mt-1">
-                      Tài khoản marketing:{' '}
-                      <span className="font-semibold text-red-500 break-words max-w-[500px] block">
-                        {selectedWallet?.users
-                          ?.map((item: any) => item?.user?.email)
-                          .join(', ')}
-                      </span>
-                    </div>
-                    <div className="text-gray-500 mt-1">
-                      User gắn campaign:{' '}
-                      <span className="font-semibold text-red-500 break-words max-w-[500px] block">
-                        {(selectedWallet?.userViewCampaign || [])
-                          .filter((item) => item.ads_id === acc.id)
-                          .map((item) => item.user?.email)
-                          .join(', ')}
-                      </span>
-                    </div>
+                    {selectedWallet.balance.toLocaleString()}{' '}
+                    {selectedWallet.currency}
                   </div>
+                  <button
+                    onClick={handleOpenSyncAllModal}
+                    className="bg-orange-600 text-white text-base px-5 py-2.5 rounded-lg hover:bg-orange-700 transition mt-2"
+                  >
+                    Đồng bộ tất cả campaign
+                  </button>
+                </div> */}
+              </div>
 
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleOpenSyncModal(acc)}
-                      className="bg-indigo-600 text-white text-base px-5 py-2.5 
+              {/* Accounts */}
+              <div>
+                <h3 className="text-xl font-semibold mb-4">
+                  Tài khoản quảng cáo
+                </h3>
+                <ul className="space-y-4">
+                  {selectedWallet?.adsAccounts?.map((acc) => (
+                    <li
+                      key={acc.id}
+                      className="border border-gray-200 rounded-xl p-5 flex justify-between items-center hover:shadow-md transition"
+                    >
+                      <div>
+                        <div className="text-lg font-medium">{acc?.name}</div>
+                        <div className="text-[14px] font-medium">
+                          {acc?.account_id}
+                        </div>
+                        <div className="text-gray-500 mt-1">
+                          BM_ID:{' '}
+                          <span className="font-semibold text-gray-700">
+                            {acc.owner}
+                          </span>
+                        </div>
+                        <div className="text-gray-500 mt-1">
+                          Ngưỡng chi tiêu:{' '}
+                          <span className="font-semibold text-gray-700">
+                            {formatVNDV2(acc.spend_cap)} VND
+                          </span>
+                        </div>
+                        <div className="text-gray-500 mt-1">
+                          Đã tiêu:{' '}
+                          <span className="font-semibold text-gray-700">
+                            {formatVNDV2(acc.amount_spent)} VND
+                          </span>
+                        </div>
+                        <div className="text-gray-500 mt-1">
+                          Tài khoản marketing:{' '}
+                          <span className="font-semibold text-red-500 break-words max-w-[500px] block">
+                            {selectedWallet?.users
+                              ?.map((item: any) => item?.user?.email)
+                              .join(', ')}
+                          </span>
+                        </div>
+                        <div className="text-gray-500 mt-1">
+                          User gắn campaign:{' '}
+                          <span className="font-semibold text-red-500 break-words max-w-[500px] block">
+                            {(selectedWallet?.userViewCampaign || [])
+                              .filter((item) => item.ads_id === acc.id)
+                              .map((item) => item.user?.email)
+                              .join(', ')}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() =>
+                            handleOpenSyncModal(acc, selectedWallet)
+                          }
+                          className="bg-indigo-600 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-indigo-700 transition"
-                    >
-                      Đồng bộ camp
-                    </button>
-                    {user?.role === 'super_admin' && (
-                      <button
-                        onClick={() => handleOpenAttachModal(acc)}
-                        className="bg-emerald-600 text-white text-base px-5 py-2.5 
+                        >
+                          Đồng bộ camp
+                        </button>
+                        {user?.role === 'super_admin' && (
+                          <button
+                            onClick={() =>
+                              handleOpenAttachModal(acc, selectedWallet)
+                            }
+                            className="bg-emerald-600 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-emerald-700 transition"
-                      >
-                        Gắn tài khoản
-                      </button>
-                    )}
+                          >
+                            Gắn tài khoản
+                          </button>
+                        )}
 
-                    <button
-                      onClick={() => handleOpenModalUpLimit(acc)}
-                      className="bg-purple-500 text-white text-base px-5 py-2.5 
+                        <button
+                          onClick={() =>
+                            handleOpenModalUpLimit(acc, selectedWallet)
+                          }
+                          className="bg-purple-500 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-purple-600 transition"
-                    >
-                      Nâng ngưỡng
-                    </button>
-                    {user?.role === 'super_admin' && (
-                      <button
-                        onClick={() => handleOpenModal(acc)}
-                        className="bg-amber-500 text-white text-base px-5 py-2.5 
+                        >
+                          Nâng ngưỡng
+                        </button>
+                        {user?.role === 'super_admin' && (
+                          <button
+                            onClick={() => handleOpenModal(acc, selectedWallet)}
+                            className="bg-amber-500 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-amber-600 transition"
-                      >
-                        Set ngưỡng
-                      </button>
-                    )}
-                    {user?.role === 'super_admin' && (
-                      <button
-                        onClick={() => handleOpenModalDelete(acc)}
-                        className="bg-rose-600 text-white text-base px-5 py-2.5 
+                          >
+                            Set ngưỡng
+                          </button>
+                        )}
+                        {user?.role === 'super_admin' && (
+                          <button
+                            onClick={() =>
+                              handleOpenModalDelete(acc, selectedWallet)
+                            }
+                            className="bg-rose-600 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-rose-700 transition"
-                      >
-                        Xóa tài khoản
-                      </button>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+                          >
+                            Xóa tài khoản
+                          </button>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          );
+        })
+      ) : (
+        <EmptyState />
       )}
       {openDelete && walletToDelete && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -516,6 +608,16 @@ const WalletDetail = () => {
               </button>
             </div>
           </div>
+        </div>
+      )}
+      {totalWallet > 0 && (
+        <div className="mt-6 ">
+          <Pagination
+            total={totalWallet}
+            current={currentPage}
+            pageSize={pageSize}
+            onChange={handleChange}
+          />
         </div>
       )}
       {/* ================= MODAL ================= */}

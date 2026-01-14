@@ -1,5 +1,5 @@
 import './style.css';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   RefreshCw,
   MoreHorizontal,
@@ -17,6 +17,8 @@ import BaseHeader from '../../../api/BaseHeader';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import EmptyState from '../../../components/EmptyState';
+import { debounce } from 'lodash';
 
 const formatDateTime = (value?: string) => {
   if (!value) return '-';
@@ -38,6 +40,10 @@ const Advertisement = () => {
     displayOnSearchBar: false,
     name: 'all',
   });
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [chooseWallet, setChooseWallet] = useState<any>(null);
+
   const [loading, setLoading] = useState(false);
   const [dataCampaign, setDataCampaign] = useState<any>([]);
 
@@ -68,15 +74,24 @@ const Advertisement = () => {
     setLoading(true);
     fetchData();
   }, [selectedWalletId, selectedFilter]);
-  const fetchWallets = async () => {
+
+  const filteredWallets = wallets.filter((w) =>
+    w.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const fetchWallets = async (keyword = '') => {
+    setLoading(true);
     try {
       const [response] = await Promise.all([
         BaseHeader({
-          url: '/wallet',
+          url: '/wallet-campaign',
           method: 'get',
+          params: {
+            query: keyword || undefined,
+          },
         }),
       ]);
-      const result = response.data.data;
+      const result = response.data.data.data;
       setWallets(result);
     } catch (error) {
       console.error(error);
@@ -84,12 +99,25 @@ const Advertisement = () => {
       setLoading(false);
     }
   };
+
+  const debouncedGetWallet = useCallback(
+    debounce((value: string) => {
+      fetchWallets(value);
+    }, 500),
+    []
+  );
   useEffect(() => {
-    setLoading(true);
-    fetchWallets();
-  }, []);
+    if (search) {
+      debouncedGetWallet(search);
+    } else {
+      fetchWallets(); // search rỗng → load all
+    }
+    return () => {
+      debouncedGetWallet.cancel();
+    };
+  }, [search]);
   const selectedWallet = useMemo(() => {
-    return wallets.find((w) => w.id === selectedWalletId) || [];
+    return wallets?.find((w) => w.id === selectedWalletId) || [];
   }, [selectedWalletId, wallets]);
 
   console.log('selectedWallet', selectedWallet);
@@ -154,44 +182,88 @@ const Advertisement = () => {
         <div className="flex items-center gap-2 mb-4">
           <span className="text-[20px] font-medium">Ví liên kết: </span>
           <div className="relative w-[220px] sm:w-[286px]">
-            <select
-              value={selectedWalletId ?? ''}
-              onChange={(e) => {
-                setSelectedWalletId(e.target.value);
-                setSelectedFilter({
-                  active: true,
-                  displayOnSearchBar: true,
-                  name: 'all',
-                });
-              }}
-              className="w-full h-[46px] text border border-gray-300 rounded-lg 
-            pr-10 pl-3 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-            bg-white truncate overflow-hidden whitespace-nowrap font-medium"
+            {/* LABEL / BUTTON */}
+            <button
+              type="button"
+              onClick={() => setOpen((prev) => !prev)}
+              className="w-full h-[46px] border border-gray-300 rounded-lg 
+      px-3 flex items-center justify-between bg-white
+      focus:ring-2 focus:ring-blue-500"
             >
-              <option value="all">Tất cả</option>
-              {wallets.map((wallet) => (
-                <option key={wallet.id} value={wallet.id}>
-                  {wallet.name}
-                </option>
-              ))}
-            </select>
-
-            {/* Icon mũi tên xuống */}
-            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+              <span className="truncate font-medium">
+                {chooseWallet ? chooseWallet.name : 'Tất cả'}
+              </span>
               <svg
-                className="w-4 h-4 text-gray-500"
+                className={`w-4 h-4 text-gray-500 transition ${
+                  open ? 'rotate-180' : ''
+                }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path
-                  d="M19 9l-7 7-7-7"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <path d="M19 9l-7 7-7-7" strokeWidth="2" />
               </svg>
-            </div>
+            </button>
+
+            {/* DROPDOWN */}
+            {open && (
+              <div className="absolute z-50 mt-2 w-full bg-white border rounded-lg shadow-lg">
+                {/* Search */}
+                <div className="p-2 border-b relative">
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Tìm theo tên..."
+                    className="w-full border rounded-lg pl-9 pr-3 py-2"
+                  />
+                  <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
+                    🔍
+                  </span>
+                </div>
+
+                {/* List */}
+                <div className="max-h-[300px] overflow-auto">
+                  {/* Tất cả */}
+                  <div
+                    onClick={() => {
+                      setChooseWallet(null);
+                      setSelectedWalletId('all');
+                      setOpen(false);
+                    }}
+                    className="px-4 py-3 cursor-pointer hover:bg-gray-100"
+                  >
+                    Tất cả
+                  </div>
+
+                  {filteredWallets.length === 0 && (
+                    <p className="text-center text-gray-400 py-6">
+                      Không có kết quả
+                    </p>
+                  )}
+
+                  {filteredWallets.map((wallet) => (
+                    <div
+                      key={wallet.id}
+                      onClick={() => {
+                        setChooseWallet(wallet);
+                        setSelectedWalletId(wallet.id);
+                        setSelectedFilter({
+                          active: true,
+                          displayOnSearchBar: true,
+                          name: 'all',
+                        });
+                        setOpen(false);
+                      }}
+                      className={`px-4 py-3 cursor-pointer
+              hover:bg-blue-50
+              ${selectedWallet?.id === wallet.id ? 'bg-blue-100' : ''}`}
+                    >
+                      <p className="font-medium">{wallet.name}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className="w-full flex flex-wrap items-center gap-2 pb-2">
@@ -567,6 +639,7 @@ const Advertisement = () => {
             </tbody>
           </table>
         </div>
+        {!dataCampaign.length && <EmptyState />}
       </div>
     </div>
   );

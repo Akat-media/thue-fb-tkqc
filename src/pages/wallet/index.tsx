@@ -4,6 +4,10 @@ import { toast } from 'react-toastify';
 import { debounce } from 'lodash';
 import { useUserStore } from '../../stores/useUserStore';
 import axios from 'axios';
+import { Button, Input, Pagination, Spin } from 'antd';
+import usePagination from '../../hook/usePagination';
+import { SearchOutlined } from '@ant-design/icons';
+import EmptyState from '../../components/EmptyState';
 
 interface WalletType {
   id: number;
@@ -41,16 +45,51 @@ const Wallet = () => {
   const [walletEditing, setWalletEditing] = useState<WalletType | null>(null);
   const [walletToDelete, setWalletToDelete] = useState<WalletType | null>(null);
   const [searchUser, setSearchUser] = useState<any>('');
+  const [loading, setLoading] = useState(false);
+  const { currentPage, pageSize, handleChange, setCurrentPage } = usePagination(
+    1,
+    3
+  );
+  const [totalWallet, setTotalWallet] = useState<number>(0);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const [search, setSearch] = useState('');
+  const [searchQuery, setSearchQuery] = useState<any>('');
+  const [inputValue, setInputValue] = useState('');
 
+  const fetchWallets = async () => {
+    try {
+      setLoading(true);
+      const [response] = await Promise.all([
+        BaseHeader({
+          url: '/wallet',
+          method: 'get',
+          params: {
+            page: currentPage,
+            limit: pageSize,
+            query: searchQuery || undefined,
+          },
+        }),
+      ]);
+      setWallets(response.data.data.data);
+      setTotalWallet(response.data.data.count);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
+    }
+  };
+  useEffect(() => {
+    fetchWallets();
+  }, [currentPage, searchQuery, reloadKey]);
+  /* ===== Fetch data ===== */
   const handleGetUser = async () => {
     try {
       const userId = userInfo?.user_id || userInfo?.user?.user_id;
-
       if (!userId) return;
-
-      const [response, responseAccount, responseWallet] = await Promise.all([
+      const [response, responseAccount] = await Promise.all([
         BaseHeader({
           url: '/user-orther',
           method: 'get',
@@ -61,15 +100,10 @@ const Wallet = () => {
           method: 'get',
           params: { user_id: userId },
         }),
-        BaseHeader({
-          url: '/wallet',
-          method: 'get',
-        }),
       ]);
 
       setUsers(response.data.data);
       setAccounts(responseAccount.data.data);
-      setWallets(responseWallet.data.data);
     } catch (error) {
       console.error(error);
     }
@@ -170,6 +204,8 @@ const Wallet = () => {
       if (response.status == 200) {
         toast.success('Tạo ví thành công!');
         handleGetUser();
+        setCurrentPage(1);
+        setReloadKey((prev) => prev + 1);
       } else {
         toast.error(response?.data?.message);
       }
@@ -227,6 +263,8 @@ const Wallet = () => {
       if (response.status == 200) {
         toast.success('Update ví thành công!');
         handleGetUser();
+        setCurrentPage(1);
+        setReloadKey((prev) => prev + 1);
       } else {
         toast.error('Update ví thất bại!');
       }
@@ -258,6 +296,8 @@ const Wallet = () => {
       if (response.status == 200) {
         toast.success('Xóa ví thành công!');
         handleGetUser();
+        setCurrentPage(1);
+        setReloadKey((prev) => prev + 1);
       } else {
         toast.error('Lỗi xóa ví thất bại!');
       }
@@ -283,10 +323,17 @@ const Wallet = () => {
     setSelectedUsers([]);
     setWalletBalanceDisplay('');
   };
-
   /* ===== Render ===== */
   return (
     <div className="container mx-auto px-4 py-8">
+      {loading && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center
+                  bg-black/40 backdrop-blur-sm"
+        >
+          <Spin tip="Loading..." size="large" />
+        </div>
+      )}
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold mb-8">Quản lý ví marketing</h2>
@@ -297,10 +344,57 @@ const Wallet = () => {
           + Tạo ví
         </button>
       </div>
+      <div className="flex w-full max-w-xl mb-4">
+        <div className="flex-1">
+          <Input
+            placeholder="Tìm kiếm theo tên ví, TK quảng cáo, TK marketing..."
+            allowClear
+            value={inputValue}
+            onChange={(e) => {
+              const value = e.target.value;
+              setInputValue(value);
+
+              if (value === '') {
+                setCurrentPage(1);
+                setSearchQuery('');
+              }
+            }}
+            className="
+            !text-[18px]
+        h-12
+        rounded-l-xl
+        rounded-r-[0px]
+        text-sm
+        border border-r-0 border-gray-200
+        focus:border-indigo-500
+        focus:ring-2
+        focus:ring-indigo-200
+      "
+          />
+        </div>
+
+        <Button
+          icon={<SearchOutlined />}
+          onClick={() => {
+            setCurrentPage(1); // reset page
+            setSearchQuery(inputValue.trim()); // set keyword thật
+          }}
+          className="
+          text-[20px]
+      !w-[70px]
+      h-12
+      rounded-r-xl
+      bg-indigo-500
+      border-indigo-500
+      text-white
+      hover:bg-indigo-600
+    "
+        />
+      </div>
 
       {/* Wallet list */}
       <div className="columns-1 md:columns-2 gap-6 space-y-6">
-        {wallets?.length > 0 &&
+        {wallets?.length > 0 ? (
           wallets?.map((wallet) => (
             <div
               key={wallet?.id}
@@ -348,8 +442,21 @@ const Wallet = () => {
                 ))}
               </div>
             </div>
-          ))}
+          ))
+        ) : (
+          <EmptyState />
+        )}
       </div>
+      {totalWallet > 0 && (
+        <div className="mt-6 ">
+          <Pagination
+            total={totalWallet}
+            current={currentPage}
+            pageSize={pageSize}
+            onChange={handleChange}
+          />
+        </div>
+      )}
 
       {/* ===== CREATE / EDIT MODAL ===== */}
       {(openCreate || openEdit) && (
