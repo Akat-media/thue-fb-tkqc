@@ -22,7 +22,7 @@ import LoginModal from '../auth/LoginModal';
 import PaymentCardModal from '../payment/PaymentCardModal';
 import ButtonCmp from '../../components/button';
 import usePagination from '../../hook/usePagination';
-import { Pagination } from 'antd';
+import { Pagination, Spin } from 'antd';
 import qs from 'qs';
 import { useSearchParams } from 'react-router-dom';
 import _ from 'lodash';
@@ -94,7 +94,11 @@ const MarketplacePage: React.FC = () => {
   const urlPage = parseInt(searchParams.get('page') || '1', 10);
   const urlPageSimple = parseInt(searchParams.get('pageSizeSimple') || '1', 10);
   const [activeTab, setActiveTab] = useState<string>('all');
-  const { currentPage, pageSize, handleChange } = usePagination(urlPage, 6);
+  const { currentPage, pageSize, handleChange, setCurrentPage } = usePagination(
+    urlPage,
+    6
+  );
+  const [loading, setLoading] = useState(false);
   const {
     currentPage: currentPageRent,
     pageSize: pageSizeRent,
@@ -104,6 +108,7 @@ const MarketplacePage: React.FC = () => {
     currentPage: currentPageAll,
     pageSize: pageSizeAll,
     handleChange: handleChangeAll,
+    setCurrentPage: setCurrentPageAll,
   } = usePagination(urlPage, 6);
   const {
     currentPage: currentPageSimple,
@@ -136,13 +141,14 @@ const MarketplacePage: React.FC = () => {
     console.log(data);
     const cleaned = _.pickBy({
       ...dataQuery,
-      page: currentPage,
+      page: 1,
       pageSizeSimple: currentPageSimple,
       // is_ads_visa: data?.selectedItems.includes('1') ? '1' : null,
       // is_ads_simple: data?.selectedItems.includes('2') ? '1' : null,
       from: data?.range?.[0],
       to: data?.range?.[1],
     });
+    setCurrentPage(1);
     const queryString = qs.stringify(cleaned);
     setDataQuery(cleaned);
     setSearchParams(queryString);
@@ -214,6 +220,7 @@ const MarketplacePage: React.FC = () => {
     }
   };
   const handleCallAPiAll = async () => {
+    setLoading(true);
     try {
       const [Res] = await Promise.all([
         BaseHeader({
@@ -234,6 +241,10 @@ const MarketplacePage: React.FC = () => {
     } catch (error) {
       console.error('Error fetching ad accounts:', error);
       toast.error(t('marketplacePage.errors.fetchAdAccounts'));
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     }
   };
   useEffect(() => {
@@ -599,7 +610,10 @@ const MarketplacePage: React.FC = () => {
             />
             <Button
               size="lg"
-              onClick={hanleChangeSearch}
+              onClick={() => {
+                setCurrentPageAll(1);
+                hanleChangeSearch();
+              }}
               className="text-white bg-gradient-to-r
     from-purple-500 to-indigo-500 hover:bg-gradient-to-bl
     focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800
@@ -677,7 +691,14 @@ const MarketplacePage: React.FC = () => {
             </div>
           </div>
         )}
-
+        {loading && (
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center
+                  bg-black/40 backdrop-blur-sm"
+          >
+            <Spin tip="Loading..." size="large" />
+          </div>
+        )}
         {/* Ad Accounts Section */}
         {activeTab === 'all' && (
           <>
