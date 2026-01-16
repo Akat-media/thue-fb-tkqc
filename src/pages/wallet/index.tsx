@@ -175,9 +175,7 @@ const Wallet = () => {
   }, [searchUser]);
   /* ===== Toggle account ===== */
   const toggleAccount = (id: string) => {
-    setSelectedAccounts((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
+    setSelectedAccounts((prev) => (prev.includes(id) ? [] : [id]));
   };
   const toggleUser = (id: string) => {
     setSelectedUsers((prev) =>
@@ -393,9 +391,9 @@ const Wallet = () => {
       </div>
 
       {/* Wallet list */}
-      <div className="columns-1 md:columns-2 gap-6 space-y-6">
-        {wallets?.length > 0 ? (
-          wallets?.map((wallet) => (
+      {wallets?.length > 0 ? (
+        <div className="columns-1 md:columns-2 gap-6 space-y-6">
+          {wallets?.map((wallet) => (
             <div
               key={wallet?.id}
               className="break-inside-avoid relative rounded-2xl border bg-white p-5 shadow hover:shadow-md transition"
@@ -442,11 +440,11 @@ const Wallet = () => {
                 ))}
               </div>
             </div>
-          ))
-        ) : (
-          <EmptyState />
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <EmptyState />
+      )}
       {totalWallet > 0 && (
         <div className="mt-6 ">
           <Pagination

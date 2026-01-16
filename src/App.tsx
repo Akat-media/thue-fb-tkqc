@@ -165,7 +165,10 @@ function AppRoutes() {
             <Route path="/admin/account" element={<Account />} />
             <Route path="/create-bot" element={<CreateBotPage />} />
             <Route path="/admin-cashback" element={<CashBackManagement />} />
-            <Route path="/admin/advertisement" element={<Advertisement />} />
+            {userobj?.role === 'super_admin' && (
+              <Route path="/admin/advertisement" element={<Advertisement />} />
+            )}
+
             <Route path="/support">
               <Route index element={<ListSupport />} />
               <Route path="create" element={<RequestForm />} />

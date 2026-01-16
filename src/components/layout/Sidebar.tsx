@@ -81,21 +81,21 @@ const Sidebar: React.FC<{
   const linksMarketing = [
     // { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
     { label: 'Chi tiết ví', icon: BadgeCheck, path: '/wallet-detail' },
-    {
-      label: 'Quản lý quảng cáo',
-      icon: ClipboardList,
-      path: '/admin/advertisement',
-    },
+    // {
+    //   label: 'Quản lý quảng cáo',
+    //   icon: ClipboardList,
+    //   path: '/admin/advertisement',
+    // },
     // { label: 'Nạp tiền', icon: CircleDollarSign, path: '/payments' },
     // { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
   ];
-  const linksMarketingUser = [
+  const linksMarketingUser: any = [
     // { label: 'Trang chủ', icon: LayoutDashboard, path: '/' },
-    {
-      label: 'Quản lý quảng cáo',
-      icon: ClipboardList,
-      path: '/admin/advertisement',
-    },
+    // {
+    //   label: 'Quản lý quảng cáo',
+    //   icon: ClipboardList,
+    //   path: '/admin/advertisement',
+    // },
     // { label: 'Nạp tiền', icon: CircleDollarSign, path: '/payments' },
     // { label: 'Quản lý Cashback', icon: QrCode, path: '/admin-cashback' },
   ];
@@ -109,7 +109,7 @@ const Sidebar: React.FC<{
     } else if (userobj?.role === 'user') {
       return linksMarketingUser;
     } else {
-      return linksMarketingUser;
+      return [];
     }
   }, [userobj]);
 
@@ -196,30 +196,31 @@ const Sidebar: React.FC<{
         </div>
 
         <nav className="space-y-2">
-          {CheckLink()
-            .slice(0, 5)
-            .map(({ label, icon: Icon, path }) => (
-              <Link
-                key={path}
-                to={path}
-                className={clsx(
-                  'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-                  location.pathname === path && 'bg-white font-semibold'
-                )}
-              >
-                <div className="w-12 flex justify-center">
-                  <Icon className="w-5 h-5" />
-                </div>
-                <span
+          {CheckLink()?.length > 0 &&
+            CheckLink()
+              .slice(0, 5)
+              .map(({ label, icon: Icon, path }: any) => (
+                <Link
+                  key={path}
+                  to={path}
                   className={clsx(
-                    'transition-all whitespace-nowrap overflow-hidden duration-300',
-                    isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                    'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+                    location.pathname === path && 'bg-white font-semibold'
                   )}
                 >
-                  {label}
-                </span>
-              </Link>
-            ))}
+                  <div className="w-12 flex justify-center">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span
+                    className={clsx(
+                      'transition-all whitespace-nowrap overflow-hidden duration-300',
+                      isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                    )}
+                  >
+                    {label}
+                  </span>
+                </Link>
+              ))}
           {userobj?.role !== 'user' && (
             <button
               onClick={() => {
@@ -339,30 +340,31 @@ const Sidebar: React.FC<{
             </div>
           </div>
 
-          {CheckLink()
-            .slice(5)
-            .map(({ label, icon: Icon, path }) => (
-              <Link
-                key={path}
-                to={path}
-                className={clsx(
-                  'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-                  location.pathname === path && 'bg-white font-semibold'
-                )}
-              >
-                <div className="w-12 flex justify-center">
-                  <Icon className="w-5 h-5" />
-                </div>
-                <span
+          {CheckLink()?.length > 0 &&
+            CheckLink()
+              .slice(5)
+              .map(({ label, icon: Icon, path }: any) => (
+                <Link
+                  key={path}
+                  to={path}
                   className={clsx(
-                    'transition-all whitespace-nowrap overflow-hidden duration-300',
-                    isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                    'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
+                    location.pathname === path && 'bg-white font-semibold'
                   )}
                 >
-                  {label}
-                </span>
-              </Link>
-            ))}
+                  <div className="w-12 flex justify-center">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span
+                    className={clsx(
+                      'transition-all whitespace-nowrap overflow-hidden duration-300',
+                      isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                    )}
+                  >
+                    {label}
+                  </span>
+                </Link>
+              ))}
         </nav>
       </div>
 

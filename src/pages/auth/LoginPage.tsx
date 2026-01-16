@@ -66,7 +66,7 @@ const LoginPage: React.FC = () => {
         if (res.data.data.user.role === 'admin') {
           navigate('/wallet-detail');
         } else if (res.data.data.user.role === 'user') {
-          navigate('/admin/advertisement');
+          navigate('/admin/settings');
         } else {
           navigate('/');
         }

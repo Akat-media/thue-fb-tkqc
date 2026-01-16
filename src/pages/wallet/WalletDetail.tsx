@@ -15,6 +15,7 @@ type ModalType =
   | 'SET_LIMIT'
   | 'UP_LIMIT'
   | 'SYNC_ALL_CONFIRM'
+  | 'STOP_ADS_ACCOUNT'
   | null;
 
 interface Wallet {
@@ -168,6 +169,11 @@ const WalletDetail = () => {
     setModalType('SYNC_CONFIRM');
     setChooseWallet(selectedWallet);
   };
+  const handleStopAdsModal = (account: any, selectedWallet: any) => {
+    setSelectedAccount(account);
+    setModalType('STOP_ADS_ACCOUNT');
+    setChooseWallet(selectedWallet);
+  };
   // const handleOpenSyncAllModal = () => {
   //   setModalType('SYNC_ALL_CONFIRM');
   // };
@@ -234,6 +240,39 @@ const WalletDetail = () => {
         setReloadKey((prev) => prev + 1);
       } else {
         toast.error('Lỗi set ngưỡng tài khoản ví thất bại!');
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Có lỗi xảy ra';
+        toast.error(message);
+      } else {
+        toast.error('Lỗi không xác định');
+      }
+    } finally {
+      setModalType(null);
+      setSelectedAccount(null);
+      setWalletBalance('');
+      setWalletBalanceDisplay('');
+    }
+  };
+  const confirmStopAds = async () => {
+    if (!chooseWallet || !selectedAccount) return;
+    try {
+      const response = await BaseHeader({
+        url: `/wallet/ads-spend-cap-increase-to-one/${chooseWallet?.id}`,
+        method: 'post',
+        data: {
+          ads_id: selectedAccount.id,
+          spend_cap: 1,
+          user_id: user?.id,
+        },
+      });
+      if (response.status == 200) {
+        toast.success('Set ngưỡng tài khoản ví về 1 thành công!');
+        setCurrentPage(1);
+        setReloadKey((prev) => prev + 1);
+      } else {
+        toast.error('Lỗi set ngưỡng tài khoản ví về 1 thất bại!');
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -454,18 +493,18 @@ const WalletDetail = () => {
                   </div>
                   <div className="text-gray-500 mt-1">Số dư hiện tại</div>
                 </div>
-                {/* <div className="text-2xl font-bold text-green-600">
+                <div className="text-2xl font-bold text-green-600">
                   <div>
                     {selectedWallet.balance.toLocaleString()}{' '}
                     {selectedWallet.currency}
                   </div>
-                  <button
+                  {/* <button
                     onClick={handleOpenSyncAllModal}
                     className="bg-orange-600 text-white text-base px-5 py-2.5 rounded-lg hover:bg-orange-700 transition mt-2"
                   >
                     Đồng bộ tất cả campaign
-                  </button>
-                </div> */}
+                  </button> */}
+                </div>
               </div>
 
               {/* Accounts */}
@@ -522,15 +561,28 @@ const WalletDetail = () => {
                       </div>
 
                       <div className="flex gap-2">
-                        <button
-                          onClick={() =>
-                            handleOpenSyncModal(acc, selectedWallet)
-                          }
-                          className="bg-indigo-600 text-white text-base px-5 py-2.5 
+                        {user?.role === 'super_admin' && (
+                          <button
+                            onClick={() =>
+                              handleStopAdsModal(acc, selectedWallet)
+                            }
+                            className="bg-pink-500 text-white text-base px-5 py-2.5 
+    rounded-lg hover:bg-pink-600 transition"
+                          >
+                            Dừng tài khoản quảng cáo
+                          </button>
+                        )}
+                        {user?.role === 'super_admin' && (
+                          <button
+                            onClick={() =>
+                              handleOpenSyncModal(acc, selectedWallet)
+                            }
+                            className="bg-indigo-600 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-indigo-700 transition"
-                        >
-                          Đồng bộ camp
-                        </button>
+                          >
+                            Đồng bộ camp
+                          </button>
+                        )}
                         {user?.role === 'super_admin' && (
                           <button
                             onClick={() =>
@@ -706,6 +758,36 @@ const WalletDetail = () => {
               <button
                 className="px-5 py-2.5 text-lg bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 onClick={handleConfirmUpLimit}
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {modalType === 'STOP_ADS_ACCOUNT' && selectedAccount && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-[400px] space-y-4">
+            <h3 className="text-xl font-bold text-indigo-600">
+              Xác nhận dừng tài khoản quảng cáo
+            </h3>
+
+            <p>
+              Bạn có chắc muốn dừng tài khoản quảng cáo và set ngưỡng về 1 cho
+              tài khoản
+              <strong> {selectedAccount.name}</strong>?
+            </p>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setModalType(null)}
+                className="px-4 py-2 border rounded-lg"
+              >
+                Huỷ
+              </button>
+              <button
+                onClick={confirmStopAds}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
               >
                 Xác nhận
               </button>
