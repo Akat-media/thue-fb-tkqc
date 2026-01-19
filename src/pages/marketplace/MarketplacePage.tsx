@@ -206,14 +206,14 @@ const MarketplacePage: React.FC = () => {
         await handleCallAPiAll();
         return;
       }
-      case 'visa': {
-        await handleCallAPiVisa();
-        return;
-      }
-      case 'simple': {
-        await handleCallAPiSimple();
-        return;
-      }
+      // case 'visa': {
+      //   await handleCallAPiVisa();
+      //   return;
+      // }
+      // case 'simple': {
+      //   await handleCallAPiSimple();
+      //   return;
+      // }
 
       default:
         return;
@@ -405,8 +405,7 @@ const MarketplacePage: React.FC = () => {
         },
       });
       if (response.status === 200) {
-        toast.success(t('marketplacePage.success.syncComplete'));
-        await handleCallAPiVisa();
+        toast.success(response.data.message || 'Đồng bộ thành công!');
         setIsSyncModalOpen(false);
       } else {
         toast.error('Đồng bộ thất bại. Vui lòng thử lại.');
