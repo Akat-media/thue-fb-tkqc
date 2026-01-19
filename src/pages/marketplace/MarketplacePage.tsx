@@ -32,6 +32,7 @@ import { usePreventScroll } from '../../hook/usePreventScroll';
 import BreadCumbsCmp from '../../components/breadCumbs';
 import Button from '../../components/ui/Button';
 import CardExchangeToken from './CardExchangeToken';
+import socket from '../../socket';
 
 interface BM {
   id: string;
@@ -393,7 +394,20 @@ const MarketplacePage: React.FC = () => {
   const handleSync = () => {
     setIsSyncModalOpen(true);
   };
-
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id);
+      socket.emit('joinRoom');
+    });
+    socket.on('payment_success', (data) => {
+      console.log('Payment thành công:', data);
+      toast.success(data.message || 'Đồng bộ thành công!');
+      handleCallAPiAll();
+    });
+    return () => {
+      socket.off('payment_success');
+    };
+  }, [handleCallAPiAll]);
   const handleSyncConfirm = async () => {
     try {
       setIsSyncing(true);
