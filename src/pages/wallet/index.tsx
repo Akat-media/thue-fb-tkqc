@@ -175,7 +175,9 @@ const Wallet = () => {
   }, [searchUser]);
   /* ===== Toggle account ===== */
   const toggleAccount = (id: string) => {
-    setSelectedAccounts((prev) => (prev.includes(id) ? [] : [id]));
+    setSelectedAccounts((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
   };
   const toggleUser = (id: string) => {
     setSelectedUsers((prev) =>
