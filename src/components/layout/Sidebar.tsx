@@ -30,6 +30,7 @@ import { useAuth } from '../../context/AuthContext';
 import socket from '../../socket';
 import { useUserStore } from '../../stores/useUserStore';
 import { useNotificationStore } from '../../stores/notificationStore';
+import BaseHeader from '../../api/BaseHeader';
 
 const Sidebar: React.FC<{
   isSidebarOpen: boolean;
@@ -159,25 +160,125 @@ const Sidebar: React.FC<{
     setUser(null);
     navigate('/login');
   };
+  const [cronStatus, setCronStatus] = useState<any>(null);
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const fetchCronStatus = async () => {
+      try {
+        const res = await BaseHeader({
+          url: '/cron/ads-sync/status',
+          method: 'post',
+        }); // đổi đúng endpoint của bạn
+
+        setCronStatus(res.data.data);
+      } catch (err) {
+        console.error('Fetch cron status failed', err);
+      }
+    };
+
+    fetchCronStatus();
+    const interval = setInterval(fetchCronStatus, 30_000); // refresh mỗi 30s
+    return () => clearInterval(interval);
+  }, []);
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const cronView = useMemo(() => {
+    // chưa có data
+    if (!cronStatus) {
+      return {
+        text: '⏸ Chưa khởi tạo cron',
+        canRestart: true,
+      };
+    }
+
+    // chưa từng chạy
+    if (!cronStatus.heartbeat) {
+      return {
+        text: '⏸ Chưa chạy lần nào',
+        canRestart: true,
+      };
+    }
+
+    // đang lỗi
+    if (cronStatus.status === 'error') {
+      return {
+        text: '❌ Lỗi lần chạy gần nhất',
+        canRestart: true,
+      };
+    }
+
+    // đang chạy
+    if (cronStatus.status === 'running') {
+      return {
+        text: '🔄 Đang đồng bộ...',
+        canRestart: false,
+      };
+    }
+
+    // thành công → countdown
+    const nextRunAt = cronStatus.heartbeat + cronStatus.intervalMs;
+    const remaining = Math.max(0, nextRunAt - now);
+
+    const m = Math.floor(remaining / 60000);
+    const s = Math.floor((remaining % 60000) / 1000);
+
+    return {
+      text: `⏳ ${m}p ${s}s`,
+      nextRunAt,
+      canRestart: false,
+    };
+  }, [cronStatus, now]);
+  const restartCron = async () => {
+    try {
+      // optional: disable spam click
+      setCronStatus((prev: any) =>
+        prev ? { ...prev, status: 'running' } : prev,
+      );
+
+      await BaseHeader({
+        url: '/cron/fb-ads-account/start',
+        method: 'post',
+      });
+
+      // reload status ngay sau khi start
+      const res = await BaseHeader({
+        url: '/cron/ads-sync/status',
+        method: 'post',
+      });
+
+      setCronStatus(res.data.data);
+    } catch (err) {
+      console.error('Restart cron failed', err);
+
+      // rollback trạng thái
+      setCronStatus((prev: any) =>
+        prev ? { ...prev, status: 'error' } : prev,
+      );
+    }
+  };
+
   return (
     <aside
       className={clsx(
         'fixed top-0 left-0 h-screen bg-gradient-to-br from-yellow-100 via-indigo-200 to-green-200 border-r flex flex-col justify-between py-6 px-4 shadow-sm z-40 transition-all duration-500',
-        isSidebarOpen ? 'w-64' : 'w-14'
+        isSidebarOpen ? 'w-64' : 'w-14',
       )}
     >
       <div>
         <div
           className={clsx(
             'flex items-center mb-6 transition-all duration-300',
-            isSidebarOpen ? 'justify-between px-2' : 'justify-center'
+            isSidebarOpen ? 'justify-between px-2' : 'justify-center',
           )}
         >
           <Link
             to="/"
             className={clsx(
               'text-2xl font-semibold text-blue-600 hover:underline transition-all duration-300',
-              !isSidebarOpen && 'opacity-0 w-0 overflow-hidden'
+              !isSidebarOpen && 'opacity-0 w-0 overflow-hidden',
             )}
           >
             AKAds
@@ -205,7 +306,7 @@ const Sidebar: React.FC<{
                   to={path}
                   className={clsx(
                     'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-                    location.pathname === path && 'bg-white font-semibold'
+                    location.pathname === path && 'bg-white font-semibold',
                   )}
                 >
                   <div className="w-12 flex justify-center">
@@ -214,7 +315,7 @@ const Sidebar: React.FC<{
                   <span
                     className={clsx(
                       'transition-all whitespace-nowrap overflow-hidden duration-300',
-                      isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                      isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0',
                     )}
                   >
                     {label}
@@ -232,7 +333,7 @@ const Sidebar: React.FC<{
               }}
               className={clsx(
                 'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300 w-full',
-                isAdsMenuActive && 'bg-white font-semibold'
+                isAdsMenuActive && 'bg-white font-semibold',
               )}
             >
               <div className="w-12 flex justify-center">
@@ -241,7 +342,7 @@ const Sidebar: React.FC<{
               <span
                 className={clsx(
                   'transition-all whitespace-nowrap overflow-hidden duration-300',
-                  isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                  isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0',
                 )}
               >
                 Quản lý hệ thống
@@ -250,7 +351,7 @@ const Sidebar: React.FC<{
                 <ChevronDown
                   className={clsx(
                     'ml-auto mr-2 w-4 h-4 transition-transform',
-                    openAdsSubmenu && 'rotate-180'
+                    openAdsSubmenu && 'rotate-180',
                   )}
                 />
               )}
@@ -262,7 +363,7 @@ const Sidebar: React.FC<{
               'transition-all duration-1000 ease-in-out overflow-hidden transform origin-top',
               openAdsSubmenu && isSidebarOpen
                 ? 'max-h-50 opacity-100 scale-y-100 mt-1'
-                : 'max-h-0 opacity-0 scale-y-95'
+                : 'max-h-0 opacity-0 scale-y-95',
             )}
           >
             <div className="ml-10 space-y-1">
@@ -272,7 +373,7 @@ const Sidebar: React.FC<{
                   className={clsx(
                     'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
                     location.pathname === '/adsaccountmanager' &&
-                      'bg-white font-semibold'
+                      'bg-white font-semibold',
                   )}
                 >
                   <div className="w-8 flex justify-center">
@@ -288,7 +389,7 @@ const Sidebar: React.FC<{
                   className={clsx(
                     'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700',
                     location.pathname === '/admin/account' &&
-                      'bg-white font-semibold'
+                      'bg-white font-semibold',
                   )}
                 >
                   <div className="w-8 flex justify-center">
@@ -349,7 +450,7 @@ const Sidebar: React.FC<{
                   to={path}
                   className={clsx(
                     'group flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-                    location.pathname === path && 'bg-white font-semibold'
+                    location.pathname === path && 'bg-white font-semibold',
                   )}
                 >
                   <div className="w-12 flex justify-center">
@@ -358,7 +459,7 @@ const Sidebar: React.FC<{
                   <span
                     className={clsx(
                       'transition-all whitespace-nowrap overflow-hidden duration-300',
-                      isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                      isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0',
                     )}
                   >
                     {label}
@@ -366,6 +467,27 @@ const Sidebar: React.FC<{
                 </Link>
               ))}
         </nav>
+        {userobj?.role === 'super_admin' && (
+          <div className="p-4">
+            <div className="font-semibold">FB Ads Sync</div>
+            <div className="text-xs text-gray-700">{cronView.text}</div>
+
+            {cronView.nextRunAt && (
+              <div className="text-[10px] text-gray-500">
+                🕒 {new Date(cronView.nextRunAt).toLocaleTimeString('vi-VN')}
+              </div>
+            )}
+
+            {cronView.canRestart && (
+              <button
+                onClick={restartCron}
+                className="mt-1 w-full rounded-md bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600"
+              >
+                Chạy lại ngay
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="space-y-2 mt-6">
@@ -373,7 +495,7 @@ const Sidebar: React.FC<{
           to="/admin/settings"
           className={clsx(
             'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-            location.pathname === '/admin/settings' && 'bg-white font-semibold'
+            location.pathname === '/admin/settings' && 'bg-white font-semibold',
           )}
         >
           <div className="w-12 flex justify-center">
@@ -382,7 +504,7 @@ const Sidebar: React.FC<{
           <span
             className={clsx(
               'transition-all whitespace-nowrap overflow-hidden duration-300',
-              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0',
             )}
           >
             Cài đặt
@@ -392,7 +514,7 @@ const Sidebar: React.FC<{
           to="/admin/support"
           className={clsx(
             'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-            location.pathname === '/admin/support' && 'bg-white font-semibold'
+            location.pathname === '/admin/support' && 'bg-white font-semibold',
           )}
         >
           <div className="w-12 flex justify-center">
@@ -401,7 +523,7 @@ const Sidebar: React.FC<{
           <span
             className={clsx(
               'transition-all whitespace-nowrap overflow-hidden duration-300',
-              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0',
             )}
           >
             Hỗ Trợ
@@ -411,7 +533,7 @@ const Sidebar: React.FC<{
           to="/admin/messages"
           className={clsx(
             'flex items-center py-2 rounded-lg hover:bg-white text-sm text-gray-700 transition-all duration-300',
-            location.pathname === '/admin/messages' && 'bg-white font-semibold'
+            location.pathname === '/admin/messages' && 'bg-white font-semibold',
           )}
         >
           <div className="w-12 flex justify-center">
@@ -420,7 +542,7 @@ const Sidebar: React.FC<{
           <span
             className={clsx(
               'transition-all whitespace-nowrap overflow-hidden duration-300',
-              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0',
             )}
           >
             Tin nhắn
@@ -442,7 +564,7 @@ const Sidebar: React.FC<{
           <span
             className={clsx(
               'transition-all whitespace-nowrap overflow-hidden duration-300',
-              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0',
             )}
           >
             Thông báo
