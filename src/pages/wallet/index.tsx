@@ -48,7 +48,7 @@ const Wallet = () => {
   const [loading, setLoading] = useState(false);
   const { currentPage, pageSize, handleChange, setCurrentPage } = usePagination(
     1,
-    3
+    3,
   );
   const [totalWallet, setTotalWallet] = useState<number>(0);
   const [reloadKey, setReloadKey] = useState(0);
@@ -145,13 +145,13 @@ const Wallet = () => {
     debounce((value: string) => {
       getAdAccounts(value);
     }, 500),
-    []
+    [],
   );
   const debouncedGetUser = useCallback(
     debounce((value: string) => {
       getAccounts(value);
     }, 500),
-    []
+    [],
   );
   useEffect(() => {
     if (search) {
@@ -176,12 +176,12 @@ const Wallet = () => {
   /* ===== Toggle account ===== */
   const toggleAccount = (id: string) => {
     setSelectedAccounts((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
   const toggleUser = (id: string) => {
     setSelectedUsers((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
 
@@ -244,7 +244,7 @@ const Wallet = () => {
     console.log(
       'Updating wallet...',
       !walletName.trim(),
-      selectedAccounts.length === 0
+      selectedAccounts.length === 0,
     );
     if (!walletName.trim() || selectedAccounts.length === 0) return;
     const userId = userInfo?.user_id || userInfo?.user?.user_id;
@@ -495,7 +495,7 @@ const Wallet = () => {
 
                       setWalletBalance(numberValue || '');
                       setWalletBalanceDisplay(
-                        numberValue ? formatVND(numberValue) : ''
+                        numberValue ? formatVND(numberValue) : '',
                       );
                     }}
                     placeholder="VD: 10.000.000"
@@ -517,7 +517,7 @@ const Wallet = () => {
                     onChange={(e) => setSearchUser(e.target.value)}
                     className="w-full border rounded-lg px-3 py-2 mt-1 mb-2"
                   />
-                  <div className="max-h-[500px] overflow-auto border rounded-lg p-2">
+                  <div className="max-h-[300px] overflow-auto border rounded-lg p-2">
                     {users.length === 0 && (
                       <p className="text-center text-gray-400 py-6">
                         Không có kết quả

@@ -69,7 +69,7 @@ const WalletDetail = () => {
   const [totalWallet, setTotalWallet] = useState<number>(0);
   const { currentPage, pageSize, handleChange, setCurrentPage } = usePagination(
     1,
-    3
+    3,
   );
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -126,7 +126,7 @@ const WalletDetail = () => {
   };
   const toggleUser = (id: string) => {
     setSelectedUsers((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
 
@@ -134,7 +134,7 @@ const WalletDetail = () => {
     debounce((value: string) => {
       fetchUserNotInCamp(value);
     }, 500),
-    []
+    [],
   );
   useEffect(() => {
     if (modalType === 'ATTACH_ACCOUNT') {
@@ -520,13 +520,13 @@ const WalletDetail = () => {
                     >
                       <div>
                         <div className="text-lg font-medium">{acc?.name}</div>
-                        <div className="text-[14px] font-medium">
+                        {/* <div className="text-[14px] font-medium">
                           {acc?.account_id}
-                        </div>
+                        </div> */}
                         <div className="text-gray-500 mt-1">
-                          BM_ID:{' '}
+                          ID:{' '}
                           <span className="font-semibold text-gray-700">
-                            {acc.owner}
+                            {acc?.account_id}
                           </span>
                         </div>
                         <div className="text-gray-500 mt-1">
@@ -535,12 +535,12 @@ const WalletDetail = () => {
                             {formatVNDV2(acc.spend_cap)} VND
                           </span>
                         </div>
-                        <div className="text-gray-500 mt-1">
+                        {/* <div className="text-gray-500 mt-1">
                           Đã tiêu:{' '}
                           <span className="font-semibold text-gray-700">
                             {formatVNDV2(acc.amount_spent)} VND
                           </span>
-                        </div>
+                        </div> */}
                         <div className="text-gray-500 mt-1">
                           Tài khoản marketing:{' '}
                           <span className="font-semibold text-red-500 break-words max-w-[500px] block">
@@ -689,7 +689,7 @@ const WalletDetail = () => {
                 const numberValue = parseVND(raw);
                 setWalletBalance(numberValue || '');
                 setWalletBalanceDisplay(
-                  numberValue ? formatVND(numberValue) : ''
+                  numberValue ? formatVND(numberValue) : '',
                 );
               }}
               placeholder="VD: 10.000.000"
@@ -736,7 +736,7 @@ const WalletDetail = () => {
                 const numberValue = parseVND(raw);
                 setWalletBalance(numberValue || '');
                 setWalletBalanceDisplay(
-                  numberValue ? formatVND(numberValue) : ''
+                  numberValue ? formatVND(numberValue) : '',
                 );
               }}
               placeholder="VD: 10.000.000"
@@ -744,7 +744,7 @@ const WalletDetail = () => {
             <p className="!mt-2 text-[12px] text-red-500">
               Lưu ý: ngưỡng sau khi nâng{' '}
               {formatVNDV2(
-                Number(selectedAccount?.spend_cap) + Number(walletBalance)
+                Number(selectedAccount?.spend_cap) + Number(walletBalance),
               )}{' '}
               VND
             </p>

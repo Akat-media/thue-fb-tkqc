@@ -205,7 +205,7 @@ const Sidebar: React.FC<{
     // đang lỗi
     if (cronStatus.status === 'error') {
       return {
-        text: '❌ Lỗi lần chạy gần nhất',
+        text: `❌ Lỗi lần chạy gần nhất:${cronStatus?.lastResult?.message}`,
         canRestart: true,
       };
     }
@@ -467,27 +467,26 @@ const Sidebar: React.FC<{
                 </Link>
               ))}
         </nav>
-        {userobj?.role === 'super_admin' && (
-          <div className="p-4">
-            <div className="font-semibold">FB Ads Sync</div>
-            <div className="text-xs text-gray-700">{cronView.text}</div>
 
-            {cronView.nextRunAt && (
-              <div className="text-[10px] text-gray-500">
-                🕒 {new Date(cronView.nextRunAt).toLocaleTimeString('vi-VN')}
-              </div>
-            )}
+        <div className="p-4">
+          <div className="font-semibold">FB Ads Sync</div>
+          <div className="text-xs text-gray-700">{cronView.text}</div>
 
-            {cronView.canRestart && (
-              <button
-                onClick={restartCron}
-                className="mt-1 w-full rounded-md bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600"
-              >
-                Chạy lại ngay
-              </button>
-            )}
-          </div>
-        )}
+          {cronView.nextRunAt && (
+            <div className="text-[10px] text-gray-500">
+              🕒 {new Date(cronView.nextRunAt).toLocaleTimeString('vi-VN')}
+            </div>
+          )}
+
+          {cronView.canRestart && (
+            <button
+              onClick={restartCron}
+              className="mt-1 w-full rounded-md bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600"
+            >
+              Chạy lại ngay
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="space-y-2 mt-6">
