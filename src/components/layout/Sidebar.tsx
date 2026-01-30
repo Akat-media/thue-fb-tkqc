@@ -124,8 +124,6 @@ const Sidebar: React.FC<{
     return () => window.removeEventListener('resize', handleResize);
   }, [isSidebarOpen, toggleSidebar]);
 
-  console.log('userobj', userobj);
-
   useEffect(() => {
     fetchUser();
   }, []);

@@ -145,13 +145,13 @@ const Wallet = () => {
     debounce((value: string) => {
       getAdAccounts(value);
     }, 500),
-    [],
+    [openEdit],
   );
   const debouncedGetUser = useCallback(
     debounce((value: string) => {
       getAccounts(value);
     }, 500),
-    [],
+    [openEdit],
   );
   useEffect(() => {
     if (search) {
