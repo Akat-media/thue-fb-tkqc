@@ -224,6 +224,12 @@ const WalletDetail = () => {
   const handleConfirmUpLimit = async () => {
     if (!chooseWallet || !selectedAccount || !walletBalance) return;
 
+    // Kiểm tra số tiền tối thiểu 500,000
+    if (typeof walletBalance === 'number' && walletBalance < 500000) {
+      toast.error('Số tiền phải từ 500,000 VND trở lên');
+      return;
+    }
+
     try {
       const response = await BaseHeader({
         url: `/wallet/ads-spend-cap-increase/${chooseWallet?.id}`,
@@ -725,22 +731,37 @@ const WalletDetail = () => {
             <p className="!mt-2">
               Dư nợ (balance): {formatVNDV2(selectedAccount?.balance)} VND
             </p>
-            <input
-              className="border border-gray-300 rounded-lg px-4 py-3 text-lg w-full focus:ring-2 focus:ring-blue-500"
-              inputMode="numeric"
-              value={walletBalanceDisplay}
-              onChange={(e) => {
-                const raw = e.target.value;
-                // chỉ cho nhập số + dấu chấm
-                if (!/^[0-9.]*$/.test(raw)) return;
-                const numberValue = parseVND(raw);
-                setWalletBalance(numberValue || '');
-                setWalletBalanceDisplay(
-                  numberValue ? formatVND(numberValue) : '',
-                );
-              }}
-              placeholder="VD: 10.000.000"
-            />
+            <div>
+              <input
+                className={`border rounded-lg px-4 py-3 text-lg w-full focus:ring-2 ${
+                  walletBalance &&
+                  typeof walletBalance === 'number' &&
+                  walletBalance < 500000
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-blue-500'
+                }`}
+                inputMode="numeric"
+                value={walletBalanceDisplay}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  // chỉ cho nhập số + dấu chấm
+                  if (!/^[0-9.]*$/.test(raw)) return;
+                  const numberValue = parseVND(raw);
+                  setWalletBalance(numberValue || '');
+                  setWalletBalanceDisplay(
+                    numberValue ? formatVND(numberValue) : '',
+                  );
+                }}
+                placeholder="Nhập số tiền (tối thiểu 500,000 VND)"
+              />
+              {walletBalance &&
+                typeof walletBalance === 'number' &&
+                walletBalance < 500000 && (
+                  <p className="text-red-500 text-sm mt-2">
+                    Số tiền phải từ 500,000 VND trở lên
+                  </p>
+                )}
+            </div>
             <p className="!mt-2 text-[12px] text-red-500">
               Lưu ý: ngưỡng sau khi nâng{' '}
               {formatVNDV2(
@@ -751,13 +772,26 @@ const WalletDetail = () => {
             <div className="flex justify-end gap-3 pt-4">
               <button
                 className="px-5 py-2.5 text-lg border rounded-lg"
-                onClick={() => setModalType(null)}
+                onClick={() => {
+                  setModalType(null);
+                  setWalletBalance('');
+                  setWalletBalanceDisplay('');
+                }}
               >
                 Huỷ
               </button>
               <button
-                className="px-5 py-2.5 text-lg bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className={`px-5 py-2.5 text-lg rounded-lg ${
+                  !walletBalance ||
+                  (typeof walletBalance === 'number' && walletBalance < 500000)
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                } text-white`}
                 onClick={handleConfirmUpLimit}
+                disabled={
+                  !walletBalance ||
+                  (typeof walletBalance === 'number' && walletBalance < 500000)
+                }
               >
                 Xác nhận
               </button>
