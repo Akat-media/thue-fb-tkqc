@@ -72,6 +72,9 @@ const WalletDetail = () => {
     3,
   );
   const [reloadKey, setReloadKey] = useState(0);
+  const [highlightedAccountId, setHighlightedAccountId] = useState<
+    string | null
+  >(null);
 
   const fetchWallets = async () => {
     try {
@@ -90,6 +93,32 @@ const WalletDetail = () => {
       const result = response.data.data.data;
       setWallets(result);
       setTotalWallet(response.data.data.count);
+
+      // Kiểm tra xem searchQuery có phải là ID tài khoản quảng cáo không
+      if (searchQuery && result.length > 0) {
+        // Tìm kiếm
+        for (const wallet of result) {
+          const foundAccount = wallet.adsAccounts?.find(
+            (acc: any) =>
+              acc.account_id === searchQuery || acc.id === searchQuery,
+          );
+          if (foundAccount) {
+            setHighlightedAccountId(foundAccount.account_id);
+            // Scroll đến tài khoản sau khi render
+            setTimeout(() => {
+              const element = document.getElementById(
+                `account-${foundAccount.account_id}`,
+              );
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }, 600);
+            break;
+          }
+        }
+      } else {
+        setHighlightedAccountId(null);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -412,9 +441,9 @@ const WalletDetail = () => {
     <div className="container mx-auto px-6 py-10 ">
       <h2 className="text-3xl font-bold mb-8">Quản lý chi tiết ví</h2>
       <div className="flex w-full max-w-xl">
-        <div className="flex-1">
+        <div className="flex-1 mb-8">
           <Input
-            placeholder="Tìm kiếm theo tên ví, TK quảng cáo, TK marketing..."
+            placeholder="Tìm kiếm theo tên ví hoặc ID tài khoản quảng cáo..."
             allowClear
             value={inputValue}
             onChange={(e) => {
@@ -424,6 +453,7 @@ const WalletDetail = () => {
               if (value === '') {
                 setCurrentPage(1);
                 setSearchQuery('');
+                setHighlightedAccountId(null);
               }
             }}
             className="
@@ -490,7 +520,7 @@ const WalletDetail = () => {
           return (
             <div
               key={selectedWallet.id}
-              className="bg-white rounded-2xl shadow-lg p-8 space-y-8 mb-4"
+              className="bg-gradient-to-br from-yellow-50 to-pink-50 rounded-2xl shadow-lg p-8 space-y-8 mb-4"
             >
               <div className="flex justify-between items-center">
                 <div>
@@ -519,120 +549,142 @@ const WalletDetail = () => {
                   Tài khoản quảng cáo
                 </h3>
                 <ul className="space-y-4">
-                  {selectedWallet?.adsAccounts?.map((acc) => (
-                    <li
-                      key={acc.id}
-                      className="border border-gray-200 rounded-xl p-5 flex justify-between items-center hover:shadow-md transition"
-                    >
-                      <div>
-                        <div className="text-lg font-medium">{acc?.name}</div>
-                        {/* <div className="text-[14px] font-medium">
+                  {selectedWallet?.adsAccounts?.map((acc) => {
+                    const isHighlighted =
+                      highlightedAccountId === acc.account_id;
+                    return (
+                      <li
+                        key={acc.id}
+                        id={`account-${acc.account_id}`}
+                        className={`bg-white border rounded-xl p-5 flex justify-between items-center hover:shadow-md transition ${
+                          isHighlighted
+                            ? 'border-yellow-400 border-2 shadow-lg bg-yellow-50 ring-4 ring-yellow-200'
+                            : 'border-gray-200'
+                        }`}
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <div className="text-lg font-medium">
+                              {acc?.name}
+                            </div>
+                            {isHighlighted && (
+                              <span className="px-3 py-1 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full animate-pulse">
+                                ⭐
+                              </span>
+                            )}
+                          </div>
+                          {/* <div className="text-[14px] font-medium">
                           {acc?.account_id}
                         </div> */}
-                        <div className="text-gray-500 mt-1">
-                          ID:{' '}
-                          <span className="font-semibold text-gray-700">
-                            {acc?.account_id}
-                          </span>
-                        </div>
-                        <div className="text-gray-500 mt-1">
-                          Ngưỡng chi tiêu:{' '}
-                          <span className="font-semibold text-gray-700">
-                            {formatVNDV2(acc.spend_cap)} VND
-                          </span>
-                        </div>
-                        {/* <div className="text-gray-500 mt-1">
+                          <div className="text-gray-500 mt-1">
+                            ID:{' '}
+                            <span
+                              className={`font-semibold ${isHighlighted ? 'text-yellow-700' : 'text-gray-700'}`}
+                            >
+                              {acc?.account_id}
+                            </span>
+                          </div>
+                          <div className="text-gray-500 mt-1">
+                            Ngưỡng chi tiêu:{' '}
+                            <span className="font-semibold text-gray-700">
+                              {formatVNDV2(acc.spend_cap)} VND
+                            </span>
+                          </div>
+                          {/* <div className="text-gray-500 mt-1">
                           Đã tiêu:{' '}
                           <span className="font-semibold text-gray-700">
                             {formatVNDV2(acc.amount_spent)} VND
                           </span>
                         </div> */}
-                        <div className="text-gray-500 mt-1">
-                          Tài khoản marketing:{' '}
-                          <span className="font-semibold text-red-500 break-words max-w-[500px] block">
-                            {selectedWallet?.users
-                              ?.map((item: any) => item?.user?.email)
-                              .join(', ')}
-                          </span>
+                          <div className="text-gray-500 mt-1">
+                            Tài khoản marketing:{' '}
+                            <span className="font-semibold text-red-500 break-words max-w-[500px] block">
+                              {selectedWallet?.users
+                                ?.map((item: any) => item?.user?.email)
+                                .join(', ')}
+                            </span>
+                          </div>
+                          {/* <div className="text-gray-500 mt-1">
+                            User gắn campaign:{' '}
+                            <span className="font-semibold text-red-500 break-words max-w-[500px] block">
+                              {(selectedWallet?.userViewCampaign || [])
+                                .filter((item) => item.ads_id === acc.id)
+                                .map((item) => item.user?.email)
+                                .join(', ')}
+                            </span>
+                          </div> */}
                         </div>
-                        <div className="text-gray-500 mt-1">
-                          User gắn campaign:{' '}
-                          <span className="font-semibold text-red-500 break-words max-w-[500px] block">
-                            {(selectedWallet?.userViewCampaign || [])
-                              .filter((item) => item.ads_id === acc.id)
-                              .map((item) => item.user?.email)
-                              .join(', ')}
-                          </span>
-                        </div>
-                      </div>
 
-                      <div className="flex gap-2">
-                        {user?.role === 'super_admin' && (
-                          <button
-                            onClick={() =>
-                              handleStopAdsModal(acc, selectedWallet)
-                            }
-                            className="bg-pink-500 text-white text-base px-5 py-2.5 
+                        <div className="flex gap-2">
+                          {user?.role === 'super_admin' && (
+                            <button
+                              onClick={() =>
+                                handleStopAdsModal(acc, selectedWallet)
+                              }
+                              className="bg-pink-500 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-pink-600 transition"
-                          >
-                            Dừng tài khoản quảng cáo
-                          </button>
-                        )}
-                        {user?.role === 'super_admin' && (
-                          <button
-                            onClick={() =>
-                              handleOpenSyncModal(acc, selectedWallet)
-                            }
-                            className="bg-indigo-600 text-white text-base px-5 py-2.5 
+                            >
+                              Dừng tài khoản quảng cáo
+                            </button>
+                          )}
+                          {user?.role === 'super_admin' && (
+                            <button
+                              onClick={() =>
+                                handleOpenSyncModal(acc, selectedWallet)
+                              }
+                              className="bg-indigo-600 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-indigo-700 transition"
-                          >
-                            Đồng bộ camp
-                          </button>
-                        )}
-                        {user?.role === 'super_admin' && (
-                          <button
-                            onClick={() =>
-                              handleOpenAttachModal(acc, selectedWallet)
-                            }
-                            className="bg-emerald-600 text-white text-base px-5 py-2.5 
+                            >
+                              Đồng bộ camp
+                            </button>
+                          )}
+                          {user?.role === 'super_admin' && (
+                            <button
+                              onClick={() =>
+                                handleOpenAttachModal(acc, selectedWallet)
+                              }
+                              className="bg-emerald-600 text-white text-base px-5 py-2.5 
     rounded-lg hover:bg-emerald-700 transition"
-                          >
-                            Gắn tài khoản
-                          </button>
-                        )}
+                            >
+                              Gắn tài khoản
+                            </button>
+                          )}
 
-                        <button
-                          onClick={() =>
-                            handleOpenModalUpLimit(acc, selectedWallet)
-                          }
-                          className="bg-purple-500 text-white text-base px-5 py-2.5 
-    rounded-lg hover:bg-purple-600 transition"
-                        >
-                          Nâng ngưỡng
-                        </button>
-                        {user?.role === 'super_admin' && (
-                          <button
-                            onClick={() => handleOpenModal(acc, selectedWallet)}
-                            className="bg-amber-500 text-white text-base px-5 py-2.5 
-    rounded-lg hover:bg-amber-600 transition"
-                          >
-                            Set ngưỡng
-                          </button>
-                        )}
-                        {user?.role === 'super_admin' && (
                           <button
                             onClick={() =>
-                              handleOpenModalDelete(acc, selectedWallet)
+                              handleOpenModalUpLimit(acc, selectedWallet)
                             }
-                            className="bg-rose-600 text-white text-base px-5 py-2.5 
-    rounded-lg hover:bg-rose-700 transition"
+                            className="bg-purple-500 text-white text-base px-5 py-2.5 
+    rounded-lg hover:bg-purple-600 transition"
                           >
-                            Xóa tài khoản
+                            Nâng ngưỡng
                           </button>
-                        )}
-                      </div>
-                    </li>
-                  ))}
+                          {user?.role === 'super_admin' && (
+                            <button
+                              onClick={() =>
+                                handleOpenModal(acc, selectedWallet)
+                              }
+                              className="bg-amber-500 text-white text-base px-5 py-2.5 
+    rounded-lg hover:bg-amber-600 transition"
+                            >
+                              Set ngưỡng
+                            </button>
+                          )}
+                          {user?.role === 'super_admin' && (
+                            <button
+                              onClick={() =>
+                                handleOpenModalDelete(acc, selectedWallet)
+                              }
+                              className="bg-rose-600 text-white text-base px-5 py-2.5 
+    rounded-lg hover:bg-rose-700 transition"
+                            >
+                              Xóa tài khoản
+                            </button>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </div>
