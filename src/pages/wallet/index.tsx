@@ -56,6 +56,9 @@ const Wallet = () => {
   const [search, setSearch] = useState('');
   const [searchQuery, setSearchQuery] = useState<any>('');
   const [inputValue, setInputValue] = useState('');
+  const [highlightedAccountId, setHighlightedAccountId] = useState<
+    string | null
+  >(null);
 
   const fetchWallets = async () => {
     try {
@@ -73,6 +76,32 @@ const Wallet = () => {
       ]);
       setWallets(response.data.data.data);
       setTotalWallet(response.data.data.count);
+
+      // Kiểm tra xem searchQuery có phải là ID tài khoản quảng cáo không
+      if (searchQuery && response.data.data.data.length > 0) {
+        // Tìm kiếm
+        for (const wallet of response.data.data.data) {
+          const foundAccount = wallet.adsAccounts?.find(
+            (acc: any) =>
+              acc.account_id === searchQuery || acc.id === searchQuery,
+          );
+          if (foundAccount) {
+            setHighlightedAccountId(foundAccount.account_id);
+            // Scroll đến tài khoản sau khi render
+            setTimeout(() => {
+              const element = document.getElementById(
+                `account-badge-${foundAccount.account_id}`,
+              );
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }, 600);
+            break;
+          }
+        }
+      } else {
+        setHighlightedAccountId(null);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -336,7 +365,7 @@ const Wallet = () => {
       )}
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold mb-8">Quản lý ví marketing</h2>
+        <h2 className="text-3xl font-bold mb-4">Quản lý ví marketing</h2>
         <button
           onClick={() => setOpenCreate(true)}
           className="px-5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
@@ -344,10 +373,10 @@ const Wallet = () => {
           + Tạo ví
         </button>
       </div>
-      <div className="flex w-full max-w-xl mb-4">
+      <div className="flex w-full max-w-xl mb-6">
         <div className="flex-1">
           <Input
-            placeholder="Tìm kiếm theo tên ví, TK quảng cáo, TK marketing..."
+            placeholder="Tìm kiếm theo tên ví, ID tài khoản quảng cáo, TK marketing..."
             allowClear
             value={inputValue}
             onChange={(e) => {
@@ -357,6 +386,7 @@ const Wallet = () => {
               if (value === '') {
                 setCurrentPage(1);
                 setSearchQuery('');
+                setHighlightedAccountId(null);
               }
             }}
             className="
@@ -398,7 +428,7 @@ const Wallet = () => {
           {wallets?.map((wallet) => (
             <div
               key={wallet?.id}
-              className="break-inside-avoid relative rounded-2xl border bg-white p-5 shadow hover:shadow-md transition"
+              className="break-inside-avoid relative rounded-2xl border bg-gradient-to-br from-blue-50 via-white to-pink-50 p-5 shadow hover:shadow-md transition"
             >
               <div className="absolute top-4 right-4 flex gap-2">
                 <button
@@ -428,18 +458,27 @@ const Wallet = () => {
                   .join(', ')}
               </h5>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 items-center">
                 <span className="text-purple-900 font-bold">
                   Tài khoản ads :
                 </span>
-                {wallet?.adsAccounts?.map((acc: any) => (
-                  <span
-                    key={acc?.account_id}
-                    className="px-3 py-1.5 rounded-full bg-gray-100 text-sm"
-                  >
-                    {acc?.name} - {acc?.id}
-                  </span>
-                ))}
+                {wallet?.adsAccounts?.map((acc: any) => {
+                  const isHighlighted = highlightedAccountId === acc.account_id;
+                  return (
+                    <span
+                      key={acc?.account_id}
+                      id={`account-badge-${acc.account_id}`}
+                      className={`px-3 py-1.5 rounded-full text-sm font-semibold transition-all ${
+                        isHighlighted
+                          ? 'bg-yellow-400 text-yellow-900 shadow-md border-2 border-yellow-500 animate-pulse'
+                          : 'bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      {isHighlighted && '⭐ '}
+                      {acc?.name} - {acc?.id}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           ))}
