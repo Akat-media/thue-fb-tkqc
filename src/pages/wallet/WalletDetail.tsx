@@ -733,7 +733,7 @@ const WalletDetail = () => {
       {/* ================= MODAL ================= */}
       {modalType === 'SET_LIMIT' && selectedAccount && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 w-[420px] space-y-6">
+          <div className="bg-white rounded-2xl p-8 w-[auto] space-y-6">
             <h3 className="text-xl font-bold">Thiết lập ngưỡng chi tiêu</h3>
             <div className="text-gray-600 text-lg">{selectedAccount.name}</div>
             <input
@@ -771,7 +771,7 @@ const WalletDetail = () => {
       )}
       {modalType === 'UP_LIMIT' && selectedAccount && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 w-[420px] space-y-6">
+          <div className="bg-white rounded-2xl p-8 w-[auto] space-y-6">
             <h3 className="text-xl font-bold">Nâng ngưỡng chi tiêu thêm</h3>
             <div className="text-gray-600 text-lg">{selectedAccount.name}</div>
             <p className="!mt-2">
@@ -813,6 +813,11 @@ const WalletDetail = () => {
                     Số tiền phải từ 500,000 VND trở lên
                   </p>
                 )}
+              {walletBalance > chooseWallet?.balance && (
+                <p className="text-red-500 text-sm mt-2">
+                  Số tiền trong ví không đủ
+                </p>
+              )}
             </div>
             <p className="!mt-2 text-[12px] text-red-500">
               Lưu ý: ngưỡng sau khi nâng{' '}
@@ -842,7 +847,9 @@ const WalletDetail = () => {
                 onClick={handleConfirmUpLimit}
                 disabled={
                   !walletBalance ||
-                  (typeof walletBalance === 'number' && walletBalance < 500000)
+                  (typeof walletBalance === 'number' &&
+                    walletBalance < 500000) ||
+                  walletBalance > chooseWallet?.balance
                 }
               >
                 Xác nhận
@@ -853,7 +860,7 @@ const WalletDetail = () => {
       )}
       {modalType === 'STOP_ADS_ACCOUNT' && selectedAccount && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-[400px] space-y-4">
+          <div className="bg-white rounded-xl p-6 w-[auto] space-y-4">
             <h3 className="text-xl font-bold text-indigo-600">
               Xác nhận dừng tài khoản quảng cáo
             </h3>
@@ -883,7 +890,7 @@ const WalletDetail = () => {
       )}
       {modalType === 'SYNC_CONFIRM' && selectedAccount && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-[400px] space-y-4">
+          <div className="bg-white rounded-xl p-6 w-[auto] space-y-4">
             <h3 className="text-xl font-bold text-indigo-600">
               Xác nhận đồng bộ
             </h3>
@@ -912,7 +919,7 @@ const WalletDetail = () => {
       )}
       {modalType === 'SYNC_ALL_CONFIRM' && selectedAccount && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-[400px] space-y-4">
+          <div className="bg-white rounded-xl p-6 w-[auto] space-y-4">
             <h3 className="text-xl font-bold text-indigo-600">
               Xác nhận đồng bộ
             </h3>
@@ -941,7 +948,7 @@ const WalletDetail = () => {
       )}
       {modalType === 'ATTACH_ACCOUNT' && selectedAccount && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-[450px] space-y-4">
+          <div className="bg-white rounded-xl p-6 w-[auto] space-y-4">
             <h3 className="text-xl font-bold text-emerald-600">
               Gắn tài khoản
             </h3>
