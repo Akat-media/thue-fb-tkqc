@@ -840,7 +840,9 @@ const WalletDetail = () => {
               <button
                 className={`px-5 py-2.5 text-lg rounded-lg ${
                   !walletBalance ||
-                  (typeof walletBalance === 'number' && walletBalance < 500000)
+                  (typeof walletBalance === 'number' &&
+                    walletBalance < 500000) ||
+                  walletBalance > chooseWallet?.balance
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-blue-600 hover:bg-blue-700'
                 } text-white`}
