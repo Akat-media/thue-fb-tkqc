@@ -51,7 +51,7 @@ const ManageAdsAccount: React.FC = () => {
   const [activeCell, setActiveCell] = useState<string | null>(null);
   const [activeRow, setActiveRow] = useState<string | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<Transaction | null>(
-    null
+    null,
   );
   const [showModal, setShowModal] = useState(false);
   const [typeFilter, setTypeFilter] = useState('all');
@@ -62,7 +62,7 @@ const ManageAdsAccount: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [highlightedRows, setHighlightedRows] = useState<string[]>([]);
   const [openSortKey, setOpenSortKey] = useState<keyof Transaction | null>(
-    null
+    null,
   );
   const [active, setActive] = useState('points');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -383,7 +383,7 @@ const ManageAdsAccount: React.FC = () => {
     } catch (error: any) {
       console.log(error);
       toast.error(
-        error.response?.data?.message || 'Lỗi khi lấy dữ liệu thống kê'
+        error.response?.data?.message || 'Lỗi khi lấy dữ liệu thống kê',
       );
     }
   };
@@ -398,7 +398,7 @@ const ManageAdsAccount: React.FC = () => {
           ...(searchQuery && { query: searchQuery.trim() }),
         },
       });
-      const pointsData = response.data.data;
+      const pointsData = response.data.data.data;
       setTransactionPoints(pointsData);
       setFiltered(pointsData); // Cập nhật filtered khi nhận dữ liệu mới
       setTotalPoints(response.data.data.count);
@@ -617,7 +617,7 @@ const ManageAdsAccount: React.FC = () => {
                             />
                           </div>
                         </th>
-                      )
+                      ),
                     )}
                   </tr>
                 </thead>
@@ -630,8 +630,8 @@ const ManageAdsAccount: React.FC = () => {
                         highlightedRows.includes(item.id)
                           ? 'bg-[#dcfce7] relative'
                           : activeRow === item.id
-                          ? 'bg-green-100'
-                          : 'hover:bg-gray-50'
+                            ? 'bg-green-100'
+                            : 'hover:bg-gray-50'
                       }`}
                       style={
                         highlightedRows.includes(item.id)
@@ -694,8 +694,8 @@ const ManageAdsAccount: React.FC = () => {
                         {item?.usd > 0
                           ? `${item.usd.toLocaleString()} USD`
                           : item?.amountVND > 0
-                          ? `${item.amountVND.toLocaleString()} VNĐ`
-                          : '—'}
+                            ? `${item.amountVND.toLocaleString()} VNĐ`
+                            : '—'}
                       </td>
                       <td
                         className={`px-4 py-2 text-center border border-gray-200 cursor-pointer`}
@@ -741,7 +741,7 @@ const ManageAdsAccount: React.FC = () => {
                           ? format(
                               new Date(item?.createdAt || item?.created_at),
                               'dd/MM/yyyy HH:mm:ss',
-                              { locale: vi }
+                              { locale: vi },
                             )
                           : ''}
                       </td>
@@ -885,7 +885,7 @@ const ManageAdsAccount: React.FC = () => {
                             />
                           </div>
                         </th>
-                      )
+                      ),
                     )}
                   </tr>
                 </thead>
@@ -898,8 +898,8 @@ const ManageAdsAccount: React.FC = () => {
                         highlightedRows.includes(item.id)
                           ? 'bg-[#dcfce7] ring-2 ring-[#47b46c]'
                           : activeRow === item.id
-                          ? 'bg-green-100'
-                          : 'hover:bg-gray-50'
+                            ? 'bg-green-100'
+                            : 'hover:bg-gray-50'
                       }`}
                     >
                       <td className="px-4 py-3 text-center border border-gray-100">
@@ -962,6 +962,9 @@ const ManageAdsAccount: React.FC = () => {
                           setActiveRow(null);
                         }}
                       >
+                        {item?.description === 'Thay đổi tiền trong ví !'
+                          ? '+'
+                          : '-'}{' '}
                         {item?.amount.toLocaleString()} VNĐ
                       </td>
                       <td
@@ -1012,7 +1015,7 @@ const ManageAdsAccount: React.FC = () => {
                           ? format(
                               new Date(item?.createdAt || item?.created_at),
                               'dd/MM/yyyy HH:mm:ss',
-                              { locale: vi }
+                              { locale: vi },
                             )
                           : ''}
                       </td>
